@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,15 +8,27 @@
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <!-- FontAwesome for Premium Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
+    <!-- Database Sync Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner-wrapper">
+            <div class="spinner"></div>
+            <p>Syncing database...</p>
+        </div>
+    </div>
+
     <div class="dashboard-container">
         <!-- Header Section -->
         <header class="dashboard-header">
@@ -75,13 +88,13 @@
 
         <!-- Main Grid Layout -->
         <main class="dashboard-grid">
-            
+
             <!-- Left Panel: Input & Data Management -->
             <section class="grid-panel sidebar-panel">
                 <div class="panel-header">
                     <h3><i class="fa-solid fa-database"></i> Data Entry & Management</h3>
                 </div>
-                
+
                 <form id="demographics-form" class="entry-form">
                     <div class="form-group">
                         <label for="brgy-select"><i class="fa-solid fa-map-pin"></i> Select Barangay</label>
@@ -109,7 +122,8 @@
                                 </label>
                                 <label class="radio-container">
                                     <input type="radio" name="sex" value="Female">
-                                    <span class="radio-custom female-radio"><i class="fa-solid fa-venus"></i> Female</span>
+                                    <span class="radio-custom female-radio"><i class="fa-solid fa-venus"></i>
+                                        Female</span>
                                 </label>
                             </div>
                         </div>
@@ -159,40 +173,151 @@
                     <h3><i class="fa-solid fa-map"></i> Muntinlupa Interactive Map</h3>
                     <div class="map-instructions">Hover to preview, click to select</div>
                 </div>
-                
+
                 <div class="map-viewport">
                     <div class="map-wrapper">
                         <!-- Base Muntinlupa Map Image -->
-                        <img src="map-image.png" alt="City Map of Muntinlupa" class="base-map-img">
-                        
+                        <img src="map-image.png" id="map-image" alt="City Map of Muntinlupa" class="base-map-img">
+
                         <!-- Interactive SVG overlay matching 750x750 coordinate system -->
                         <svg viewBox="0 0 750 750" class="map-svg-overlay">
-                            <!-- Sucat (Pinkish, top right coast) -->
-                            <polygon class="map-polygon" data-name="Sucat" points="450,140 495,145 497,260 477,280 413,290 400,245 450,140" />
-                            
-                            <!-- Buli (Yellow, tiny strip below Sucat) -->
-                            <polygon class="map-polygon" data-name="Buli" points="413,290 477,280 472,300 405,305" />
-                            
-                            <!-- Cupang (Blue, below Buli/Sucat) -->
-                            <polygon class="map-polygon" data-name="Cupang" points="405,305 472,300 480,360 455,390 378,375 325,335 348,328" />
-                            
-                            <!-- Alabang (Yellow/Greenish, center) -->
-                            <polygon class="map-polygon" data-name="Alabang" points="378,375 455,390 480,360 482,450 440,465 418,470 413,445 378,460" />
-                            
-                            <!-- Ayala Alabang (Purple, west side) -->
-                            <polygon class="map-polygon" data-name="Ayala Alabang" points="325,335 378,375 378,460 413,445 415,470 380,480 360,480 360,590 266,590 270,540" />
-                            
-                            <!-- Bayanan (Light blue/purple, thin strip east of Alabang) -->
-                            <polygon class="map-polygon" data-name="Bayanan" points="418,470 440,465 482,450 475,495 415,495" />
-                            
-                            <!-- Putatan (Green, center-south below Alabang) -->
-                            <polygon class="map-polygon" data-name="Putatan" points="380,480 418,470 415,495 475,495 475,590 360,590 360,480" />
-                            
-                            <!-- Poblacion (Pink, south below Putatan) -->
-                            <polygon class="map-polygon" data-name="Poblacion" points="266,590 360,590 475,590 480,640 440,660 440,685 410,710 338,710 338,620 270,625" />
-                            
-                            <!-- Tunasan (Yellowish, bottom) -->
-                            <polygon class="map-polygon" data-name="Tunasan" points="270,625 338,620 338,710 410,710 440,685 440,660 480,640 498,690 460,740 330,750 240,750" />
+                            <!-- Sucat (top-right, salmon/pink) -->
+                            <polygon class="map-polygon" data-name="Sucat" points="
+                                469,47 463,36 464,21 466,18 469,17 471,17 476,19 486,17 493,16 
+                                499,18 505,20 511,21 517,18 522,16 528,18 533,20 538,19 538,18 
+                                542,17 547,20 552,22 559,21 566,23 563,29 560,33 562,37 558,39 
+                                555,45 560,47 553,47 549,54 550,57 547,56 547,62 548,64 543,67 
+                                542,72 540,78 536,79 538,80 537,82 538,84 537,86 538,90 538,95 
+                                535,96 534,98 533,105 531,107 529,124 529,130 526,139 531,140 
+                                533,129 534,123 535,116 535,114 539,111 539,113 541,114 541,117
+                                542,118 540,120 537,140 538,143 553,146 549,147 547,146 538,150 
+                                530,146 522,145 506,148 504,146 501,145 500,143 497,141 497,144 
+                                492,144 483,146 473,144 466,145 462,147 456,146 450,148 439,154 
+                                440,157 423,160 422,156 418,156 417,153 400,144 407,140 415,126 
+                                418,126 418,119 416,118 431,104 435,104 437,96 460,86 459,70 464,
+                                69 464,65 468,63 468,60 467,57 463,55 468,47
+                            " />
+
+                            <!-- Buli (tiny strip just below Sucat) -->
+                            <polygon class="map-polygon" data-name="Buli" points="
+                                440,158 439,154 439,154 444,152 449,148 457,145 467,146 467,146
+                                473,143 481,146 490,144 496,146 497,141 501,144 506,148 515,148
+                                522,145 537,150 541,153 540,166 535,169 526,168 522,171 508,175
+                                501,170 495,175 490,178 470,173 465,174 463,170 449,169 447,164 
+                                451,163 450,160 440,159
+                            " />
+
+                            <!-- Cupang (large blue region, center-upper) -->
+                            <polygon class="map-polygon" data-name="Cupang" points="
+                                305,296 310,282 316,270 322,260 328,252 334,246 340,242 346,240
+                                352,239 358,240 364,242 370,246 374,250 377,255 378,260 377,266
+                                376,272 375,278 376,284 378,290 381,295 385,298 390,300
+                                413,270 416,276 422,280 429,284 436,287 443,288 450,288 457,287
+                                462,284 465,280 466,274 464,268 468,264 470,260 472,254 474,246
+                                476,262 477,275 477,288 476,300 474,310 471,320 467,328 462,335
+                                456,340 449,344 441,347 432,348 422,347 412,344 402,340 392,335
+                                382,329 373,323 364,317 356,311 349,306 342,302 335,299 328,298
+                                320,298 312,298
+                            " />
+
+                            <!-- Alabang (yellow, center-right) -->
+                            <polygon class="map-polygon" data-name="Alabang" points="
+                                382,329 392,335 402,340 412,344 422,347 432,348 441,347 449,344
+                                456,340 462,335 467,328 471,320 474,310 476,300 477,288 477,275
+                                476,262 478,270 480,280 481,292 481,305 480,318 478,330 475,342
+                                472,352 468,361 463,368 457,374 450,378 442,381 433,382 423,381
+                                413,378 404,374 396,369 389,363 384,357 381,350 380,342 381,335
+                            " />
+
+                            <!-- Ayala Alabang (large purple, left side) -->
+                            <polygon class="map-polygon" data-name="Ayala Alabang" points="
+                                247,488 252,476 257,464 262,453 267,444 272,436 277,428 282,420
+                                287,413 293,407 299,402 305,398 312,394 318,391 323,389 328,388
+                                334,388 340,390 346,393 351,398 355,403 358,408 360,414 360,420
+                                359,426 357,432 354,438 352,443 351,448 352,453 354,458 358,462
+                                362,466 367,469 373,471 378,472 383,472 387,470 390,467 392,462
+                                393,456 392,450 391,443 391,437 392,431 395,426 399,422 404,418
+                                409,416 414,414 419,414 424,415 429,417 433,420 437,424
+                                442,381 433,382 423,381 413,378 404,374 396,369 389,363 384,357
+                                381,350 380,342 381,335 382,329 373,323 364,317 356,311 349,306
+                                342,302 335,299 328,298 320,298 312,298 305,296 310,282 316,270
+                                322,260 328,252 318,248 308,246 298,246 288,248 278,252 269,258
+                                261,265 254,274 248,284 244,295 241,307 240,320 240,333 241,346
+                                243,358 245,370 247,381 248,392 248,402 247,412 245,422 244,432
+                                244,442 245,452 246,462 247,472 247,481
+                            " />
+
+                            <!-- Bayanan (small region, right of Alabang) -->
+                            <polygon class="map-polygon" data-name="Bayanan" points="
+                                437,424 441,428 444,433 446,438 447,444 447,450 446,456 444,462
+                                441,467 437,471 432,474 426,476 420,476 414,475 408,473 403,470
+                                399,466 396,461 394,455 393,449 393,443 394,437 396,432 399,427
+                                403,423 408,419 413,416 418,415 423,415 428,416 433,419
+                            " />
+
+                            <!-- Putatan (green, center-south) -->
+                            <polygon class="map-polygon" points="
+                                392,462 393,449 394,437 391,443 392,450 393,456 392,462
+                            " data-name="Putatan" />
+                            <polygon class="map-polygon" data-name="Putatan" points="
+                                362,466 367,469 373,471 378,472 383,472 387,470 390,467 392,462
+                                394,455 396,461 399,466 403,470 408,473 414,475 420,476 426,476
+                                432,474 437,471 441,467 444,462 446,456 447,450 447,444 446,438
+                                444,433 441,428 437,424 442,428 447,433 451,438 454,444 455,450
+                                454,457 452,463 449,469 445,474 440,478 434,481 428,483 421,484
+                                414,484 407,483 400,480 394,476 389,471 385,466 382,460 380,454
+                                378,448 377,442 376,436 375,430 375,424 376,418 378,413 381,409
+                                385,406 390,404 395,403 400,403 405,404 410,406 414,409 418,413
+                                421,414 416,414 411,415 406,417 402,420 399,423 396,427 394,432
+                                393,437 392,443 393,450 395,456 398,461 402,466 407,470 413,474
+                                419,476 425,477 431,476 437,474 442,470 446,465 448,460 449,454
+                                448,448 446,441 442,435 437,429 432,424 426,419 420,415 413,413
+                                406,412 399,412 393,414 388,417 384,422 381,427 379,433 378,439
+                                378,445 379,451 381,457 384,462 388,467 393,471 399,474 406,476
+                                413,477 420,477 427,476 434,473 440,469 444,464 446,458 447,452
+                                446,446 444,439 440,433 436,427 430,422 424,418 417,415
+                            " />
+
+                            <!-- Poblacion (pink/salmon, lower-left) -->
+                            <polygon class="map-polygon" data-name="Poblacion" points="
+                                247,488 252,496 258,504 264,512 270,520 276,527 281,534 286,540
+                                290,546 293,552 295,558 296,564 296,570 295,576 293,582 290,588
+                                288,594 286,600 285,606 285,612 286,618 288,624 291,629 295,633
+                                299,636 305,638 311,639 318,638 325,636 332,633 338,629 343,624
+                                347,618 350,612 352,606 353,600 354,594 354,588 354,582 353,576
+                                352,570 351,564 350,558 350,552 351,546 353,540 356,534 360,528
+                                364,523 368,518 372,514 376,510 380,507 383,504 386,501 388,498
+                                391,495 394,492 397,489 400,487 403,485 406,483 409,482 412,481
+                                415,481 418,481 421,482 424,484 427,486 430,489 433,493 435,497
+                                437,502 438,508 438,514 437,520 435,526 432,532 428,537 423,541
+                                418,545 412,548 405,550 398,551 391,551 384,549 378,546 373,542
+                                368,537 364,532 361,526 359,520 358,514 358,508 360,502 362,496
+                                365,491 369,487 374,483 379,480 384,477 390,475 396,474 402,474
+                                408,475 414,477 420,479 425,483 429,488 432,493 434,499 435,506
+                                434,513 432,519 428,525 424,530 418,534 412,537 405,539 398,540
+                                391,539 384,537 377,533 371,528 366,522 363,516 360,510 360,504
+                                361,498 363,492 367,487 372,483 377,479 383,476 389,474 395,473
+                                401,473 246,488
+                            " />
+
+                            <!-- Tunasan (yellow/tan, bottom) -->
+                            <polygon class="map-polygon" data-name="Tunasan" points="
+                                338,629 343,635 349,641 356,647 363,652 370,657 377,661 384,664
+                                390,666 396,668 402,669 408,669 414,669 420,668 426,666 432,663
+                                437,660 442,656 447,651 451,646 455,640 458,634 460,628 461,622
+                                461,616 460,610 458,604 455,598 451,592 447,587 442,582 437,578
+                                432,575 427,573 422,572 417,572 412,573 407,575 402,578 398,582
+                                394,587 391,593 389,599 388,606 388,613 389,620 391,627 394,633
+                                398,638 403,642 408,645 414,647 420,648 426,647 432,645 437,641
+                                442,636 446,630 449,624 450,618 450,612 449,606 446,600 442,595
+                                437,591 431,588 424,586 417,585 410,585 403,586 396,589 390,592
+                                385,597 381,602 378,608 377,615 377,622 379,629 382,635 387,640
+                                393,644 400,647 407,649 414,649 421,648 428,646 434,642 440,637
+                                445,631 448,624 450,617 450,610 448,603 445,597 441,592 435,588
+                                428,585 420,584 413,584 406,585 399,588 393,592 388,597 384,603
+                                382,610 381,617 382,624 385,630 389,636 395,641 402,645 409,647
+                                292,636 299,639 305,641 311,642 318,641 325,638
+                            " />
                         </svg>
                     </div>
 
@@ -256,14 +381,16 @@
                 </div>
             </section>
         </main>
-        
+
         <!-- Footer -->
         <footer class="dashboard-footer">
-            <p>Muntinlupa City Demographic Dashboard. Built with Vanilla Web Technologies (HTML, CSS, JS) and Chart.js.</p>
+            <p>Muntinlupa City Demographic Dashboard. Built with Vanilla Web Technologies (HTML, CSS, JS) and Chart.js.
+            </p>
         </footer>
     </div>
 
     <!-- Application Script -->
     <script src="app.js"></script>
 </body>
+
 </html>

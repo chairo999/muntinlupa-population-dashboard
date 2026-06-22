@@ -50,6 +50,18 @@ const DEFAULT_DEMOGRAPHIC_DATA = {
 const STORAGE_KEY = "muntinlupa_demographics_data";
 const HISTORICAL_LABELS = ["2022", "2023", "2024", "2025", "2026 (Current)"];
 
+// Supabase Configuration
+// Replace these values with your actual Supabase URL and Anon Key
+const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
+
+let supabaseClient = null;
+
+// Initialize Supabase client if keys are provided and supabase JS SDK is loaded
+if (typeof supabase !== 'undefined' && SUPABASE_URL !== "YOUR_SUPABASE_URL") {
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
 // State Variables
 let appData = {};
 let selectedBarangay = null; // null represents City-Wide view
@@ -60,58 +72,129 @@ let ageChartInstance = null;
 let trendChartInstance = null;
 
 // Initialize Application
-document.addEventListener("DOMContentLoaded", () => {
-    initData();
+document.addEventListener("DOMContentLoaded", async () => {
+    showLoading(true);
+    await initData();
     initClock();
     initEventListeners();
     renderDashboard();
+    showLoading(false);
 });
 
-// Load data from LocalStorage or seed default values
-function initData() {
+// Show/Hide Database Loading Overlay
+function showLoading(show) {
+    const overlay = document.getElementById("loading-overlay");
+    if (overlay) {
+        if (show) {
+            overlay.classList.add("active");
+        } else {
+            overlay.classList.remove("active");
+        }
+    }
+}
+
+// Load data from Supabase DB or LocalStorage fallback, or seed default values
+async function initData() {
+    if (supabaseClient) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('demographics')
+                .select('data')
+                .eq('id', 1)
+                .single();
+
+            if (error) {
+                // If row not found (e.g. table is empty/new), initialize it
+                if (error.code === 'PGRST116') {
+                    console.log("No data found in Supabase. Initializing default demographic data.");
+                    await restoreDefaultData();
+                } else {
+                    throw error;
+                }
+            } else if (data && data.data) {
+                appData = data.data;
+            } else {
+                await restoreDefaultData();
+            }
+        } catch (e) {
+            console.error("Error loading data from Supabase. Falling back to LocalStorage.", e);
+            loadFromLocalStorageFallback();
+        }
+    } else {
+        console.log("Supabase not configured or credentials missing. Using LocalStorage fallback.");
+        loadFromLocalStorageFallback();
+    }
+}
+
+// LocalStorage Fallback loaders
+function loadFromLocalStorageFallback() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
         try {
             appData = JSON.parse(stored);
         } catch (e) {
             console.error("Error parsing local demographic data. Resetting to defaults.", e);
-            restoreDefaultData();
+            restoreDefaultDataSync();
         }
     } else {
-        restoreDefaultData();
+        restoreDefaultDataSync();
     }
 }
 
 // Restore default census mock data
-function restoreDefaultData() {
+async function restoreDefaultData() {
     appData = JSON.parse(JSON.stringify(DEFAULT_DEMOGRAPHIC_DATA));
-    saveData();
+    await saveData();
 }
 
-// Save active state to LocalStorage
-function saveData() {
+// Synchronous default data restore (for fallback)
+function restoreDefaultDataSync() {
+    appData = JSON.parse(JSON.stringify(DEFAULT_DEMOGRAPHIC_DATA));
+    saveDataSync();
+}
+
+// Save active state to Supabase or fallback to LocalStorage
+async function saveData() {
+    if (supabaseClient) {
+        try {
+            const { error } = await supabaseClient
+                .from('demographics')
+                .upsert({ id: 1, data: appData, updated_at: new Date() });
+
+            if (error) throw error;
+        } catch (e) {
+            console.error("Error saving data to Supabase. Falling back to LocalStorage.", e);
+            saveDataSync();
+        }
+    } else {
+        saveDataSync();
+    }
+}
+
+// Synchronous save to LocalStorage fallback
+function saveDataSync() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
 }
 
 // Running clock function in the header
 function initClock() {
     const timeEl = document.getElementById("date-time");
-    
+
     function updateClock() {
         const now = new Date();
-        const options = { 
-            weekday: 'short', 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric', 
-            hour: '2-digit', 
-            minute: '2-digit', 
+        const options = {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
             second: '2-digit',
-            hour12: true 
+            hour12: true
         };
         timeEl.innerHTML = `<i class="fa-regular fa-clock"></i> ${now.toLocaleString('en-US', options)}`;
     }
-    
+
     updateClock();
     setInterval(updateClock, 1000);
 }
@@ -121,7 +204,7 @@ function initEventListeners() {
     const mapPolygons = document.querySelectorAll(".map-polygon");
     const mapWrapper = document.querySelector(".map-wrapper");
     const tooltip = document.getElementById("map-tooltip");
-    
+
     const tooltipTitle = document.getElementById("tooltip-title");
     const tooltipPop = document.getElementById("tooltip-pop");
     const tooltipMale = document.getElementById("tooltip-male");
@@ -149,7 +232,7 @@ function initEventListeners() {
             const rect = mapWrapper.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            
+
             tooltip.style.left = `${x}px`;
             tooltip.style.top = `${y}px`;
         });
@@ -181,9 +264,9 @@ function initEventListeners() {
 
     // 4. Data Entry Form Submission
     const form = document.getElementById("demographics-form");
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        
+
         const brgy = document.getElementById("brgy-select").value;
         const sex = form.querySelector('input[name="sex"]:checked').value;
         const ageGroup = document.getElementById("age-select").value;
@@ -194,20 +277,24 @@ function initEventListeners() {
             return;
         }
 
+        showLoading(true);
+
         // Add to active state
         const sexKey = sex.toLowerCase();
         appData[brgy][sexKey][ageGroup] += count;
-        
+
         // Add to history (increment current year population value)
         const lastIndex = appData[brgy].history.length - 1;
         appData[brgy].history[lastIndex] += count;
 
-        saveData();
+        await saveData();
         renderDashboard();
-        
+
         // Reset count field only
         document.getElementById("pop-count").value = "";
-        
+
+        showLoading(false);
+
         // Show glowing success effect on selected card
         const cardTotal = document.getElementById("card-total");
         cardTotal.style.boxShadow = "0 0 20px var(--accent-cyan-glow)";
@@ -217,24 +304,28 @@ function initEventListeners() {
     });
 
     // 5. Actions / Tool buttons
-    document.getElementById("btn-seed-data").addEventListener("click", () => {
+    document.getElementById("btn-seed-data").addEventListener("click", async () => {
         if (confirm("Are you sure you want to restore default population demographics? This will overwrite your current changes.")) {
-            restoreDefaultData();
+            showLoading(true);
+            await restoreDefaultData();
             selectBarangay(null);
             renderDashboard();
+            showLoading(false);
         }
     });
 
-    document.getElementById("btn-clear-data").addEventListener("click", () => {
+    document.getElementById("btn-clear-data").addEventListener("click", async () => {
         if (confirm("Are you sure you want to clear all counts? All numbers will be set to zero.")) {
+            showLoading(true);
             // Set all values to 0
             for (let brgy in appData) {
                 for (let age in appData[brgy].male) appData[brgy].male[age] = 0;
                 for (let age in appData[brgy].female) appData[brgy].female[age] = 0;
                 appData[brgy].history = [0, 0, 0, 0, 0];
             }
-            saveData();
+            await saveData();
             renderDashboard();
+            showLoading(false);
         }
     });
 }
@@ -242,7 +333,7 @@ function initEventListeners() {
 // Perform Barangay Selection and UI updates
 function selectBarangay(name, updateForm = true) {
     selectedBarangay = name;
-    
+
     // Update map polygon selected classes
     const polygons = document.querySelectorAll(".map-polygon");
     polygons.forEach(polygon => {
@@ -266,10 +357,10 @@ function selectBarangay(name, updateForm = true) {
 function getBarangayStats(name) {
     const brgy = appData[name];
     if (!brgy) return { total: 0, male: 0, female: 0 };
-    
+
     let maleSum = Object.values(brgy.male).reduce((a, b) => a + b, 0);
     let femaleSum = Object.values(brgy.female).reduce((a, b) => a + b, 0);
-    
+
     return {
         total: maleSum + femaleSum,
         male: maleSum,
@@ -286,7 +377,7 @@ function getCityWideStats() {
 
     for (let brgyName in appData) {
         const brgy = appData[brgyName];
-        
+
         for (let age in brgy.male) {
             maleAge[age] += brgy.male[age];
             male += brgy.male[age];
@@ -295,12 +386,12 @@ function getCityWideStats() {
             femaleAge[age] += brgy.female[age];
             female += brgy.female[age];
         }
-        
+
         for (let i = 0; i < history.length; i++) {
             history[i] += brgy.history[i] || 0;
         }
     }
-    
+
     total = male + female;
 
     return { total, male, female, maleAge, femaleAge, history };
@@ -324,12 +415,12 @@ function renderDashboard() {
             female: localStats.female,
             history: brgy.history
         };
-        
+
         ageLabels.forEach(age => {
             maleAgeData.push(brgy.male[age]);
             femaleAgeData.push(brgy.female[age]);
         });
-        
+
         historyData = brgy.history;
 
         // Update Labels
@@ -349,7 +440,7 @@ function renderDashboard() {
             maleAgeData.push(cwStats.maleAge[age]);
             femaleAgeData.push(cwStats.femaleAge[age]);
         });
-        
+
         historyData = cwStats.history;
 
         // Update Labels
@@ -361,7 +452,7 @@ function renderDashboard() {
     document.getElementById("total-pop-val").textContent = stats.total.toLocaleString();
     document.getElementById("total-male-val").textContent = stats.male.toLocaleString();
     document.getElementById("total-female-val").textContent = stats.female.toLocaleString();
-    
+
     // Male & Female percentages
     const malePct = stats.total > 0 ? ((stats.male / stats.total) * 100).toFixed(1) : "0.0";
     const femalePct = stats.total > 0 ? ((stats.female / stats.total) * 100).toFixed(1) : "0.0";
@@ -374,7 +465,7 @@ function renderDashboard() {
 
 // Configure and Draw charts
 function renderCharts(maleTotal, femaleTotal, ageLabels, maleAgeData, femaleAgeData, historyData) {
-    
+
     // Set custom Chart.js font and styling defaults
     Chart.defaults.color = '#94a3b8';
     Chart.defaults.font.family = 'Outfit';
@@ -418,7 +509,7 @@ function renderCharts(maleTotal, femaleTotal, ageLabels, maleAgeData, femaleAgeD
                         borderWidth: 1,
                         borderColor: "rgba(255, 255, 255, 0.15)",
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 let label = context.label || '';
                                 let value = context.raw || 0;
                                 let total = maleTotal + femaleTotal;
@@ -497,7 +588,7 @@ function renderCharts(maleTotal, femaleTotal, ageLabels, maleAgeData, femaleAgeD
         trendChartInstance.update();
     } else {
         const ctx3 = document.getElementById("trendChart").getContext("2d");
-        
+
         // Create glowing violet gradient
         const gradient = ctx3.createLinearGradient(0, 0, 0, 160);
         gradient.addColorStop(0, "rgba(139, 92, 246, 0.35)");
@@ -543,7 +634,7 @@ function renderCharts(maleTotal, femaleTotal, ageLabels, maleAgeData, femaleAgeD
                         grid: { color: "rgba(255, 255, 255, 0.05)" },
                         ticks: {
                             color: "#94a3b8",
-                            callback: function(value) {
+                            callback: function (value) {
                                 return value.toLocaleString();
                             }
                         }

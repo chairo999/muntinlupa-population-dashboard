@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Map Coordinate Picker</title>
+    <style>
+        body {
+            margin: 0;
+            background: #111;
+            color: #fff;
+            font-family: monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+        }
+
+        h2 {
+            margin: 8px 0;
+            font-size: 1rem;
+            color: #06b6d4;
+        }
+
+        #info {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        #container {
+            position: relative;
+            width: 750px;
+            height: 750px;
+            cursor: crosshair;
+            border: 2px solid #334155;
+        }
+
+        #map-img {
+            width: 750px;
+            height: 750px;
+            display: block;
+        }
+
+        svg#overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 750px;
+            height: 750px;
+        }
+
+        circle.dot {
+            fill: red;
+            stroke: white;
+            stroke-width: 1;
+        }
+
+        polyline.trace {
+            fill: rgba(139, 92, 246, 0.2);
+            stroke: #8b5cf6;
+            stroke-width: 2;
+        }
+
+        #coords-box {
+            margin-top: 8px;
+            background: #1e293b;
+            padding: 10px;
+            border-radius: 8px;
+            width: 750px;
+            min-height: 60px;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            word-break: break-all;
+            color: #06b6d4;
+        }
+
+        #crosshair {
+            position: absolute;
+            pointer-events: none;
+            display: none;
+        }
+
+        #crosshair-x {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 1px;
+            background: rgba(255, 100, 100, 0.6);
+        }
+
+        #crosshair-y {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 100, 100, 0.6);
+        }
+
+        #cursor-label {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #fbbf24;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        #controls {
+            margin: 6px 0;
+            display: flex;
+            gap: 8px;
+        }
+
+        button {
+            padding: 6px 14px;
+            background: #334155;
+            color: #fff;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        button:hover {
+            background: #475569;
+        }
+
+        #barangay-label {
+            background: #1e293b;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            color: #f8fafc;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>🗺️ Muntinlupa Map Coordinate Picker</h2>
+    <div id="info">Click on the map to trace a barangay polygon. Right-click to undo last point.</div>
+    <div id="controls">
+        <label>Barangay: </label>
+        <select id="barangay-label">
+            <option value="Sucat">Sucat</option>
+            <option value="Buli">Buli</option>
+            <option value="Cupang">Cupang</option>
+            <option value="Alabang">Alabang</option>
+            <option value="Ayala Alabang">Ayala Alabang</option>
+            <option value="Bayanan">Bayanan</option>
+            <option value="Putatan">Putatan</option>
+            <option value="Poblacion">Poblacion</option>
+            <option value="Tunasan">Tunasan</option>
+        </select>
+        <button onclick="undoPoint()">Undo</button>
+        <button onclick="clearPoints()">Clear</button>
+        <button onclick="copyCoords()">Copy Points</button>
+        <button onclick="copyAll()">Copy All Polygons</button>
+    </div>
+    <div id="container">
+        <img id="map-img" src="./map-image.png" alt="Map" onerror="this.alt='Map image not found';">
+        <div id="crosshair">
+            <div id="crosshair-x"></div>
+            <div id="crosshair-y"></div>
+            <div id="cursor-label"></div>
+        </div>
+        <svg id="overlay" viewBox="0 0 750 750">
+            <polyline id="trace-line" class="trace" points="" fill="none" />
+            <g id="dots"></g>
+        </svg>
+    </div>
+    <div id="coords-box">Click on map to start tracing...</div>
+
+    <script>
+        const container = document.getElementById('container');
+        const dotsGroup = document.getElementById('dots');
+        const traceLine = document.getElementById('trace-line');
+        const coordsBox = document.getElementById('coords-box');
+        const crosshair = document.getElementById('crosshair');
+        const crosshairX = document.getElementById('crosshair-x');
+        const crosshairY = document.getElementById('crosshair-y');
+        const cursorLabel = document.getElementById('cursor-label');
+
+        let points = [];
+        const allPolygons = {};
+
+        function getCoords(e) {
+            const rect = container.getBoundingClientRect();
+            // Map from screen pixels to 750x750 viewBox
+            const x = Math.round((e.clientX - rect.left) * (750 / rect.width));
+            const y = Math.round((e.clientY - rect.top) * (750 / rect.height));
+            return { x, y };
+        }
+
+        container.addEventListener('mousemove', (e) => {
+            const { x, y } = getCoords(e);
+            const rect = container.getBoundingClientRect();
+            const px = e.clientX - rect.left;
+            const py = e.clientY - rect.top;
+            crosshair.style.display = 'block';
+            crosshairX.style.left = px + 'px';
+            crosshairY.style.top = py + 'px';
+            cursorLabel.style.left = (px + 10) + 'px';
+            cursorLabel.style.top = (py - 20) + 'px';
+            cursorLabel.textContent = `${x},${y}`;
+        });
+
+        container.addEventListener('mouseleave', () => {
+            crosshair.style.display = 'none';
+        });
+
+        container.addEventListener('click', (e) => {
+            e.preventDefault();
+            const { x, y } = getCoords(e);
+            points.push({ x, y });
+            updateDisplay();
+        });
+
+        container.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            if (points.length > 0) {
+                points.pop();
+                updateDisplay();
+            }
+        });
+
+        function updateDisplay() {
+            // Update trace line
+            const ptStr = points.map(p => `${p.x},${p.y}`).join(' ');
+            traceLine.setAttribute('points', ptStr);
+
+            // Update dots
+            dotsGroup.innerHTML = '';
+            points.forEach((p, i) => {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', p.x);
+                circle.setAttribute('cy', p.y);
+                circle.setAttribute('r', 2);
+                circle.setAttribute('class', 'dot');
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', p.x + 6);
+                text.setAttribute('y', p.y - 4);
+                text.setAttribute('fill', '#fbbf24');
+                text.setAttribute('font-size', '8');
+                text.textContent = i + 1;
+                dotsGroup.appendChild(circle);
+                dotsGroup.appendChild(text);
+            });
+
+            // Update coords display
+            coordsBox.textContent = `points="${ptStr}"  (${points.length} points)`;
+        }
+
+        function undoPoint() {
+            if (points.length > 0) {
+                points.pop();
+                updateDisplay();
+            }
+        }
+
+        function clearPoints() {
+            points = [];
+            updateDisplay();
+            coordsBox.textContent = 'Cleared. Click on map to start tracing...';
+        }
+
+        function copyCoords() {
+            const ptStr = points.map(p => `${p.x},${p.y}`).join(' ');
+            navigator.clipboard.writeText(ptStr).then(() => {
+                coordsBox.textContent = '✅ Copied to clipboard! ' + ptStr;
+            });
+        }
+
+        function copyAll() {
+            // Save current
+            const name = document.getElementById('barangay-label').value;
+            if (points.length > 0) {
+                allPolygons[name] = [...points];
+            }
+            let output = '';
+            for (const [brgy, pts] of Object.entries(allPolygons)) {
+                const ptStr = pts.map(p => `${p.x},${p.y}`).join(' ');
+                output += `<polygon class="map-polygon" data-name="${brgy}" points="${ptStr}" />\n`;
+            }
+            navigator.clipboard.writeText(output).then(() => {
+                coordsBox.textContent = '✅ All polygons copied!\n' + output;
+            });
+        }
+
+        // Save current polygon when switching barangay
+        document.getElementById('barangay-label').addEventListener('change', () => {
+            const name = document.getElementById('barangay-label').value;
+            clearPoints();
+        });
+    </script>
+</body>
+
+</html>
