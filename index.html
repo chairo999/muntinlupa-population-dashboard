@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muntinlupa City Demographic Dashboard</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header Section -->
+        <header class="dashboard-header">
+            <div class="header-logo">
+                <i class="fa-solid fa-city header-icon"></i>
+                <div class="header-titles">
+                    <h1>MUNTINLUPA CITY</h1>
+                    <p class="subtitle">DEMOGRAPHIC DASHBOARD SYSTEM</p>
+                </div>
+            </div>
+            <div class="header-info">
+                <span id="date-time"><i class="fa-regular fa-clock"></i> Loading local time...</span>
+            </div>
+        </header>
+
+        <!-- Main Stats Summary Banner -->
+        <section class="stats-banner">
+            <div class="stat-card" id="card-total">
+                <div class="stat-icon-wrapper total-icon">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Total Population</span>
+                    <h2 id="total-pop-val">0</h2>
+                </div>
+            </div>
+            <div class="stat-card" id="card-male">
+                <div class="stat-icon-wrapper male-icon">
+                    <i class="fa-solid fa-mars"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Male Count</span>
+                    <h2 id="total-male-val">0</h2>
+                    <span class="stat-pct" id="male-pct">0%</span>
+                </div>
+            </div>
+            <div class="stat-card" id="card-female">
+                <div class="stat-icon-wrapper female-icon">
+                    <i class="fa-solid fa-venus"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Female Count</span>
+                    <h2 id="total-female-val">0</h2>
+                    <span class="stat-pct" id="female-pct">0%</span>
+                </div>
+            </div>
+            <div class="stat-card" id="card-selected">
+                <div class="stat-icon-wrapper target-icon">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Current View</span>
+                    <h2 id="selected-brgy-val">City-Wide</h2>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Grid Layout -->
+        <main class="dashboard-grid">
+            
+            <!-- Left Panel: Input & Data Management -->
+            <section class="grid-panel sidebar-panel">
+                <div class="panel-header">
+                    <h3><i class="fa-solid fa-database"></i> Data Entry & Management</h3>
+                </div>
+                
+                <form id="demographics-form" class="entry-form">
+                    <div class="form-group">
+                        <label for="brgy-select"><i class="fa-solid fa-map-pin"></i> Select Barangay</label>
+                        <select id="brgy-select" required>
+                            <option value="" disabled selected>-- Choose Barangay --</option>
+                            <option value="Sucat">Sucat</option>
+                            <option value="Buli">Buli</option>
+                            <option value="Cupang">Cupang</option>
+                            <option value="Alabang">Alabang</option>
+                            <option value="Ayala Alabang">Ayala Alabang</option>
+                            <option value="Bayanan">Bayanan</option>
+                            <option value="Putatan">Putatan</option>
+                            <option value="Poblacion">Poblacion</option>
+                            <option value="Tunasan">Tunasan</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-venus-mars"></i> Sex</label>
+                            <div class="radio-group">
+                                <label class="radio-container">
+                                    <input type="radio" name="sex" value="Male" checked>
+                                    <span class="radio-custom male-radio"><i class="fa-solid fa-mars"></i> Male</span>
+                                </label>
+                                <label class="radio-container">
+                                    <input type="radio" name="sex" value="Female">
+                                    <span class="radio-custom female-radio"><i class="fa-solid fa-venus"></i> Female</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label for="age-select"><i class="fa-solid fa-cake-candles"></i> Age Group</label>
+                            <select id="age-select" required>
+                                <option value="" disabled selected>-- Choose Group --</option>
+                                <option value="0-14">0 - 14 Years (Children)</option>
+                                <option value="15-24">15 - 24 Years (Youth)</option>
+                                <option value="25-54">25 - 54 Years (Adults)</option>
+                                <option value="55-64">55 - 64 Years (Seniors)</option>
+                                <option value="65+">65+ Years (Elderly)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="pop-count"><i class="fa-solid fa-arrow-up-9-1"></i> Count Increment</label>
+                            <input type="number" id="pop-count" min="1" max="100000" placeholder="e.g. 150" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fa-solid fa-plus"></i> Add Demographics
+                    </button>
+                </form>
+
+                <div class="sidebar-divider"></div>
+
+                <div class="actions-section">
+                    <h4>Actions & Tools</h4>
+                    <div class="action-buttons">
+                        <button id="btn-seed-data" class="btn btn-secondary">
+                            <i class="fa-solid fa-seedling"></i> Restore Defaults
+                        </button>
+                        <button id="btn-clear-data" class="btn btn-danger">
+                            <i class="fa-solid fa-trash-can"></i> Clear All Data
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Center Panel: Interactive Map -->
+            <section class="grid-panel map-panel">
+                <div class="panel-header">
+                    <h3><i class="fa-solid fa-map"></i> Muntinlupa Interactive Map</h3>
+                    <div class="map-instructions">Hover to preview, click to select</div>
+                </div>
+                
+                <div class="map-viewport">
+                    <div class="map-wrapper">
+                        <!-- Base Muntinlupa Map Image -->
+                        <img src="map-image.png" alt="City Map of Muntinlupa" class="base-map-img">
+                        
+                        <!-- Interactive SVG overlay matching 750x750 coordinate system -->
+                        <svg viewBox="0 0 750 750" class="map-svg-overlay">
+                            <!-- Sucat (Pinkish, top right coast) -->
+                            <polygon class="map-polygon" data-name="Sucat" points="450,140 495,145 497,260 477,280 413,290 400,245 450,140" />
+                            
+                            <!-- Buli (Yellow, tiny strip below Sucat) -->
+                            <polygon class="map-polygon" data-name="Buli" points="413,290 477,280 472,300 405,305" />
+                            
+                            <!-- Cupang (Blue, below Buli/Sucat) -->
+                            <polygon class="map-polygon" data-name="Cupang" points="405,305 472,300 480,360 455,390 378,375 325,335 348,328" />
+                            
+                            <!-- Alabang (Yellow/Greenish, center) -->
+                            <polygon class="map-polygon" data-name="Alabang" points="378,375 455,390 480,360 482,450 440,465 418,470 413,445 378,460" />
+                            
+                            <!-- Ayala Alabang (Purple, west side) -->
+                            <polygon class="map-polygon" data-name="Ayala Alabang" points="325,335 378,375 378,460 413,445 415,470 380,480 360,480 360,590 266,590 270,540" />
+                            
+                            <!-- Bayanan (Light blue/purple, thin strip east of Alabang) -->
+                            <polygon class="map-polygon" data-name="Bayanan" points="418,470 440,465 482,450 475,495 415,495" />
+                            
+                            <!-- Putatan (Green, center-south below Alabang) -->
+                            <polygon class="map-polygon" data-name="Putatan" points="380,480 418,470 415,495 475,495 475,590 360,590 360,480" />
+                            
+                            <!-- Poblacion (Pink, south below Putatan) -->
+                            <polygon class="map-polygon" data-name="Poblacion" points="266,590 360,590 475,590 480,640 440,660 440,685 410,710 338,710 338,620 270,625" />
+                            
+                            <!-- Tunasan (Yellowish, bottom) -->
+                            <polygon class="map-polygon" data-name="Tunasan" points="270,625 338,620 338,710 410,710 440,685 440,660 480,640 498,690 460,740 330,750 240,750" />
+                        </svg>
+                    </div>
+
+                    <!-- Interactive Floating Tooltip -->
+                    <div id="map-tooltip" class="floating-tooltip">
+                        <h4 id="tooltip-title">Barangay</h4>
+                        <div class="tooltip-row">
+                            <span class="tooltip-label"><i class="fa-solid fa-users"></i> Pop:</span>
+                            <span class="tooltip-value" id="tooltip-pop">0</span>
+                        </div>
+                        <div class="tooltip-row">
+                            <span class="tooltip-label male-color"><i class="fa-solid fa-mars"></i> Male:</span>
+                            <span class="tooltip-value male-color" id="tooltip-male">0</span>
+                        </div>
+                        <div class="tooltip-row">
+                            <span class="tooltip-label female-color"><i class="fa-solid fa-venus"></i> Female:</span>
+                            <span class="tooltip-value female-color" id="tooltip-female">0</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Charts and Trends -->
+            <section class="grid-panel charts-panel">
+                <div class="panel-header flex-header">
+                    <h3><i class="fa-solid fa-chart-line"></i> Demographics & Trends</h3>
+                    <div class="badge" id="selected-badge">City-Wide Analytics</div>
+                </div>
+
+                <!-- Charts Container -->
+                <div class="charts-wrapper">
+                    <!-- Chart 1: Male vs Female Ratio -->
+                    <div class="chart-card">
+                        <div class="chart-title-wrapper">
+                            <h5><i class="fa-solid fa-venus-mars"></i> Gender Distribution</h5>
+                        </div>
+                        <div class="canvas-container doughnut-container">
+                            <canvas id="genderChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Chart 2: Age Distribution -->
+                    <div class="chart-card">
+                        <div class="chart-title-wrapper">
+                            <h5><i class="fa-solid fa-cake-candles"></i> Age Distribution</h5>
+                        </div>
+                        <div class="canvas-container">
+                            <canvas id="ageChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Chart 3: Historical Population Growth/Update Trend -->
+                    <div class="chart-card span-full">
+                        <div class="chart-title-wrapper">
+                            <h5><i class="fa-solid fa-chart-area"></i> Population Growth & Updates Trend</h5>
+                        </div>
+                        <div class="canvas-container trend-container">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <p>Muntinlupa City Demographic Dashboard. Built with Vanilla Web Technologies (HTML, CSS, JS) and Chart.js.</p>
+        </footer>
+    </div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>
