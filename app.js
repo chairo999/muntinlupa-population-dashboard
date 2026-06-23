@@ -73,12 +73,10 @@ let trendChartInstance = null;
 
 // Initialize Application
 document.addEventListener("DOMContentLoaded", async () => {
-    showLoading(true);
     await initData();
     initClock();
     initEventListeners();
     renderDashboard();
-    showLoading(false);
 });
 
 // Show/Hide Database Loading Overlay
