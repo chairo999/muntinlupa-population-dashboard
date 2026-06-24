@@ -48,7 +48,8 @@ const DEFAULT_DEMOGRAPHIC_DATA = {
 };
 
 const STORAGE_KEY = "muntinlupa_demographics_data";
-const HISTORICAL_LABELS = ["2022", "2023", "2024", "2025", "2026 (Current)"];
+const DEFAULT_HISTORICAL_LABELS = ["2022", "2023", "2024", "2025", "2026 (Current)"];
+let HISTORICAL_LABELS = [...DEFAULT_HISTORICAL_LABELS];
 
 // Supabase Configuration
 // Replace these values with your actual Supabase URL and Anon Key
@@ -76,6 +77,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await initData();
     initClock();
     initEventListeners();
+    fillTrendYearOptions();
     renderDashboard();
 });
 
@@ -97,7 +99,7 @@ async function initData() {
         try {
             const { data, error } = await supabaseClient
                 .from('demographics')
-                .select('data')
+                .select('data, labels')
                 .eq('id', 1)
                 .single();
 
@@ -111,6 +113,9 @@ async function initData() {
                 }
             } else if (data && data.data) {
                 appData = data.data;
+                if (Array.isArray(data.labels) && data.labels.length > 0) {
+                    HISTORICAL_LABELS = data.labels;
+                }
             } else {
                 await restoreDefaultData();
             }
@@ -129,7 +134,15 @@ function loadFromLocalStorageFallback() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
         try {
-            appData = JSON.parse(stored);
+            const parsed = JSON.parse(stored);
+            if (parsed && parsed.data) {
+                appData = parsed.data;
+            } else {
+                appData = parsed;
+            }
+            if (parsed && Array.isArray(parsed.labels) && parsed.labels.length > 0) {
+                HISTORICAL_LABELS = parsed.labels;
+            }
         } catch (e) {
             console.error("Error parsing local demographic data. Resetting to defaults.", e);
             restoreDefaultDataSync();
@@ -142,12 +155,16 @@ function loadFromLocalStorageFallback() {
 // Restore default census mock data
 async function restoreDefaultData() {
     appData = JSON.parse(JSON.stringify(DEFAULT_DEMOGRAPHIC_DATA));
+    HISTORICAL_LABELS = [...DEFAULT_HISTORICAL_LABELS];
+    delete appData._cityHistory;
     await saveData();
 }
 
 // Synchronous default data restore (for fallback)
 function restoreDefaultDataSync() {
     appData = JSON.parse(JSON.stringify(DEFAULT_DEMOGRAPHIC_DATA));
+    HISTORICAL_LABELS = [...DEFAULT_HISTORICAL_LABELS];
+    delete appData._cityHistory;
     saveDataSync();
 }
 
@@ -157,7 +174,7 @@ async function saveData() {
         try {
             const { error } = await supabaseClient
                 .from('demographics')
-                .upsert({ id: 1, data: appData, updated_at: new Date() });
+                .upsert({ id: 1, data: appData, labels: HISTORICAL_LABELS, updated_at: new Date() });
 
             if (error) throw error;
         } catch (e) {
@@ -171,7 +188,7 @@ async function saveData() {
 
 // Synchronous save to LocalStorage fallback
 function saveDataSync() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: appData, labels: HISTORICAL_LABELS }));
 }
 
 // Running clock function in the header
@@ -260,7 +277,47 @@ function initEventListeners() {
         }
     });
 
-    // 4. Data Entry Form Submission
+    // 4. Trend History Entry Form
+    const trendForm = document.getElementById("trend-form");
+    if (trendForm) {
+        trendForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const yearIndex = parseInt(document.getElementById("trend-year").value, 10);
+            const trendValue = parseInt(document.getElementById("trend-value").value, 10);
+            const trendLabel = document.getElementById("trend-label").value.trim();
+
+            if (Number.isNaN(yearIndex) || yearIndex < 0 || yearIndex >= HISTORICAL_LABELS.length || Number.isNaN(trendValue) || trendValue < 0) {
+                alert("Please choose a valid year and enter a valid population value.");
+                return;
+            }
+
+            showLoading(true);
+
+            if (selectedBarangay) {
+                appData[selectedBarangay].history[yearIndex] = trendValue;
+            } else {
+                if (!appData._cityHistory || !Array.isArray(appData._cityHistory) || appData._cityHistory.length !== HISTORICAL_LABELS.length) {
+                    appData._cityHistory = getCityWideStats().history.slice();
+                }
+                appData._cityHistory[yearIndex] = trendValue;
+            }
+
+            if (trendLabel) {
+                HISTORICAL_LABELS[yearIndex] = trendLabel;
+                fillTrendYearOptions();
+            }
+
+            await saveData();
+            renderDashboard();
+
+            document.getElementById("trend-value").value = "";
+            document.getElementById("trend-label").value = "";
+            showLoading(false);
+        });
+    }
+
+    // 5. Data Entry Form Submission
     const form = document.getElementById("demographics-form");
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -374,6 +431,7 @@ function getCityWideStats() {
     let history = [0, 0, 0, 0, 0];
 
     for (let brgyName in appData) {
+        if (brgyName === '_cityHistory') continue;
         const brgy = appData[brgyName];
 
         for (let age in brgy.male) {
@@ -388,6 +446,10 @@ function getCityWideStats() {
         for (let i = 0; i < history.length; i++) {
             history[i] += brgy.history[i] || 0;
         }
+    }
+
+    if (Array.isArray(appData._cityHistory) && appData._cityHistory.length === history.length) {
+        history = appData._cityHistory.slice();
     }
 
     total = male + female;
@@ -462,6 +524,19 @@ function renderDashboard() {
 }
 
 // Configure and Draw charts
+function fillTrendYearOptions() {
+    const yearSelect = document.getElementById("trend-year");
+    if (!yearSelect) return;
+
+    yearSelect.innerHTML = "<option value=\"\" disabled selected>-- Choose Year --</option>";
+    HISTORICAL_LABELS.forEach((label, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = label;
+        yearSelect.appendChild(option);
+    });
+}
+
 function renderCharts(maleTotal, femaleTotal, ageLabels, maleAgeData, femaleAgeData, historyData) {
 
     // Set custom Chart.js font and styling defaults
@@ -582,6 +657,7 @@ function renderCharts(maleTotal, femaleTotal, ageLabels, maleAgeData, femaleAgeD
 
     // --- Chart 3: Linear Population updates/trend line chart ---
     if (trendChartInstance) {
+        trendChartInstance.data.labels = HISTORICAL_LABELS.slice();
         trendChartInstance.data.datasets[0].data = historyData;
         trendChartInstance.update();
     } else {
@@ -595,7 +671,7 @@ function renderCharts(maleTotal, femaleTotal, ageLabels, maleAgeData, femaleAgeD
         trendChartInstance = new Chart(ctx3, {
             type: "line",
             data: {
-                labels: HISTORICAL_LABELS,
+                labels: HISTORICAL_LABELS.slice(),
                 datasets: [{
                     label: "Overall Population",
                     data: historyData,

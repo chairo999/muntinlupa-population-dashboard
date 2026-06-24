@@ -305,6 +305,13 @@ body {
     gap: 6px;
 }
 
+.form-group .small-note {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+    line-height: 1.4;
+}
+
 .form-row-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
