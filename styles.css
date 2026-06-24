@@ -66,11 +66,37 @@ body {
     max-width: 1600px;
     width: 100%;
     margin: 0 auto;
-    padding: 24px;
+    padding: 24px 24px 140px;
     display: flex;
     flex-direction: column;
     gap: 24px;
     flex-grow: 1;
+}
+
+/* Fixed footer image */
+.dashboard-footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    min-height: 80px;
+    max-height: 140px;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.footer-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    user-select: none;
+    pointer-events: none;
 }
 
 /* Header Styling */
