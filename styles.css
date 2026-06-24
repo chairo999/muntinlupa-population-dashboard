@@ -83,9 +83,8 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 16px 24px;
-    background: linear-gradient(to right, #0033a0, #ffcc00, #ce1126);
+    background: #003397;
     color: white;
-    border-bottom: 4px solid #ffffff; 
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
@@ -221,8 +220,8 @@ body {
     font-weight: 600;
     margin-top: 2px;
 }
-#male-pct { color: var(--accent-cyan); }
-#female-pct { color: var(--accent-rose); }
+#male-pct { color: black; }
+#female-pct { color: black; }
 
 /* Main Dashboard Grid Layout */
 .dashboard-grid {
