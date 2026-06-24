@@ -67,36 +67,11 @@ body {
     width: 100%;
     margin: 0 auto;
     padding: 24px 24px 140px;
+    padding-bottom: 30px;
     display: flex;
     flex-direction: column;
     gap: 24px;
     flex-grow: 1;
-}
-
-/* Fixed footer image */
-.dashboard-footer {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 20;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100px;
-    min-height: 80px;
-    max-height: 140px;
-    pointer-events: none;
-    background: rgba(255, 255, 255, 0.02);
-}
-
-.footer-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    user-select: none;
-    pointer-events: none;
 }
 
 /* Header Styling */
@@ -697,12 +672,20 @@ select option {
 
 /* Footer styling */
 .dashboard-footer {
-    text-align: center;
-    padding: 12px;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    margin-top: auto;
+    position: fixed; /* Pins it to the bottom of the screen */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 12px; /* Set height to match the desired thickness of your bar */
+    z-index: 9999;
+    line-height: 0;
+}
+
+.footer-image {
+    width: 100%;
+    height: 100%;
+    object-fit: fill; /* Stretches the colors across the full width */
+    display: block;
 }
 
 /* Desktop and Tablet Responsiveness */
