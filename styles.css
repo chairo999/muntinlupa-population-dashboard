@@ -1,7 +1,7 @@
 /* Root Theme Variable Definitions */
 :root {
-    --bg-dark: #ffffff;
-    --bg-dark-rgb: 255, 255, 255;
+    --bg-light: #ffffff;
+    --bg-light-rgb: 255, 255, 255;
     --card-bg: rgba(255, 255, 255, 0.85);
     --card-border: rgba(15, 23, 42, 0.08);
     --card-hover-border: rgba(15, 23, 42, 0.15);
@@ -338,7 +338,7 @@ select:focus, input[type="number"]:focus {
 }
 
 select option {
-    background-color: var(--bg-dark);
+    background-color: var(--bg-light);
     color: var(--text-primary);
 }
 
