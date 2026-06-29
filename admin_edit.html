@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — Edit Barangay Population</title>
+  <link href="styles.css" rel="stylesheet">
+  <style>
+    body { font-family: 'Outfit', system-ui, sans-serif; padding: 24px; background:#f8fafc; color:#0f172a }
+    .card { background:white; padding:20px; border-radius:12px; max-width:720px; margin:20px auto; box-shadow:0 6px 18px rgba(0,0,0,0.06) }
+    label{display:block;margin:10px 0 6px;font-weight:600}
+    select,input[type=number]{width:100%;padding:10px;border:1px solid rgba(15,23,42,0.08);border-radius:8px}
+    button{margin-top:16px;padding:10px 14px;border-radius:8px;background:#06b6d4;color:#fff;border:none;cursor:pointer}
+    .note{font-size:0.9rem;color:#475569;margin-top:12px}
+    .ok{color:green}
+    .err{color:#b91c1c}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Edit Population by Barangay (Supabase)</h2>
+
+    <div id="status" class="note">Loading...</div>
+
+    <form id="edit-form">
+      <label for="brgy">Select Barangay</label>
+      <select id="brgy" required>
+        <option value="" disabled selected>Loading barangays...</option>
+      </select>
+
+      <label for="year">Select Year</label>
+      <select id="year" required>
+        <option value="" disabled selected>Loading years...</option>
+      </select>
+
+      <label for="value">Population Value</label>
+      <input id="value" type="number" min="0" placeholder="Enter population value" required />
+
+      <button type="submit">Save to Supabase</button>
+    </form>
+
+    <p class="note">This page updates the `history` value for a barangay in the `demographics` table (row id = 1). Make sure the Supabase keys below are valid.</p>
+
+    <details>
+      <summary>Supabase config (edit if needed)</summary>
+      <div class="note">Supabase URL and anon key are stored here for the editor. These are the same values used by the dashboard app.</div>
+      <pre id="cfg" class="note"></pre>
+    </details>
+  </div>
+
+  <!-- Supabase JS (UMD) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  <script>
+    // Configure these — values taken from existing app.js (update if different)
+    const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
+
+    const DEFAULT_HISTORICAL_LABELS = ["2022","2023","2024","2025","2026 (Current)"];
+
+    const statusEl = document.getElementById('status');
+    const brgySelect = document.getElementById('brgy');
+    const yearSelect = document.getElementById('year');
+    const valueInput = document.getElementById('value');
+    const cfgEl = document.getElementById('cfg');
+
+    cfgEl.textContent = `URL: ${SUPABASE_URL}\nAnon Key: ${SUPABASE_ANON_KEY}`;
+
+    // Create a client from the UMD global `supabase` and store it as `supabaseClient`
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let appData = {};
+    let HISTORICAL_LABELS = [...DEFAULT_HISTORICAL_LABELS];
+
+    async function init() {
+      statusEl.textContent = 'Connecting to Supabase...';
+      try {
+        const { data, error } = await supabaseClient.from('demographics').select('data, labels').eq('id', 1).single();
+        if (error && error.code !== 'PGRST116') {
+          console.error(error);
+          statusEl.textContent = 'Error fetching data: ' + (error.message || error);
+          statusEl.className = 'note err';
+          return;
+        }
+
+        if (data && data.data) {
+          appData = data.data;
+          if (Array.isArray(data.labels) && data.labels.length) HISTORICAL_LABELS = data.labels;
+        } else {
+          // If row missing, try to fetch from local fallback via window (not available here)
+          statusEl.textContent = 'No demographics row found. You may need to seed the table.';
+          statusEl.className = 'note err';
+          appData = {};
+        }
+
+        populateBarangays();
+        populateYears();
+        statusEl.textContent = 'Ready. Select barangay and year to edit.';
+        statusEl.className = 'note';
+      } catch (e) {
+        console.error(e);
+        statusEl.textContent = 'Unexpected error connecting to Supabase.';
+        statusEl.className = 'note err';
+      }
+    }
+
+    function populateBarangays() {
+      brgySelect.innerHTML = '<option value="" disabled selected>-- Choose Barangay --</option>';
+      const names = Object.keys(appData).filter(k => k !== '_cityHistory');
+      if (names.length === 0) {
+        // fallback: common barangays list
+        ['Sucat','Buli','Cupang','Alabang','Ayala Alabang','Bayanan','Putatan','Poblacion','Tunasan'].forEach(n => {
+          const o = document.createElement('option'); o.value = n; o.textContent = n; brgySelect.appendChild(o);
+        });
+        return;
+      }
+      names.forEach(n => {
+        const o = document.createElement('option'); o.value = n; o.textContent = n; brgySelect.appendChild(o);
+      });
+    }
+
+    function populateYears() {
+      yearSelect.innerHTML = '<option value="" disabled selected>-- Choose Year --</option>';
+      HISTORICAL_LABELS.forEach((lbl, idx) => {
+        const o = document.createElement('option'); o.value = idx; o.textContent = lbl; yearSelect.appendChild(o);
+      });
+    }
+
+    document.getElementById('edit-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const brgy = brgySelect.value;
+      const yearIndex = parseInt(yearSelect.value, 10);
+      const val = parseInt(valueInput.value, 10);
+
+      if (!brgy) { alert('Choose a barangay'); return; }
+      if (Number.isNaN(yearIndex)) { alert('Choose a year'); return; }
+      if (Number.isNaN(val) || val < 0) { alert('Enter a valid population value'); return; }
+
+      statusEl.textContent = 'Saving...';
+      try {
+        // Ensure path exists
+        if (!appData[brgy]) {
+          // create a minimal structure if missing
+          appData[brgy] = { male: { '0-14':0,'15-24':0,'25-54':0,'55-64':0,'65+':0 }, female: { '0-14':0,'15-24':0,'25-54':0,'55-64':0,'65+':0 }, history: [0,0,0,0,0] };
+        }
+        if (!Array.isArray(appData[brgy].history)) appData[brgy].history = [0,0,0,0,0];
+        // Expand history if needed
+        while (appData[brgy].history.length <= yearIndex) appData[brgy].history.push(0);
+
+        appData[brgy].history[yearIndex] = val;
+
+        const { error } = await supabaseClient.from('demographics').upsert({ id: 1, data: appData, labels: HISTORICAL_LABELS });
+        if (error) throw error;
+
+        statusEl.textContent = 'Saved successfully.';
+        statusEl.className = 'note ok';
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = 'Error saving: ' + (err.message || err);
+        statusEl.className = 'note err';
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>

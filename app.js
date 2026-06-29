@@ -77,7 +77,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await initData();
     initClock();
     initEventListeners();
-    fillTrendYearOptions();
     renderDashboard();
 });
 
@@ -277,112 +276,7 @@ function initEventListeners() {
         }
     });
 
-    // 4. Trend History Entry Form
-    const trendForm = document.getElementById("trend-form");
-    if (trendForm) {
-        trendForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            const yearIndex = parseInt(document.getElementById("trend-year").value, 10);
-            const trendValue = parseInt(document.getElementById("trend-value").value, 10);
-            const trendLabel = document.getElementById("trend-label").value.trim();
-
-            if (Number.isNaN(yearIndex) || yearIndex < 0 || yearIndex >= HISTORICAL_LABELS.length || Number.isNaN(trendValue) || trendValue < 0) {
-                alert("Please choose a valid year and enter a valid population value.");
-                return;
-            }
-
-            showLoading(true);
-
-            if (selectedBarangay) {
-                appData[selectedBarangay].history[yearIndex] = trendValue;
-            } else {
-                if (!appData._cityHistory || !Array.isArray(appData._cityHistory) || appData._cityHistory.length !== HISTORICAL_LABELS.length) {
-                    appData._cityHistory = getCityWideStats().history.slice();
-                }
-                appData._cityHistory[yearIndex] = trendValue;
-            }
-
-            if (trendLabel) {
-                HISTORICAL_LABELS[yearIndex] = trendLabel;
-                fillTrendYearOptions();
-            }
-
-            await saveData();
-            renderDashboard();
-
-            document.getElementById("trend-value").value = "";
-            document.getElementById("trend-label").value = "";
-            showLoading(false);
-        });
-    }
-
-    // 5. Data Entry Form Submission
-    const form = document.getElementById("demographics-form");
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const brgy = document.getElementById("brgy-select").value;
-        const sex = form.querySelector('input[name="sex"]:checked').value;
-        const ageGroup = document.getElementById("age-select").value;
-        const count = parseInt(document.getElementById("pop-count").value, 10);
-
-        if (!brgy || !sex || !ageGroup || isNaN(count) || count <= 0) {
-            alert("Please fill all form fields correctly.");
-            return;
-        }
-
-        showLoading(true);
-
-        // Add to active state
-        const sexKey = sex.toLowerCase();
-        appData[brgy][sexKey][ageGroup] += count;
-
-        // Add to history (increment current year population value)
-        const lastIndex = appData[brgy].history.length - 1;
-        appData[brgy].history[lastIndex] += count;
-
-        await saveData();
-        renderDashboard();
-
-        // Reset count field only
-        document.getElementById("pop-count").value = "";
-
-        showLoading(false);
-
-        // Show glowing success effect on selected card
-        const cardTotal = document.getElementById("card-total");
-        cardTotal.style.boxShadow = "0 0 20px var(--accent-cyan-glow)";
-        setTimeout(() => {
-            cardTotal.style.boxShadow = "";
-        }, 1000);
-    });
-
-    // 5. Actions / Tool buttons
-    document.getElementById("btn-seed-data").addEventListener("click", async () => {
-        if (confirm("Are you sure you want to restore default population demographics? This will overwrite your current changes.")) {
-            showLoading(true);
-            await restoreDefaultData();
-            selectBarangay(null);
-            renderDashboard();
-            showLoading(false);
-        }
-    });
-
-    document.getElementById("btn-clear-data").addEventListener("click", async () => {
-        if (confirm("Are you sure you want to clear all counts? All numbers will be set to zero.")) {
-            showLoading(true);
-            // Set all values to 0
-            for (let brgy in appData) {
-                for (let age in appData[brgy].male) appData[brgy].male[age] = 0;
-                for (let age in appData[brgy].female) appData[brgy].female[age] = 0;
-                appData[brgy].history = [0, 0, 0, 0, 0];
-            }
-            await saveData();
-            renderDashboard();
-            showLoading(false);
-        }
-    });
+    // Actions removed: previously handled by sidebar buttons
 }
 
 // Perform Barangay Selection and UI updates
@@ -524,19 +418,6 @@ function renderDashboard() {
 }
 
 // Configure and Draw charts
-function fillTrendYearOptions() {
-    const yearSelect = document.getElementById("trend-year");
-    if (!yearSelect) return;
-
-    yearSelect.innerHTML = "<option value=\"\" disabled selected>-- Choose Year --</option>";
-    HISTORICAL_LABELS.forEach((label, index) => {
-        const option = document.createElement("option");
-        option.value = index;
-        option.textContent = label;
-        yearSelect.appendChild(option);
-    });
-}
-
 function renderCharts(maleTotal, femaleTotal, ageLabels, maleAgeData, femaleAgeData, historyData) {
 
     // Set custom Chart.js font and styling defaults

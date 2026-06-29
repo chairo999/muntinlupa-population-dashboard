@@ -486,6 +486,11 @@ select option {
     justify-content: space-between;
 }
 
+/* Utility to make a panel span two columns in the grid */
+.span-two {
+    grid-column: span 2;
+}
+
 .map-instructions {
     font-size: 0.75rem;
     color: var(--text-secondary);

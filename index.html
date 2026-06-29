@@ -90,110 +90,8 @@
         <!-- Main Grid Layout -->
         <main class="dashboard-grid">
             
-            <!-- Left Panel: Input & Data Management -->
-            <section class="grid-panel sidebar-panel">
-                <div class="panel-header">
-                    <h3><i class="fa-solid fa-database"></i> Data Entry & Management</h3>
-                </div>
-                
-                <form id="demographics-form" class="entry-form">
-                    <div class="form-group">
-                        <label for="brgy-select"><i class="fa-solid fa-map-pin"></i> Select Barangay</label>
-                        <select id="brgy-select" required>
-                            <option value="" disabled selected>-- Choose Barangay --</option>
-                            <option value="Sucat">Sucat</option>
-                            <option value="Buli">Buli</option>
-                            <option value="Cupang">Cupang</option>
-                            <option value="Alabang">Alabang</option>
-                            <option value="Ayala Alabang">Ayala Alabang</option>
-                            <option value="Bayanan">Bayanan</option>
-                            <option value="Putatan">Putatan</option>
-                            <option value="Poblacion">Poblacion</option>
-                            <option value="Tunasan">Tunasan</option>
-                        </select>
-                    </div>
-
-                    <div class="form-row-2">
-                        <div class="form-group">
-                            <label><i class="fa-solid fa-venus-mars"></i> Sex</label>
-                            <div class="radio-group">
-                                <label class="radio-container">
-                                    <input type="radio" name="sex" value="Male" checked>
-                                    <span class="radio-custom male-radio"><i class="fa-solid fa-mars"></i> Male</span>
-                                </label>
-                                <label class="radio-container">
-                                    <input type="radio" name="sex" value="Female">
-                                    <span class="radio-custom female-radio"><i class="fa-solid fa-venus"></i> Female</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-row-2">
-                        <div class="form-group">
-                            <label for="age-select"><i class="fa-solid fa-cake-candles"></i> Age Group</label>
-                            <select id="age-select" required>
-                                <option value="" disabled selected>-- Choose Group --</option>
-                                <option value="0-14">0 - 14 Years (Children)</option>
-                                <option value="15-24">15 - 24 Years (Youth)</option>
-                                <option value="25-54">25 - 54 Years (Adults)</option>
-                                <option value="55-64">55 - 64 Years (Seniors)</option>
-                                <option value="65+">65+ Years (Elderly)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="pop-count"><i class="fa-solid fa-arrow-up-9-1"></i> Count Increment</label>
-                            <input type="number" id="pop-count" min="1" max="100000" placeholder="e.g. 150" required>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-block">
-                        <i class="fa-solid fa-plus"></i> Add Demographics
-                    </button>
-                </form>
-
-                <div class="sidebar-divider"></div>
-
-                <form id="trend-form" class="entry-form">
-                    <h4>Trend History Input</h4>
-                    <div class="form-group">
-                        <label for="trend-year"><i class="fa-solid fa-calendar-days"></i> Select Year</label>
-                        <select id="trend-year" required>
-                            <option value="" disabled selected>-- Choose Year --</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="trend-value"><i class="fa-solid fa-arrow-up-right-dots"></i> Population Value</label>
-                        <input type="number" id="trend-value" min="0" placeholder="e.g. 48500" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="trend-label"><i class="fa-solid fa-tag"></i> Optional Label</label>
-                        <input type="text" id="trend-label" placeholder="e.g. 2026 (Current)">
-                        <p class="small-note">Rename the year label on the trend chart if needed.</p>
-                    </div>
-                    <button type="submit" class="btn btn-secondary btn-block">
-                        <i class="fa-solid fa-edit"></i> Update Trend Entry
-                    </button>
-                    <p class="small-note">Trend updates apply to the current selection. Select a barangay for barangay-specific history, or leave selection city-wide for global timeline overrides.</p>
-                </form>
-
-                <div class="sidebar-divider"></div>
-
-                <div class="actions-section">
-                    <h4>Actions & Tools</h4>
-                    <div class="action-buttons">
-                        <button id="btn-seed-data" class="btn btn-secondary">
-                            <i class="fa-solid fa-seedling"></i> Restore Defaults
-                        </button>
-                        <button id="btn-clear-data" class="btn btn-danger">
-                            <i class="fa-solid fa-trash-can"></i> Clear All Data
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Center Panel: Interactive Map -->
-            <section class="grid-panel map-panel">
+            <!-- Combined Map Panel (replaces Data Entry sidebar) -->
+            <section class="grid-panel map-panel span-two">
                 <div class="panel-header">
                     <h3><i class="fa-solid fa-map"></i> Muntinlupa Interactive Map</h3>
                     <div class="map-instructions">Hover to preview, click to select</div>
@@ -298,8 +196,8 @@
                                 455,387 457,391 461,392 473,389 477,391 481,391 489,390 499,390 
                                 506,389 512,392 513,396 512,399 510,401 509,404 514,406 514,408 
                                 508,410 510,411 513,413 512,415 510,417 508,419 508,422 511,422 
-                                509,424 508,428 508,430 510,431 511,433 511,436 517,437 527,436 
-                                512,439 514,439 529,440 517,441 512,443 513,447 517,448 520,449 
+                                509,424 508,428 508,430 510,431 511,433 511,436 517,437 527,436  
+                                512,439 514,439 529,440 517,441 512,443 513,447 517,448 520,449  
                                 515,452 515,454 517,455 520,457 518,458 518,461 520,462 526,462 
                                 529,463 531,464 528,465 513,467 506,467 499,466 493,470 487,469 
                                 480,470 470,473 464,475 458,473 450,474 443,474 443,477 440,477 
@@ -360,26 +258,18 @@
                             " />
                         </svg>
                     </div>
-
-
-                    <!-- Interactive Floating Tooltip -->
-                    <div id="map-tooltip" class="floating-tooltip">
+                    
+                    <!-- Tooltip (floating on top of map-wrapper) -->
+                    <div id="map-tooltip" class="floating-tooltip" aria-hidden="true">
                         <h4 id="tooltip-title">Barangay</h4>
-                        <div class="tooltip-row">
-                            <span class="tooltip-label"><i class="fa-solid fa-users"></i> Pop:</span>
-                            <span class="tooltip-value" id="tooltip-pop">0</span>
-                        </div>
-                        <div class="tooltip-row">
-                            <span class="tooltip-label male-color"><i class="fa-solid fa-mars"></i> Male:</span>
-                            <span class="tooltip-value male-color" id="tooltip-male">0</span>
-                        </div>
-                        <div class="tooltip-row">
-                            <span class="tooltip-label female-color"><i class="fa-solid fa-venus"></i> Female:</span>
-                            <span class="tooltip-value female-color" id="tooltip-female">0</span>
-                        </div>
+                        <div class="tooltip-row"><span class="tooltip-label">Total</span><span id="tooltip-pop" class="tooltip-value">0</span></div>
+                        <div class="tooltip-row"><span class="tooltip-label male-color">Male</span><span id="tooltip-male" class="tooltip-value">0</span></div>
+                        <div class="tooltip-row"><span class="tooltip-label female-color">Female</span><span id="tooltip-female" class="tooltip-value">0</span></div>
                     </div>
                 </div>
             </section>
+
+            
 
             <!-- Right Panel: Charts and Trends -->
             <section class="grid-panel charts-panel">
