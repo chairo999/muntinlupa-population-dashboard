@@ -94,6 +94,12 @@ body {
     gap: 16px;
 }
 
+.header-logo-img {
+    width: 100px;
+    height:100px;
+    object-fit: contain;
+}
+
 .header-icon {
     font-size: 2rem;
     color: var(--accent-cyan);
