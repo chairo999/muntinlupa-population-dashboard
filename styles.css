@@ -376,7 +376,7 @@ body {
 }
 
 .panel-header h3 i {
-    color: var(--accent-cyan);
+    color: #e1271a;
 }
 
 .panel-header.flex-header {
@@ -417,7 +417,7 @@ body {
 }
 
 .form-group label {
-    font-size: 0.85rem;
+    font-size: 14px;
     font-weight: 600;
     color: var(--text-secondary);
     display: flex;
@@ -426,7 +426,7 @@ body {
 }
 
 .form-group .small-note {
-    font-size: 0.82rem;
+    font-size: 14px;
     color: var(--text-muted);
     margin-top: 6px;
     line-height: 1.4;
@@ -440,11 +440,11 @@ body {
 
 /* Styled Form Controls */
 select, input[type="number"] {
-    background-color: #ffffff;
+    background-color: #e1271a;
     border: 1px solid rgba(15, 23, 42, 0.12);
-    color: var(--text-primary);
-    padding: 12px 16px;
-    border-radius: var(--border-radius-md);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 0.375rem;
     font-family: var(--font-outfit);
     font-size: 0.95rem;
     outline: none;
@@ -875,58 +875,4 @@ select option {
 .dashboard-header #date-time,
 .dashboard-header i {
     color: white !important;
-}
-
-/* Database Loading Overlay */
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-}
-
-.loading-overlay.active {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.spinner-wrapper {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-}
-
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 3px solid rgba(6, 182, 212, 0.1);
-    border-radius: 50%;
-    border-top-color: var(--accent-cyan);
-    animation: spin 1s ease-in-out infinite;
-    box-shadow: 0 0 15px var(--accent-cyan-glow);
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-.spinner-wrapper p {
-    color: var(--text-primary);
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    font-size: 1.1rem;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
