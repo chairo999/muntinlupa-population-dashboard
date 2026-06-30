@@ -369,3 +369,34 @@ function renderTrendChart(historyData) {
         }
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Select elements
+    const hamburgerBtn = document.getElementById("hamburger-btn");
+    const sidebar = document.getElementById("sector-sidebar");
+    const overlay = document.getElementById("sidebar-overlay");
+    const closeBtn = document.getElementById("close-sidebar-btn");
+
+    // Check if the hamburger button exists before adding event listeners
+    if (hamburgerBtn) {
+        // Open Sidebar
+        hamburgerBtn.addEventListener("click", () => {
+            sidebar.classList.add("active");
+            overlay.classList.add("active");
+            document.body.style.overflow = "hidden"; // Prevent scrolling main page when sidebar is open
+        });
+
+        // Close Sidebar (via X button)
+        closeBtn.addEventListener("click", closeSidebar);
+
+        // Close Sidebar (via clicking outside the sidebar)
+        overlay.addEventListener("click", closeSidebar);
+    }
+
+    // Helper function to close sidebar
+    function closeSidebar() {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+        document.body.style.overflow = ""; // Restore scrolling
+    }
+});

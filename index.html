@@ -28,25 +28,32 @@
         </div>
         <div class="header-info">
             <!-- <span id="date-time"><i class="fa-regular fa-clock"></i> Loading local time...</span> -->
-             <img src="hamburger.png" alt="sidebar" class="sidebar-sectors">
+             <img src="hamburger.png" alt="sidebar" class="sidebar-sectors" id="hamburger-btn">
         </div>
     </header>
 
-    <div class="dashboard-container">
-        <!-- Header Section
-        <header class="dashboard-header">
-            <div class="header-logo">
-                <i class="fa-solid fa-city header-icon"></i>
-                <div class="header-titles">
-                    <h1>MunTHINK Hub</h1>
-                    <p class="subtitle">Smarter Data for a Smarter Muntinlupa</p>
-                </div>
-            </div>
-            <div class="header-info">
-                <span id="date-time"><i class="fa-regular fa-clock"></i> Loading local time...</span>
-            </div>
-        </header> -->
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
+    <aside class="sector-sidebar" id="sector-sidebar">
+        <div class="sidebar-header">
+            <h2>Dashboard Sectors</h2>
+            <i class="fa-solid fa-xmark" id="close-sidebar-btn"></i>
+        </div>
+    
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item"><i class="fa-solid fa-users"></i> Population</a>
+            <a href="economic.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Economic</a>
+            <a href="education.html" class="nav-item"><i class="fa-solid fa-graduation-cap"></i> Education</a>
+            <a href="health.html" class="nav-item"><i class="fa-solid fa-notes-medical"></i> Health</a>
+            <a href="protective.html" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Protective</a>
+            <a href="socwel.html" class="nav-item"><i class="fa-solid fa-hand-holding-heart"></i> Social Welfare</a>
+            <a href="environment.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Environment</a>
+            <a href="institutional.html" class="nav-item"><i class="fa-solid fa-building-columns"></i> Institutional</a>
+        </nav>
+    </aside>
+
+    <div class="dashboard-container">
         <!-- Main Stats Summary Banner -->
         <section class="stats-banner">
             <div class="stat-card" id="card-total">
