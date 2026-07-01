@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MunTHINK Hub — Social Welfare Sector</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        /* Specific Social Welfare Dashboard Layout tweaks to enhance the view */
+        .socwel-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-top: 10px;
+        }
+
+        .charts-container-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .charts-full-width {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-container-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.02);
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .chart-card:hover {
+            border-color: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.04);
+        }
+
+        .chart-title-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+            padding-bottom: 12px;
+        }
+
+        .chart-card h5 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-card h5 i {
+            color: #ef4444; /* Touches of Red */
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 380px;
+        }
+
+        /* Stats Cards Red Touches */
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-lg);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.08);
+        }
+
+        .stat-icon-wrapper.socwel-icon-red {
+            width: 54px;
+            height: 54px;
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            background: rgba(239, 68, 68, 0.08);
+            color: #ef4444;
+        }
+
+        /* Barangay Profiles List */
+        .barangay-profiles-section {
+            margin-top: 10px;
+        }
+
+        .section-header {
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+            padding-bottom: 8px;
+        }
+
+        .section-header h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header h4 i {
+            color: #ef4444;
+        }
+
+        .barangays-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .brgy-profile-card {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.06);
+            border-radius: var(--border-radius-md);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.01);
+        }
+
+        .brgy-profile-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(245, 158, 11, 0.25);
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.04);
+        }
+
+        .brgy-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+            padding-bottom: 8px;
+        }
+
+        .brgy-card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brgy-card-title i {
+            color: #003397;
+        }
+
+        .brgy-card-district {
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: #f1f5f9;
+            color: var(--text-secondary);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .brgy-metric-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .metric-label i {
+            width: 14px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .metric-detail {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-left: 20px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px dashed rgba(15, 23, 42, 0.03);
+            padding-top: 2px;
+        }
+
+        /* Database Status overlay */
+        .db-status-bar {
+            background: #f1f5f9;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-md);
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .db-status-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .db-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-emerald);
+            box-shadow: 0 0 6px var(--accent-emerald);
+        }
+
+        .db-dot.offline {
+            background-color: #f59e0b;
+            box-shadow: 0 0 6px #f59e0b;
+        }
+
+        .admin-link-btn {
+            color: #ef4444;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: var(--transition-smooth);
+        }
+
+        .admin-link-btn:hover {
+            color: #dc2626;
+            text-decoration: underline;
+        }
+
+        /* Custom spinner overlay */
+        .loading-cover {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            font-family: var(--font-outfit);
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-cover.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(239, 68, 68, 0.1);
+            border-top-color: #ef4444;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Cover -->
+    <div id="loading-cover" class="loading-cover">
+        <div class="spinner"></div>
+        <div style="font-weight: 600; color: var(--text-primary);">MunTHINK Social Welfare Database Loading...</div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="dashboard-header">
+        <div class="header-logo">
+            <img src="muntinlupa-city-logo.png" alt="MunTHINK Logo" class="header-logo-img">
+            <div class="header-titles">
+                <h1>MunTHINK Hub</h1>
+                <p class="subtitle">Smarter Data for a Smarter Muntinlupa</p>
+            </div>
+        </div>
+        <div class="header-info">
+             <img src="hamburger.png" alt="sidebar" class="sidebar-sectors" id="hamburger-btn">
+        </div>
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <aside class="sector-sidebar" id="sector-sidebar">
+        <div class="sidebar-header">
+            <h2>Dashboard Sectors</h2>
+            <i class="fa-solid fa-xmark" id="close-sidebar-btn"></i>
+        </div>
+    
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item"><i class="fa-solid fa-users"></i> Population</a>
+            <a href="economic.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Economic</a>
+            <a href="education.html" class="nav-item"><i class="fa-solid fa-graduation-cap"></i> Education</a>
+            <a href="health.html" class="nav-item"><i class="fa-solid fa-notes-medical"></i> Health</a>
+            <a href="protective.html" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Protective</a>
+            <a href="socwel.html" class="nav-item active" style="background: rgba(0, 51, 151, 0.08); color: #003397; border-left: 4px solid #ef4444;"><i class="fa-solid fa-hand-holding-heart" style="color: #ef4444;"></i> Social Welfare</a>
+            <a href="environment.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Environment</a>
+            <a href="institutional.html" class="nav-item"><i class="fa-solid fa-building-columns"></i> Institutional</a>
+        </nav>
+    </aside>
+
+    <div class="dashboard-container">
+        
+        <!-- Live Connection Status Alert Bar -->
+        <div class="db-status-bar">
+            <div class="db-status-left">
+                <div id="db-dot" class="db-dot"></div>
+                <span id="db-status-txt">Connected to live Supabase DB</span>
+            </div>
+            <a href="admin_edit.html" class="admin-link-btn">
+                <i class="fa-solid fa-screwdriver-wrench"></i> Manage Social Welfare Records in Admin
+            </a>
+        </div>
+
+        <!-- Main Stats Summary Banner -->
+        <section class="stats-banner">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper socwel-icon-red">
+                    <i class="fa-solid fa-wheelchair"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Total PWDs Registered</span>
+                    <h2 id="card-pwds">--</h2>
+                    <span class="stat-pct" id="card-pwds-year" style="color: var(--text-muted)">Latest Year</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper socwel-icon-red">
+                    <i class="fa-solid fa-person-cane"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Total Senior Citizens</span>
+                    <h2 id="card-seniors">--</h2>
+                    <span class="stat-pct" id="card-seniors-year" style="color: var(--text-muted)">Latest Year</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper socwel-icon-red">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Total Youths Registered</span>
+                    <h2 id="card-youths">--</h2>
+                    <span class="stat-pct" id="card-youths-year" style="color: var(--text-muted)">Latest Year</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper socwel-icon-red">
+                    <i class="fa-solid fa-people-group"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Youth Organizations</span>
+                    <h2 id="card-youth-orgs">--</h2>
+                    <span class="stat-pct" id="card-youth-orgs-year" style="color: var(--text-muted)">Latest Year</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Charts Workspace -->
+        <div class="socwel-grid">
+            <div class="charts-container-grid">
+                
+                <!-- Chart 1: Seniors Citizens by Barangay & Sex -->
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-person-cane"></i> Senior Citizens Profile</h5>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Hover bars for detailed counts</div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="seniorsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: PWDs by Barangay & Sex -->
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-wheelchair"></i> Registered PWDs Profile</h5>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Hover bars for details</div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="pwdChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Chart 3: Registered Youths & Youth Organizations -->
+            <div class="charts-full-width">
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-children"></i> Registered Youth Demographics & Youth Organizations</h5>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Hover elements for counts & organizations</div>
+                    </div>
+                    <div class="canvas-container" style="height: 420px;">
+                        <canvas id="youthsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Barangay Social Welfare Profiles -->
+        <section class="barangay-profiles-section">
+            <div class="section-header">
+                <h4><i class="fa-solid fa-circle-info"></i> Barangay Social Welfare Summary</h4>
+            </div>
+            <div class="barangays-grid" id="barangay-grid-container">
+                <!-- Javascript builds these dynamically -->
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer" aria-hidden="true" style="margin-top: 40px;">
+            <img src="footer.jpg" alt="" class="footer-image">
+        </footer>
+
+    </div>
+
+    <!-- Supabase JS CDN (v2) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Page Logic Javascript -->
+    <script>
+        // Supabase DB credentials
+        const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
+        const STORAGE_KEY = "muntinlupa_sector_data_social_welfare";
+
+        const socWelBarangays = ["Alabang", "Ayala Alabang", "Bayanan", "Buli", "Cupang", "Poblacion", "Putatan", "Sucat", "Tunasan"];
+        const socWelMetrics = ["PWD (Male)", "PWD (Female)", "Youth Organizations", "Registered Youths", "Seniors (Male)", "Seniors (Female)"];
+        const SOCWEL_LABELS = ["2021", "2022", "2023", "2024", "2025"];
+
+        // Districts Mapping
+        const BARANGAY_DISTRICTS = {
+            "Tunasan": "District 1",
+            "Poblacion": "District 1",
+            "Putatan": "District 1",
+            "Bayanan": "District 1",
+            "Alabang": "District 2",
+            "Ayala Alabang": "District 2",
+            "Buli": "District 2",
+            "Cupang": "District 2",
+            "Sucat": "District 2"
+        };
+
+        // Seed data values matching the user screenshot
+        const DEFAULT_SOCWEL_DATA = {};
+        const socWelRaw = {
+          "Alabang": [1131, 1110, 37, 3774, 2602, 3795],
+          "Ayala Alabang": [325, 326, 5, 70, 1394, 2175],
+          "Bayanan": [648, 564, 15, 483, 1677, 2724],
+          "Buli": [149, 154, 9, 749, 482, 727],
+          "Cupang": [673, 643, 15, 1752, 2595, 3852],
+          "Poblacion": [1322, 1356, 50, 2758, 4537, 6519],
+          "Putatan": [1488, 1418, 28, 1045, 4974, 7706],
+          "Sucat": [609, 547, 22, 1618, 1868, 2838],
+          "Tunasan": [879, 811, 19, 1246, 3196, 4784]
+        };
+
+        // Generate DEFAULT_SOCWEL_DATA
+        socWelBarangays.forEach(brgy => {
+          socWelMetrics.forEach((metric, metricIdx) => {
+            const key = `${brgy} - ${metric}`;
+            const history = [null, null, null, null, null]; // correspond to ["2021", "2022", "2023", "2024", "2025"]
+            const yearIndex = (metricIdx < 2) ? 0 : (metricIdx < 4) ? 1 : 3;
+            history[yearIndex] = socWelRaw[brgy][metricIdx];
+            DEFAULT_SOCWEL_DATA[key] = { history };
+          });
+        });
+
+        let socwelData = {};
+        let supabaseClient = null;
+
+        // Initialize Supabase safely
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        // Initialize Page
+        document.addEventListener("DOMContentLoaded", async () => {
+            initSidebar();
+            await fetchSocWelData();
+            renderStatsBanner();
+            renderCharts();
+            renderBarangayProfiles();
+            
+            // Hide loading cover
+            const cover = document.getElementById("loading-cover");
+            cover.classList.add("fade-out");
+            setTimeout(() => cover.style.display = 'none', 300);
+        });
+
+        // Sidebar navigation toggling
+        function initSidebar() {
+            const hamburgerBtn = document.getElementById("hamburger-btn");
+            const sidebar = document.getElementById("sector-sidebar");
+            const overlay = document.getElementById("sidebar-overlay");
+            const closeBtn = document.getElementById("close-sidebar-btn");
+
+            if (hamburgerBtn) {
+                hamburgerBtn.addEventListener("click", () => {
+                    sidebar.classList.add("active");
+                    overlay.classList.add("active");
+                });
+            }
+            if (closeBtn) {
+                closeBtn.addEventListener("click", () => {
+                    sidebar.classList.remove("active");
+                    overlay.classList.remove("active");
+                });
+            }
+            if (overlay) {
+                overlay.addEventListener("click", () => {
+                    sidebar.classList.remove("active");
+                    overlay.classList.remove("active");
+                });
+            }
+        }
+
+        // Fetch Live Database or Local Storage Fallback
+        async function fetchSocWelData() {
+            const statusTxt = document.getElementById("db-status-txt");
+            const statusDot = document.getElementById("db-dot");
+            
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('social_welfare')
+                        .select('data')
+                        .eq('id', 1)
+                        .single();
+
+                    if (error) {
+                        if (error.code === 'PGRST116') {
+                            console.log("Social Welfare table empty in Supabase. Seeding default data.");
+                            await supabaseClient.from('social_welfare').insert({ id: 1, data: DEFAULT_SOCWEL_DATA, labels: SOCWEL_LABELS });
+                            socwelData = DEFAULT_SOCWEL_DATA;
+                        } else {
+                            throw error;
+                        }
+                    } else {
+                        socwelData = data.data || DEFAULT_SOCWEL_DATA;
+                    }
+                    
+                    statusTxt.textContent = "Live Supabase Database Connected";
+                    statusDot.className = "db-dot";
+                } catch (e) {
+                    console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
+                    loadOfflineFallback();
+                }
+            } else {
+                console.warn("Supabase library not loaded. Loading from LocalStorage fallback.");
+                loadOfflineFallback();
+            }
+        }
+
+        function loadOfflineFallback() {
+            const statusTxt = document.getElementById("db-status-txt");
+            const statusDot = document.getElementById("db-dot");
+            
+            statusTxt.textContent = "Offline Mode (LocalStorage Fallback)";
+            statusDot.className = "db-dot offline";
+
+            const localData = localStorage.getItem(STORAGE_KEY);
+            if (localData) {
+                try {
+                    const parsed = JSON.parse(localData);
+                    socwelData = parsed.data || DEFAULT_SOCWEL_DATA;
+                } catch (e) {
+                    console.error("Error parsing localstorage data.", e);
+                    socwelData = DEFAULT_SOCWEL_DATA;
+                }
+            } else {
+                socwelData = DEFAULT_SOCWEL_DATA;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: DEFAULT_SOCWEL_DATA, labels: SOCWEL_LABELS }));
+            }
+        }
+
+        // Helper to grab latest non-null value from an array
+        function getLatestValue(arr) {
+            if (!Array.isArray(arr)) return { val: 0, year: '--' };
+            for (let i = arr.length - 1; i >= 0; i--) {
+                if (arr[i] !== null && arr[i] !== undefined) {
+                    return { val: Number(arr[i]), year: SOCWEL_LABELS[i] };
+                }
+            }
+            return { val: 0, year: '--' };
+        }
+
+        // Get value helper for a specific barangay metric
+        function getMetric(brgy, metric) {
+            const key = `${brgy} - ${metric}`;
+            if (socwelData[key] && socwelData[key].history) {
+                return getLatestValue(socwelData[key].history);
+            }
+            return { val: 0, year: '--' };
+        }
+
+        // Calculate dynamic totals for the main stats cards
+        function getTotals() {
+            let totals = {
+                pwdMale: 0,
+                pwdFemale: 0,
+                pwdTotal: 0,
+                pwdYear: '--',
+                seniorsMale: 0,
+                seniorsFemale: 0,
+                seniorsTotal: 0,
+                seniorsYear: '--',
+                youthOrgs: 0,
+                youthOrgsYear: '--',
+                youthsTotal: 0,
+                youthsYear: '--'
+            };
+
+            socWelBarangays.forEach(brgy => {
+                const pm = getMetric(brgy, "PWD (Male)");
+                const pf = getMetric(brgy, "PWD (Female)");
+                totals.pwdMale += pm.val;
+                totals.pwdFemale += pf.val;
+                if (pm.year !== '--') totals.pwdYear = pm.year;
+
+                const sm = getMetric(brgy, "Seniors (Male)");
+                const sf = getMetric(brgy, "Seniors (Female)");
+                totals.seniorsMale += sm.val;
+                totals.seniorsFemale += sf.val;
+                if (sm.year !== '--') totals.seniorsYear = sm.year;
+
+                const yo = getMetric(brgy, "Youth Organizations");
+                totals.youthOrgs += yo.val;
+                if (yo.year !== '--') totals.youthOrgsYear = yo.year;
+
+                const yt = getMetric(brgy, "Registered Youths");
+                totals.youthsTotal += yt.val;
+                if (yt.year !== '--') totals.youthsYear = yt.year;
+            });
+
+            totals.pwdTotal = totals.pwdMale + totals.pwdFemale;
+            totals.seniorsTotal = totals.seniorsMale + totals.seniorsFemale;
+
+            return totals;
+        }
+
+        // Populate Stats Banner Cards
+        function renderStatsBanner() {
+            const t = getTotals();
+
+            document.getElementById("card-pwds").textContent = t.pwdTotal.toLocaleString();
+            document.getElementById("card-pwds-year").textContent = `As of ${t.pwdYear}`;
+
+            document.getElementById("card-seniors").textContent = t.seniorsTotal.toLocaleString();
+            document.getElementById("card-seniors-year").textContent = `As of ${t.seniorsYear}`;
+
+            document.getElementById("card-youths").textContent = t.youthsTotal.toLocaleString();
+            document.getElementById("card-youths-year").textContent = `As of ${t.youthsYear}`;
+
+            document.getElementById("card-youth-orgs").textContent = t.youthOrgs.toLocaleString();
+            document.getElementById("card-youth-orgs-year").textContent = `As of ${t.youthOrgsYear}`;
+        }
+
+        // Draw Interactive Charts using Chart.js
+        function renderCharts() {
+            const t = getTotals();
+
+            // Prepare Barangay Specific Datasets
+            const pwdMaleData = [];
+            const pwdFemaleData = [];
+            const pwdTotalData = [];
+            const seniorsMaleData = [];
+            const seniorsFemaleData = [];
+            const seniorsTotalData = [];
+            const youthOrgsData = [];
+            const youthsTotalData = [];
+
+            socWelBarangays.forEach(brgy => {
+                const pm = getMetric(brgy, "PWD (Male)").val;
+                const pf = getMetric(brgy, "PWD (Female)").val;
+                pwdMaleData.push(pm);
+                pwdFemaleData.push(pf);
+                pwdTotalData.push(pm + pf);
+
+                const sm = getMetric(brgy, "Seniors (Male)").val;
+                const sf = getMetric(brgy, "Seniors (Female)").val;
+                seniorsMaleData.push(sm);
+                seniorsFemaleData.push(sf);
+                seniorsTotalData.push(sm + sf);
+
+                youthOrgsData.push(getMetric(brgy, "Youth Organizations").val);
+                youthsTotalData.push(getMetric(brgy, "Registered Youths").val);
+            });
+
+            // Chart 1: Senior Citizens Profile (Grouped Bar Chart)
+            const ctxSeniors = document.getElementById("seniorsChart").getContext("2d");
+            new Chart(ctxSeniors, {
+                type: 'bar',
+                data: {
+                    labels: socWelBarangays,
+                    datasets: [
+                        {
+                            label: 'Male Seniors',
+                            data: seniorsMaleData,
+                            backgroundColor: 'rgba(54, 162, 235, 0.85)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Female Seniors',
+                            data: seniorsFemaleData,
+                            backgroundColor: 'rgba(255, 99, 132, 0.85)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { font: { family: 'Outfit', size: 12, weight: '500' } }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleFont: { family: 'Outfit', size: 13, weight: 'bold' },
+                            bodyFont: { family: 'Outfit', size: 12 },
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    label += context.parsed.y.toLocaleString();
+                                    
+                                    // Calculate percentage of total seniors in that Barangay
+                                    const brgyIndex = context.dataIndex;
+                                    const totalBrgySeniors = seniorsTotalData[brgyIndex];
+                                    if (totalBrgySeniors > 0) {
+                                        const pct = ((context.parsed.y / totalBrgySeniors) * 100).toFixed(1);
+                                        label += ` (${pct}% of Barangay Seniors)`;
+                                    }
+                                    return label;
+                                },
+                                afterBody: function(context) {
+                                    const brgyIndex = context[0].dataIndex;
+                                    return `Total Seniors: ${seniorsTotalData[brgyIndex].toLocaleString()}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Number of Senior Citizens', font: { family: 'Outfit', weight: 'bold' } },
+                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: PWD Profile (Grouped Bar Chart with Percentage display)
+            const ctxPwd = document.getElementById("pwdChart").getContext("2d");
+            new Chart(ctxPwd, {
+                type: 'bar',
+                data: {
+                    labels: socWelBarangays,
+                    datasets: [
+                        {
+                            label: 'Male PWDs',
+                            data: pwdMaleData,
+                            backgroundColor: 'rgba(79, 70, 229, 0.85)',
+                            borderColor: 'rgba(79, 70, 229, 1)',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Female PWDs',
+                            data: pwdFemaleData,
+                            backgroundColor: 'rgba(236, 72, 153, 0.85)',
+                            borderColor: 'rgba(236, 72, 153, 1)',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { font: { family: 'Outfit', size: 12, weight: '500' } }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleFont: { family: 'Outfit', size: 13, weight: 'bold' },
+                            bodyFont: { family: 'Outfit', size: 12 },
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    label += context.parsed.y.toLocaleString();
+                                    
+                                    const brgyIndex = context.dataIndex;
+                                    const totalBrgyPwds = pwdTotalData[brgyIndex];
+                                    if (totalBrgyPwds > 0) {
+                                        const pct = ((context.parsed.y / totalBrgyPwds) * 100).toFixed(1);
+                                        label += ` (${pct}% of Barangay PWDs)`;
+                                    }
+                                    return label;
+                                },
+                                afterBody: function(context) {
+                                    const brgyIndex = context[0].dataIndex;
+                                    const brgyTotal = pwdTotalData[brgyIndex];
+                                    const overallTotal = t.pwdTotal;
+                                    const cityPct = overallTotal > 0 ? ((brgyTotal / overallTotal) * 100).toFixed(2) : 0;
+                                    return `Total Barangay PWDs: ${brgyTotal.toLocaleString()}\n(${cityPct}% of City-wide PWDs)`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Number of Registered PWDs', font: { family: 'Outfit', weight: 'bold' } },
+                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // Chart 3: Registered Youths & Youth Organizations (Dual Axes: Bar & Line)
+            const ctxYouths = document.getElementById("youthsChart").getContext("2d");
+            new Chart(ctxYouths, {
+                type: 'bar',
+                data: {
+                    labels: socWelBarangays,
+                    datasets: [
+                        {
+                            label: 'Registered Youths (Left Axis)',
+                            data: youthsTotalData,
+                            backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                            borderColor: 'rgba(16, 185, 129, 1)',
+                            borderWidth: 1,
+                            yAxisID: 'y',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Youth Organizations (Right Axis)',
+                            data: youthOrgsData,
+                            type: 'line',
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#f59e0b',
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            yAxisID: 'y1',
+                            tension: 0.2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { font: { family: 'Outfit', size: 12, weight: '500' } }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleFont: { family: 'Outfit', size: 13, weight: 'bold' },
+                            bodyFont: { family: 'Outfit', size: 12 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'Number of Registered Youths', font: { family: 'Outfit', weight: 'bold' } },
+                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            min: 0,
+                            title: { display: true, text: 'Number of Youth Organizations', font: { family: 'Outfit', weight: 'bold' } },
+                            grid: { drawOnChartArea: false }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render cards summaries for each Barangay
+        function renderBarangayProfiles() {
+            const container = document.getElementById("barangay-grid-container");
+            container.innerHTML = "";
+
+            const t = getTotals();
+
+            // Sort barangays alphabetically
+            const sortedBarangays = [...socWelBarangays].sort();
+
+            sortedBarangays.forEach(brgy => {
+                const pm = getMetric(brgy, "PWD (Male)").val;
+                const pf = getMetric(brgy, "PWD (Female)").val;
+                const pwdTotal = pm + pf;
+                const pwdPct = t.pwdTotal > 0 ? ((pwdTotal / t.pwdTotal) * 100).toFixed(2) : '0.00';
+
+                const sm = getMetric(brgy, "Seniors (Male)").val;
+                const sf = getMetric(brgy, "Seniors (Female)").val;
+                const seniorsTotal = sm + sf;
+                const seniorsPct = t.seniorsTotal > 0 ? ((seniorsTotal / t.seniorsTotal) * 100).toFixed(2) : '0.00';
+
+                const youthOrgs = getMetric(brgy, "Youth Organizations").val;
+                const youthsTotal = getMetric(brgy, "Registered Youths").val;
+
+                const district = BARANGAY_DISTRICTS[brgy] || "District Unknown";
+
+                const card = document.createElement("div");
+                card.className = "brgy-profile-card";
+                
+                card.innerHTML = `
+                    <div class="brgy-card-header">
+                        <span class="brgy-card-title"><i class="fa-solid fa-building-flag"></i> ${brgy}</span>
+                        <span class="brgy-card-district">${district}</span>
+                    </div>
+                    <div class="brgy-metric-row">
+                        <!-- Seniors -->
+                        <div class="metric-item">
+                            <span class="metric-label"><i class="fa-solid fa-person-cane" style="color: #3b82f6;"></i> Senior Citizens</span>
+                            <span class="metric-value">${seniorsTotal.toLocaleString()}</span>
+                        </div>
+                        <div class="metric-detail">
+                            <span>M: ${sm.toLocaleString()} | F: ${sf.toLocaleString()}</span>
+                            <span>${seniorsPct}% of City</span>
+                        </div>
+                        
+                        <!-- PWDs -->
+                        <div style="height: 6px;"></div>
+                        <div class="metric-item">
+                            <span class="metric-label"><i class="fa-solid fa-wheelchair" style="color: #ec4899;"></i> Registered PWDs</span>
+                            <span class="metric-value">${pwdTotal.toLocaleString()}</span>
+                        </div>
+                        <div class="metric-detail">
+                            <span>M: ${pm.toLocaleString()} | F: ${pf.toLocaleString()}</span>
+                            <span>${pwdPct}% of City</span>
+                        </div>
+
+                        <!-- Youths -->
+                        <div style="height: 6px;"></div>
+                        <div class="metric-item">
+                            <span class="metric-label"><i class="fa-solid fa-graduation-cap" style="color: #10b981;"></i> Registered Youths</span>
+                            <span class="metric-value">${youthsTotal.toLocaleString()}</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label"><i class="fa-solid fa-people-group" style="color: #f59e0b;"></i> Youth Organizations</span>
+                            <span class="metric-value">${youthOrgs}</span>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
