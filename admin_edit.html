@@ -704,10 +704,31 @@
       protective: {
         table: "protective",
         name: "Protective Services",
-        desc: "Update safety ratios, precinct coverages, and community protection logs.",
+        desc: "Update crime statistics, police force headcount, and municipal resource indices.",
         icon: "fa-shield-halved",
-        defaultLabels: ["2021", "2022", "2023", "2024", "2025"],
-        defaultKeys: ["Crime Solution Efficiency Rate", "Fire Response Time (minutes)", "Police to Population Ratio", "Firefighter to Population Ratio", "Number of Crime Incidents"]
+        defaultLabels: ["2020", "2021", "2022", "2023", "2024"],
+        defaultData: {
+          "Total Crime Volume (TCV)": { history: [1773, 1273, 1458, 1276, 1169] },
+          "Index Crime": { history: [245, 181, 176, 129, 84] },
+          "Average Monthly Crime Rate (AMCR)": { history: [27.19, 19.52, 22.36, 20.0, 18.0] },
+          "Crime Solution Efficiency (CSE)": { history: [86.95, 83.67, 85.46, 86.99, 89.05] },
+          "Crime Clearance Solution": { history: [99.44, 99.77, 99.86, 99.84, 99.83] },
+          "Police to Population Ratio (1:X)": { history: [1053, 1142, 708, 739, 703] },
+          "Number of Policemen": { history: [479, 476, 561, 544, 564] },
+          "Non-Uniformed Personnel": { history: [16, 17, 18, 18, 17] },
+          "Police Sub-Stations": { history: [6, 6, 6, 7, 7] },
+          "Patrol Cars": { history: [36, 26, 36, 39, 36] },
+          "Motorcycles": { history: [33, 37, 44, 43, 42] },
+          "Tunasan": { history: [186, 134, 185, 177, 149] },
+          "Poblacion": { history: [333, 261, 287, 249, 203] },
+          "Putatan": { history: [219, 197, 179, 153, 235] },
+          "Bayanan": { history: [148, 130, 129, 105, 92] },
+          "Alabang": { history: [481, 269, 333, 294, 32] },
+          "Ayala Alabang": { history: [46, 43, 44, 30, 142] },
+          "Cupang": { history: [140, 128, 101, 96, 29] },
+          "Buli": { history: [26, 18, 8, 25, 151] },
+          "Sucat": { history: [207, 143, 192, 147, 136] }
+        }
       },
       social_welfare: {
         table: "social_welfare",
