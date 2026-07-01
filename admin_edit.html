@@ -660,61 +660,92 @@
     // Configuration details
     const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
-    // Configuration map for editing options
+
+    // Sector Configuration map
     const SECTORS = {
       edit: {
         table: "demographics",
         name: "Population",
         desc: "Modify the demographic census population estimates across years and districts.",
-        icon: "fa-users"
+        icon: "fa-users",
+        defaultLabels: ["2015", "2020", "2024"],
+        defaultKeys: ['Sucat', 'Buli', 'Cupang', 'Alabang', 'Ayala Alabang', 'Bayanan', 'Putatan', 'Poblacion', 'Tunasan']
       },
       education: {
         table: "education",
         name: "Education Sector",
         desc: "Manage education metrics, school statistics, and literacy index records.",
-        icon: "fa-graduation-cap"
+        icon: "fa-graduation-cap",
+        defaultLabels: ["2021", "2022", "2023", "2024", "2025"],
+        defaultKeys: ["Student-Teacher Ratio (Elementary)", "Student-Teacher Ratio (Junior High)", "Student-Teacher Ratio (Senior High)", "Graduation Rate", "Literacy Rate", "Number of Public Schools", "Number of Private Schools"]
       },
       health: {
         table: "health",
         name: "Health Sector",
         desc: "Edit healthcare indexes, facility metrics, and general health parameters.",
-        icon: "fa-heart-pulse"
+        icon: "fa-heart-pulse",
+        defaultLabels: ["2020", "2021", "2022", "2023", "2024", "2025"],
+        defaultData: {
+          "Crude Birth Rate (CBR)": { history: [12.12, 12.3, null, null, 13.6, 15.04] },
+          "Crude Death Rate (CDR)": { history: [4.71, 5.54, null, null, 3.17, null] },
+          "Infant Mortality Rate": { history: [6.86, 9.21, null, null, 7.85, 7.69] },
+          "Under Five Mortality Rate (UMR)": { history: [9.61, 11.58, null, null, 9.55, null] },
+          "Maternal Mortality Rate (MMR)": { history: [106.8, 133.67, null, null, 52.0, 12.0] },
+          "Child Woman Ratio (CWR)": { history: [null, 1.1, null, null, null, null] },
+          "Percentage of Fully Immunized Children": { history: [null, 74.0, 61.0, 60.29, 54.65, 50.26] },
+          "Prevalence of Underweight (UW) & Severely Underweight (SUW) Children": { history: [null, null, null, null, null, null] },
+          "Infants Exclusively Breastfeed until 6 months": { history: [null, 75.28, 53.48, 59.39, 68.37, null] },
+          "Percentage of Teenage Deliveries": { history: [null, 8.89, null, null, null, null] },
+          "Percentage of Birth by Skilled Attendant": { history: [null, 87.0, 82.0, 86.0, 95.80, 95.28] },
+          "Births by Facility Based": { history: [null, 83.0, 78.28, 85.38, 95.69, 94.36] },
+          "Contraceptive Prevalence Rate": { history: [null, 22.7, 23.74, 27.57, null, null] }
+        }
       },
       protective: {
         table: "protective",
         name: "Protective Services",
         desc: "Update safety ratios, precinct coverages, and community protection logs.",
-        icon: "fa-shield-halved"
+        icon: "fa-shield-halved",
+        defaultLabels: ["2021", "2022", "2023", "2024", "2025"],
+        defaultKeys: ["Crime Solution Efficiency Rate", "Fire Response Time (minutes)", "Police to Population Ratio", "Firefighter to Population Ratio", "Number of Crime Incidents"]
       },
       social_welfare: {
         table: "social_welfare",
         name: "Social Welfare Services",
         desc: "Edit social support system markers, program coverage, and beneficiary counts.",
-        icon: "fa-hand-holding-heart"
+        icon: "fa-hand-holding-heart",
+        defaultLabels: ["2021", "2022", "2023", "2024", "2025"],
+        defaultKeys: ["Senior Citizen Beneficiaries", "PWD Beneficiaries", "Pantawid Pamilya (4Ps) Families", "Number of Daycare Centers", "Social Welfare Service Index"]
       },
       environment: {
         table: "environment",
         name: "Environmental Indicators",
         desc: "Modify waste management metrics, green cover stats, and environment markers.",
-        icon: "fa-leaf"
+        icon: "fa-leaf",
+        defaultLabels: ["2021", "2022", "2023", "2024", "2025"],
+        defaultKeys: ["Solid Waste Collection Coverage (%)", "Material Recovery Facility Count", "Air Quality Index (AQI)", "Tree Cover Percentage", "Flood Prone Areas Count"]
       },
       institutional: {
         table: "institutional",
         name: "Institutional Metrics",
         desc: "Edit governance ratings, administrative assets, and municipal indices.",
-        icon: "fa-building-columns"
+        icon: "fa-building-columns",
+        defaultLabels: ["2021", "2022", "2023", "2024", "2025"],
+        defaultKeys: ["Revenue Collection Growth Rate", "Civil Service Eligibility Percentage", "Number of Ordinances Passed", "City Employee Headcount", "Municipal Budget Utilization Rate"]
       }
     };
+
     const DEFAULT_HISTORICAL_LABELS = ["2015", "2020", "2024"];
     const DEFAULT_BARANGAY_LIST = ['Sucat', 'Buli', 'Cupang', 'Alabang', 'Ayala Alabang', 'Bayanan', 'Putatan', 'Poblacion', 'Tunasan'];
+
     // State parameters
     let currentSectorKey = "edit";
     let appData = {};
     let HISTORICAL_LABELS = [...DEFAULT_HISTORICAL_LABELS];
+
     // DOM Elements
     const statusDotEl = document.getElementById('status-dot');
     const statusTextEl = document.getElementById('status-text');
-    const statusBannerEl = document.getElementById('status');
     const brgySelect = document.getElementById('brgy');
     const yearSelect = document.getElementById('year');
     const valueInput = document.getElementById('value');
@@ -727,10 +758,13 @@
     const sectorTitle = document.getElementById('sector-title');
     const sectorDesc = document.getElementById('sector-desc');
     const tableNameBadge = document.getElementById('table-name-badge');
+
     // Show config on page init
     cfgEl.textContent = `Endpoint API URL: ${SUPABASE_URL}\nAnon Access Key: ${SUPABASE_ANON_KEY.substring(0, 20)}...`;
+
     // Initialize Supabase Client
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     // Set up sidebar navigation click handlers
     document.querySelectorAll('.nav-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -745,6 +779,7 @@
         switchSector(targetSector);
       });
     });
+
     // Handle Sector Switch
     async function switchSector(sectorKey) {
       if (!SECTORS[sectorKey]) return;
@@ -757,15 +792,27 @@
       sectorDesc.textContent = config.desc;
       tableNameBadge.textContent = config.table;
       
+      // Update label text dynamically (Select Barangay vs Select Indicator)
+      const labelEl = document.querySelector('label[for="brgy"]');
+      if (labelEl) {
+        if (sectorKey === 'edit') {
+          labelEl.innerHTML = '<i class="fa-solid fa-map-pin"></i> Select Barangay';
+        } else {
+          labelEl.innerHTML = '<i class="fa-solid fa-chart-bar"></i> Select Indicator';
+        }
+      }
+      
       // Clear inputs & previews
       valuePreviewBox.style.display = 'none';
       valueInput.value = '';
       
       // Disable controls while loading
       disableForm(true);
+
       // Fetch data for the new sector
       await loadSectorData(config.table);
     }
+
     // Disable or Enable the Form Inputs & Button
     function disableForm(disabled) {
       brgySelect.disabled = disabled;
@@ -773,11 +820,13 @@
       valueInput.disabled = disabled;
       submitBtn.disabled = disabled;
     }
+
     // Set the overall header status banner
     function updateHeaderStatus(state, message) {
       statusTextEl.textContent = message;
       statusDotEl.className = 'status-dot ' + state;
     }
+
     // Show inline alert in form
     function showNotification(type, message, iconClass = 'fa-circle-info') {
       const parent = document.getElementById('notification-area');
@@ -787,10 +836,15 @@
         </div>
       `;
     }
-    // Load data from selected Table in Supabase
+
+    // Load data from selected Table in Supabase (with LocalStorage fallbacks)
     async function loadSectorData(tableName) {
       updateHeaderStatus('connecting', `Connecting table: [${tableName}]...`);
       showNotification('info', `Retrieving sector data from table '${tableName}'...`, 'fa-spinner fa-spin');
+      
+      const sectorConfig = SECTORS[currentSectorKey];
+      const fallbackLabels = sectorConfig.defaultLabels || DEFAULT_HISTORICAL_LABELS;
+      const fallbackKeys = sectorConfig.defaultKeys || DEFAULT_BARANGAY_LIST;
       
       try {
         const { data, error } = await supabaseClient
@@ -798,48 +852,85 @@
           .select('data, labels')
           .eq('id', 1)
           .single();
+
         if (error) {
-          // If table row is empty or not seeded
           if (error.code === 'PGRST116') {
-            console.warn("Table row empty/unseeded. Creating fallback skeleton data.");
-            appData = {};
-            HISTORICAL_LABELS = [...DEFAULT_HISTORICAL_LABELS];
-            
-            showNotification('info', `No active records found in table '${tableName}'. Seed schema is ready for input.`, 'fa-circle-exclamation');
-            updateHeaderStatus('online', `Live & Connected (Table: ${tableName})`);
+            // Check LocalStorage fallback
+            const localStored = localStorage.getItem(`muntinlupa_sector_data_${currentSectorKey}`);
+            if (localStored) {
+              const parsed = JSON.parse(localStored);
+              appData = parsed.data || {};
+              HISTORICAL_LABELS = parsed.labels || fallbackLabels;
+              showNotification('info', `Loaded '${tableName}' records from LocalStorage fallback.`, 'fa-circle-exclamation');
+            } else {
+              // Create fallback skeleton using default data or default keys
+              appData = {};
+              if (sectorConfig.defaultData) {
+                appData = JSON.parse(JSON.stringify(sectorConfig.defaultData));
+              } else {
+                fallbackKeys.forEach(k => {
+                  appData[k] = { history: new Array(fallbackLabels.length).fill(null) };
+                });
+              }
+              HISTORICAL_LABELS = fallbackLabels;
+              showNotification('info', `No active records found in table '${tableName}'. Operating with default indicators.`, 'fa-circle-exclamation');
+            }
+            updateHeaderStatus('online', `Connected (LocalStorage Fallback Mode)`);
           } else {
             throw error;
           }
         } else {
-          // Data successfully loaded
           appData = data.data || {};
-          if (Array.isArray(data.labels) && data.labels.length) {
-            HISTORICAL_LABELS = data.labels;
-          } else {
-            HISTORICAL_LABELS = [...DEFAULT_HISTORICAL_LABELS];
-          }
-          
-          showNotification('info', `Ready. Select a barangay and year to modify this sector.`, 'fa-circle-check');
+          HISTORICAL_LABELS = (Array.isArray(data.labels) && data.labels.length) ? data.labels : fallbackLabels;
+          showNotification('info', `Ready. Select an item and year to modify this sector.`, 'fa-circle-check');
           updateHeaderStatus('online', `Live & Connected (Table: ${tableName})`);
         }
+
         // Re-populate choices
         populateBarangays();
         populateYears();
         disableForm(false);
         
       } catch (err) {
-        console.error(err);
-        showNotification('err', `Database Error: ${err.message || 'Could not query the selected table. Ensure table exists in Supabase.'}`, 'fa-circle-xmark');
-        updateHeaderStatus('error', `Connection error: ${tableName}`);
-        disableForm(true); // Lock inputs if error occurred
+        console.warn("Database connection failed. Falling back to LocalStorage.", err);
+        const localStored = localStorage.getItem(`muntinlupa_sector_data_${currentSectorKey}`);
+        if (localStored) {
+          const parsed = JSON.parse(localStored);
+          appData = parsed.data || {};
+          HISTORICAL_LABELS = parsed.labels || fallbackLabels;
+          showNotification('info', `Database offline. Loaded data from LocalStorage fallback.`, 'fa-triangle-exclamation');
+          updateHeaderStatus('error', `Offline (LocalStorage Mode)`);
+        } else {
+          appData = {};
+          if (sectorConfig.defaultData) {
+            appData = JSON.parse(JSON.stringify(sectorConfig.defaultData));
+          } else {
+            fallbackKeys.forEach(k => {
+              appData[k] = { history: new Array(fallbackLabels.length).fill(null) };
+            });
+          }
+          HISTORICAL_LABELS = fallbackLabels;
+          showNotification('err', `Database offline. Loaded default indicators.`, 'fa-triangle-exclamation');
+          updateHeaderStatus('error', `Offline Mode`);
+        }
+        
+        populateBarangays();
+        populateYears();
+        disableForm(false);
       }
     }
-    // Populate Barangay Select options
+
+    // Populate Barangay/Indicator Select options
     function populateBarangays() {
-      brgySelect.innerHTML = '<option value="" disabled selected>-- Choose Barangay --</option>';
+      const config = SECTORS[currentSectorKey];
+      const isPop = currentSectorKey === 'edit';
+      const defaultTxt = isPop ? '-- Choose Barangay --' : '-- Choose Indicator --';
+      
+      brgySelect.innerHTML = `<option value="" disabled selected>${defaultTxt}</option>`;
       const names = Object.keys(appData).filter(k => k !== '_cityHistory' && k !== 'history');
       
-      const listToUse = names.length > 0 ? names : DEFAULT_BARANGAY_LIST;
+      const fallbackKeys = config.defaultKeys || DEFAULT_BARANGAY_LIST;
+      const listToUse = names.length > 0 ? names : fallbackKeys;
       
       listToUse.forEach(n => {
         const o = document.createElement('option');
@@ -848,6 +939,7 @@
         brgySelect.appendChild(o);
       });
     }
+
     // Populate Year Select options
     function populateYears() {
       yearSelect.innerHTML = '<option value="" disabled selected>-- Choose Year --</option>';
@@ -858,6 +950,7 @@
         yearSelect.appendChild(o);
       });
     }
+
     // Listener for syncing stored database value
     function syncValuePreview() {
       const brgy = brgySelect.value;
@@ -876,55 +969,69 @@
       valuePreviewBox.style.display = 'flex';
       if (val !== undefined && val !== null) {
         currentValueDisplay.textContent = Number(val).toLocaleString();
-        valueInput.value = val; // auto-populate current value to save editing time
+        valueInput.value = val;
       } else {
-        currentValueDisplay.textContent = '0 (Empty)';
-        valueInput.value = '0';
+        currentValueDisplay.textContent = 'None (Empty)';
+        valueInput.value = '';
       }
     }
+
     brgySelect.addEventListener('change', syncValuePreview);
     yearSelect.addEventListener('change', syncValuePreview);
+
     // Form Submit Event Handler
     document.getElementById('edit-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const brgy = brgySelect.value;
       const yearIndex = parseInt(yearSelect.value, 10);
-      const val = parseInt(valueInput.value, 10);
+      const valText = valueInput.value;
+      const val = valText === '' ? null : parseFloat(valText);
       const tableName = SECTORS[currentSectorKey].table;
-      if (!brgy) { alert('Choose a barangay'); return; }
+
+      if (!brgy) { alert('Choose a barangay / indicator'); return; }
       if (Number.isNaN(yearIndex)) { alert('Choose a year'); return; }
-      if (Number.isNaN(val) || val < 0) { alert('Enter a valid value'); return; }
-      showNotification('info', `Saving value to Supabase...`, 'fa-spinner fa-spin');
+
+      showNotification('info', `Saving value...`, 'fa-spinner fa-spin');
       submitBtn.disabled = true;
       
       try {
-        // Build minimal item structure if not existing
         if (!appData[brgy]) {
-          appData[brgy] = { 
-            male: { '0-14': 0, '15-24': 0, '25-54': 0, '55-64': 0, '65+': 0 }, 
-            female: { '0-14': 0, '15-24': 0, '25-54': 0, '55-64': 0, '65+': 0 }, 
-            history: [] 
-          };
+          appData[brgy] = { history: [] };
         }
         
         if (!Array.isArray(appData[brgy].history)) {
           appData[brgy].history = [];
         }
         
-        // Expand the history array if index is larger than size
         while (appData[brgy].history.length <= yearIndex) {
-          appData[brgy].history.push(0);
+          appData[brgy].history.push(null);
         }
-        // Apply updated value
+
         appData[brgy].history[yearIndex] = val;
-        const { error } = await supabaseClient
-          .from(tableName)
-          .upsert({ id: 1, data: appData, labels: HISTORICAL_LABELS });
-        if (error) throw error;
-        // Success notification
-        showNotification('ok', `Successfully saved changes to table '${tableName}'.`, 'fa-circle-check');
-        currentValueDisplay.textContent = Number(val).toLocaleString();
+
+        // Try Supabase DB Save
+        let savedToSupabase = false;
+        try {
+          const { error } = await supabaseClient
+            .from(tableName)
+            .upsert({ id: 1, data: appData, labels: HISTORICAL_LABELS });
+          if (!error) savedToSupabase = true;
+          else console.error("Supabase upsert error:", error);
+        } catch (dbErr) {
+          console.warn("Could not save live to Supabase. Saving to LocalStorage.", dbErr);
+        }
+
+        // Backup in LocalStorage
+        localStorage.setItem(`muntinlupa_sector_data_${currentSectorKey}`, JSON.stringify({ data: appData, labels: HISTORICAL_LABELS }));
+
+        if (savedToSupabase) {
+          showNotification('ok', `Successfully saved changes to Supabase table '${tableName}'.`, 'fa-circle-check');
+        } else {
+          showNotification('ok', `Saved changes locally (LocalStorage Fallback).`, 'fa-circle-exclamation');
+        }
+
+        currentValueDisplay.textContent = val !== null ? Number(val).toLocaleString() : 'None (Empty)';
         
       } catch (err) {
         console.error(err);
@@ -933,6 +1040,7 @@
         submitBtn.disabled = false;
       }
     });
+
     // Initial page load triggers sector loading
     switchSector("edit");
   </script>

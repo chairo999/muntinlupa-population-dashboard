@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MunTHINK Hub — Health Sector</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        /* Specific Health Dashboard Layout tweaks to enhance the view */
+        .health-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-top: 10px;
+        }
+
+        .charts-container-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-container-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.02);
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .chart-card:hover {
+            border-color: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.04);
+        }
+
+        .chart-title-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+            padding-bottom: 12px;
+        }
+
+        .chart-card h5 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-card h5 i {
+            color: #ef4444; /* Touches of Red */
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 380px;
+        }
+
+        /* Stats Cards Red Touches */
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-lg);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.08);
+        }
+
+        .stat-icon-wrapper.health-icon-red {
+            width: 54px;
+            height: 54px;
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            background: rgba(239, 68, 68, 0.08);
+            color: #ef4444;
+        }
+
+        /* Indicator detail card list */
+        .indicator-cards-section {
+            margin-top: 10px;
+        }
+
+        .section-header {
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+            padding-bottom: 8px;
+        }
+
+        .section-header h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header h4 i {
+            color: #ef4444;
+        }
+
+        .indicators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .ind-card {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.06);
+            border-radius: var(--border-radius-md);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: var(--transition-smooth);
+        }
+
+        .ind-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(245, 158, 11, 0.25);
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.04);
+        }
+
+        .ind-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ind-card-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            max-width: 75%;
+            line-height: 1.3;
+        }
+
+        .ind-card-icon {
+            font-size: 1.1rem;
+            color: #f59e0b;
+        }
+
+        .ind-card-value-box {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .ind-card-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #ef4444;
+        }
+
+        .ind-card-year {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .ind-card-desc {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            border-top: 1px solid rgba(15, 23, 42, 0.04);
+            padding-top: 8px;
+        }
+
+        /* Database Status overlay */
+        .db-status-bar {
+            background: #f1f5f9;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-md);
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .db-status-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .db-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-emerald);
+            box-shadow: 0 0 6px var(--accent-emerald);
+        }
+
+        .db-dot.offline {
+            background-color: #f59e0b;
+            box-shadow: 0 0 6px #f59e0b;
+        }
+
+        .admin-link-btn {
+            color: #ef4444;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: var(--transition-smooth);
+        }
+
+        .admin-link-btn:hover {
+            color: #dc2626;
+            text-decoration: underline;
+        }
+
+        /* Custom spinner overlay */
+        .loading-cover {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            font-family: var(--font-outfit);
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-cover.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(239, 68, 68, 0.1);
+            border-top-color: #ef4444;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Cover -->
+    <div id="loading-cover" class="loading-cover">
+        <div class="spinner"></div>
+        <div style="font-weight: 600; color: var(--text-primary);">MunTHINK Health Database Loading...</div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="dashboard-header">
+        <div class="header-logo">
+            <img src="muntinlupa-city-logo.png" alt="MunTHINK Logo" class="header-logo-img">
+            <div class="header-titles">
+                <h1>MunTHINK Hub</h1>
+                <p class="subtitle">Smarter Data for a Smarter Muntinlupa</p>
+            </div>
+        </div>
+        <div class="header-info">
+             <img src="hamburger.png" alt="sidebar" class="sidebar-sectors" id="hamburger-btn">
+        </div>
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <aside class="sector-sidebar" id="sector-sidebar">
+        <div class="sidebar-header">
+            <h2>Dashboard Sectors</h2>
+            <i class="fa-solid fa-xmark" id="close-sidebar-btn"></i>
+        </div>
+    
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item"><i class="fa-solid fa-users"></i> Population</a>
+            <a href="economic.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Economic</a>
+            <a href="education.html" class="nav-item"><i class="fa-solid fa-graduation-cap"></i> Education</a>
+            <a href="health.html" class="nav-item active" style="background: rgba(0, 51, 151, 0.08); color: #003397; border-left: 4px solid #ef4444;"><i class="fa-solid fa-notes-medical" style="color: #ef4444;"></i> Health</a>
+            <a href="protective.html" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Protective</a>
+            <a href="socwel.html" class="nav-item"><i class="fa-solid fa-hand-holding-heart"></i> Social Welfare</a>
+            <a href="environment.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Environment</a>
+            <a href="institutional.html" class="nav-item"><i class="fa-solid fa-building-columns"></i> Institutional</a>
+        </nav>
+    </aside>
+
+    <div class="dashboard-container">
+        
+        <!-- Live Connection Status Alert Bar -->
+        <div class="db-status-bar">
+            <div class="db-status-left">
+                <div id="db-dot" class="db-dot"></div>
+                <span id="db-status-txt">Connected to live Supabase DB</span>
+            </div>
+            <a href="admin_edit.html" class="admin-link-btn">
+                <i class="fa-solid fa-screwdriver-wrench"></i> Manage Health Records in Admin
+            </a>
+        </div>
+
+        <!-- Main Stats Summary Banner -->
+        <section class="stats-banner">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper health-icon-red">
+                    <i class="fa-solid fa-baby"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Crude Birth Rate (CBR)</span>
+                    <h2 id="card-cbr">--</h2>
+                    <span class="stat-pct" id="card-cbr-year" style="color: var(--text-muted)">Latest Year</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper health-icon-red">
+                    <i class="fa-solid fa-skull"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Crude Death Rate (CDR)</span>
+                    <h2 id="card-cdr">--</h2>
+                    <span class="stat-pct" id="card-cdr-year" style="color: var(--text-muted)">Latest Year</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper health-icon-red">
+                    <i class="fa-solid fa-syringe"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Fully Immunized Children</span>
+                    <h2 id="card-immunized">--</h2>
+                    <span class="stat-pct" id="card-immunized-year" style="color: var(--text-muted)">Latest Year</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper health-icon-red">
+                    <i class="fa-solid fa-house-chimney-medical"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Facility Based Births</span>
+                    <h2 id="card-facility">--</h2>
+                    <span class="stat-pct" id="card-facility-year" style="color: var(--text-muted)">Latest Year</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Charts Workspace -->
+        <div class="health-grid">
+            <div class="charts-container-grid">
+                
+                <!-- Chart 1: Vital Health Situation -->
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-heart-pulse"></i> Vital Rates & Ratios</h5>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Hover chart points for details</div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="vitalRatesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Family Health & Child Care -->
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-person-breastfeeding"></i> Family Health & Child Care</h5>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Hover chart points for details</div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="familyHealthChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Detailed Indicators Cards Grid -->
+        <section class="indicator-cards-section">
+            <div class="section-header">
+                <h4><i class="fa-solid fa-circle-info"></i> Health Indicators Summary</h4>
+            </div>
+            <div class="indicators-grid" id="indicators-grid-container">
+                <!-- Javascript builds these dynamically -->
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer" aria-hidden="true" style="margin-top: 40px;">
+            <img src="footer.jpg" alt="" class="footer-image">
+        </footer>
+
+    </div>
+
+    <!-- Supabase JS CDN (v2) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Page Logic Javascript -->
+    <script>
+        // Supabase DB credentials
+        const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
+        const STORAGE_KEY = "muntinlupa_sector_data_health";
+
+        // Initial default health indicators dataset
+        const DEFAULT_HEALTH_DATA = {
+            "Crude Birth Rate (CBR)": { history: [12.12, 12.3, null, null, 13.6, 15.04] },
+            "Crude Death Rate (CDR)": { history: [4.71, 5.54, null, null, 3.17, null] },
+            "Infant Mortality Rate": { history: [6.86, 9.21, null, null, 7.85, 7.69] },
+            "Under Five Mortality Rate (UMR)": { history: [9.61, 11.58, null, null, 9.55, null] },
+            "Maternal Mortality Rate (MMR)": { history: [106.8, 133.67, null, null, 52.0, 12.0] },
+            "Child Woman Ratio (CWR)": { history: [null, 1.1, null, null, null, null] },
+            "Percentage of Fully Immunized Children": { history: [null, 74.0, 61.0, 60.29, 54.65, 50.26] },
+            "Prevalence of Underweight (UW) & Severely Underweight (SUW) Children": { history: [null, null, null, null, null, null] },
+            "Infants Exclusively Breastfeed until 6 months": { history: [null, 75.28, 53.48, 59.39, 68.37, null] },
+            "Percentage of Teenage Deliveries": { history: [null, 8.89, null, null, null, null] },
+            "Percentage of Birth by Skilled Attendant": { history: [null, 87.0, 82.0, 86.0, 95.80, 95.28] },
+            "Births by Facility Based": { history: [null, 83.0, 78.28, 85.38, 95.69, 94.36] },
+            "Contraceptive Prevalence Rate": { history: [null, 22.7, 23.74, 27.57, null, null] }
+        };
+        const HEALTH_LABELS = ["2020", "2021", "2022", "2023", "2024", "2025"];
+
+        // Indicator configuration details for cards (icons, descriptions, units)
+        const INDICATORS_METADATA = {
+            "Crude Birth Rate (CBR)": { icon: "fa-baby", desc: "Annual number of live births per 1,000 population.", unit: "%" },
+            "Crude Death Rate (CDR)": { icon: "fa-skull", desc: "Annual number of deaths per 1,000 population.", unit: "%" },
+            "Infant Mortality Rate": { icon: "fa-baby-carriage", desc: "Number of infant deaths per 1,000 live births.", unit: "%" },
+            "Under Five Mortality Rate (UMR)": { icon: "fa-children", desc: "Number of under-five deaths per 1,000 live births.", unit: "%" },
+            "Maternal Mortality Rate (MMR)": { icon: "fa-person-pregnant", desc: "Maternal deaths per 100,000 live births.", unit: " deaths per 100k" },
+            "Child Woman Ratio (CWR)": { icon: "fa-child-reaching", desc: "Ratio of children under 5 to women of childbearing age.", unit: "" },
+            "Percentage of Fully Immunized Children": { icon: "fa-shield-virus", desc: "Percentage of children under 1 fully immunized.", unit: "%" },
+            "Prevalence of Underweight (UW) & Severely Underweight (SUW) Children": { icon: "fa-apple-whole", desc: "Percentage of underweight children.", unit: "%" },
+            "Infants Exclusively Breastfeed until 6 months": { icon: "fa-person-breastfeeding", desc: "Percentage of infants exclusively breastfed.", unit: "%" },
+            "Percentage of Teenage Deliveries": { icon: "fa-user-clock", desc: "Percentage of births to mothers aged 15-19.", unit: "%" },
+            "Percentage of Birth by Skilled Attendant": { icon: "fa-user-nurse", desc: "Births assisted by trained healthcare personnel.", unit: "%" },
+            "Births by Facility Based": { icon: "fa-hospital", desc: "Births occurring within hospital/health facilities.", unit: "%" },
+            "Contraceptive Prevalence Rate": { icon: "fa-pills", desc: "Percentage of women using modern family planning.", unit: "%" }
+        };
+
+        let healthData = {};
+        let healthLabels = [];
+        let supabaseClient = null;
+
+        // Initialize Supabase safely
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        // Initialize Page
+        document.addEventListener("DOMContentLoaded", async () => {
+            initSidebar();
+            await fetchHealthData();
+            renderStatsBanner();
+            renderCharts();
+            renderIndicatorCards();
+            
+            // Hide loading cover
+            const cover = document.getElementById("loading-cover");
+            cover.classList.add("fade-out");
+            setTimeout(() => cover.style.display = 'none', 300);
+        });
+
+        // Sidebar navigation toggling
+        function initSidebar() {
+            const hamburgerBtn = document.getElementById("hamburger-btn");
+            const sidebar = document.getElementById("sector-sidebar");
+            const overlay = document.getElementById("sidebar-overlay");
+            const closeBtn = document.getElementById("close-sidebar-btn");
+
+            if (hamburgerBtn) {
+                hamburgerBtn.addEventListener("click", () => {
+                    sidebar.classList.add("active");
+                    overlay.classList.add("active");
+                });
+            }
+            if (closeBtn) {
+                closeBtn.addEventListener("click", () => {
+                    sidebar.classList.remove("active");
+                    overlay.classList.remove("active");
+                });
+            }
+            if (overlay) {
+                overlay.addEventListener("click", () => {
+                    sidebar.classList.remove("active");
+                    overlay.classList.remove("active");
+                });
+            }
+        }
+
+        // Fetch Live Database or Local Storage Fallback
+        async function fetchHealthData() {
+            const statusTxt = document.getElementById("db-status-txt");
+            const statusDot = document.getElementById("db-dot");
+            
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('health')
+                        .select('data, labels')
+                        .eq('id', 1)
+                        .single();
+
+                    if (error) {
+                        if (error.code === 'PGRST116') {
+                            console.log("Health table empty in Supabase. Attempting to seed default data.");
+                            // Seed default health data to Supabase live
+                            await supabaseClient.from('health').insert({ id: 1, data: DEFAULT_HEALTH_DATA, labels: HEALTH_LABELS });
+                            healthData = DEFAULT_HEALTH_DATA;
+                            healthLabels = HEALTH_LABELS;
+                        } else {
+                            throw error;
+                        }
+                    } else {
+                        healthData = data.data || DEFAULT_HEALTH_DATA;
+                        healthLabels = data.labels || HEALTH_LABELS;
+                    }
+                    
+                    statusTxt.textContent = "Live Supabase Database Connected";
+                    statusDot.className = "db-dot";
+                } catch (e) {
+                    console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
+                    loadOfflineFallback();
+                }
+            } else {
+                console.warn("Supabase library not loaded. Loading from LocalStorage fallback.");
+                loadOfflineFallback();
+            }
+        }
+
+        function loadOfflineFallback() {
+            const statusTxt = document.getElementById("db-status-txt");
+            const statusDot = document.getElementById("db-dot");
+            
+            statusTxt.textContent = "Offline Mode (LocalStorage Fallback)";
+            statusDot.className = "db-dot offline";
+
+            const localData = localStorage.getItem(STORAGE_KEY);
+            if (localData) {
+                try {
+                    const parsed = JSON.parse(localData);
+                    healthData = parsed.data || DEFAULT_HEALTH_DATA;
+                    healthLabels = parsed.labels || HEALTH_LABELS;
+                } catch (e) {
+                    console.error("Error parsing localstorage data.", e);
+                    healthData = DEFAULT_HEALTH_DATA;
+                    healthLabels = HEALTH_LABELS;
+                }
+            } else {
+                healthData = DEFAULT_HEALTH_DATA;
+                healthLabels = HEALTH_LABELS;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: DEFAULT_HEALTH_DATA, labels: HEALTH_LABELS }));
+            }
+        }
+
+        // Helper to grab latest non-null value from an array
+        function getLatestValue(arr) {
+            if (!Array.isArray(arr)) return { val: '--', year: '--' };
+            for (let i = arr.length - 1; i >= 0; i--) {
+                if (arr[i] !== null && arr[i] !== undefined) {
+                    return { val: arr[i], year: healthLabels[i] };
+                }
+            }
+            return { val: '--', year: '--' };
+        }
+
+        // Populate Stats Banner Cards
+        function renderStatsBanner() {
+            // CBR
+            const cbrInfo = getLatestValue(healthData["Crude Birth Rate (CBR)"]?.history);
+            document.getElementById("card-cbr").textContent = cbrInfo.val !== '--' ? `${cbrInfo.val}%` : '--';
+            document.getElementById("card-cbr-year").textContent = `Census Year: ${cbrInfo.year}`;
+
+            // CDR
+            const cdrInfo = getLatestValue(healthData["Crude Death Rate (CDR)"]?.history);
+            document.getElementById("card-cdr").textContent = cdrInfo.val !== '--' ? `${cdrInfo.val}%` : '--';
+            document.getElementById("card-cdr-year").textContent = `Census Year: ${cdrInfo.year}`;
+
+            // Immunized Children
+            const immInfo = getLatestValue(healthData["Percentage of Fully Immunized Children"]?.history);
+            document.getElementById("card-immunized").textContent = immInfo.val !== '--' ? `${immInfo.val}%` : '--';
+            document.getElementById("card-immunized-year").textContent = `Census Year: ${immInfo.year}`;
+
+            // Facility births
+            const facInfo = getLatestValue(healthData["Births by Facility Based"]?.history);
+            document.getElementById("card-facility").textContent = facInfo.val !== '--' ? `${facInfo.val}%` : '--';
+            document.getElementById("card-facility-year").textContent = `Census Year: ${facInfo.year}`;
+        }
+
+        // Draw Interactive Charts
+        function renderCharts() {
+            // Chart A: Vital Rates (CBR, CDR, Infant Mortality, UMR, CWR on left axis, MMR on right axis)
+            const ctxA = document.getElementById("vitalRatesChart").getContext("2d");
+            new Chart(ctxA, {
+                type: 'line',
+                data: {
+                    labels: healthLabels,
+                    datasets: [
+                        {
+                            label: 'Crude Birth Rate (CBR)',
+                            data: healthData["Crude Birth Rate (CBR)"]?.history || [],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.05)',
+                            borderWidth: 3,
+                            yAxisID: 'y',
+                            spanGaps: true,
+                            tension: 0.15
+                        },
+                        {
+                            label: 'Crude Death Rate (CDR)',
+                            data: healthData["Crude Death Rate (CDR)"]?.history || [],
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                            borderWidth: 3,
+                            yAxisID: 'y',
+                            spanGaps: true,
+                            tension: 0.15
+                        },
+                        {
+                            label: 'Infant Mortality Rate',
+                            data: healthData["Infant Mortality Rate"]?.history || [],
+                            borderColor: '#10b981',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            yAxisID: 'y',
+                            spanGaps: true,
+                            tension: 0.15
+                        },
+                        {
+                            label: 'Under Five Mortality Rate (UMR)',
+                            data: healthData["Under Five Mortality Rate (UMR)"]?.history || [],
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            yAxisID: 'y',
+                            spanGaps: true,
+                            tension: 0.15
+                        },
+                        {
+                            label: 'Child Woman Ratio (CWR)',
+                            data: healthData["Child Woman Ratio (CWR)"]?.history || [],
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            yAxisID: 'y',
+                            spanGaps: true,
+                            pointStyle: 'rectRot',
+                            tension: 0.15
+                        },
+                        {
+                            label: 'Maternal Mortality (MMR)',
+                            data: healthData["Maternal Mortality Rate (MMR)"]?.history || [],
+                            borderColor: '#ec4899',
+                            backgroundColor: 'transparent',
+                            borderWidth: 3,
+                            yAxisID: 'y1', // Dual scale Y1
+                            spanGaps: true,
+                            pointStyle: 'triangle',
+                            tension: 0.15
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                font: { family: 'Outfit', size: 11, weight: '500' },
+                                padding: 14
+                            }
+                        },
+                        tooltip: {
+                            font: { family: 'Outfit' },
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed.y !== null) {
+                                        if (context.dataset.label.includes('Maternal')) {
+                                            label += context.parsed.y + ' per 100k births';
+                                        } else if (context.dataset.label.includes('Ratio')) {
+                                            label += context.parsed.y;
+                                        } else {
+                                            label += context.parsed.y + '%';
+                                        }
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Rate / Ratio (%)',
+                                font: { family: 'Outfit', weight: 'bold', size: 12 }
+                            },
+                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Maternal Deaths per 100k Livebirths',
+                                font: { family: 'Outfit', weight: 'bold', size: 12 }
+                            },
+                            grid: { drawOnChartArea: false } // Avoid clashing gridlines
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Family Health & Child Care (Immunization, Breastfeeding, Teenage, Skilled, Facility, Contraceptives)
+            const ctxB = document.getElementById("familyHealthChart").getContext("2d");
+            new Chart(ctxB, {
+                type: 'line',
+                data: {
+                    labels: healthLabels,
+                    datasets: [
+                        {
+                            label: 'Fully Immunized Children',
+                            data: healthData["Percentage of Fully Immunized Children"]?.history || [],
+                            borderColor: '#2563eb',
+                            borderWidth: 3,
+                            spanGaps: true,
+                            tension: 0.15
+                        },
+                        {
+                            label: 'Exclusively Breastfed (6 mos)',
+                            data: healthData["Infants Exclusively Breastfeed until 6 months"]?.history || [],
+                            borderColor: '#db2777',
+                            borderWidth: 2,
+                            spanGaps: true,
+                            tension: 0.15
+                        },
+                        {
+                            label: 'Teenage Deliveries',
+                            data: healthData["Percentage of Teenage Deliveries"]?.history || [],
+                            borderColor: '#ea580c',
+                            borderWidth: 2,
+                            spanGaps: true,
+                            tension: 0.15
+                        },
+                        {
+                            label: 'Birth by Skilled Attendant',
+                            data: healthData["Percentage of Birth by Skilled Attendant"]?.history || [],
+                            borderColor: '#16a34a',
+                            borderWidth: 3,
+                            spanGaps: true,
+                            tension: 0.15
+                        },
+                        {
+                            label: 'Births in Facility',
+                            data: healthData["Births by Facility Based"]?.history || [],
+                            borderColor: '#0d9488',
+                            borderWidth: 2,
+                            spanGaps: true,
+                            tension: 0.15
+                        },
+                        {
+                            label: 'Contraceptive Prevalence Rate',
+                            data: healthData["Contraceptive Prevalence Rate"]?.history || [],
+                            borderColor: '#4f46e5',
+                            borderWidth: 2,
+                            spanGaps: true,
+                            tension: 0.15
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                font: { family: 'Outfit', size: 11, weight: '500' },
+                                padding: 14
+                            }
+                        },
+                        tooltip: {
+                            font: { family: 'Outfit' },
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Percentage (%)',
+                                font: { family: 'Outfit', weight: 'bold', size: 12 }
+                            },
+                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render detailed cards for each indicator
+        function renderIndicatorCards() {
+            const container = document.getElementById("indicators-grid-container");
+            container.innerHTML = "";
+
+            Object.keys(INDICATORS_METADATA).forEach(indicatorName => {
+                const meta = INDICATORS_METADATA[indicatorName];
+                const history = healthData[indicatorName]?.history;
+                const latest = getLatestValue(history);
+
+                const card = document.createElement("div");
+                card.className = "ind-card";
+                
+                let displayVal = '--';
+                if (latest.val !== '--') {
+                    displayVal = latest.val + meta.unit;
+                }
+
+                card.innerHTML = `
+                    <div class="ind-card-header">
+                        <span class="ind-card-title">${indicatorName}</span>
+                        <i class="fa-solid ${meta.icon} ind-card-icon"></i>
+                    </div>
+                    <div class="ind-card-value-box">
+                        <span class="ind-card-value">${displayVal}</span>
+                        <span class="ind-card-year">${latest.year !== '--' ? `(Latest: ${latest.year})` : ''}</span>
+                    </div>
+                    <div class="ind-card-desc">
+                        ${meta.desc}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
