@@ -713,7 +713,7 @@ select option {
     fill: rgba(139, 92, 246, 0.18);
     stroke: transparent;
     stroke-width: 0;
-    transform: scale(1.05);
+    transform: scale(1.03);
     filter: drop-shadow(0 0 10px var(--accent-violet-glow));
 }
 
