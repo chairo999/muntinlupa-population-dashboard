@@ -2,164 +2,939 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin — Edit Barangay Population</title>
-  <link href="styles.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Muntinlupa City Data Portal</title>
+  <!-- Google Fonts: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
-    body { font-family: 'Outfit', system-ui, sans-serif; padding: 24px; background:#f8fafc; color:#0f172a }
-    .card { background:white; padding:20px; border-radius:12px; max-width:720px; margin:20px auto; box-shadow:0 6px 18px rgba(0,0,0,0.06) }
-    label{display:block;margin:10px 0 6px;font-weight:600}
-    select,input[type=number]{width:100%;padding:10px;border:1px solid rgba(15,23,42,0.08);border-radius:8px}
-    button{margin-top:16px;padding:10px 14px;border-radius:8px;background:#06b6d4;color:#fff;border:none;cursor:pointer}
-    .note{font-size:0.9rem;color:#475569;margin-top:12px}
-    .ok{color:green}
-    .err{color:#b91c1c}
+    :root {
+      --bg-light: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: rgba(15, 23, 42, 0.08);
+      --card-hover-border: rgba(15, 23, 42, 0.15);
+      
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      
+      /* Color Accents: Yellow with touches of Red */
+      --accent-yellow: #f59e0b; /* warm yellow */
+      --accent-yellow-light: #fef3c7; /* yellow-100 */
+      --accent-yellow-glow: rgba(245, 158, 11, 0.15);
+      
+      --accent-red: #ef4444; /* red-500 */
+      --accent-red-hover: #dc2626; /* red-600 */
+      --accent-red-glow: rgba(239, 68, 68, 0.2);
+      
+      --accent-cyan: #0891b2;
+      --accent-emerald: #10b981;
+      
+      --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --border-radius-lg: 16px;
+      --border-radius-md: 10px;
+      --font-outfit: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: var(--bg-light);
+      color: var(--text-primary);
+      font-family: var(--font-outfit);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(at 10% 10%, rgba(245, 158, 11, 0.06) 0px, transparent 50%),
+        radial-gradient(at 90% 10%, rgba(239, 68, 68, 0.05) 0px, transparent 50%),
+        radial-gradient(at 50% 90%, rgba(8, 145, 178, 0.03) 0px, transparent 50%);
+      background-attachment: fixed;
+      padding: 24px;
+    }
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.03);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.2);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-red);
+    }
+    /* Container & Layout */
+    .admin-container {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      flex-grow: 1;
+    }
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 28px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius-lg);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03), 0 1px 8px rgba(15, 23, 42, 0.02);
+    }
+    .header-title-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header-icon {
+      font-size: 2.2rem;
+      color: var(--accent-red);
+      filter: drop-shadow(0 0 8px var(--accent-red-glow));
+      animation: pulse-glow 2.5s infinite alternate;
+    }
+    @keyframes pulse-glow {
+      0% { filter: drop-shadow(0 0 2px var(--accent-red-glow)); }
+      100% { filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.5)); }
+    }
+    .header-titles h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      background: linear-gradient(to right, var(--text-primary), var(--accent-red));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header-titles p {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-yellow);
+      letter-spacing: 3px;
+    }
+    .header-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f1f5f9;
+      padding: 8px 16px;
+      border-radius: 30px;
+      border: 1px solid var(--card-border);
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--text-muted);
+      position: relative;
+    }
+    .status-dot.connecting {
+      background-color: var(--accent-cyan);
+      box-shadow: 0 0 8px var(--accent-cyan);
+      animation: blink 1s infinite alternate;
+    }
+    .status-dot.online {
+      background-color: var(--accent-emerald);
+      box-shadow: 0 0 8px var(--accent-emerald);
+    }
+    .status-dot.error {
+      background-color: var(--accent-red);
+      box-shadow: 0 0 8px var(--accent-red);
+    }
+    @keyframes blink {
+      0% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
+    .status-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    /* Main Workspace Grid */
+    .workspace {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+    /* Sidebar Navigation */
+    .sidebar {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03);
+      height: fit-content;
+    }
+    .sidebar-section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      list-style: none;
+    }
+    .nav-item {
+      width: 100%;
+    }
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--border-radius-md);
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+    .nav-btn i {
+      font-size: 1.1rem;
+      width: 20px;
+      text-align: center;
+      transition: var(--transition-smooth);
+      color: var(--text-muted);
+    }
+    .nav-btn:hover {
+      background: #f8fafc;
+      color: var(--text-primary);
+      border-color: rgba(239, 68, 68, 0.1);
+    }
+    .nav-btn:hover i {
+      color: var(--accent-red);
+      transform: scale(1.1);
+    }
+    .nav-btn.active {
+      background: var(--accent-yellow-light);
+      color: var(--text-primary);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-left: 4px solid var(--accent-red); /* Red Left indicator touch */
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.05);
+    }
+    .nav-btn.active i {
+      color: var(--accent-red); /* Red active icons */
+      filter: drop-shadow(0 0 2px var(--accent-red-glow));
+    }
+    /* Main Content Card */
+    .main-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius-lg);
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03);
+      transition: var(--transition-smooth);
+      position: relative;
+    }
+    .card:hover {
+      border-color: var(--card-hover-border);
+    }
+    .sector-header {
+      border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .sector-header-info h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sector-header-info h2 i {
+      color: var(--accent-red); /* Title Icon Red Touch */
+    }
+    .sector-header-info p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    .db-badge {
+      background: rgba(239, 68, 68, 0.08); /* Red database badge */
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: var(--accent-red);
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    label i {
+      color: var(--accent-red); /* Input label Red Touch */
+      font-size: 0.95rem;
+    }
+    select, input[type=number] {
+      width: 100%;
+      padding: 12px 16px;
+      background: #f8fafc;
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      border-radius: var(--border-radius-md);
+      color: var(--text-primary);
+      font-family: var(--font-outfit);
+      font-size: 0.95rem;
+      transition: var(--transition-smooth);
+      outline: none;
+    }
+    select:focus, input[type=number]:focus {
+      border-color: var(--accent-yellow);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1); /* Red glow focus ring */
+      background: #ffffff;
+    }
+    select option {
+      background: #ffffff;
+      color: var(--text-primary);
+    }
+    /* Current Value Preview Alert: Yellow background with red border */
+    .value-preview-card {
+      background: rgba(245, 158, 11, 0.05); /* Yellow base tint */
+      border: 1px dashed rgba(239, 68, 68, 0.35); /* Red dashed border touch */
+      border-radius: var(--border-radius-md);
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: var(--transition-smooth);
+    }
+    .value-preview-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+    .value-preview-left i {
+      color: var(--accent-red);
+      font-size: 1.1rem;
+    }
+    .value-preview-right {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent-red); /* Display text in red */
+    }
+    /* Save Button: Gradient yellow to red */
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--accent-yellow), var(--accent-red));
+      border: none;
+      border-radius: var(--border-radius-md);
+      color: #ffffff;
+      font-family: var(--font-outfit);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition-smooth);
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.2);
+    }
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
+      background: linear-gradient(135deg, #fbbf24, var(--accent-red-hover));
+    }
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+    .submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    /* Status Notifications */
+    .notification {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px;
+      border-radius: var(--border-radius-md);
+      font-size: 0.9rem;
+      margin-top: 20px;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: slide-up 0.3s forwards cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes slide-up {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .notification.info {
+      background: rgba(8, 145, 178, 0.08);
+      border: 1px solid rgba(8, 145, 178, 0.15);
+      color: var(--accent-cyan);
+    }
+    .notification.ok {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.18);
+      color: #059669;
+    }
+    .notification.err {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.18);
+      color: var(--accent-red);
+    }
+    /* Supabase Details Config Collapsible */
+    details {
+      margin-top: 24px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius-md);
+      background: #f8fafc;
+      overflow: hidden;
+      transition: var(--transition-smooth);
+    }
+    summary {
+      padding: 14px 18px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      user-select: none;
+      transition: var(--transition-smooth);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    summary::after {
+      content: '\f107';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 0.95rem;
+      transition: var(--transition-smooth);
+      color: var(--text-muted);
+    }
+    details[open] summary {
+      color: var(--accent-red);
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--card-border);
+    }
+    details[open] summary::after {
+      transform: rotate(180deg);
+      color: var(--accent-red);
+    }
+    summary:hover {
+      color: var(--text-primary);
+      background: #f1f5f9;
+    }
+    .details-content {
+      padding: 18px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .config-pre {
+      background: #0f172a; /* Dark console contrast */
+      padding: 12px 14px;
+      border-radius: 6px;
+      font-family: monospace;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: #38bdf8;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    /* Back Link to Dashboard */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: var(--transition-smooth);
+      margin-top: 8px;
+      align-self: center;
+    }
+    .back-link:hover {
+      color: var(--accent-red);
+    }
+    .back-link i {
+      transition: var(--transition-smooth);
+    }
+    .back-link:hover i {
+      transform: translateX(-4px);
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>Edit Population by Barangay</h2>
-
-    <div id="status" class="note">Loading...</div>
-
-    <form id="edit-form">
-      <label for="brgy">Select Barangay</label>
-      <select id="brgy" required>
-        <option value="" disabled selected>Loading barangays...</option>
-      </select>
-
-      <label for="year">Select Year</label>
-      <select id="year" required>
-        <option value="" disabled selected>Loading years...</option>
-      </select>
-
-      <label for="value">Population Value</label>
-      <input id="value" type="number" min="0" placeholder="Enter population value" required />
-
-      <button type="submit">Save to Supabase</button>
-    </form>
-
-
-    <details>
-      <summary>Supabase config (edit if needed)</summary>
-      <div class="note">Supabase URL and anon key are stored here for the editor. These are the same values used by the dashboard app.</div>
-      <pre id="cfg" class="note"></pre>
-    </details>
+  <div class="admin-container">
+    
+    <!-- Top Header -->
+    <header>
+      <div class="header-title-group">
+        <i class="fa-solid fa-screwdriver-wrench header-icon"></i>
+        <div class="header-titles">
+          <h1>MUNTINLUPA CITY ADMIN</h1>
+          <p>DATABASE DATA EDITOR</p>
+        </div>
+      </div>
+      <div class="header-status">
+        <div id="status-dot" class="status-dot connecting"></div>
+        <span id="status-text" class="status-text">Connecting to Supabase...</span>
+      </div>
+    </header>
+    <!-- Main Workspace -->
+    <div class="workspace">
+      
+      <!-- Sidebar Navigation for Editor Sections -->
+      <aside class="sidebar">
+        <div class="sidebar-section-title">Edit Sectors</div>
+        <nav class="nav-list">
+          <li class="nav-item">
+            <button class="nav-btn active" data-sector="edit">
+              <i class="fa-solid fa-users"></i>
+              <span>Population</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-btn" data-sector="education">
+              <i class="fa-solid fa-graduation-cap"></i>
+              <span>Education Sector</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-btn" data-sector="health">
+              <i class="fa-solid fa-heart-pulse"></i>
+              <span>Health Sector</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-btn" data-sector="protective">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>Protective Services</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-btn" data-sector="social_welfare">
+              <i class="fa-solid fa-hand-holding-heart"></i>
+              <span>Social Welfare</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-btn" data-sector="environment">
+              <i class="fa-solid fa-leaf"></i>
+              <span>Environment</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-btn" data-sector="institutional">
+              <i class="fa-solid fa-building-columns"></i>
+              <span>Institutional</span>
+            </button>
+          </li>
+        </nav>
+        
+        <a href="index.html" class="back-link">
+          <i class="fa-solid fa-arrow-left"></i> Back to Public Dashboard
+        </a>
+      </aside>
+      <!-- Content Area -->
+      <main class="main-panel">
+        
+        <!-- Editor Form Card -->
+        <div class="card">
+          <div class="sector-header">
+            <div class="sector-header-info">
+              <h2 id="sector-title"><i class="fa-solid fa-users"></i> Population</h2>
+              <p id="sector-desc">Modify the demographic census population estimates across years and districts.</p>
+            </div>
+            <div class="db-badge">
+              <i class="fa-solid fa-database"></i> Table: <span id="table-name-badge">demographics</span>
+            </div>
+          </div>
+          <!-- Message Log (Inline status notifications) -->
+          <div id="notification-area">
+            <div id="status" class="notification info">
+              <i class="fa-solid fa-circle-info"></i> Connecting to database and loading resources...
+            </div>
+          </div>
+          <form id="edit-form" style="margin-top: 20px;">
+            <div class="form-group">
+              <label for="brgy"><i class="fa-solid fa-map-pin"></i> Select Barangay</label>
+              <select id="brgy" required disabled>
+                <option value="" disabled selected>Loading barangays...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="year"><i class="fa-solid fa-calendar-days"></i> Select Year</label>
+              <select id="year" required disabled>
+                <option value="" disabled selected>Loading years...</option>
+              </select>
+            </div>
+            <!-- Value Previewer -->
+            <div id="value-preview-box" class="value-preview-card" style="display: none;">
+              <div class="value-preview-left">
+                <i class="fa-solid fa-chart-simple"></i>
+                <span>Currently stored value in Supabase:</span>
+              </div>
+              <div id="current-value-display" class="value-preview-right">--</div>
+            </div>
+            <div class="form-group">
+              <label for="value"><i class="fa-solid fa-arrow-up-9-1"></i> New Value</label>
+              <input id="value" type="number" min="0" placeholder="Enter numerical value" required disabled />
+            </div>
+            <button type="submit" id="submit-btn" class="submit-btn" disabled>
+              <i class="fa-solid fa-floppy-disk"></i> Save changes to Supabase
+            </button>
+          </form>
+          <!-- Supabase Config Collapsible details -->
+          <details>
+            <summary>Supabase connection details</summary>
+            <div class="details-content">
+              <p>These values are sourced from the system configuration. Edits made through this console are written live to the specified table in the backend database.</p>
+              <pre id="cfg" class="config-pre"></pre>
+            </div>
+          </details>
+        </div>
+      </main>
+    </div>
   </div>
-
   <!-- Supabase JS (UMD) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  
   <script>
-    // Configure these — values taken from existing app.js (update if different)
+    // Configuration details
     const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
-
-    const DEFAULT_HISTORICAL_LABELS = ["2015","2020","2024"];
-
-    const statusEl = document.getElementById('status');
+    // Configuration map for editing options
+    const SECTORS = {
+      edit: {
+        table: "demographics",
+        name: "Population",
+        desc: "Modify the demographic census population estimates across years and districts.",
+        icon: "fa-users"
+      },
+      education: {
+        table: "education",
+        name: "Education Sector",
+        desc: "Manage education metrics, school statistics, and literacy index records.",
+        icon: "fa-graduation-cap"
+      },
+      health: {
+        table: "health",
+        name: "Health Sector",
+        desc: "Edit healthcare indexes, facility metrics, and general health parameters.",
+        icon: "fa-heart-pulse"
+      },
+      protective: {
+        table: "protective",
+        name: "Protective Services",
+        desc: "Update safety ratios, precinct coverages, and community protection logs.",
+        icon: "fa-shield-halved"
+      },
+      social_welfare: {
+        table: "social_welfare",
+        name: "Social Welfare Services",
+        desc: "Edit social support system markers, program coverage, and beneficiary counts.",
+        icon: "fa-hand-holding-heart"
+      },
+      environment: {
+        table: "environment",
+        name: "Environmental Indicators",
+        desc: "Modify waste management metrics, green cover stats, and environment markers.",
+        icon: "fa-leaf"
+      },
+      institutional: {
+        table: "institutional",
+        name: "Institutional Metrics",
+        desc: "Edit governance ratings, administrative assets, and municipal indices.",
+        icon: "fa-building-columns"
+      }
+    };
+    const DEFAULT_HISTORICAL_LABELS = ["2015", "2020", "2024"];
+    const DEFAULT_BARANGAY_LIST = ['Sucat', 'Buli', 'Cupang', 'Alabang', 'Ayala Alabang', 'Bayanan', 'Putatan', 'Poblacion', 'Tunasan'];
+    // State parameters
+    let currentSectorKey = "edit";
+    let appData = {};
+    let HISTORICAL_LABELS = [...DEFAULT_HISTORICAL_LABELS];
+    // DOM Elements
+    const statusDotEl = document.getElementById('status-dot');
+    const statusTextEl = document.getElementById('status-text');
+    const statusBannerEl = document.getElementById('status');
     const brgySelect = document.getElementById('brgy');
     const yearSelect = document.getElementById('year');
     const valueInput = document.getElementById('value');
+    const submitBtn = document.getElementById('submit-btn');
     const cfgEl = document.getElementById('cfg');
-
-    cfgEl.textContent = `URL: ${SUPABASE_URL}\nAnon Key: ${SUPABASE_ANON_KEY}`;
-
-    // Create a client from the UMD global `supabase` and store it as `supabaseClient`
+    const valuePreviewBox = document.getElementById('value-preview-box');
+    const currentValueDisplay = document.getElementById('current-value-display');
+    
+    // Header/Sector Info DOM Elements
+    const sectorTitle = document.getElementById('sector-title');
+    const sectorDesc = document.getElementById('sector-desc');
+    const tableNameBadge = document.getElementById('table-name-badge');
+    // Show config on page init
+    cfgEl.textContent = `Endpoint API URL: ${SUPABASE_URL}\nAnon Access Key: ${SUPABASE_ANON_KEY.substring(0, 20)}...`;
+    // Initialize Supabase Client
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    let appData = {};
-    let HISTORICAL_LABELS = [...DEFAULT_HISTORICAL_LABELS];
-
-    async function init() {
-      statusEl.textContent = 'Connecting to Supabase...';
+    // Set up sidebar navigation click handlers
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const selectedBtn = e.currentTarget;
+        const targetSector = selectedBtn.getAttribute('data-sector');
+        
+        // Update active class
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        selectedBtn.classList.add('active');
+        
+        // Set new sector
+        switchSector(targetSector);
+      });
+    });
+    // Handle Sector Switch
+    async function switchSector(sectorKey) {
+      if (!SECTORS[sectorKey]) return;
+      currentSectorKey = sectorKey;
+      
+      const config = SECTORS[sectorKey];
+      
+      // Update UI title and texts
+      sectorTitle.innerHTML = `<i class="fa-solid ${config.icon}"></i> ${config.name}`;
+      sectorDesc.textContent = config.desc;
+      tableNameBadge.textContent = config.table;
+      
+      // Clear inputs & previews
+      valuePreviewBox.style.display = 'none';
+      valueInput.value = '';
+      
+      // Disable controls while loading
+      disableForm(true);
+      // Fetch data for the new sector
+      await loadSectorData(config.table);
+    }
+    // Disable or Enable the Form Inputs & Button
+    function disableForm(disabled) {
+      brgySelect.disabled = disabled;
+      yearSelect.disabled = disabled;
+      valueInput.disabled = disabled;
+      submitBtn.disabled = disabled;
+    }
+    // Set the overall header status banner
+    function updateHeaderStatus(state, message) {
+      statusTextEl.textContent = message;
+      statusDotEl.className = 'status-dot ' + state;
+    }
+    // Show inline alert in form
+    function showNotification(type, message, iconClass = 'fa-circle-info') {
+      const parent = document.getElementById('notification-area');
+      parent.innerHTML = `
+        <div id="status" class="notification ${type}">
+          <i class="fa-solid ${iconClass}"></i> ${message}
+        </div>
+      `;
+    }
+    // Load data from selected Table in Supabase
+    async function loadSectorData(tableName) {
+      updateHeaderStatus('connecting', `Connecting table: [${tableName}]...`);
+      showNotification('info', `Retrieving sector data from table '${tableName}'...`, 'fa-spinner fa-spin');
+      
       try {
-        const { data, error } = await supabaseClient.from('demographics').select('data, labels').eq('id', 1).single();
-        if (error && error.code !== 'PGRST116') {
-          console.error(error);
-          statusEl.textContent = 'Error fetching data: ' + (error.message || error);
-          statusEl.className = 'note err';
-          return;
-        }
-
-        if (data && data.data) {
-          appData = data.data;
-          if (Array.isArray(data.labels) && data.labels.length) HISTORICAL_LABELS = data.labels;
+        const { data, error } = await supabaseClient
+          .from(tableName)
+          .select('data, labels')
+          .eq('id', 1)
+          .single();
+        if (error) {
+          // If table row is empty or not seeded
+          if (error.code === 'PGRST116') {
+            console.warn("Table row empty/unseeded. Creating fallback skeleton data.");
+            appData = {};
+            HISTORICAL_LABELS = [...DEFAULT_HISTORICAL_LABELS];
+            
+            showNotification('info', `No active records found in table '${tableName}'. Seed schema is ready for input.`, 'fa-circle-exclamation');
+            updateHeaderStatus('online', `Live & Connected (Table: ${tableName})`);
+          } else {
+            throw error;
+          }
         } else {
-          // If row missing, try to fetch from local fallback via window (not available here)
-          statusEl.textContent = 'No demographics row found. You may need to seed the table.';
-          statusEl.className = 'note err';
-          appData = {};
+          // Data successfully loaded
+          appData = data.data || {};
+          if (Array.isArray(data.labels) && data.labels.length) {
+            HISTORICAL_LABELS = data.labels;
+          } else {
+            HISTORICAL_LABELS = [...DEFAULT_HISTORICAL_LABELS];
+          }
+          
+          showNotification('info', `Ready. Select a barangay and year to modify this sector.`, 'fa-circle-check');
+          updateHeaderStatus('online', `Live & Connected (Table: ${tableName})`);
         }
-
+        // Re-populate choices
         populateBarangays();
         populateYears();
-        statusEl.textContent = 'Ready. Select barangay and year to edit.';
-        statusEl.className = 'note';
-      } catch (e) {
-        console.error(e);
-        statusEl.textContent = 'Unexpected error connecting to Supabase.';
-        statusEl.className = 'note err';
+        disableForm(false);
+        
+      } catch (err) {
+        console.error(err);
+        showNotification('err', `Database Error: ${err.message || 'Could not query the selected table. Ensure table exists in Supabase.'}`, 'fa-circle-xmark');
+        updateHeaderStatus('error', `Connection error: ${tableName}`);
+        disableForm(true); // Lock inputs if error occurred
       }
     }
-
+    // Populate Barangay Select options
     function populateBarangays() {
       brgySelect.innerHTML = '<option value="" disabled selected>-- Choose Barangay --</option>';
-      const names = Object.keys(appData).filter(k => k !== '_cityHistory');
-      if (names.length === 0) {
-        // fallback: common barangays list
-        ['Sucat','Buli','Cupang','Alabang','Ayala Alabang','Bayanan','Putatan','Poblacion','Tunasan'].forEach(n => {
-          const o = document.createElement('option'); o.value = n; o.textContent = n; brgySelect.appendChild(o);
-        });
-        return;
-      }
-      names.forEach(n => {
-        const o = document.createElement('option'); o.value = n; o.textContent = n; brgySelect.appendChild(o);
+      const names = Object.keys(appData).filter(k => k !== '_cityHistory' && k !== 'history');
+      
+      const listToUse = names.length > 0 ? names : DEFAULT_BARANGAY_LIST;
+      
+      listToUse.forEach(n => {
+        const o = document.createElement('option');
+        o.value = n;
+        o.textContent = n;
+        brgySelect.appendChild(o);
       });
     }
-
+    // Populate Year Select options
     function populateYears() {
       yearSelect.innerHTML = '<option value="" disabled selected>-- Choose Year --</option>';
       HISTORICAL_LABELS.forEach((lbl, idx) => {
-        const o = document.createElement('option'); o.value = idx; o.textContent = lbl; yearSelect.appendChild(o);
+        const o = document.createElement('option');
+        o.value = idx;
+        o.textContent = lbl;
+        yearSelect.appendChild(o);
       });
     }
-
+    // Listener for syncing stored database value
+    function syncValuePreview() {
+      const brgy = brgySelect.value;
+      const yearIndex = parseInt(yearSelect.value, 10);
+      
+      if (!brgy || Number.isNaN(yearIndex)) {
+        valuePreviewBox.style.display = 'none';
+        return;
+      }
+      
+      let val = null;
+      if (appData[brgy] && Array.isArray(appData[brgy].history)) {
+        val = appData[brgy].history[yearIndex];
+      }
+      
+      valuePreviewBox.style.display = 'flex';
+      if (val !== undefined && val !== null) {
+        currentValueDisplay.textContent = Number(val).toLocaleString();
+        valueInput.value = val; // auto-populate current value to save editing time
+      } else {
+        currentValueDisplay.textContent = '0 (Empty)';
+        valueInput.value = '0';
+      }
+    }
+    brgySelect.addEventListener('change', syncValuePreview);
+    yearSelect.addEventListener('change', syncValuePreview);
+    // Form Submit Event Handler
     document.getElementById('edit-form').addEventListener('submit', async (e) => {
       e.preventDefault();
+      
       const brgy = brgySelect.value;
       const yearIndex = parseInt(yearSelect.value, 10);
       const val = parseInt(valueInput.value, 10);
-
+      const tableName = SECTORS[currentSectorKey].table;
       if (!brgy) { alert('Choose a barangay'); return; }
       if (Number.isNaN(yearIndex)) { alert('Choose a year'); return; }
-      if (Number.isNaN(val) || val < 0) { alert('Enter a valid population value'); return; }
-
-      statusEl.textContent = 'Saving...';
+      if (Number.isNaN(val) || val < 0) { alert('Enter a valid value'); return; }
+      showNotification('info', `Saving value to Supabase...`, 'fa-spinner fa-spin');
+      submitBtn.disabled = true;
+      
       try {
-        // Ensure path exists
+        // Build minimal item structure if not existing
         if (!appData[brgy]) {
-          // create a minimal structure if missing
-          appData[brgy] = { male: { '0-14':0,'15-24':0,'25-54':0,'55-64':0,'65+':0 }, female: { '0-14':0,'15-24':0,'25-54':0,'55-64':0,'65+':0 }, history: [0,0,0,0,0] };
+          appData[brgy] = { 
+            male: { '0-14': 0, '15-24': 0, '25-54': 0, '55-64': 0, '65+': 0 }, 
+            female: { '0-14': 0, '15-24': 0, '25-54': 0, '55-64': 0, '65+': 0 }, 
+            history: [] 
+          };
         }
-        if (!Array.isArray(appData[brgy].history)) appData[brgy].history = [0,0,0,0,0];
-        // Expand history if needed
-        while (appData[brgy].history.length <= yearIndex) appData[brgy].history.push(0);
-
+        
+        if (!Array.isArray(appData[brgy].history)) {
+          appData[brgy].history = [];
+        }
+        
+        // Expand the history array if index is larger than size
+        while (appData[brgy].history.length <= yearIndex) {
+          appData[brgy].history.push(0);
+        }
+        // Apply updated value
         appData[brgy].history[yearIndex] = val;
-
-        const { error } = await supabaseClient.from('demographics').upsert({ id: 1, data: appData, labels: HISTORICAL_LABELS });
+        const { error } = await supabaseClient
+          .from(tableName)
+          .upsert({ id: 1, data: appData, labels: HISTORICAL_LABELS });
         if (error) throw error;
-
-        statusEl.textContent = 'Saved successfully.';
-        statusEl.className = 'note ok';
+        // Success notification
+        showNotification('ok', `Successfully saved changes to table '${tableName}'.`, 'fa-circle-check');
+        currentValueDisplay.textContent = Number(val).toLocaleString();
+        
       } catch (err) {
         console.error(err);
-        statusEl.textContent = 'Error saving: ' + (err.message || err);
-        statusEl.className = 'note err';
+        showNotification('err', `Save Failed: ${err.message || err}`, 'fa-circle-xmark');
+      } finally {
+        submitBtn.disabled = false;
       }
     });
-
-    init();
+    // Initial page load triggers sector loading
+    switchSector("edit");
   </script>
 </body>
 </html>
