@@ -158,6 +158,29 @@ function initEventListeners() {
     const mapPolygons = document.querySelectorAll(".map-polygon");
     const mapWrapper = document.querySelector(".map-wrapper");
     const tooltip = document.getElementById("map-tooltip");
+    const svgOverlay = mapWrapper?.querySelector(".map-svg-overlay");
+
+    const zoomLayer = mapWrapper?.querySelector(".map-zoom-layer") || (() => {
+        const layer = document.createElement("div");
+        layer.className = "map-zoom-layer";
+        if (mapWrapper && svgOverlay) {
+            mapWrapper.insertBefore(layer, svgOverlay);
+        } else {
+            mapWrapper?.appendChild(layer);
+        }
+        return layer;
+    })();
+
+    const blurLayer = mapWrapper?.querySelector(".map-blur-layer") || (() => {
+        const layer = document.createElement("div");
+        layer.className = "map-blur-layer";
+        if (mapWrapper && svgOverlay) {
+            mapWrapper.insertBefore(layer, svgOverlay);
+        } else {
+            mapWrapper?.appendChild(layer);
+        }
+        return layer;
+    })();
 
     const tooltipTitle = document.getElementById("tooltip-title");
     const tooltipPop = document.getElementById("tooltip-pop");
@@ -181,6 +204,20 @@ function initEventListeners() {
             if (tooltipTitle) tooltipTitle.textContent = `${name} (${selectedYear})`;
             if (tooltipPop) tooltipPop.textContent = stats.total.toLocaleString();
             if (tooltip) tooltip.classList.add("visible");
+
+            if (zoomLayer && mapWrapper) {
+                const { points, originX, originY } = getPolygonHoverData(polygon, mapWrapper);
+                zoomLayer.style.clipPath = `polygon(${points})`;
+                zoomLayer.style.transformOrigin = `${originX}% ${originY}%`;
+                zoomLayer.classList.add("visible");
+                zoomLayer.style.transform = "scale(1.08)";
+            }
+
+            if (blurLayer && mapWrapper) {
+                const { points } = getPolygonHoverData(polygon, mapWrapper);
+                blurLayer.style.clipPath = `polygon(${points})`;
+                blurLayer.classList.add("visible");
+            }
         });
 
         polygon.addEventListener("mousemove", (e) => {
@@ -195,6 +232,13 @@ function initEventListeners() {
 
         polygon.addEventListener("mouseleave", () => {
             if (tooltip) tooltip.classList.remove("visible");
+            if (zoomLayer) {
+                zoomLayer.classList.remove("visible");
+                zoomLayer.style.transform = "scale(1)";
+            }
+            if (blurLayer) {
+                blurLayer.classList.remove("visible");
+            }
         });
 
         polygon.addEventListener("click", (e) => {
@@ -222,6 +266,38 @@ function initEventListeners() {
             renderDashboard(); 
         });
     }
+}
+
+function getPolygonHoverData(polygon, mapWrapper) {
+    const bounds = mapWrapper.getBoundingClientRect();
+    const width = bounds.width || 750;
+    const height = bounds.height || 750;
+    const baseWidth = 750;
+    const baseHeight = 750;
+    const rawPoints = polygon.getAttribute("points") || "";
+    const coords = rawPoints
+        .trim()
+        .split(/\s+/)
+        .map(point => point.split(","))
+        .filter(([x, y]) => x !== undefined && y !== undefined)
+        .map(([x, y]) => ({
+            x: Number(x),
+            y: Number(y)
+        }));
+
+    const points = coords
+        .map(({ x, y }) => `${((x / baseWidth) * width).toFixed(2)}px ${((y / baseHeight) * height).toFixed(2)}px`)
+        .join(", ");
+
+    const totalX = coords.reduce((sum, { x }) => sum + x, 0);
+    const totalY = coords.reduce((sum, { y }) => sum + y, 0);
+    const count = coords.length || 1;
+
+    return {
+        points,
+        originX: ((totalX / count / baseWidth) * 100).toFixed(2),
+        originY: ((totalY / count / baseHeight) * 100).toFixed(2)
+    };
 }
 
 function selectBarangay(name, updateForm = true) {
