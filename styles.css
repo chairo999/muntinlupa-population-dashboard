@@ -763,6 +763,7 @@ select option {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     padding-bottom: 4px;
     margin-bottom: 2px;
+    color: #ffffff;
 }
 
 .tooltip-row {
@@ -772,12 +773,13 @@ select option {
 }
 
 .tooltip-label {
-    color: var(--text-secondary);
+    color: #ffffff;
     font-weight: 500;
 }
 
 .tooltip-value {
     font-weight: 700;
+    color: #ffffff;
 }
 
 .male-color { color: var(--accent-cyan); }
