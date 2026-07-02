@@ -5,42 +5,131 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Muntinlupa Population Dashboard</title>
     
-    <!-- Google Fonts: Montserrat Bold & Extra Bold -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     
-    <!-- LINK TO YOUR EXTERNAL CSS FILE -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="lp-env-body">
 
-    <!-- 10-Part Scroll Container using the isolated CSS layout names -->
-<div class="lp-slider-container">
-    
-    <!-- Slide Part 1 -->
-    <div class="lp-slide-part">
+    <header class="lp-dropdown-header">
+        <div class="lp-header-left">
+            <img src="muntinlupa-city-logo.png" alt="Muntinlupa City Logo" class="lp-header-logo-img">
+            <div class="lp-header-text">
+                <h3>MunTHINK Hub</h3>
+                <p>SMARTER DATA FOR A SMARTER MUNTINLUPA</p>
+            </div>
+        </div>
+        <nav class="lp-header-nav">
+            <span class="lp-nav-indicator">SCROLL TO EXPLORE</span>
+        </nav>
+    </header>
+
+    <div class="lp-slider-container">
         
-        <!-- Nested safely inside the slide, ready to be positioned top-left -->
-        <div class="lp-slide-logo">
-            <img src="muntinlupa-city-logo.png" alt="Muntinlupa City Logo">
+        <div class="lp-slide-part">
+            <div class="lp-slide-logo">
+                <img src="muntinlupa-city-logo.png" alt="Muntinlupa City Logo">
+            </div>
+            <div class="lp-slide-title">
+                <h1>ECOLOGICAL PROFILE</h1>
+                <h2>MUNTINLUPA CITY</h2>
+            </div>
         </div>
         
-        <!-- Title Branding -->
-        <div class="lp-slide-title">
-            <h1>ECOLOGICAL PROFILE</h1>
-            <h2>MUNTINLUPA CITY</h2>
+        <div class="lp-slide-part">
+            <div class="lp-slide-title">
+                <h1>POPULATION</h1>
+            </div>
+        </div>
+
+        <div class="lp-slide-part">
+            <div class="lp-slide-title">
+                <h1>ECONOMIC</h1>
+            </div>
+        </div>  
+
+        <div class="lp-slide-part">
+            <div class="lp-slide-title">
+                <h1>EDUCATION</h1>
+            </div>
+        </div>
+
+        <div class="lp-slide-part">
+            <div class="lp-slide-title">
+                <h1>HEALTH</h1>
+            </div>
+        </div>
+
+        <div class="lp-slide-part">
+            <div class="lp-slide-title">
+                <h1>PROTECTIVE</h1>
+            </div>
+        </div>
+
+        <div class="lp-slide-part">
+            <div class="lp-slide-title">
+                <h1>SOCIAL WELFARE</h1>
+            </div>
+        </div>
+
+        <div class="lp-slide-part">
+            <div class="lp-slide-title">
+                <h1>ENVIRONMENT</h1>
+            </div>
+        </div>
+
+        <div class="lp-slide-part">
+            <div class="lp-slide-title">
+                <h1>INSTITUTIONAL</h1>
+            </div>
+        </div>
+
+        <div class="lp-slide-part">
+            <div class="lp-slide-title">
+                <h1>SDG LOCALIZATION</h1>
+            </div>
         </div>
     </div>
+
+    <script>
+        const container = document.querySelector('.lp-slider-container');
+const dropdownHeader = document.querySelector('.lp-dropdown-header');
+let isScrolling = false;
+
+// Strict monitoring: Only reveal the header when the scrollbar moves past Slide 1
+container.addEventListener('scroll', () => {
+    const viewportHeight = window.innerHeight;
     
-    <!-- Subsequent Slides -->
-    <div class="lp-slide-part"></div>
-    <div class="lp-slide-part"></div>
-    <div class="lp-slide-part"></div>  
-    <div class="lp-slide-part"></div>
-    <div class="lp-slide-part"></div>
-    <div class="lp-slide-part"></div>
-    <div class="lp-slide-part"></div>
-    <div class="lp-slide-part"></div>
-    <div class="lp-slide-part"></div>
-</div>
+    // Checks if the user has scrolled past Slide 1 (100% viewport height) minus a tiny buffer
+    if (container.scrollTop >= viewportHeight - 10) {
+        dropdownHeader.classList.add('visible');
+    } else {
+        dropdownHeader.classList.remove('visible');
+    }
+});
+
+// Your existing smooth trackpad wheel lock logic remains below...
+container.addEventListener('wheel', (e) => {
+    if (isScrolling) return;
+    const direction = e.deltaY > 0 ? 1 : -1;
+    const currentScroll = container.scrollTop;
+    const viewportHeight = window.innerHeight;
+    const currentSlideIndex = Math.round(currentScroll / viewportHeight);
+    const targetSlideIndex = currentSlideIndex + direction;
+    const totalSlides = container.children.length;
+
+    if (targetSlideIndex >= 0 && targetSlideIndex < totalSlides) {
+        e.preventDefault();
+        isScrolling = true;
+        container.scrollTo({
+            top: targetSlideIndex * viewportHeight,
+            behavior: 'smooth'
+        });
+        setTimeout(() => { isScrolling = false; }, 700);
+    }
+}, { passive: false });
+    </script>
+</body>
+</html>
