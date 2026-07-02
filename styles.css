@@ -945,7 +945,7 @@ body.lp-env-body {
     font-weight: 800;
     color: #ffffff;
     letter-spacing: 0.5px;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    /* text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); */
 }
 
 .lp-header-text p {
@@ -954,7 +954,7 @@ body.lp-env-body {
     font-weight: 600;
     color: #fbce13; 
     letter-spacing: 1px;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    /* text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); */
 }
 
 
@@ -1050,12 +1050,12 @@ body.lp-env-body {
     width: 95px !important;  
     height: 95px !important; 
     object-fit: contain;
-    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+    /* filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4)); */
     flex-shrink: 0;
 }
 
 .lp-header-text {
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); /* Enhances readability across changing backdrop layers */
+    /* text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);  Enhances readability across changing backdrop layers */ */
 }
 
 .lp-header-text h3 {
