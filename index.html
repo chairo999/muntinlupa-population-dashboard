@@ -1,41 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Muntinlupa City Demographic Dashboard</title>
-    <!-- Google Fonts: Outfit -->
+    <!-- Google Fonts: Montserrat -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome for Premium Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Supabase JS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-    <div class="dashboard-container">
-        <!-- Header Section -->
-        <header class="dashboard-header">
-            <div class="header-logo">
-                <i class="fa-solid fa-city header-icon"></i>
-                <div class="header-titles">
-                    <h1>MunTHINK Hub</h1>
-                    <p class="subtitle">Smarter Data for a Smarter Muntinlupa</p>
-                </div>
+    <!-- Header Section -->
+    <header class="dashboard-header">
+        <div class="header-logo">
+            <!-- <i class="fa-solid fa-city header-icon"></i> -->
+            <img src="muntinlupa-city-logo.png" alt="MunTHINK Logo" class="header-logo-img">
+            <div class="header-titles">
+                <h1>MunTHINK Hub</h1>
+                <p class="subtitle">Smarter Data for a Smarter Muntinlupa</p>
             </div>
-            <div class="header-info">
-                <span id="date-time"><i class="fa-regular fa-clock"></i> Loading local time...</span>
-            </div>
-        </header>   
+        </div>
+        <div class="header-info">
+             <img src="hamburger.png" alt="sidebar" class="sidebar-sectors" id="hamburger-btn">
+        </div>
+    </header>
 
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <aside class="sector-sidebar" id="sector-sidebar">
+        <div class="sidebar-header">
+            <h2>Dashboard Sectors</h2>
+            <i class="fa-solid fa-xmark" id="close-sidebar-btn"></i>
+        </div>
+    
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item"><i class="fa-solid fa-users"></i> Population</a>
+            <a href="economic.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Economic</a>
+            <a href="education.html" class="nav-item"><i class="fa-solid fa-graduation-cap"></i> Education</a>
+            <a href="health.html" class="nav-item"><i class="fa-solid fa-notes-medical"></i> Health</a>
+            <a href="protective.html" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Protective</a>
+            <a href="socwel.html" class="nav-item"><i class="fa-solid fa-hand-holding-heart"></i> Social Welfare</a>
+            <a href="environment.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Environment</a>
+            <a href="institutional.html" class="nav-item"><i class="fa-solid fa-building-columns"></i> Institutional</a>
+        </nav>
+    </aside>
+
+    <div class="dashboard-container">
         <!-- Main Stats Summary Banner -->
         <section class="stats-banner">
             <div class="stat-card" id="card-total">
@@ -80,18 +97,23 @@
 
         <!-- Main Grid Layout -->
         <main class="dashboard-grid">
+            
+            <!-- Combined Map Panel (replaces Data Entry sidebar) -->
+            <section class="grid-panel map-panel span-two">
+                <div class="panel-header flex-header">
+                    <h3><i class="fa-solid fa-map"></i> Muntinlupa Interactive Map</h3>
 
-            <!-- Left Panel: Input & Data Management -->
-            <section class="grid-panel sidebar-panel">
-                <div class="panel-header">
-                    <h3><i class="fa-solid fa-database"></i> Data Entry & Management</h3>
-                </div>
+                    <!-- <div class="year-select-wrapper" style="display: flex; align-items: center; gap: 0.5rem;"> -->
+                    <div class="header-controls">
+                        <label for="year-select" style="font-size: 14px; color: #000000; font-weight: 500;">Census Year:</label>
+                        <select id="year-select" style="background-color: #e1271a; color: #f8fafc; border-radius: 0.375rem; padding: 5px 10px 5px 10px; font-family: 'Outfit', sans-serif; font-size: 0.87rem; cursor: pointer; outline: none;">
+                            <option value="2015">2015</option>
+                            <option value="2020">2020</option>
+                            <option value="2024" selected>2024</option>
+                        </select>
 
-                <form id="demographics-form" class="entry-form">
-                    <div class="form-group">
-                        <label for="brgy-select"><i class="fa-solid fa-map-pin"></i> Select Barangay</label>
-                        <select id="brgy-select" required>
-                            <option value="" disabled selected>-- Choose Barangay --</option>
+                        <select id="brgy-select" required style="background-color: #e1271a; color: #f8fafc; border-radius: 0.375rem; padding: 5px 10px 5px 10px; font-family: 'Outfit', sans-serif; font-size: 0.87rem; cursor: pointer; outline: none;">
+                            <option value="" disabled selected>-- Select Barangay --</option>
                             <option value="Sucat">Sucat</option>
                             <option value="Buli">Buli</option>
                             <option value="Cupang">Cupang</option>
@@ -103,74 +125,13 @@
                             <option value="Tunasan">Tunasan</option>
                         </select>
                     </div>
-
-                    <div class="form-row-2">
-                        <div class="form-group">
-                            <label><i class="fa-solid fa-venus-mars"></i> Sex</label>
-                            <div class="radio-group">
-                                <label class="radio-container">
-                                    <input type="radio" name="sex" value="Male" checked>
-                                    <span class="radio-custom male-radio"><i class="fa-solid fa-mars"></i> Male</span>
-                                </label>
-                                <label class="radio-container">
-                                    <input type="radio" name="sex" value="Female">
-                                    <span class="radio-custom female-radio"><i class="fa-solid fa-venus"></i>
-                                        Female</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-row-2">
-                        <div class="form-group">
-                            <label for="age-select"><i class="fa-solid fa-cake-candles"></i> Age Group</label>
-                            <select id="age-select" required>
-                                <option value="" disabled selected>-- Choose Group --</option>
-                                <option value="0-14">0 - 14 Years (Children)</option>
-                                <option value="15-24">15 - 24 Years (Youth)</option>
-                                <option value="25-54">25 - 54 Years (Adults)</option>
-                                <option value="55-64">55 - 64 Years (Seniors)</option>
-                                <option value="65+">65+ Years (Elderly)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="pop-count"><i class="fa-solid fa-arrow-up-9-1"></i> Count Increment</label>
-                            <input type="number" id="pop-count" min="1" max="100000" placeholder="e.g. 150" required>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-block">
-                        <i class="fa-solid fa-plus"></i> Add Demographics
-                    </button>
-                </form>
-
-                <div class="sidebar-divider"></div>
-
-                <div class="actions-section">
-                    <h4>Actions & Tools</h4>
-                    <div class="action-buttons">
-                        <button id="btn-seed-data" class="btn btn-secondary">
-                            <i class="fa-solid fa-seedling"></i> Restore Defaults
-                        </button>
-                        <button id="btn-clear-data" class="btn btn-danger">
-                            <i class="fa-solid fa-trash-can"></i> Clear All Data
-                        </button>
-                    </div>
                 </div>
-            </section>
-
-            <!-- Center Panel: Interactive Map -->
-            <section class="grid-panel map-panel">
-                <div class="panel-header">
-                    <h3><i class="fa-solid fa-map"></i> Muntinlupa Interactive Map</h3>
-                    <div class="map-instructions">Hover to preview, click to select</div>
-                </div>
-
+                
                 <div class="map-viewport">
                     <div class="map-wrapper">
                         <!-- Base Muntinlupa Map Image -->
-                        <img src="map-image.png" id="map-image" alt="City Map of Muntinlupa" class="base-map-img">
-
+                        <img src="map-image.png" alt="City Map of Muntinlupa" class="base-map-img">
+                        
                         <!-- Interactive SVG overlay matching 750x750 coordinate system -->
                         <svg viewBox="0 0 750 750" class="map-svg-overlay">
                             <!-- Sucat (top-right, salmon/pink) -->
@@ -265,8 +226,8 @@
                                 455,387 457,391 461,392 473,389 477,391 481,391 489,390 499,390 
                                 506,389 512,392 513,396 512,399 510,401 509,404 514,406 514,408 
                                 508,410 510,411 513,413 512,415 510,417 508,419 508,422 511,422 
-                                509,424 508,428 508,430 510,431 511,433 511,436 517,437 527,436 
-                                512,439 514,439 529,440 517,441 512,443 513,447 517,448 520,449 
+                                509,424 508,428 508,430 510,431 511,433 511,436 517,437 527,436  
+                                512,439 514,439 529,440 517,441 512,443 513,447 517,448 520,449  
                                 515,452 515,454 517,455 520,457 518,458 518,461 520,462 526,462 
                                 529,463 531,464 528,465 513,467 506,467 499,466 493,470 487,469 
                                 480,470 470,473 464,475 458,473 450,474 443,474 443,477 440,477 
@@ -327,25 +288,18 @@
                             " />
                         </svg>
                     </div>
-
-                    <!-- Interactive Floating Tooltip -->
-                    <div id="map-tooltip" class="floating-tooltip">
+                    
+                    <!-- Tooltip (floating on top of map-wrapper) -->
+                    <div id="map-tooltip" class="floating-tooltip" aria-hidden="true">
                         <h4 id="tooltip-title">Barangay</h4>
-                        <div class="tooltip-row">
-                            <span class="tooltip-label"><i class="fa-solid fa-users"></i> Pop:</span>
-                            <span class="tooltip-value" id="tooltip-pop">0</span>
-                        </div>
-                        <div class="tooltip-row">
-                            <span class="tooltip-label male-color"><i class="fa-solid fa-mars"></i> Male:</span>
-                            <span class="tooltip-value male-color" id="tooltip-male">0</span>
-                        </div>
-                        <div class="tooltip-row">
-                            <span class="tooltip-label female-color"><i class="fa-solid fa-venus"></i> Female:</span>
-                            <span class="tooltip-value female-color" id="tooltip-female">0</span>
-                        </div>
+                        <div class="tooltip-row"><span class="tooltip-label">Total</span><span id="tooltip-pop" class="tooltip-value">0</span></div>
+                        <div class="tooltip-row"><span class="tooltip-label male-color">Male</span><span id="tooltip-male" class="tooltip-value">0</span></div>
+                        <div class="tooltip-row"><span class="tooltip-label female-color">Female</span><span id="tooltip-female" class="tooltip-value">0</span></div>
                     </div>
                 </div>
             </section>
+
+            
 
             <!-- Right Panel: Charts and Trends -->
             <section class="grid-panel charts-panel">
@@ -385,14 +339,28 @@
                             <canvas id="trendChart"></canvas>
                         </div>
                     </div>
+
+                    <div class="chart-card span-full">
+                        <div class="chart-title-wrapper">
+                            <h5><i class="fa-solid fa-chart-bar"></i> Barangay Population</h5>
+                        </div>
+                        <div class="canvas-container trend-container">
+                            <canvas id="barangayBarChart"></canvas>
+                        </div>
+                    </div>
+                    </div>
+                    
                 </div>
             </section>
         </main>
 
-        <footer class="dashboard-footer" aria-label="Footer image"></footer>
+        <footer class="dashboard-footer" aria-hidden="true">
+            <img src="footer.jpg" alt="" class="footer-image">
+        </footer>
 
     <!-- Application Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script src="app.js"></script>
 </body>
-
-</html>5
+</html>
