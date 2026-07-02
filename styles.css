@@ -1030,17 +1030,20 @@ body.lp-env-body {
     text-transform: uppercase;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
+/* ==========================================
+   GLOBAL FIXED LANDING PAGE HEADER
+   ========================================== */
 
 .lp-slide-logo {
-    position: absolute;
+    position: fixed; /* Changed from absolute to fixed to lock it in place while scrolling */
     top: 32px;  
     left: 32px; 
-    z-index: 3; 
+    z-index: 100; /* High z-index ensures it sits safely on top of all sliding panels */
     
-    /* Flexbox changes to align text directly to the right */
     display: flex;
     align-items: center;
-    gap: 16px; /* Creates clean breathing room between logo and text */
+    gap: 16px;  
+    pointer-events: none; /* Allows mouse wheels/swipes over the header area to still trigger the scroll snap */
 }
 
 .lp-slide-logo img {
@@ -1048,5 +1051,25 @@ body.lp-env-body {
     height: 95px !important; 
     object-fit: contain;
     filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
-    flex-shrink: 0; /* Prevents the logo image from squishing */
+    flex-shrink: 0;
+}
+
+.lp-header-text {
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); /* Enhances readability across changing backdrop layers */
+}
+
+.lp-header-text h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+.lp-header-text p {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fbce13; 
+    letter-spacing: 1px;
 }
