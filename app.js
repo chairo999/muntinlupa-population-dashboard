@@ -210,7 +210,7 @@ function initEventListeners() {
                 zoomLayer.style.clipPath = `polygon(${points})`;
                 zoomLayer.style.transformOrigin = `${originX}% ${originY}%`;
                 zoomLayer.classList.add("visible");
-                zoomLayer.style.transform = "scale(1.08)";
+                zoomLayer.style.transform = "scale(1.03)";
             }
 
             if (blurLayer && mapWrapper) {
