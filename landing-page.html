@@ -13,24 +13,16 @@
 </head>
 <body class="lp-env-body">
 
-    <header class="lp-dropdown-header">
-        <div class="lp-header-left">
-            <img src="muntinlupa-city-logo.png" alt="Muntinlupa City Logo" class="lp-header-logo-img">
-            <div class="lp-header-text">
-                <h3>MunTHINK Hub</h3>
-                <p>SMARTER DATA FOR A SMARTER MUNTINLUPA</p>
-            </div>
-        </div>
-        <nav class="lp-header-nav">
-            <span class="lp-nav-indicator">SCROLL TO EXPLORE</span>
-        </nav>
-    </header>
-
     <div class="lp-slider-container">
         
         <div class="lp-slide-part">
+            
             <div class="lp-slide-logo">
                 <img src="muntinlupa-city-logo.png" alt="Muntinlupa City Logo">
+                <div class="lp-header-text">
+                    <h3>MunTHINK Hub</h3>
+                    <p>SMARTER DATA FOR A SMARTER MUNTINLUPA</p>
+                </div>
             </div>
             <div class="lp-slide-title">
                 <h1>ECOLOGICAL PROFILE</h1>
@@ -95,41 +87,28 @@
 
     <script>
         const container = document.querySelector('.lp-slider-container');
-const dropdownHeader = document.querySelector('.lp-dropdown-header');
-let isScrolling = false;
+        let isScrolling = false;
 
-// Strict monitoring: Only reveal the header when the scrollbar moves past Slide 1
-container.addEventListener('scroll', () => {
-    const viewportHeight = window.innerHeight;
-    
-    // Checks if the user has scrolled past Slide 1 (100% viewport height) minus a tiny buffer
-    if (container.scrollTop >= viewportHeight - 10) {
-        dropdownHeader.classList.add('visible');
-    } else {
-        dropdownHeader.classList.remove('visible');
-    }
-});
+        // Smooth trackpad wheel snap system logic
+        container.addEventListener('wheel', (e) => {
+            if (isScrolling) return;
+            const direction = e.deltaY > 0 ? 1 : -1;
+            const currentScroll = container.scrollTop;
+            const viewportHeight = window.innerHeight;
+            const currentSlideIndex = Math.round(currentScroll / viewportHeight);
+            const targetSlideIndex = currentSlideIndex + direction;
+            const totalSlides = container.children.length;
 
-// Your existing smooth trackpad wheel lock logic remains below...
-container.addEventListener('wheel', (e) => {
-    if (isScrolling) return;
-    const direction = e.deltaY > 0 ? 1 : -1;
-    const currentScroll = container.scrollTop;
-    const viewportHeight = window.innerHeight;
-    const currentSlideIndex = Math.round(currentScroll / viewportHeight);
-    const targetSlideIndex = currentSlideIndex + direction;
-    const totalSlides = container.children.length;
-
-    if (targetSlideIndex >= 0 && targetSlideIndex < totalSlides) {
-        e.preventDefault();
-        isScrolling = true;
-        container.scrollTo({
-            top: targetSlideIndex * viewportHeight,
-            behavior: 'smooth'
-        });
-        setTimeout(() => { isScrolling = false; }, 700);
-    }
-}, { passive: false });
+            if (targetSlideIndex >= 0 && targetSlideIndex < totalSlides) {
+                e.preventDefault();
+                isScrolling = true;
+                container.scrollTo({
+                    top: targetSlideIndex * viewportHeight,
+                    behavior: 'smooth'
+                });
+                setTimeout(() => { isScrolling = false; }, 700);
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
