@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muntinlupa Population Dashboard</title>
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            background: #033492;
+            overflow: hidden;
+        }
+
+        .slider-container {
+            height: 100vh;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }       
+
+        .slide-part {
+            height: 100vh;
+            scroll-snap-align: start;
+            background: #033492;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-part::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url('ecological_profile.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.5;
+            z-index: 0;
+        }
+
+        .slide-title {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 2;
+            pointer-events: none;
+            font-family: 'Montserrat', sans-serif;
+            padding: 24px;
+        }
+
+        .slide-title h1 {
+            margin: 0;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .slide-title h2 {
+            margin: 8px 0 0;
+            font-size: clamp(1rem, 2.2vw, 1.35rem);
+            font-weight: 600;
+            color: #fbce13;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="slider-container">
+        <div class="slide-part">
+            <div class="slide-title">
+                <h1>ECOLOGICAL PROFILE</h1>
+                <h2>MUNTINLUPA CITY</h2>
+            </div>
+        </div>
+        <div class="slide-part"></div>
+        <div class="slide-part"></div>
+        <div class="slide-part"></div>  
+        <div class="slide-part"></div>
+        <div class="slide-part"></div>
+        <div class="slide-part"></div>
+        <div class="slide-part"></div>
+        <div class="slide-part"></div>
+        <div class="slide-part"></div>
+    </div>
+</body>
+</html>
