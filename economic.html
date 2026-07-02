@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MunTHINK Hub — Economic Sector</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        .economic-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-top: 10px;
+        }
+
+        .charts-container-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .charts-container-grid.full-width {
+            grid-template-columns: 1fr;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-container-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.02);
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .chart-card:hover {
+            border-color: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.04);
+        }
+
+        .chart-title-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+            padding-bottom: 12px;
+        }
+
+        .chart-card h5 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-card h5 i {
+            color: #ef4444; /* Touch of red */
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 350px;
+        }
+
+        /* Stats Cards Red Touches */
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-lg);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.08);
+        }
+
+        .stat-icon-wrapper.econ-icon-red {
+            width: 54px;
+            height: 54px;
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            background: rgba(239, 68, 68, 0.08);
+            color: #ef4444;
+        }
+
+        /* Database Status Overlay */
+        .db-status-bar {
+            background: #f1f5f9;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-md);
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .db-status-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .db-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-emerald);
+            box-shadow: 0 0 6px var(--accent-emerald);
+        }
+
+        .db-dot.offline {
+            background-color: #f59e0b;
+            box-shadow: 0 0 6px #f59e0b;
+        }
+
+        .admin-link-btn {
+            color: #ef4444;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: var(--transition-smooth);
+        }
+
+        .admin-link-btn:hover {
+            color: #dc2626;
+            text-decoration: underline;
+        }
+
+        /* Interactive controls for charts */
+        .chart-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chart-select {
+            background-color: #f1f5f9;
+            color: var(--text-primary);
+            border: 1px solid rgba(15, 23, 42, 0.1);
+            border-radius: 0.375rem;
+            padding: 5px 10px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .chart-select:focus {
+            border-color: #ef4444;
+        }
+
+        /* Custom spinner overlay */
+        .loading-cover {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            font-family: var(--font-outfit);
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-cover.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(239, 68, 68, 0.1);
+            border-top-color: #ef4444;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Cover -->
+    <div id="loading-cover" class="loading-cover">
+        <div class="spinner"></div>
+        <div style="font-weight: 600; color: var(--text-primary);">MunTHINK Economic Database Loading...</div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="dashboard-header">
+        <div class="header-logo">
+            <img src="muntinlupa-city-logo.png" alt="MunTHINK Logo" class="header-logo-img">
+            <div class="header-titles">
+                <h1>MunTHINK Hub</h1>
+                <p class="subtitle">Smarter Data for a Smarter Muntinlupa</p>
+            </div>
+        </div>
+        <div class="header-info">
+             <img src="hamburger.png" alt="sidebar" class="sidebar-sectors" id="hamburger-btn">
+        </div>
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <aside class="sector-sidebar" id="sector-sidebar">
+        <div class="sidebar-header">
+            <h2>Dashboard Sectors</h2>
+            <i class="fa-solid fa-xmark" id="close-sidebar-btn"></i>
+        </div>
+    
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item"><i class="fa-solid fa-users"></i> Population</a>
+            <a href="economic.html" class="nav-item active" style="background: rgba(0, 51, 151, 0.08); color: #003397; border-left: 4px solid #ef4444;"><i class="fa-solid fa-chart-line" style="color: #ef4444;"></i> Economic</a>
+            <a href="education.html" class="nav-item"><i class="fa-solid fa-graduation-cap"></i> Education</a>
+            <a href="health.html" class="nav-item"><i class="fa-solid fa-notes-medical"></i> Health</a>
+            <a href="protective.html" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Protective</a>
+            <a href="socwel.html" class="nav-item"><i class="fa-solid fa-hand-holding-heart"></i> Social Welfare</a>
+            <a href="environment.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Environment</a>
+            <a href="institutional.html" class="nav-item"><i class="fa-solid fa-building-columns"></i> Institutional</a>
+        </nav>
+    </aside>
+
+    <div class="dashboard-container">
+        
+        <!-- Live Connection Status Alert Bar -->
+        <div class="db-status-bar">
+            <div class="db-status-left">
+                <div id="db-dot" class="db-dot"></div>
+                <span id="db-status-txt">Connected to live Supabase DB</span>
+            </div>
+            <a href="admin_edit.html" class="admin-link-btn">
+                <i class="fa-solid fa-screwdriver-wrench"></i> Manage Economic Records in Admin
+            </a>
+        </div>
+
+        <!-- Main Stats Summary Banner -->
+        <section class="stats-banner">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper econ-icon-red">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Competitiveness Rank (2024)</span>
+                    <h2 id="card-rank">#4</h2>
+                    <span class="stat-pct" style="color: var(--text-muted)">Highly Urbanized Cities</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper econ-icon-red">
+                    <i class="fa-solid fa-store"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Total Establishments (2025)</span>
+                    <h2 id="card-establishments">16,594</h2>
+                    <span class="stat-pct" style="color: var(--text-muted)">Registered Businesses</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper econ-icon-red">
+                    <i class="fa-solid fa-briefcase"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Local Employment (2025)</span>
+                    <h2 id="card-employment">151,495</h2>
+                    <span class="stat-pct" style="color: var(--text-muted)">Generated by Businesses</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper econ-icon-red">
+                    <i class="fa-solid fa-hotel"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Hotel Arrivals (2024)</span>
+                    <h2 id="card-hotels">389,707</h2>
+                    <span class="stat-pct" style="color: var(--text-muted)">Tourism arrivals in city</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Charts Workspace -->
+        <div class="economic-grid">
+            <div class="charts-container-grid">
+                
+                <!-- Chart 1: Competitiveness Index -->
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-arrow-trend-up"></i> Municipal Competitiveness Rankings (CMCI)</h5>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Lower Rank = Better Position</div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="rankingChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Total Businesses & Tourism Arrivals (Dual scale) -->
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-chart-area"></i> City Establishments & Hotel Arrivals</h5>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Establishments (Bar) vs Hotels (Line)</div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Full Width Panel: Barangay Business Registrations & Employment -->
+            <div class="charts-container-grid full-width">
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-map-pin"></i> Barangay Business & Employment Generation (2025)</h5>
+                        <div class="chart-controls">
+                            <!-- Toggle view type -->
+                            <select id="barangay-view-mode" class="chart-select">
+                                <option value="compare-establishments">Compare Establishments</option>
+                                <option value="compare-employment">Compare Employment</option>
+                                <option value="category-split">Barangay Category Split</option>
+                            </select>
+                            <!-- Secondary selects updated dynamically -->
+                            <select id="barangay-select" class="chart-select" style="display: none;"></select>
+                        </div>
+                    </div>
+                    <div class="canvas-container" style="height: 380px;">
+                        <canvas id="barangayEconChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Supabase JS CDN (v2) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Page Logic JavaScript -->
+    <script>
+        const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
+        const STORAGE_KEY = "muntinlupa_sector_data_economic";
+
+        const ECONOMIC_LABELS = ["2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"];
+        const BARANGAY_NAMES = ["Alabang", "Ayala Alabang", "Bayanan", "Buli", "Cupang", "Poblacion", "Putatan", "Sucat", "Tunasan"];
+
+        // Static default configurations seed from screenshots
+        const DEFAULT_ECONOMIC_DATA = {
+            "Competitiveness Rank": { history: [null, null, 12, 9, 12, 10, 8, 5, 5, 5, 5, 4, null] },
+            "Total Establishments": { history: [12981, 13124, 13255, 13761, 14644, 15409, 15708, 15143, 14347, 14941, 16022, 16461, 16594] },
+            "Hotel Arrivals": { history: [null, null, null, null, null, null, null, 230057, 346855, 306617, 382318, 389707, null] },
+            
+            // Barangay business counts (index 12 is year 2025)
+            "Sucat - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 771] },
+            "Sucat - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 65] },
+            "Sucat - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 14] },
+            "Sucat - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 5] },
+            "Sucat - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 855] },
+            "Sucat - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 4196] },
+            
+            "Cupang - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1322] },
+            "Cupang - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 209] },
+            "Cupang - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 81] },
+            "Cupang - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 18] },
+            "Cupang - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1630] },
+            "Cupang - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 22260] },
+            
+            "Buli - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 157] },
+            "Buli - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 27] },
+            "Buli - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 7] },
+            "Buli - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 6] },
+            "Buli - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 197] },
+            "Buli - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 2751] },
+            
+            "Ayala Alabang - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1954] },
+            "Ayala Alabang - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 677] },
+            "Ayala Alabang - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 199] },
+            "Ayala Alabang - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 39] },
+            "Ayala Alabang - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 2869] },
+            "Ayala Alabang - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 26635] },
+            
+            "Alabang - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 4100] },
+            "Alabang - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 120] },
+            "Alabang - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 260] },
+            "Alabang - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 84] },
+            "Alabang - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 4564] },
+            "Alabang - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 72320] },
+            
+            "Bayanan - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 649] },
+            "Bayanan - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 35] },
+            "Bayanan - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 3] },
+            "Bayanan - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1] },
+            "Bayanan - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 688] },
+            "Bayanan - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 2193] },
+            
+            "Putatan - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1832] },
+            "Putatan - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 155] },
+            "Putatan - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 31] },
+            "Putatan - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 3] },
+            "Putatan - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 2021] },
+            "Putatan - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 8041] },
+            
+            "Poblacion - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1204] },
+            "Poblacion - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 59] },
+            "Poblacion - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 5] },
+            "Poblacion - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 9] },
+            "Poblacion - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1277] },
+            "Poblacion - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 4019] },
+            
+            "Tunasan - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1664] },
+            "Tunasan - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 120] },
+            "Tunasan - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 30] },
+            "Tunasan - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 5] },
+            "Tunasan - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1819] },
+            "Tunasan - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 9080] }
+        };
+
+        let economicData = {};
+        let economicLabels = [];
+        let supabaseClient = null;
+
+        // Chart instances
+        let rankingChartInstance = null;
+        let growthChartInstance = null;
+        let barangayEconChartInstance = null;
+
+        // Initialize Supabase safely
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        // Initialize Page
+        document.addEventListener("DOMContentLoaded", async () => {
+            initSidebar();
+            await fetchEconomicData();
+            renderStatsBanner();
+            renderCharts();
+            initChartControls();
+            
+            // Hide loading cover
+            const cover = document.getElementById("loading-cover");
+            cover.classList.add("fade-out");
+            setTimeout(() => cover.style.display = 'none', 300);
+        });
+
+        // Sidebar Navigation
+        function initSidebar() {
+            const hamburgerBtn = document.getElementById("hamburger-btn");
+            const sidebar = document.getElementById("sector-sidebar");
+            const overlay = document.getElementById("sidebar-overlay");
+            const closeBtn = document.getElementById("close-sidebar-btn");
+
+            if (hamburgerBtn) {
+                hamburgerBtn.addEventListener("click", () => {
+                    sidebar.classList.add("active");
+                    overlay.classList.add("active");
+                });
+            }
+            if (closeBtn) {
+                closeBtn.addEventListener("click", () => {
+                    sidebar.classList.remove("active");
+                    overlay.classList.remove("active");
+                });
+            }
+            if (overlay) {
+                overlay.addEventListener("click", () => {
+                    sidebar.classList.remove("active");
+                    overlay.classList.remove("active");
+                });
+            }
+        }
+
+        // Fetch Live Database or Local Storage Fallback
+        async function fetchEconomicData() {
+            const statusTxt = document.getElementById("db-status-txt");
+            const statusDot = document.getElementById("db-dot");
+            
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('economic')
+                        .select('data, labels')
+                        .eq('id', 1)
+                        .single();
+
+                    if (error) {
+                        if (error.code === 'PGRST116') {
+                            console.log("Economic table empty in Supabase. Seeding default data.");
+                            await supabaseClient.from('economic').insert({ id: 1, data: DEFAULT_ECONOMIC_DATA, labels: ECONOMIC_LABELS });
+                            economicData = DEFAULT_ECONOMIC_DATA;
+                            economicLabels = ECONOMIC_LABELS;
+                        } else {
+                            throw error;
+                        }
+                    } else {
+                        economicData = data.data || DEFAULT_ECONOMIC_DATA;
+                        economicLabels = data.labels || ECONOMIC_LABELS;
+                    }
+                    
+                    statusTxt.textContent = "Live Supabase Database Connected";
+                    statusDot.className = "db-dot";
+                } catch (e) {
+                    console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
+                    loadOfflineFallback();
+                }
+            } else {
+                console.warn("Supabase library not loaded. Loading from LocalStorage fallback.");
+                loadOfflineFallback();
+            }
+        }
+
+        function loadOfflineFallback() {
+            const statusTxt = document.getElementById("db-status-txt");
+            const statusDot = document.getElementById("db-dot");
+            
+            statusTxt.textContent = "Offline Mode (LocalStorage Fallback)";
+            statusDot.className = "db-dot offline";
+
+            const localData = localStorage.getItem(STORAGE_KEY);
+            if (localData) {
+                try {
+                    const parsed = JSON.parse(localData);
+                    economicData = parsed.data || DEFAULT_ECONOMIC_DATA;
+                    economicLabels = parsed.labels || ECONOMIC_LABELS;
+                } catch (e) {
+                    console.error("Error parsing localstorage data.", e);
+                    economicData = DEFAULT_ECONOMIC_DATA;
+                    economicLabels = ECONOMIC_LABELS;
+                }
+            } else {
+                economicData = DEFAULT_ECONOMIC_DATA;
+                economicLabels = ECONOMIC_LABELS;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: DEFAULT_ECONOMIC_DATA, labels: ECONOMIC_LABELS }));
+            }
+        }
+
+        // Helper to grab latest value safely
+        function getLatestValue(arr) {
+            if (!Array.isArray(arr)) return { val: '--', year: '--' };
+            for (let i = arr.length - 1; i >= 0; i--) {
+                if (arr[i] !== null && arr[i] !== undefined) {
+                    return { val: arr[i], year: economicLabels[i] };
+                }
+            }
+            return { val: '--', year: '--' };
+        }
+
+        // Populate Scoreboard counts
+        function renderStatsBanner() {
+            // Rank
+            const rankInfo = getLatestValue(economicData["Competitiveness Rank"]?.history);
+            document.getElementById("card-rank").textContent = rankInfo.val !== '--' ? `#${rankInfo.val}` : '--';
+
+            // Establishments
+            const estInfo = getLatestValue(economicData["Total Establishments"]?.history);
+            document.getElementById("card-establishments").textContent = estInfo.val !== '--' ? Number(estInfo.val).toLocaleString() : '--';
+
+            // Hotel Arrivals
+            const hotInfo = getLatestValue(economicData["Hotel Arrivals"]?.history);
+            document.getElementById("card-hotels").textContent = hotInfo.val !== '--' ? Number(hotInfo.val).toLocaleString() : '--';
+
+            // Aggregate total employment across barangays in 2025
+            let totalEmp = 0;
+            BARANGAY_NAMES.forEach(b => {
+                const key = `${b} - Number of Employment`;
+                const history = economicData[key]?.history || [];
+                const val = history[12]; // index 12 corresponds to 2025
+                if (val) totalEmp += val;
+            });
+            document.getElementById("card-employment").textContent = totalEmp > 0 ? totalEmp.toLocaleString() : '--';
+        }
+
+        // Render Page Charts
+        function renderCharts() {
+            // Chart 1: Competitiveness (Reversed Y Scale)
+            const ctxA = document.getElementById("rankingChart").getContext("2d");
+            rankingChartInstance = new Chart(ctxA, {
+                type: 'line',
+                data: {
+                    labels: economicLabels.slice(2, 12), // 2015 to 2024
+                    datasets: [{
+                        label: 'Competitiveness Rank',
+                        data: economicData["Competitiveness Rank"]?.history.slice(2, 12) || [],
+                        borderColor: '#ef4444', // Touch of red
+                        backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                        borderWidth: 3.5,
+                        tension: 0.15,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            reverse: true, // Rank 1 is top
+                            min: 1,
+                            max: 15,
+                            ticks: { stepSize: 2 },
+                            title: {
+                                display: true,
+                                text: 'Rank (Highly Urbanized Cities)',
+                                font: { family: 'Outfit', weight: 'bold', size: 11 }
+                            },
+                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
+                        },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // Chart 2: Total establishments & Hotel Arrivals (Dual Y-Axis)
+            const ctxB = document.getElementById("growthChart").getContext("2d");
+            growthChartInstance = new Chart(ctxB, {
+                type: 'bar',
+                data: {
+                    labels: economicLabels,
+                    datasets: [
+                        {
+                            label: 'Active Establishments',
+                            data: economicData["Total Establishments"]?.history || [],
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                            borderColor: '#3b82f6',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Hotel Arrivals',
+                            data: economicData["Hotel Arrivals"]?.history || [],
+                            borderColor: '#ef4444', // Touch of red
+                            borderWidth: 3,
+                            type: 'line',
+                            yAxisID: 'y1',
+                            spanGaps: true,
+                            tension: 0.15
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'Total Active Businesses', font: { family: 'Outfit', weight: 'bold' } },
+                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: { display: true, text: 'Annual Hotel Arrivals', font: { family: 'Outfit', weight: 'bold' } },
+                            grid: { drawOnChartArea: false }
+                        },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { family: 'Outfit', weight: '500' } } }
+                    }
+                }
+            });
+
+            // Chart 3: Barangay Business & Employment
+            const ctxC = document.getElementById("barangayEconChart").getContext("2d");
+            barangayEconChartInstance = new Chart(ctxC, {
+                type: 'bar',
+                data: {
+                    labels: BARANGAY_NAMES,
+                    datasets: [{
+                        label: 'Data',
+                        data: [],
+                        backgroundColor: 'rgba(239, 68, 68, 0.75)',
+                        borderColor: '#ef4444',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { font: { family: 'Outfit' } }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            updateBarangayEconChart();
+        }
+
+        // Initialize Controls
+        function initChartControls() {
+            const toggle = document.getElementById("barangay-view-mode");
+            const selectBrgy = document.getElementById("barangay-select");
+
+            // Populate select dropdown
+            selectBrgy.innerHTML = "";
+            BARANGAY_NAMES.forEach(b => {
+                const o = document.createElement("option");
+                o.value = b;
+                o.textContent = b;
+                if (b === "Alabang") o.selected = true; // default Alabang
+                selectBrgy.appendChild(o);
+            });
+
+            toggle.addEventListener("change", () => {
+                if (toggle.value === "category-split") {
+                    selectBrgy.style.display = "inline-block";
+                } else {
+                    selectBrgy.style.display = "none";
+                }
+                updateBarangayEconChart();
+            });
+
+            selectBrgy.addEventListener("change", updateBarangayEconChart);
+        }
+
+        // Render dynamic views on Barangay Economic Chart
+        function updateBarangayEconChart() {
+            const mode = document.getElementById("barangay-view-mode").value;
+            const selectedBrgy = document.getElementById("barangay-select").value;
+
+            if (mode === "compare-establishments") {
+                // Bar chart comparing total business counts in 2025 across all barangays
+                const counts = BARANGAY_NAMES.map(b => {
+                    const key = `${b} - Total Establishments`;
+                    return economicData[key]?.history[12] || 0;
+                });
+
+                barangayEconChartInstance.config.type = 'bar';
+                barangayEconChartInstance.data.labels = BARANGAY_NAMES;
+                barangayEconChartInstance.data.datasets = [{
+                    label: 'Active Establishments (2025)',
+                    data: counts,
+                    backgroundColor: BARANGAY_NAMES.map(n => n === 'Alabang' ? 'rgba(245, 158, 11, 0.8)' : 'rgba(239, 68, 68, 0.8)'),
+                    borderColor: BARANGAY_NAMES.map(n => n === 'Alabang' ? '#f59e0b' : '#ef4444'),
+                    borderWidth: 1,
+                    borderRadius: 4
+                }];
+                
+                barangayEconChartInstance.options.scales.x.stacked = false;
+                barangayEconChartInstance.options.scales.y.stacked = false;
+                barangayEconChartInstance.options.plugins.legend.display = false;
+
+            } else if (mode === "compare-employment") {
+                // Bar chart comparing total employment generated in 2025 across all barangays
+                const jobs = BARANGAY_NAMES.map(b => {
+                    const key = `${b} - Number of Employment`;
+                    return economicData[key]?.history[12] || 0;
+                });
+
+                barangayEconChartInstance.config.type = 'bar';
+                barangayEconChartInstance.data.labels = BARANGAY_NAMES;
+                barangayEconChartInstance.data.datasets = [{
+                    label: 'Employment Generated (2025)',
+                    data: jobs,
+                    backgroundColor: BARANGAY_NAMES.map(n => n === 'Alabang' ? 'rgba(245, 158, 11, 0.8)' : 'rgba(59, 130, 246, 0.8)'),
+                    borderColor: BARANGAY_NAMES.map(n => n === 'Alabang' ? '#f59e0b' : '#3b82f6'),
+                    borderWidth: 1,
+                    borderRadius: 4
+                }];
+
+                barangayEconChartInstance.options.scales.x.stacked = false;
+                barangayEconChartInstance.options.scales.y.stacked = false;
+                barangayEconChartInstance.options.plugins.legend.display = false;
+
+            } else {
+                // Stacked categories breakdown chart for a single selected Barangay (Micro, Small, Medium, Large)
+                const micro = economicData[`${selectedBrgy} - Micro Establishments`]?.history[12] || 0;
+                const small = economicData[`${selectedBrgy} - Small Establishments`]?.history[12] || 0;
+                const medium = economicData[`${selectedBrgy} - Medium Establishments`]?.history[12] || 0;
+                const large = economicData[`${selectedBrgy} - Large Establishments`]?.history[12] || 0;
+
+                barangayEconChartInstance.config.type = 'bar';
+                barangayEconChartInstance.data.labels = ['Establishments Category Split'];
+                
+                barangayEconChartInstance.data.datasets = [
+                    {
+                        label: 'Micro (≤ 3M Capitalization)',
+                        data: [micro],
+                        backgroundColor: '#d97706', // amber-600
+                        borderWidth: 1,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Small (3.1M - 15M Capitalization)',
+                        data: [small],
+                        backgroundColor: '#eab308', // yellow-500
+                        borderWidth: 1,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Medium (15.1M - 100M Capitalization)',
+                        data: [medium],
+                        backgroundColor: '#10b981', // emerald-500
+                        borderWidth: 1,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Large (≥ 100.1M Capitalization)',
+                        data: [large],
+                        backgroundColor: '#ef4444', // red-500
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }
+                ];
+
+                barangayEconChartInstance.options.scales.x.stacked = true;
+                barangayEconChartInstance.options.scales.y.stacked = true;
+                barangayEconChartInstance.options.plugins.legend.display = true;
+                barangayEconChartInstance.options.plugins.legend.position = 'bottom';
+            }
+
+            barangayEconChartInstance.update();
+        }
+    </script>
+</body>
+</html>

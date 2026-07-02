@@ -551,6 +551,12 @@
             </button>
           </li>
           <li class="nav-item">
+            <button class="nav-btn" data-sector="economic">
+              <i class="fa-solid fa-chart-line"></i>
+              <span>Economic Sector</span>
+            </button>
+          </li>
+          <li class="nav-item">
             <button class="nav-btn" data-sector="education">
               <i class="fa-solid fa-graduation-cap"></i>
               <span>Education Sector</span>
@@ -671,13 +677,112 @@
         defaultLabels: ["2015", "2020", "2024"],
         defaultKeys: ['Sucat', 'Buli', 'Cupang', 'Alabang', 'Ayala Alabang', 'Bayanan', 'Putatan', 'Poblacion', 'Tunasan']
       },
+      economic: {
+        table: "economic",
+        name: "Economic Sector",
+        desc: "Edit municipal competitiveness rankings, hotel arrivals, and business registration counts.",
+        icon: "fa-chart-line",
+        defaultLabels: ["2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"],
+        defaultData: {
+          "Competitiveness Rank": { history: [null, null, 12, 9, 12, 10, 8, 5, 5, 5, 5, 4, null] },
+          "Total Establishments": { history: [12981, 13124, 13255, 13761, 14644, 15409, 15708, 15143, 14347, 14941, 16022, 16461, 16594] },
+          "Hotel Arrivals": { history: [null, null, null, null, null, null, null, 230057, 346855, 306617, 382318, 389707, null] },
+          "Sucat - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 771] },
+          "Sucat - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 65] },
+          "Sucat - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 14] },
+          "Sucat - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 5] },
+          "Sucat - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 855] },
+          "Sucat - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 4196] },
+          "Cupang - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1322] },
+          "Cupang - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 209] },
+          "Cupang - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 81] },
+          "Cupang - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 18] },
+          "Cupang - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1630] },
+          "Cupang - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 22260] },
+          "Buli - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 157] },
+          "Buli - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 27] },
+          "Buli - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 7] },
+          "Buli - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 6] },
+          "Buli - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 197] },
+          "Buli - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 2751] },
+          "Ayala Alabang - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1954] },
+          "Ayala Alabang - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 677] },
+          "Ayala Alabang - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 199] },
+          "Ayala Alabang - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 39] },
+          "Ayala Alabang - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 2869] },
+          "Ayala Alabang - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 26635] },
+          "Alabang - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 4100] },
+          "Alabang - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 120] },
+          "Alabang - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 260] },
+          "Alabang - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 84] },
+          "Alabang - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 4564] },
+          "Alabang - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 72320] },
+          "Bayanan - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 649] },
+          "Bayanan - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 35] },
+          "Bayanan - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 3] },
+          "Bayanan - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1] },
+          "Bayanan - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 688] },
+          "Bayanan - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 2193] },
+          "Putatan - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1832] },
+          "Putatan - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 155] },
+          "Putatan - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 31] },
+          "Putatan - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 3] },
+          "Putatan - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 2021] },
+          "Putatan - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 8041] },
+          "Poblacion - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1204] },
+          "Poblacion - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 59] },
+          "Poblacion - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 5] },
+          "Poblacion - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 9] },
+          "Poblacion - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1277] },
+          "Poblacion - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 4019] },
+          "Tunasan - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1664] },
+          "Tunasan - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 120] },
+          "Tunasan - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 30] },
+          "Tunasan - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 5] },
+          "Tunasan - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1819] },
+          "Tunasan - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 9080] }
+        }
+      },
       education: {
         table: "education",
         name: "Education Sector",
-        desc: "Manage education metrics, school statistics, and literacy index records.",
+        desc: "Manage literacy rates, student enrollment splits, and CDM engineering program sizes.",
         icon: "fa-graduation-cap",
-        defaultLabels: ["2021", "2022", "2023", "2024", "2025"],
-        defaultKeys: ["Student-Teacher Ratio (Elementary)", "Student-Teacher Ratio (Junior High)", "Student-Teacher Ratio (Senior High)", "Graduation Rate", "Literacy Rate", "Number of Public Schools", "Number of Private Schools"]
+        defaultLabels: ["2007", "2010", "2015", "2020", "2024", "2025"],
+        defaultData: {
+          "Literacy Rate": { history: [79.83, 98.74, 98.86, 98.96, 93.10, null] },
+          "Public Schools Count": { history: [null, null, null, null, null, 28] },
+          "Private Schools Count": { history: [null, null, null, null, null, 70] },
+          "Alabang - Day Care": { history: [null, null, null, null, null, 541] },
+          "Ayala Alabang - Day Care": { history: [null, null, null, null, null, 59] },
+          "Bayanan - Day Care": { history: [null, null, null, null, null, 423] },
+          "Buli - Day Care": { history: [null, null, null, null, null, 138] },
+          "Cupang - Day Care": { history: [null, null, null, null, null, 298] },
+          "Poblacion - Day Care": { history: [null, null, null, null, null, 1105] },
+          "Putatan - Day Care": { history: [null, null, null, null, null, 715] },
+          "Sucat - Day Care": { history: [null, null, null, null, null, 406] },
+          "Tunasan - Day Care": { history: [null, null, null, null, null, 587] },
+          "Public Enrollment - Kinder": { history: [null, null, null, null, null, 6822] },
+          "Public Enrollment - Elementary": { history: [null, null, null, null, null, 40442] },
+          "Public Enrollment - Junior High": { history: [null, null, null, null, null, 25490] },
+          "Public Enrollment - Senior High": { history: [null, null, null, null, null, 9171] },
+          "Private Enrollment - Kinder": { history: [null, null, null, null, null, 1334] },
+          "Private Enrollment - Elementary": { history: [null, null, null, null, null, 8284] },
+          "Private Enrollment - Junior High": { history: [null, null, null, null, null, 7742] },
+          "Private Enrollment - Senior High": { history: [null, null, null, null, null, 10259] },
+          "CDM - BS Architecture": { history: [null, null, null, null, null, 372] },
+          "CDM - BS Civil Engineering": { history: [null, null, null, null, null, 987] },
+          "CDM - BS Computer Engineering": { history: [null, null, null, null, null, 509] },
+          "CDM - BS Electronics Engineering": { history: [null, null, null, null, null, 161] },
+          "CDM - BS Electrical Engineering": { history: [null, null, null, null, null, 187] },
+          "CDM - BS Environmental Engineering": { history: [null, null, null, null, null, 31] },
+          "CDM - BS Industrial Engineering": { history: [null, null, null, null, null, 230] },
+          "CDM - BS Mechanical Engineering": { history: [null, null, null, null, null, 344] },
+          "Gross Enrolment Rate (Grades 1-6)": { history: [null, null, null, null, 91.39, null] },
+          "Net Enrolment Rate (Grades 1-6)": { history: [null, null, null, null, 84.13, null] },
+          "Cohort Survival Rate (Grades 1-6)": { history: [null, null, null, null, 97.97, null] },
+          "School Leaver Rate (Grades 1-6)": { history: [null, null, null, null, 0.36, null] }
+        }
       },
       health: {
         table: "health",
