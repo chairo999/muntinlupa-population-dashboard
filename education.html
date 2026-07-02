@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MunTHINK Hub — Education Sector</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        .edu-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-top: 10px;
+        }
+
+        .charts-container-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .charts-container-grid.full-width {
+            grid-template-columns: 1fr;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-container-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.02);
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .chart-card:hover {
+            border-color: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.04);
+        }
+
+        .chart-title-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+            padding-bottom: 12px;
+        }
+
+        .chart-card h5 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-card h5 i {
+            color: #ef4444; /* Touch of red */
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 350px;
+        }
+
+        /* Stats Cards Red Touches */
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-lg);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.08);
+        }
+
+        .stat-icon-wrapper.edu-icon-red {
+            width: 54px;
+            height: 54px;
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            background: rgba(239, 68, 68, 0.08);
+            color: #ef4444;
+        }
+
+        /* Database Status Overlay */
+        .db-status-bar {
+            background: #f1f5f9;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-md);
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .db-status-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .db-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-emerald);
+            box-shadow: 0 0 6px var(--accent-emerald);
+        }
+
+        .db-dot.offline {
+            background-color: #f59e0b;
+            box-shadow: 0 0 6px #f59e0b;
+        }
+
+        .admin-link-btn {
+            color: #ef4444;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: var(--transition-smooth);
+        }
+
+        .admin-link-btn:hover {
+            color: #dc2626;
+            text-decoration: underline;
+        }
+
+        /* Interactive controls for charts */
+        .chart-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chart-select {
+            background-color: #f1f5f9;
+            color: var(--text-primary);
+            border: 1px solid rgba(15, 23, 42, 0.1);
+            border-radius: 0.375rem;
+            padding: 5px 10px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .chart-select:focus {
+            border-color: #ef4444;
+        }
+
+        /* Daycare details spotlight panel */
+        .daycare-details-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .daycare-details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .daycare-sidebar {
+            background: #f8fafc;
+            border-radius: var(--border-radius-md);
+            padding: 20px;
+            border: 1px solid rgba(15, 23, 42, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            justify-content: center;
+        }
+
+        .daycare-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #ef4444;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+            padding-bottom: 8px;
+        }
+
+        .daycare-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed rgba(15, 23, 42, 0.06);
+            padding-bottom: 8px;
+        }
+
+        .daycare-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .daycare-lbl {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .daycare-val {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Custom spinner overlay */
+        .loading-cover {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            font-family: var(--font-outfit);
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-cover.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(239, 68, 68, 0.1);
+            border-top-color: #ef4444;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Cover -->
+    <div id="loading-cover" class="loading-cover">
+        <div class="spinner"></div>
+        <div style="font-weight: 600; color: var(--text-primary);">MunTHINK Education Database Loading...</div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="dashboard-header">
+        <div class="header-logo">
+            <img src="muntinlupa-city-logo.png" alt="MunTHINK Logo" class="header-logo-img">
+            <div class="header-titles">
+                <h1>MunTHINK Hub</h1>
+                <p class="subtitle">Smarter Data for a Smarter Muntinlupa</p>
+            </div>
+        </div>
+        <div class="header-info">
+             <img src="hamburger.png" alt="sidebar" class="sidebar-sectors" id="hamburger-btn">
+        </div>
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <aside class="sector-sidebar" id="sector-sidebar">
+        <div class="sidebar-header">
+            <h2>Dashboard Sectors</h2>
+            <i class="fa-solid fa-xmark" id="close-sidebar-btn"></i>
+        </div>
+    
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-item"><i class="fa-solid fa-users"></i> Population</a>
+            <a href="economic.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Economic</a>
+            <a href="education.html" class="nav-item active" style="background: rgba(0, 51, 151, 0.08); color: #003397; border-left: 4px solid #ef4444;"><i class="fa-solid fa-graduation-cap" style="color: #ef4444;"></i> Education</a>
+            <a href="health.html" class="nav-item"><i class="fa-solid fa-notes-medical"></i> Health</a>
+            <a href="protective.html" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Protective</a>
+            <a href="socwel.html" class="nav-item"><i class="fa-solid fa-hand-holding-heart"></i> Social Welfare</a>
+            <a href="environment.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Environment</a>
+            <a href="institutional.html" class="nav-item"><i class="fa-solid fa-building-columns"></i> Institutional</a>
+        </nav>
+    </aside>
+
+    <div class="dashboard-container">
+        
+        <!-- Live Connection Status Alert Bar -->
+        <div class="db-status-bar">
+            <div class="db-status-left">
+                <div id="db-dot" class="db-dot"></div>
+                <span id="db-status-txt">Connected to live Supabase DB</span>
+            </div>
+            <a href="admin_edit.html" class="admin-link-btn">
+                <i class="fa-solid fa-screwdriver-wrench"></i> Manage Education Records in Admin
+            </a>
+        </div>
+
+        <!-- Main Stats Summary Banner -->
+        <section class="stats-banner">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper edu-icon-red">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Functional Literacy (2024)</span>
+                    <h2 id="card-literacy">93.10%</h2>
+                    <span class="stat-pct" style="color: var(--text-muted)">PSA Functional Survey</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper edu-icon-red">
+                    <i class="fa-solid fa-school"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Total Schools (2025)</span>
+                    <h2 id="card-schools">98</h2>
+                    <span class="stat-pct" id="card-schools-split" style="color: var(--text-muted)">28 Public, 70 Private</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper edu-icon-red">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">K-12 Student Enrollment</span>
+                    <h2 id="card-enrollment">110,239</h2>
+                    <span class="stat-pct" style="color: var(--text-muted)">Public & Private Schools</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper edu-icon-red">
+                    <i class="fa-solid fa-user-graduate"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">CDM College Enrollment</span>
+                    <h2 id="card-cdm">2,821</h2>
+                    <span class="stat-pct" style="color: var(--text-muted)">Engineering & Arch</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Charts Workspace -->
+        <div class="edu-grid">
+            <div class="charts-container-grid">
+                
+                <!-- Chart 1: Literacy Rate Trend -->
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-chart-line"></i> Historical Functional Literacy Rate</h5>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Census data: 2007-2024</div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="literacyChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Public vs Private Enrollment -->
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-chart-bar"></i> Enrollment by Education Level (SY 2025)</h5>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Public vs Private School distribution</div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="enrollmentChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Chart 3: CDM Course Program Enrollees (Horizontal bar chart) -->
+            <div class="charts-container-grid">
+                
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-building-columns"></i> Colegio de Muntinlupa (CDM) Enrollment</h5>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Engineering & Architecture program size</div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="cdmChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 4: Barangay ECCD Day Care Spotlight Widget -->
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-child-reaching"></i> ECCD Day Care Center Enrollment</h5>
+                        <div class="chart-controls">
+                            <label for="daycare-brgy-select" style="font-size: 0.8rem; font-weight:700; color:var(--text-secondary)">Barangay:</label>
+                            <select id="daycare-brgy-select" class="chart-select">
+                                <!-- Loaded dynamically -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="daycare-details-grid">
+                        <div class="daycare-sidebar">
+                            <div class="daycare-title">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span id="daycare-name">Barangay</span>
+                            </div>
+                            <div class="daycare-row">
+                                <span class="daycare-lbl">Total Day Care:</span>
+                                <span class="daycare-val" id="daycare-total">0</span>
+                            </div>
+                            <div class="daycare-row">
+                                <span class="daycare-lbl">Ages 2 - 2.11:</span>
+                                <span class="daycare-val" id="daycare-age2">0</span>
+                            </div>
+                            <div class="daycare-row">
+                                <span class="daycare-lbl">Ages 3 - 3.11:</span>
+                                <span class="daycare-val" id="daycare-age3">0</span>
+                            </div>
+                            <div class="daycare-row">
+                                <span class="daycare-lbl">Ages 4 - 4.11:</span>
+                                <span class="daycare-val" id="daycare-age4">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Bar chart inside Daycare card -->
+                        <div class="canvas-container" style="height: 250px;">
+                            <canvas id="daycareChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Supabase JS CDN (v2) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Page Logic JavaScript -->
+    <script>
+        const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
+        const STORAGE_KEY = "muntinlupa_sector_data_education";
+
+        const EDUCATION_LABELS = ["2007", "2010", "2015", "2020", "2024", "2025"];
+        const BARANGAY_NAMES = ["Alabang", "Ayala Alabang", "Bayanan", "Buli", "Cupang", "Poblacion", "Putatan", "Sucat", "Tunasan"];
+
+        // Static default values
+        const DEFAULT_EDU_DATA = {
+            "Literacy Rate": { history: [79.83, 98.74, 98.86, 98.96, 93.10, null] },
+            "Public Schools Count": { history: [null, null, null, null, null, 28] },
+            "Private Schools Count": { history: [null, null, null, null, null, 70] },
+            
+            "Alabang - Day Care": { history: [null, null, null, null, null, 541] },
+            "Ayala Alabang - Day Care": { history: [null, null, null, null, null, 59] },
+            "Bayanan - Day Care": { history: [null, null, null, null, null, 423] },
+            "Buli - Day Care": { history: [null, null, null, null, null, 138] },
+            "Cupang - Day Care": { history: [null, null, null, null, null, 298] },
+            "Poblacion - Day Care": { history: [null, null, null, null, null, 1105] },
+            "Putatan - Day Care": { history: [null, null, null, null, null, 715] },
+            "Sucat - Day Care": { history: [null, null, null, null, null, 406] },
+            "Tunasan - Day Care": { history: [null, null, null, null, null, 587] },
+            
+            "Public Enrollment - Kinder": { history: [null, null, null, null, null, 6822] },
+            "Public Enrollment - Elementary": { history: [null, null, null, null, null, 40442] },
+            "Public Enrollment - Junior High": { history: [null, null, null, null, null, 25490] },
+            "Public Enrollment - Senior High": { history: [null, null, null, null, null, 9171] },
+            
+            "Private Enrollment - Kinder": { history: [null, null, null, null, null, 1334] },
+            "Private Enrollment - Elementary": { history: [null, null, null, null, null, 8284] },
+            "Private Enrollment - Junior High": { history: [null, null, null, null, null, 7742] },
+            "Private Enrollment - Senior High": { history: [null, null, null, null, null, 10259] },
+            
+            "CDM - BS Architecture": { history: [null, null, null, null, null, 372] },
+            "CDM - BS Civil Engineering": { history: [null, null, null, null, null, 987] },
+            "CDM - BS Computer Engineering": { history: [null, null, null, null, null, 509] },
+            "CDM - BS Electronics Engineering": { history: [null, null, null, null, null, 161] },
+            "CDM - BS Electrical Engineering": { history: [null, null, null, null, null, 187] },
+            "CDM - BS Environmental Engineering": { history: [null, null, null, null, null, 31] },
+            "CDM - BS Industrial Engineering": { history: [null, null, null, null, null, 230] },
+            "CDM - BS Mechanical Engineering": { history: [null, null, null, null, null, 344] }
+        };
+
+        // Static Day Care age groups sex split data (for dynamic widget computations)
+        const daycareDetailsRaw = {
+            "Alabang": { age2: [31, 37], age3: [80, 88], age4: [269, 272] },
+            "Ayala Alabang": { age2: [14, 13], age3: [12, 20], age4: [25, 34] },
+            "Bayanan": { age2: [44, 41], age3: [80, 99], age4: [227, 196] },
+            "Buli": { age2: [10, 9], age3: [27, 23], age4: [68, 70] },
+            "Cupang": { age2: [22, 22], age3: [57, 66], age4: [151, 147] },
+            "Poblacion": { age2: [258, 256], age3: [321, 325], age4: [541, 564] },
+            "Putatan": { age2: [50, 64], age3: [117, 118], age4: [363, 352] },
+            "Sucat": { age2: [8, 16], age3: [31, 49], age4: [210, 196] },
+            "Tunasan": { age2: [56, 58], age3: [123, 124], age4: [326, 261] }
+        };
+
+        let eduData = {};
+        let eduLabels = [];
+        let supabaseClient = null;
+
+        // Chart instances
+        let literacyChartInst = null;
+        let enrollmentChartInst = null;
+        let cdmChartInst = null;
+        let daycareChartInst = null;
+
+        // Initialize Supabase safely
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        // Initialize Page
+        document.addEventListener("DOMContentLoaded", async () => {
+            initSidebar();
+            await fetchEducationData();
+            renderStatsBanner();
+            renderCharts();
+            initDaycareWidget();
+            
+            // Hide loading cover
+            const cover = document.getElementById("loading-cover");
+            cover.classList.add("fade-out");
+            setTimeout(() => cover.style.display = 'none', 300);
+        });
+
+        // Sidebar Navigation
+        function initSidebar() {
+            const hamburgerBtn = document.getElementById("hamburger-btn");
+            const sidebar = document.getElementById("sector-sidebar");
+            const overlay = document.getElementById("sidebar-overlay");
+            const closeBtn = document.getElementById("close-sidebar-btn");
+
+            if (hamburgerBtn) {
+                hamburgerBtn.addEventListener("click", () => {
+                    sidebar.classList.add("active");
+                    overlay.classList.add("active");
+                });
+            }
+            if (closeBtn) {
+                closeBtn.addEventListener("click", () => {
+                    sidebar.classList.remove("active");
+                    overlay.classList.remove("active");
+                });
+            }
+            if (overlay) {
+                overlay.addEventListener("click", () => {
+                    sidebar.classList.remove("active");
+                    overlay.classList.remove("active");
+                });
+            }
+        }
+
+        // Fetch Live Database or Local Storage Fallback
+        async function fetchEducationData() {
+            const statusTxt = document.getElementById("db-status-txt");
+            const statusDot = document.getElementById("db-dot");
+            
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('education')
+                        .select('data, labels')
+                        .eq('id', 1)
+                        .single();
+
+                    if (error) {
+                        if (error.code === 'PGRST116') {
+                            console.log("Education table empty in Supabase. Seeding default data.");
+                            await supabaseClient.from('education').insert({ id: 1, data: DEFAULT_EDU_DATA, labels: EDUCATION_LABELS });
+                            eduData = DEFAULT_EDU_DATA;
+                            eduLabels = EDUCATION_LABELS;
+                        } else {
+                            throw error;
+                        }
+                    } else {
+                        eduData = data.data || DEFAULT_EDU_DATA;
+                        eduLabels = data.labels || EDUCATION_LABELS;
+                    }
+                    
+                    statusTxt.textContent = "Live Supabase Database Connected";
+                    statusDot.className = "db-dot";
+                } catch (e) {
+                    console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
+                    loadOfflineFallback();
+                }
+            } else {
+                console.warn("Supabase library not loaded. Loading from LocalStorage fallback.");
+                loadOfflineFallback();
+            }
+        }
+
+        function loadOfflineFallback() {
+            const statusTxt = document.getElementById("db-status-txt");
+            const statusDot = document.getElementById("db-dot");
+            
+            statusTxt.textContent = "Offline Mode (LocalStorage Fallback)";
+            statusDot.className = "db-dot offline";
+
+            const localData = localStorage.getItem(STORAGE_KEY);
+            if (localData) {
+                try {
+                    const parsed = JSON.parse(localData);
+                    eduData = parsed.data || DEFAULT_EDU_DATA;
+                    eduLabels = parsed.labels || EDUCATION_LABELS;
+                } catch (e) {
+                    console.error("Error parsing localstorage data.", e);
+                    eduData = DEFAULT_EDU_DATA;
+                    eduLabels = EDUCATION_LABELS;
+                }
+            } else {
+                eduData = DEFAULT_EDU_DATA;
+                eduLabels = EDUCATION_LABELS;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: DEFAULT_EDU_DATA, labels: EDUCATION_LABELS }));
+            }
+        }
+
+        // Helper to grab value safely for a key and yearIndex
+        function getValue(key, yearIdx = 5) {
+            const history = eduData[key]?.history || [];
+            return history[yearIdx] !== undefined && history[yearIdx] !== null ? history[yearIdx] : 0;
+        }
+
+        // Populate Scoreboard counts
+        function renderStatsBanner() {
+            // Literacy
+            const litVal = eduData["Literacy Rate"]?.history[4] || 93.10; // idx 4 corresponds to 2024
+            document.getElementById("card-literacy").textContent = `${litVal}%`;
+
+            // Schools
+            const pubSchools = getValue("Public Schools Count");
+            const privSchools = getValue("Private Schools Count");
+            document.getElementById("card-schools").textContent = (pubSchools + privSchools).toString();
+            document.getElementById("card-schools-split").textContent = `${pubSchools} Public, ${privSchools} Private`;
+
+            // Total K-12 Enrollment
+            let totEnroll = 0;
+            const levels = ["Kinder", "Elementary", "Junior High", "Senior High"];
+            levels.forEach(lvl => {
+                totEnroll += getValue(`Public Enrollment - ${lvl}`) + getValue(`Private Enrollment - ${lvl}`);
+            });
+            document.getElementById("card-enrollment").textContent = totEnroll.toLocaleString();
+
+            // CDM College Enrollment
+            let cdmTot = 0;
+            const courses = ["BS Architecture", "BS Civil Engineering", "BS Computer Engineering", "BS Electronics Engineering", "BS Electrical Engineering", "BS Environmental Engineering", "BS Industrial Engineering", "BS Mechanical Engineering"];
+            courses.forEach(c => {
+                cdmTot += getValue(`CDM - ${c}`);
+            });
+            document.getElementById("card-cdm").textContent = cdmTot.toLocaleString();
+        }
+
+        // Render Page Charts
+        function renderCharts() {
+            // Chart 1: Literacy Rate (2007-2024)
+            const ctxA = document.getElementById("literacyChart").getContext("2d");
+            literacyChartInst = new Chart(ctxA, {
+                type: 'line',
+                data: {
+                    labels: eduLabels.slice(0, 5), // 2007 to 2024
+                    datasets: [{
+                        label: 'Functional Literacy Rate (%)',
+                        data: eduLabels.slice(0, 5).map((l, i) => eduData["Literacy Rate"]?.history[i]),
+                        borderColor: '#ef4444', // Touch of red
+                        backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                        borderWidth: 3.5,
+                        tension: 0.15,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            min: 75,
+                            max: 100,
+                            title: { display: true, text: 'Percentage (%)', font: { family: 'Outfit', weight: 'bold' } },
+                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
+                        },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // Chart 2: Public vs Private Enrollment by Level
+            const levels = ["Kinder", "Elementary", "Junior High", "Senior High"];
+            const publicData = levels.map(lvl => getValue(`Public Enrollment - ${lvl}`));
+            const privateData = levels.map(lvl => getValue(`Private Enrollment - ${lvl}`));
+
+            const ctxB = document.getElementById("enrollmentChart").getContext("2d");
+            enrollmentChartInst = new Chart(ctxB, {
+                type: 'bar',
+                data: {
+                    labels: ['Kindergarten', 'Elementary', 'Junior High', 'Senior High'],
+                    datasets: [
+                        {
+                            label: 'Public School',
+                            data: publicData,
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                            borderColor: '#3b82f6',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Private School',
+                            data: privateData,
+                            backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                            borderColor: '#f59e0b',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { grid: { color: 'rgba(15, 23, 42, 0.04)' } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { family: 'Outfit', weight: '500' } } }
+                    }
+                }
+            });
+
+            // Chart 3: CDM Courses Program size
+            const courses = ["BS Architecture", "BS Civil Engineering", "BS Computer Engineering", "BS Electronics Engineering", "BS Electrical Engineering", "BS Environmental Engineering", "BS Industrial Engineering", "BS Mechanical Engineering"];
+            const cdmCounts = courses.map(c => getValue(`CDM - ${c}`));
+
+            const ctxC = document.getElementById("cdmChart").getContext("2d");
+            cdmChartInst = new Chart(ctxC, {
+                type: 'bar',
+                data: {
+                    labels: ['Architecture', 'Civil Eng', 'Computer Eng', 'Electronics Eng', 'Electrical Eng', 'Environmental Eng', 'Industrial Eng', 'Mechanical Eng'],
+                    datasets: [{
+                        data: cdmCounts,
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderColor: '#3b82f6',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', // Horizontal bars
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { grid: { color: 'rgba(15, 23, 42, 0.04)' } },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // Initialize Daycare widget
+        function initDaycareWidget() {
+            const select = document.getElementById("daycare-brgy-select");
+
+            select.innerHTML = "";
+            BARANGAY_NAMES.forEach(b => {
+                const o = document.createElement("option");
+                o.value = b;
+                o.textContent = b;
+                if (b === "Poblacion") o.selected = true; // default Poblacion
+                select.appendChild(o);
+            });
+
+            select.addEventListener("change", updateDaycareWidget);
+            
+            // Draw initial Daycare Chart inside widget
+            const ctxD = document.getElementById("daycareChart").getContext("2d");
+            daycareChartInst = new Chart(ctxD, {
+                type: 'bar',
+                data: {
+                    labels: ['Ages 2-2.11', 'Ages 3-3.11', 'Ages 4-4.11'],
+                    datasets: [
+                        {
+                            label: 'Male Students',
+                            data: [],
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                            borderColor: '#3b82f6',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Female Students',
+                            data: [],
+                            backgroundColor: 'rgba(236, 72, 153, 0.8)',
+                            borderColor: '#ec4899',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { beginAtZero: true, grid: { color: 'rgba(15, 23, 42, 0.04)' } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { family: 'Outfit', weight: '500' } } }
+                    }
+                }
+            });
+
+            updateDaycareWidget();
+        }
+
+        // Update Daycare stats and chart dynamically
+        function updateDaycareWidget() {
+            const brgyName = document.getElementById("daycare-brgy-select").value;
+            const raw = daycareDetailsRaw[brgyName];
+
+            // Grab the database edited value of Age 4 (to keep database edits dynamic!)
+            const dbEditedAge4 = getValue(`${brgyName} - Day Care`); // index 5 (2025)
+            
+            // Calculate ratios for Male/Female split based on raw static values
+            const totalRawAge4 = raw.age4[0] + raw.age4[1];
+            const maleRatio = raw.age4[0] / totalRawAge4;
+            const femaleRatio = raw.age4[1] / totalRawAge4;
+
+            // Apply ratio to edited database totals to show live edits on child charts!
+            const dynamicMaleAge4 = Math.round(dbEditedAge4 * maleRatio);
+            const dynamicFemaleAge4 = Math.round(dbEditedAge4 * femaleRatio);
+
+            const age2Total = raw.age2[0] + raw.age2[1];
+            const age3Total = raw.age3[0] + raw.age3[1];
+            const grandTotal = age2Total + age3Total + dbEditedAge4;
+
+            // Update scoreboard text
+            document.getElementById("daycare-name").textContent = brgyName;
+            document.getElementById("daycare-total").textContent = grandTotal.toLocaleString();
+            document.getElementById("daycare-age2").textContent = age2Total.toLocaleString();
+            document.getElementById("daycare-age3").textContent = age3Total.toLocaleString();
+            document.getElementById("daycare-age4").textContent = dbEditedAge4.toLocaleString();
+
+            // Update Chart datasets
+            daycareChartInst.data.datasets[0].data = [raw.age2[0], raw.age3[0], dynamicMaleAge4];
+            daycareChartInst.data.datasets[1].data = [raw.age2[1], raw.age3[1], dynamicFemaleAge4];
+            daycareChartInst.update();
+        }
+    </script>
+</body>
+</html>
