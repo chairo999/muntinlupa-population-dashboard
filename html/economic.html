@@ -539,7 +539,7 @@
                         }
                     } else {
                         economicData = data.data || DEFAULT_ECONOMIC_DATA;
-                        economicLabels = data.labels || ECONOMIC_LABELS;
+                        economicLabels = normalizeLabels(data.labels) || ECONOMIC_LABELS;
                     }
                     
                     statusTxt.textContent = "Live Supabase Database Connected";
@@ -566,7 +566,7 @@
                 try {
                     const parsed = JSON.parse(localData);
                     economicData = parsed.data || DEFAULT_ECONOMIC_DATA;
-                    economicLabels = parsed.labels || ECONOMIC_LABELS;
+                    economicLabels = normalizeLabels(parsed.labels) || ECONOMIC_LABELS;
                 } catch (e) {
                     console.error("Error parsing localstorage data.", e);
                     economicData = DEFAULT_ECONOMIC_DATA;
@@ -577,6 +577,24 @@
                 economicLabels = ECONOMIC_LABELS;
                 localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: DEFAULT_ECONOMIC_DATA, labels: ECONOMIC_LABELS }));
             }
+        }
+
+        function normalizeLabels(labels) {
+            if (Array.isArray(labels)) {
+                return labels.map(String);
+            }
+            if (typeof labels === 'string') {
+                try {
+                    const parsed = JSON.parse(labels);
+                    if (Array.isArray(parsed)) {
+                        return parsed.map(String);
+                    }
+                } catch (e) {
+                    // Fall back to comma-separated strings
+                }
+                return labels.split(',').map(item => item.trim().replace(/^['"]|['"]$/g, ''));
+            }
+            return [];
         }
 
         // Helper to grab latest value safely
@@ -617,15 +635,26 @@
 
         // Render Page Charts
         function renderCharts() {
+            const rankHistory = economicData["Competitiveness Rank"]?.history || [];
+            const filteredYears = [];
+            const filteredRankValues = [];
+
+            rankHistory.forEach((value, index) => {
+                if (value !== null && value !== undefined) {
+                    filteredYears.push(Number(economicLabels[index]));
+                    filteredRankValues.push(value);
+                }
+            });
+
             // Chart 1: Competitiveness (Reversed Y Scale)
             const ctxA = document.getElementById("rankingChart").getContext("2d");
             rankingChartInstance = new Chart(ctxA, {
                 type: 'line',
                 data: {
-                    labels: economicLabels.slice(2, 12), // 2015 to 2024
+                    labels: filteredYears,
                     datasets: [{
                         label: 'Competitiveness Rank',
-                        data: economicData["Competitiveness Rank"]?.history.slice(2, 12) || [],
+                        data: filteredRankValues,
                         borderColor: '#ef4444', // Touch of red
                         backgroundColor: 'rgba(239, 68, 68, 0.05)',
                         borderWidth: 3.5,

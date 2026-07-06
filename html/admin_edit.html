@@ -631,6 +631,14 @@
                 <option value="" disabled selected>Loading years...</option>
               </select>
             </div>
+            <div class="form-group year-controls" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+              <div style="flex:1;min-width:240px;">
+                <label for="new-year"><i class="fa-solid fa-plus"></i> Add Year</label>
+                <input id="new-year" type="number" min="1900" placeholder="e.g. 2026" disabled />
+              </div>
+              <button type="button" id="add-year-btn" class="secondary-btn" disabled>Add year</button>
+              <button type="button" id="remove-year-btn" class="secondary-btn danger-btn" disabled><i class="fa-solid fa-minus"></i> Remove selected year</button>
+            </div>
             <!-- Value Previewer -->
             <div id="value-preview-box" class="value-preview-card" style="display: none;">
               <div class="value-preview-left">
@@ -904,6 +912,9 @@
     const statusTextEl = document.getElementById('status-text');
     const brgySelect = document.getElementById('brgy');
     const yearSelect = document.getElementById('year');
+    const newYearInput = document.getElementById('new-year');
+    const addYearBtn = document.getElementById('add-year-btn');
+    const removeYearBtn = document.getElementById('remove-year-btn');
     const valueInput = document.getElementById('value');
     const submitBtn = document.getElementById('submit-btn');
     const cfgEl = document.getElementById('cfg');
@@ -973,8 +984,115 @@
     function disableForm(disabled) {
       brgySelect.disabled = disabled;
       yearSelect.disabled = disabled;
+      newYearInput.disabled = disabled;
+      addYearBtn.disabled = disabled;
+      removeYearBtn.disabled = disabled;
       valueInput.disabled = disabled;
       submitBtn.disabled = disabled;
+    }
+
+    function updateRemoveYearBtn() {
+      removeYearBtn.disabled = Number.isNaN(parseInt(yearSelect.value, 10));
+    }
+
+    async function persistSectorData(tableName) {
+      const payload = { data: appData, labels: HISTORICAL_LABELS };
+      let savedToSupabase = false;
+      let saveError = null;
+
+      try {
+        const { error } = await supabaseClient
+          .from(tableName)
+          .upsert({ id: 1, data: payload.data, labels: payload.labels });
+        if (!error) {
+          savedToSupabase = true;
+        } else {
+          saveError = error;
+          console.error('Supabase upsert error:', error);
+        }
+      } catch (err) {
+        saveError = err;
+        console.warn('Supabase save error:', err);
+      }
+
+      localStorage.setItem(`muntinlupa_sector_data_${currentSectorKey}`, JSON.stringify(payload));
+
+      return { savedToSupabase, saveError };
+    }
+
+    async function addYear() {
+      const rawValue = newYearInput.value.trim();
+      const yearValue = Number(rawValue);
+      if (!rawValue || Number.isNaN(yearValue) || yearValue < 1900) {
+        showNotification('err', 'Enter a valid year to add.', 'fa-circle-xmark');
+        return;
+      }
+
+      const yearString = String(yearValue);
+      if (HISTORICAL_LABELS.includes(yearString)) {
+        showNotification('err', `Year ${yearString} already exists.`, 'fa-circle-xmark');
+        return;
+      }
+
+      const nextLabels = [...HISTORICAL_LABELS, yearString]
+        .map(String)
+        .sort((a, b) => Number(a) - Number(b));
+      const insertIndex = nextLabels.indexOf(yearString);
+      HISTORICAL_LABELS = nextLabels;
+
+      Object.keys(appData).forEach(key => {
+        const history = Array.isArray(appData[key].history) ? [...appData[key].history] : [];
+        history.splice(insertIndex, 0, null);
+        appData[key].history = history;
+      });
+
+      await saveYearChanges(`Added year ${yearString} to ${SECTORS[currentSectorKey].table}`);
+      newYearInput.value = '';
+      populateYears();
+      yearSelect.value = insertIndex;
+      syncValuePreview();
+      updateRemoveYearBtn();
+    }
+
+    async function removeYear() {
+      const yearIndex = parseInt(yearSelect.value, 10);
+      if (Number.isNaN(yearIndex)) {
+        showNotification('err', 'Select a year to remove.', 'fa-circle-xmark');
+        return;
+      }
+      if (HISTORICAL_LABELS.length <= 1) {
+        showNotification('err', 'At least one year must remain.', 'fa-circle-xmark');
+        return;
+      }
+
+      const removedYear = HISTORICAL_LABELS.splice(yearIndex, 1)[0];
+      Object.keys(appData).forEach(key => {
+        const history = Array.isArray(appData[key].history) ? [...appData[key].history] : [];
+        history.splice(yearIndex, 1);
+        appData[key].history = history;
+      });
+
+      await saveYearChanges(`Removed year ${removedYear} from ${SECTORS[currentSectorKey].table}`);
+      populateYears();
+      yearSelect.selectedIndex = 0;
+      syncValuePreview();
+      updateRemoveYearBtn();
+    }
+
+    async function saveYearChanges(message) {
+      showNotification('info', `${message} Saving changes...`, 'fa-spinner fa-spin');
+      disableForm(true);
+      const tableName = SECTORS[currentSectorKey].table;
+      const { savedToSupabase, saveError } = await persistSectorData(tableName);
+      disableForm(false);
+
+      if (savedToSupabase) {
+        showNotification('ok', `Year update saved to Supabase table '${tableName}'.`, 'fa-circle-check');
+      } else if (saveError) {
+        showNotification('err', `Save failed: ${saveError.message || saveError}`, 'fa-circle-xmark');
+      } else {
+        showNotification('ok', `Year update saved locally.`, 'fa-circle-exclamation');
+      }
     }
 
     // Set the overall header status banner
@@ -1105,6 +1223,7 @@
         o.textContent = lbl;
         yearSelect.appendChild(o);
       });
+      updateRemoveYearBtn();
     }
 
     // Listener for syncing stored database value
@@ -1133,7 +1252,12 @@
     }
 
     brgySelect.addEventListener('change', syncValuePreview);
-    yearSelect.addEventListener('change', syncValuePreview);
+    yearSelect.addEventListener('change', () => {
+      syncValuePreview();
+      updateRemoveYearBtn();
+    });
+    addYearBtn.addEventListener('click', addYear);
+    removeYearBtn.addEventListener('click', removeYear);
 
     // Form Submit Event Handler
     document.getElementById('edit-form').addEventListener('submit', async (e) => {
@@ -1166,23 +1290,12 @@
 
         appData[brgy].history[yearIndex] = val;
 
-        // Try Supabase DB Save
-        let savedToSupabase = false;
-        try {
-          const { error } = await supabaseClient
-            .from(tableName)
-            .upsert({ id: 1, data: appData, labels: HISTORICAL_LABELS });
-          if (!error) savedToSupabase = true;
-          else console.error("Supabase upsert error:", error);
-        } catch (dbErr) {
-          console.warn("Could not save live to Supabase. Saving to LocalStorage.", dbErr);
-        }
-
-        // Backup in LocalStorage
-        localStorage.setItem(`muntinlupa_sector_data_${currentSectorKey}`, JSON.stringify({ data: appData, labels: HISTORICAL_LABELS }));
+        const { savedToSupabase, saveError } = await persistSectorData(tableName);
 
         if (savedToSupabase) {
           showNotification('ok', `Successfully saved changes to Supabase table '${tableName}'.`, 'fa-circle-check');
+        } else if (saveError) {
+          showNotification('err', `Save Failed: ${saveError.message || saveError}`, 'fa-circle-xmark');
         } else {
           showNotification('ok', `Saved changes locally (LocalStorage Fallback).`, 'fa-circle-exclamation');
         }
