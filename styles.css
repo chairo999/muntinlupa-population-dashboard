@@ -652,7 +652,7 @@ select option {
 .map-zoom-layer {
     position: absolute;
     inset: 0;
-    background-image: url("map-image.png");
+    background-image: url("assets/images/map-image.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-position: center;
@@ -961,11 +961,13 @@ body.lp-env-body {
 .lp-slider-container {
     height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
     scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;       
+    scroll-behavior: smooth;
     scroll-padding-top: 0;
-    scroll-snap-stop: always;      
-    scrollbar-width: none;         
+    scroll-snap-stop: always;
+    scrollbar-width: none;
+    overscroll-behavior-y: contain;
 }
 
 .lp-slider-container::-webkit-scrollbar {
@@ -989,7 +991,7 @@ body.lp-env-body {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: url('ecological_profile.png');
+    background-image: url('assets/images/ecological_profile.png');
     background-size: cover;
     background-position: center;
     opacity: 0.4;

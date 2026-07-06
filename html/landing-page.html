@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body class="lp-env-body">
 
@@ -18,7 +18,7 @@
         <div class="lp-slide-part">
             
             <div class="lp-slide-logo">
-                <img src="muntinlupa-city-logo.png" alt="Muntinlupa City Logo">
+                <img src="../assets/images/muntinlupa-city-logo.png" alt="Muntinlupa City Logo">
                 <div class="lp-header-text">
                     <h3>MunTHINK Hub</h3>
                     <p>SMARTER DATA FOR A SMARTER MUNTINLUPA</p>
@@ -85,30 +85,6 @@
         </div>
     </div>
 
-    <script>
-        const container = document.querySelector('.lp-slider-container');
-        let isScrolling = false;
 
-        // Smooth trackpad wheel snap system logic
-        container.addEventListener('wheel', (e) => {
-            if (isScrolling) return;
-            const direction = e.deltaY > 0 ? 1 : -1;
-            const currentScroll = container.scrollTop;
-            const viewportHeight = window.innerHeight;
-            const currentSlideIndex = Math.round(currentScroll / viewportHeight);
-            const targetSlideIndex = currentSlideIndex + direction;
-            const totalSlides = container.children.length;
-
-            if (targetSlideIndex >= 0 && targetSlideIndex < totalSlides) {
-                e.preventDefault();
-                isScrolling = true;
-                container.scrollTo({
-                    top: targetSlideIndex * viewportHeight,
-                    behavior: 'smooth'
-                });
-                setTimeout(() => { isScrolling = false; }, 700);
-            }
-        }, { passive: false });
-    </script>
 </body>
 </html>
