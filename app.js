@@ -551,3 +551,69 @@ function renderBarangayBarChart() {
         }
     }
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const smoothLinks = document.querySelectorAll('.lp-header-action-link[href^="#"]');
+
+    function easeInOutQuad(t) {
+        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+
+    function animatedScrollTo(targetElement, duration = 700) {
+        const startY = window.pageYOffset || document.documentElement.scrollTop;
+        const targetRect = targetElement.getBoundingClientRect();
+        const targetY = Math.max(0, Math.round(startY + targetRect.top));
+        const distance = targetY - startY;
+        const startTime = performance.now();
+
+        function step(currentTime) {
+            const elapsed = Math.min(1, (currentTime - startTime) / duration);
+            const progress = easeInOutQuad(elapsed);
+            window.scrollTo(0, startY + distance * progress);
+            if (elapsed < 1) {
+                requestAnimationFrame(step);
+            }
+        }
+
+        requestAnimationFrame(step);
+    }
+
+    smoothLinks.forEach(link => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = this.getAttribute('href').slice(1);
+            const targetElement = document.getElementById(targetId);
+            if (!targetElement) return;
+
+            animatedScrollTo(targetElement, 750);
+            history.replaceState(null, '', '#' + targetId);
+        });
+    });
+
+    // Add scroll event listener to update active link based on visible section
+    function updateActiveLink() {
+        const links = document.querySelectorAll('.lp-header-action-link');
+        
+        links.forEach(link => {
+            const targetId = link.getAttribute('href').slice(1);
+            const section = document.getElementById(targetId);
+            
+            if (section) {
+                const rect = section.getBoundingClientRect();
+                const isInView = rect.top <= window.innerHeight * 0.5 && rect.bottom >= window.innerHeight * 0.5;
+                
+                if (isInView) {
+                    links.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                }
+            }
+        });
+    }
+
+    window.addEventListener('scroll', updateActiveLink, { passive: true });
+    
+    // Call once on load to set initial active link
+    updateActiveLink();
+});

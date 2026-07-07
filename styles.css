@@ -933,9 +933,10 @@ html.lp-env-body,
 body.lp-env-body {
     margin: 0;
     padding: 0;
-    height: 100%;
+    min-height: 100%;
     background: #033492;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     font-family: 'Montserrat', sans-serif;
 }
 
@@ -958,26 +959,30 @@ body.lp-env-body {
 }
 
 
-.lp-slider-container {
-    height: 100vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scroll-snap-type: y mandatory;
+html,
+body {
     scroll-behavior: smooth;
-    scroll-padding-top: 0;
-    scroll-snap-stop: always;
-    scrollbar-width: none;
-    overscroll-behavior-y: contain;
+}
+
+.lp-slider-container {
+    min-height: 100%;
+    overflow: visible;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #fbce13 transparent;
 }
 
 .lp-slider-container::-webkit-scrollbar {
-    display: none;
+    width: 8px;
+}
+
+.lp-slider-container::-webkit-scrollbar-thumb {
+    background: #fbce13;
+    border-radius: 999px;
 }
 
 .lp-slide-part {
-    height: 100vh;
-    scroll-snap-align: start;    
-    scroll-snap-stop: always;      
+    min-height: 100vh;
     background: #033492;
     position: relative;
     overflow: hidden;
@@ -1032,9 +1037,6 @@ body.lp-env-body {
     text-transform: uppercase;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
-/* ==========================================
-   GLOBAL FIXED LANDING PAGE HEADER
-   ========================================== */
 
 .lp-slide-nav-link {
     position: absolute;
@@ -1059,10 +1061,58 @@ body.lp-env-body {
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
 }
 
+.lp-header-actions {
+    position: fixed;
+    top: 30px;
+    right: 10px;
+    z-index: 101;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: calc(100vw - 180px);
+    justify-content: flex-end;
+    padding-right: 8px;
+    overflow-x: auto;
+}
+
+.lp-header-actions::-webkit-scrollbar {
+    height: 8px;
+}
+
+.lp-header-actions::-webkit-scrollbar-thumb {
+    background: rgba(255, 207, 1, 0.6);
+    border-radius: 999px;
+}
+
+.lp-header-action-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0px 6px;
+    color: white;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, text-shadow 0.2s ease;
+    position: relative;
+}
+
+.lp-header-action-link:hover {
+    transform: translateY(-2px);
+}
+
+.lp-header-action-link.active {
+    color: #ffcf01;
+    transform: translateY(-2px);
+}
+
 .lp-slide-logo {
     position: fixed; /* Changed from absolute to fixed to lock it in place while scrolling */
-    top: 32px;  
-    left: 32px; 
+    top: 15px;  
+    left: 18px; 
     z-index: 100; /* High z-index ensures it sits safely on top of all sliding panels */
     
     display: flex;
@@ -1072,8 +1122,8 @@ body.lp-env-body {
 }
 
 .lp-slide-logo img {
-    width: 95px !important;  
-    height: 95px !important; 
+    width: 90px !important;  
+    height: 90px !important; 
     object-fit: contain;
     /* filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4)); */
     flex-shrink: 0;
@@ -1081,7 +1131,7 @@ body.lp-env-body {
 
 .lp-header-text h3 {
     margin: 0;
-    font-size: 1.3rem;
+    font-size: 25px;
     font-weight: 800;
     color: #ffffff;
     letter-spacing: 0.5px;
@@ -1089,7 +1139,7 @@ body.lp-env-body {
 
 .lp-header-text p {
     margin: 0;
-    font-size: 0.75rem;
+    font-size: 15px;
     font-weight: 600;
     color: #fbce13; 
     letter-spacing: 1px;
