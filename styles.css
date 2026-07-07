@@ -1144,3 +1144,39 @@ body {
     color: #fbce13; 
     letter-spacing: 1px;
 }
+
+#population-slide {
+    background-color: #00576d;
+}
+
+#economic-slide {
+    background-color: #5f4600;
+}
+
+#education-slide {
+    background-color: #00025e;
+}
+
+#health-slide {
+    background-color: #550000;
+}
+
+#protective-slide {
+    background-color: #460066;
+}
+
+#socwel-slide {
+    background-color: #690041;
+}
+
+#environment-slide {
+    background-color: #005229;
+}
+
+#institutional-slide {
+    background-color: #202020;
+}
+
+#sdg-localization-slide {
+    background-color: #00224e;
+}
