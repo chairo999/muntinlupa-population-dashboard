@@ -342,8 +342,8 @@
                         <h5><i class="fa-solid fa-map-pin"></i> Barangay Business & Employment Generation</h5>
                         <div class="chart-controls">
                             <select id="barangay-view-mode" class="chart-select">
-                                <option value="compare-establishments">Compare Establishments</option>
-                                <option value="compare-employment">Compare Employment</option>
+                                <option value="compare-establishments">Registered Businesses</option>
+                                <option value="compare-employment">Employment</option>
                                 <option value="category-split">Barangay Category Split</option>
                             </select>
                             <select id="barangay-select" class="chart-select" style="display: none;"></select>
@@ -634,12 +634,15 @@
             const selectedBrgy = document.getElementById("barangay-select").value;
 
             if (mode === "compare-establishments") {
-                const counts = BARANGAY_NAMES.map(b => Number(getLatestValue(`${b} - Total Establishments`)) || 0);
+                const counts = BARANGAY_NAMES.map(b => {
+                    const rawVal = getLatestValue(`${b} - Total Establishments`);
+                    return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
+                });
 
                 barangayEconChartInstance.config.type = 'bar';
                 barangayEconChartInstance.data.labels = BARANGAY_NAMES;
                 barangayEconChartInstance.data.datasets = [{
-                    label: 'Most Recent Active Establishments Count',
+                    label: 'Most Recent Registered Businesses Count',
                     data: counts,
                     backgroundColor: 'rgba(239, 68, 68, 0.8)',
                     borderColor: '#ef4444',
@@ -651,7 +654,10 @@
                 barangayEconChartInstance.options.plugins.legend.display = false;
 
             } else if (mode === "compare-employment") {
-                const jobs = BARANGAY_NAMES.map(b => Number(getLatestValue(`${b} - Number of Employment`)) || 0);
+                const jobs = BARANGAY_NAMES.map(b => {
+                    const rawVal = getLatestValue(`${b} - Number of Employment`);
+                    return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
+                });
 
                 barangayEconChartInstance.config.type = 'bar';
                 barangayEconChartInstance.data.labels = BARANGAY_NAMES;
@@ -668,19 +674,48 @@
                 barangayEconChartInstance.options.plugins.legend.display = false;
 
             } else {
-                const micro = Number(getLatestValue(`${selectedBrgy} - Micro Establishments`)) || 0;
-                const small = Number(getLatestValue(`${selectedBrgy} - Small Establishments`)) || 0;
-                const medium = Number(getLatestValue(`${selectedBrgy} - Medium Establishments`)) || 0;
-                const large = Number(getLatestValue(`${selectedBrgy} - Large Establishments`)) || 0;
+                // FORCE TEXT DATA INTO PARSED FLOATS FOR MATH/GRAPHICS RENDER
+                const micro = parseFloat(getLatestValue(`${selectedBrgy} - Micro Establishments`)) || 0;
+                const small = parseFloat(getLatestValue(`${selectedBrgy} - Small Establishments`)) || 0;
+                const medium = parseFloat(getLatestValue(`${selectedBrgy} - Medium Establishments`)) || 0;
+                const large = parseFloat(getLatestValue(`${selectedBrgy} - Large Establishments`)) || 0;
 
                 barangayEconChartInstance.config.type = 'bar';
-                barangayEconChartInstance.data.labels = [`${selectedBrgy} Capitalization Distribution Split`];
+                // Provide a string array title axis label 
+                barangayEconChartInstance.data.labels = ["Capitalization Distribution Split"];
+                
+                // FIXED: Re-mapped into individual objects so Chart.js compiles separate stacked bars
                 barangayEconChartInstance.data.datasets = [
-                    { label: 'Micro', data: [micro], backgroundColor: '#d97706', borderRadius: 4 },
-                    { label: 'Small', data: [small], backgroundColor: '#eab308', borderRadius: 4 },
-                    { label: 'Medium', data: [medium], backgroundColor: '#10b981', borderRadius: 4 },
-                    { label: 'Large', data: [large], backgroundColor: '#ef4444', borderRadius: 4 }
+                    {
+                        label: 'Micro (≤ 3M Capitalization)',
+                        data: [micro],
+                        backgroundColor: '#d97706',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Small (3.1M - 15M Capitalization)',
+                        data: [small],
+                        backgroundColor: '#eab308',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Medium (15.1M - 100M Capitalization)',
+                        data: [medium],
+                        backgroundColor: '#10b981',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Large (≥ 100.1M Capitalization)',
+                        data: [large],
+                        backgroundColor: '#ef4444',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }
                 ];
+
                 barangayEconChartInstance.options.scales.x.stacked = true;
                 barangayEconChartInstance.options.scales.y.stacked = true;
                 barangayEconChartInstance.options.plugins.legend.display = true;
@@ -689,6 +724,7 @@
 
             barangayEconChartInstance.update();
         }
+   
     </script>
 </body>
 </html>
