@@ -794,6 +794,15 @@
           : '<i class="fa-solid fa-chart-bar"></i> Select Indicator';
       }
       
+      const yearLabelEl = document.querySelector('label[for="year"]');
+      if (yearLabelEl) {
+        yearLabelEl.innerHTML = '<i class="fa-solid fa-calendar-days"></i> Select Year';
+      }
+      const yearControls = document.querySelector('.year-controls');
+      if (yearControls) {
+        yearControls.style.display = 'flex';
+      }
+      
       valuePreviewBox.style.display = 'none';
       valueInput.value = '';
       disableForm(true);
@@ -861,8 +870,13 @@
       if (!selectedIndicatorRow) return;
 
       // Populate year selector based on chosen indicator's individual timelines
-      yearSelect.innerHTML = '<option value="" disabled selected>-- Choose Year --</option>';
       const labels = selectedIndicatorRow.labels || [];
+      const hasNonNumeric = labels.some(l => isNaN(l));
+      
+      yearSelect.innerHTML = hasNonNumeric 
+        ? '<option value="" disabled selected>-- Choose Category --</option>'
+        : '<option value="" disabled selected>-- Choose Year --</option>';
+        
       labels.forEach((lbl, idx) => {
         const o = document.createElement('option');
         o.value = idx;
@@ -874,6 +888,20 @@
       valuePreviewBox.style.display = 'none';
       valueInput.value = '';
       removeYearBtn.disabled = true;
+
+      // Dynamic updates to labels and inputs for category-based indicators
+      const yearLabelEl = document.querySelector('label[for="year"]');
+      const yearControls = document.querySelector('.year-controls');
+      
+      if (yearLabelEl) {
+        yearLabelEl.innerHTML = hasNonNumeric 
+          ? '<i class="fa-solid fa-list"></i> Select Category'
+          : '<i class="fa-solid fa-calendar-days"></i> Select Year';
+      }
+      
+      if (yearControls) {
+        yearControls.style.display = hasNonNumeric ? 'none' : 'flex';
+      }
     });
 
     // Sync selected year preview values

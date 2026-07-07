@@ -674,11 +674,30 @@
                 barangayEconChartInstance.options.plugins.legend.display = false;
 
             } else {
-                // FORCE TEXT DATA INTO PARSED FLOATS FOR MATH/GRAPHICS RENDER
-                const micro = parseFloat(getLatestValue(`${selectedBrgy} - Micro Establishments`)) || 0;
-                const small = parseFloat(getLatestValue(`${selectedBrgy} - Small Establishments`)) || 0;
-                const medium = parseFloat(getLatestValue(`${selectedBrgy} - Medium Establishments`)) || 0;
-                const large = parseFloat(getLatestValue(`${selectedBrgy} - Large Establishments`)) || 0;
+                let micro = 0, small = 0, medium = 0, large = 0;
+                
+                // Retrieve combined category-based data if present, or fallback to separate indicator rows
+                const regBizKey = `${selectedBrgy} Registered Businesses`;
+                if (economicData[regBizKey]) {
+                    const bizData = economicData[regBizKey];
+                    const labels = bizData.labels || [];
+                    const history = bizData.history || [];
+                    
+                    const microIdx = labels.indexOf("Micro");
+                    const smallIdx = labels.indexOf("Small");
+                    const mediumIdx = labels.indexOf("Medium");
+                    const largeIdx = labels.indexOf("Large");
+                    
+                    if (microIdx !== -1) micro = parseFloat(history[microIdx]) || 0;
+                    if (smallIdx !== -1) small = parseFloat(history[smallIdx]) || 0;
+                    if (mediumIdx !== -1) medium = parseFloat(history[mediumIdx]) || 0;
+                    if (largeIdx !== -1) large = parseFloat(history[largeIdx]) || 0;
+                } else {
+                    micro = parseFloat(getLatestValue(`${selectedBrgy} - Micro Establishments`)) || 0;
+                    small = parseFloat(getLatestValue(`${selectedBrgy} - Small Establishments`)) || 0;
+                    medium = parseFloat(getLatestValue(`${selectedBrgy} - Medium Establishments`)) || 0;
+                    large = parseFloat(getLatestValue(`${selectedBrgy} - Large Establishments`)) || 0;
+                }
 
                 barangayEconChartInstance.config.type = 'bar';
                 // Provide a string array title axis label 
