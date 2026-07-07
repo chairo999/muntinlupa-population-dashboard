@@ -1155,6 +1155,10 @@
           }
         } else {
           appData = data.data || {};
+          if (sectorConfig.defaultData) {
+            const defaults = JSON.parse(JSON.stringify(sectorConfig.defaultData));
+            appData = { ...defaults, ...appData };
+          }
           HISTORICAL_LABELS = (Array.isArray(data.labels) && data.labels.length) ? data.labels : fallbackLabels;
           showNotification('info', `Ready. Select an item and year to modify this sector.`, 'fa-circle-check');
           updateHeaderStatus('online', `Live & Connected (Table: ${tableName})`);
