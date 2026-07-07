@@ -669,243 +669,72 @@
   </div>
   <!-- Supabase JS (UMD) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+
   
   <script>
-    // Configuration details
+    // 1. CONFIGURATION
     const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
+    
+    // Your new master table name
+    const MASTER_TABLE_NAME = "municipal_indicators"; 
 
-    // Sector Configuration map
+    // Sector Configuration mapping to your frontend tabs
     const SECTORS = {
       edit: {
-        table: "demographics",
+        sectorId: "population",
         name: "Population",
         desc: "Modify the demographic census population estimates across years and districts.",
-        icon: "fa-users",
-        defaultLabels: ["2015", "2020", "2024"],
-        defaultKeys: ['Sucat', 'Buli', 'Cupang', 'Alabang', 'Ayala Alabang', 'Bayanan', 'Putatan', 'Poblacion', 'Tunasan']
+        icon: "fa-users"
       },
       economic: {
-        table: "economic",
+        sectorId: "economic",
         name: "Economic Sector",
         desc: "Edit municipal competitiveness rankings, hotel arrivals, and business registration counts.",
-        icon: "fa-chart-line",
-        defaultLabels: ["2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"],
-        defaultData: {
-          "Competitiveness Rank": { history: [null, null, 12, 9, 12, 10, 8, 5, 5, 5, 5, 4, null] },
-          "Total Establishments": { history: [12981, 13124, 13255, 13761, 14644, 15409, 15708, 15143, 14347, 14941, 16022, 16461, 16594] },
-          "Hotel Arrivals": { history: [null, null, null, null, null, null, null, 230057, 346855, 306617, 382318, 389707, null] },
-          "Sucat - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 771] },
-          "Sucat - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 65] },
-          "Sucat - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 14] },
-          "Sucat - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 5] },
-          "Sucat - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 855] },
-          "Sucat - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 4196] },
-          "Cupang - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1322] },
-          "Cupang - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 209] },
-          "Cupang - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 81] },
-          "Cupang - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 18] },
-          "Cupang - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1630] },
-          "Cupang - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 22260] },
-          "Buli - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 157] },
-          "Buli - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 27] },
-          "Buli - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 7] },
-          "Buli - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 6] },
-          "Buli - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 197] },
-          "Buli - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 2751] },
-          "Ayala Alabang - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1954] },
-          "Ayala Alabang - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 677] },
-          "Ayala Alabang - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 199] },
-          "Ayala Alabang - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 39] },
-          "Ayala Alabang - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 2869] },
-          "Ayala Alabang - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 26635] },
-          "Alabang - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 4100] },
-          "Alabang - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 120] },
-          "Alabang - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 260] },
-          "Alabang - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 84] },
-          "Alabang - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 4564] },
-          "Alabang - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 72320] },
-          "Bayanan - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 649] },
-          "Bayanan - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 35] },
-          "Bayanan - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 3] },
-          "Bayanan - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1] },
-          "Bayanan - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 688] },
-          "Bayanan - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 2193] },
-          "Putatan - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1832] },
-          "Putatan - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 155] },
-          "Putatan - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 31] },
-          "Putatan - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 3] },
-          "Putatan - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 2021] },
-          "Putatan - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 8041] },
-          "Poblacion - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1204] },
-          "Poblacion - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 59] },
-          "Poblacion - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 5] },
-          "Poblacion - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 9] },
-          "Poblacion - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1277] },
-          "Poblacion - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 4019] },
-          "Tunasan - Micro Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1664] },
-          "Tunasan - Small Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 120] },
-          "Tunasan - Medium Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 30] },
-          "Tunasan - Large Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 5] },
-          "Tunasan - Total Establishments": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 1819] },
-          "Tunasan - Number of Employment": { history: [null, null, null, null, null, null, null, null, null, null, null, null, 9080] }
-        }
+        icon: "fa-chart-line"
       },
       education: {
-        table: "education",
+        sectorId: "education",
         name: "Education Sector",
         desc: "Manage literacy rates, student enrollment splits, and CDM engineering program sizes.",
-        icon: "fa-graduation-cap",
-        defaultLabels: ["2007", "2010", "2015", "2020", "2024", "2025"],
-        defaultData: {
-          "Literacy Rate": { history: [79.83, 98.74, 98.86, 98.96, 93.10, null] },
-          "Public Schools Count": { history: [null, null, null, null, null, 28] },
-          "Private Schools Count": { history: [null, null, null, null, null, 70] },
-          "Alabang - Day Care": { history: [null, null, null, null, null, 541] },
-          "Ayala Alabang - Day Care": { history: [null, null, null, null, null, 59] },
-          "Bayanan - Day Care": { history: [null, null, null, null, null, 423] },
-          "Buli - Day Care": { history: [null, null, null, null, null, 138] },
-          "Cupang - Day Care": { history: [null, null, null, null, null, 298] },
-          "Poblacion - Day Care": { history: [null, null, null, null, null, 1105] },
-          "Putatan - Day Care": { history: [null, null, null, null, null, 715] },
-          "Sucat - Day Care": { history: [null, null, null, null, null, 406] },
-          "Tunasan - Day Care": { history: [null, null, null, null, null, 587] },
-          "Public Enrollment - Kinder": { history: [null, null, null, null, null, 6822] },
-          "Public Enrollment - Elementary": { history: [null, null, null, null, null, 40442] },
-          "Public Enrollment - Junior High": { history: [null, null, null, null, null, 25490] },
-          "Public Enrollment - Senior High": { history: [null, null, null, null, null, 9171] },
-          "Private Enrollment - Kinder": { history: [null, null, null, null, null, 1334] },
-          "Private Enrollment - Elementary": { history: [null, null, null, null, null, 8284] },
-          "Private Enrollment - Junior High": { history: [null, null, null, null, null, 7742] },
-          "Private Enrollment - Senior High": { history: [null, null, null, null, null, 10259] },
-          "CDM - BS Architecture": { history: [null, null, null, null, null, 372] },
-          "CDM - BS Civil Engineering": { history: [null, null, null, null, null, 987] },
-          "CDM - BS Computer Engineering": { history: [null, null, null, null, null, 509] },
-          "CDM - BS Electronics Engineering": { history: [null, null, null, null, null, 161] },
-          "CDM - BS Electrical Engineering": { history: [null, null, null, null, null, 187] },
-          "CDM - BS Environmental Engineering": { history: [null, null, null, null, null, 31] },
-          "CDM - BS Industrial Engineering": { history: [null, null, null, null, null, 230] },
-          "CDM - BS Mechanical Engineering": { history: [null, null, null, null, null, 344] },
-          "Gross Enrolment Rate (Grades 1-6)": { history: [null, null, null, null, 91.39, null] },
-          "Net Enrolment Rate (Grades 1-6)": { history: [null, null, null, null, 84.13, null] },
-          "Cohort Survival Rate (Grades 1-6)": { history: [null, null, null, null, 97.97, null] },
-          "School Leaver Rate (Grades 1-6)": { history: [null, null, null, null, 0.36, null] }
-        }
+        icon: "fa-graduation-cap"
       },
       health: {
-        table: "health",
+        sectorId: "health",
         name: "Health Sector",
         desc: "Edit healthcare indexes, facility metrics, and general health parameters.",
-        icon: "fa-heart-pulse",
-        defaultLabels: ["2020", "2021", "2022", "2023", "2024", "2025"],
-        defaultData: {
-          "Crude Birth Rate (CBR)": { history: [12.12, 12.3, null, null, 13.6, 15.04] },
-          "Crude Death Rate (CDR)": { history: [4.71, 5.54, null, null, 3.17, null] },
-          "Infant Mortality Rate": { history: [6.86, 9.21, null, null, 7.85, 7.69] },
-          "Under Five Mortality Rate (UMR)": { history: [9.61, 11.58, null, null, 9.55, null] },
-          "Maternal Mortality Rate (MMR)": { history: [106.8, 133.67, null, null, 52.0, 12.0] },
-          "Child Woman Ratio (CWR)": { history: [null, 1.1, null, null, null, null] },
-          "Percentage of Fully Immunized Children": { history: [null, 74.0, 61.0, 60.29, 54.65, 50.26] },
-          "Prevalence of Underweight (UW) & Severely Underweight (SUW) Children": { history: [null, null, null, null, null, null] },
-          "Infants Exclusively Breastfeed until 6 months": { history: [null, 75.28, 53.48, 59.39, 68.37, null] },
-          "Percentage of Teenage Deliveries": { history: [null, 8.89, null, null, null, null] },
-          "Percentage of Birth by Skilled Attendant": { history: [null, 87.0, 82.0, 86.0, 95.80, 95.28] },
-          "Births by Facility Based": { history: [null, 83.0, 78.28, 85.38, 95.69, 94.36] },
-          "Contraceptive Prevalence Rate": { history: [null, 22.7, 23.74, 27.57, null, null] }
-        }
+        icon: "fa-heart-pulse"
       },
       protective: {
-        table: "protective",
+        sectorId: "protective",
         name: "Protective Services",
         desc: "Update crime statistics, police force headcount, and municipal resource indices.",
-        icon: "fa-shield-halved",
-        defaultLabels: ["2020", "2021", "2022", "2023", "2024"],
-        defaultData: {
-          "Total Crime Volume (TCV)": { history: [1773, 1273, 1458, 1276, 1169] },
-          "Index Crime": { history: [245, 181, 176, 129, 84] },
-          "Average Monthly Crime Rate (AMCR)": { history: [27.19, 19.52, 22.36, 20.0, 18.0] },
-          "Crime Solution Efficiency (CSE)": { history: [86.95, 83.67, 85.46, 86.99, 89.05] },
-          "Crime Clearance Solution": { history: [99.44, 99.77, 99.86, 99.84, 99.83] },
-          "Police to Population Ratio (1:X)": { history: [1053, 1142, 708, 739, 703] },
-          "Number of Policemen": { history: [479, 476, 561, 544, 564] },
-          "Non-Uniformed Personnel": { history: [16, 17, 18, 18, 17] },
-          "Police Sub-Stations": { history: [6, 6, 6, 7, 7] },
-          "Patrol Cars": { history: [36, 26, 36, 39, 36] },
-          "Motorcycles": { history: [33, 37, 44, 43, 42] },
-          "Tunasan": { history: [186, 134, 185, 177, 149] },
-          "Poblacion": { history: [333, 261, 287, 249, 203] },
-          "Putatan": { history: [219, 197, 179, 153, 235] },
-          "Bayanan": { history: [148, 130, 129, 105, 92] },
-          "Alabang": { history: [481, 269, 333, 294, 32] },
-          "Ayala Alabang": { history: [46, 43, 44, 30, 142] },
-          "Cupang": { history: [140, 128, 101, 96, 29] },
-          "Buli": { history: [26, 18, 8, 25, 151] },
-          "Sucat": { history: [207, 143, 192, 147, 136] }
-        }
+        icon: "fa-shield-halved"
       },
       social_welfare: {
-        table: "social_welfare",
+        sectorId: "social_welfare",
         name: "Social Welfare Services",
         desc: "Edit social support system markers, program coverage, and beneficiary counts.",
-        icon: "fa-hand-holding-heart",
-        defaultLabels: ["2021", "2022", "2023", "2024", "2025"]
+        icon: "fa-hand-holding-heart"
       },
       environment: {
-        table: "environment",
+        sectorId: "environment",
         name: "Environmental Indicators",
         desc: "Modify waste management metrics, green cover stats, and environment markers.",
-        icon: "fa-leaf",
-        defaultLabels: ["2021", "2022", "2023", "2024", "2025"],
-        defaultKeys: ["Solid Waste Collection Coverage (%)", "Material Recovery Facility Count", "Air Quality Index (AQI)", "Tree Cover Percentage", "Flood Prone Areas Count"]
+        icon: "fa-leaf"
       },
       institutional: {
-        table: "institutional",
+        sectorId: "institutional",
         name: "Institutional Metrics",
         desc: "Edit governance ratings, administrative assets, and municipal indices.",
-        icon: "fa-building-columns",
-        defaultLabels: ["2021", "2022", "2023", "2024", "2025"],
-        defaultKeys: ["Revenue Collection Growth Rate", "Civil Service Eligibility Percentage", "Number of Ordinances Passed", "City Employee Headcount", "Municipal Budget Utilization Rate"]
+        icon: "fa-building-columns"
       }
     };
 
-    // Programmatically populate social_welfare defaultKeys and defaultData
-    const socWelBarangays = ["Alabang", "Ayala Alabang", "Bayanan", "Buli", "Cupang", "Poblacion", "Putatan", "Sucat", "Tunasan"];
-    const socWelMetrics = ["PWD (Male)", "PWD (Female)", "Youth Organizations", "Registered Youths", "Seniors (Male)", "Seniors (Female)"];
-    const socWelRaw = {
-      "Alabang": [1131, 1110, 37, 3774, 2602, 3795],
-      "Ayala Alabang": [325, 326, 5, 70, 1394, 2175],
-      "Bayanan": [648, 564, 15, 483, 1677, 2724],
-      "Buli": [149, 154, 9, 749, 482, 727],
-      "Cupang": [673, 643, 15, 1752, 2595, 3852],
-      "Poblacion": [1322, 1356, 50, 2758, 4537, 6519],
-      "Putatan": [1488, 1418, 28, 1045, 4974, 7706],
-      "Sucat": [609, 547, 22, 1618, 1868, 2838],
-      "Tunasan": [879, 811, 19, 1246, 3196, 4784]
-    };
-    
-    SECTORS.social_welfare.defaultKeys = [];
-    SECTORS.social_welfare.defaultData = {};
-    
-    socWelBarangays.forEach(brgy => {
-      socWelMetrics.forEach((metric, metricIdx) => {
-        const key = `${brgy} - ${metric}`;
-        SECTORS.social_welfare.defaultKeys.push(key);
-        
-        const history = [null, null, null, null, null]; // corresponds to ["2021", "2022", "2023", "2024", "2025"]
-        const yearIndex = (metricIdx < 2) ? 0 : (metricIdx < 4) ? 1 : 3;
-        history[yearIndex] = socWelRaw[brgy][metricIdx];
-        
-        SECTORS.social_welfare.defaultData[key] = { history };
-      });
-    });
-
-    const DEFAULT_HISTORICAL_LABELS = ["2015", "2020", "2024"];
-    const DEFAULT_BARANGAY_LIST = ['Sucat', 'Buli', 'Cupang', 'Alabang', 'Ayala Alabang', 'Bayanan', 'Putatan', 'Poblacion', 'Tunasan'];
-
     // State parameters
     let currentSectorKey = "edit";
-    let appData = {};
-    let HISTORICAL_LABELS = [...DEFAULT_HISTORICAL_LABELS];
+    let activeIndicators = []; // Holds the rows fetched for the current sector
+    let selectedIndicatorRow = null; // Currently selected row object
 
     // DOM Elements
     const statusDotEl = document.getElementById('status-dot');
@@ -920,30 +749,29 @@
     const cfgEl = document.getElementById('cfg');
     const valuePreviewBox = document.getElementById('value-preview-box');
     const currentValueDisplay = document.getElementById('current-value-display');
-    
-    // Header/Sector Info DOM Elements
     const sectorTitle = document.getElementById('sector-title');
     const sectorDesc = document.getElementById('sector-desc');
     const tableNameBadge = document.getElementById('table-name-badge');
 
-    // Show config on page init
-    cfgEl.textContent = `Endpoint API URL: ${SUPABASE_URL}\nAnon Access Key: ${SUPABASE_ANON_KEY.substring(0, 20)}...`;
+    cfgEl.textContent = `Master Table: ${MASTER_TABLE_NAME}\nEndpoint URL: ${SUPABASE_URL}`;
 
-    // Initialize Supabase Client
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Initialize Supabase safely
+    let supabaseClient = null;
+    try {
+      if (typeof supabase === 'undefined') throw new Error("Supabase CDN blocked or failed to load.");
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch(err) {
+      updateHeaderStatus('error', 'Initialization Error');
+      showNotification('err', err.message, 'fa-triangle-exclamation');
+    }
 
-    // Set up sidebar navigation click handlers
+    // Set up sidebar navigation
     document.querySelectorAll('.nav-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const selectedBtn = e.currentTarget;
-        const targetSector = selectedBtn.getAttribute('data-sector');
-        
-        // Update active class
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         selectedBtn.classList.add('active');
-        
-        // Set new sector
-        switchSector(targetSector);
+        switchSector(selectedBtn.getAttribute('data-sector'));
       });
     });
 
@@ -951,36 +779,28 @@
     async function switchSector(sectorKey) {
       if (!SECTORS[sectorKey]) return;
       currentSectorKey = sectorKey;
-      
       const config = SECTORS[sectorKey];
       
-      // Update UI title and texts
+      // Update Titles
       sectorTitle.innerHTML = `<i class="fa-solid ${config.icon}"></i> ${config.name}`;
       sectorDesc.textContent = config.desc;
-      tableNameBadge.textContent = config.table;
+      tableNameBadge.textContent = `${MASTER_TABLE_NAME} (${config.sectorId})`;
       
-      // Update label text dynamically (Select Barangay vs Select Indicator)
+      // Toggle dropdown labels depending on mode
       const labelEl = document.querySelector('label[for="brgy"]');
       if (labelEl) {
-        if (sectorKey === 'edit') {
-          labelEl.innerHTML = '<i class="fa-solid fa-map-pin"></i> Select Barangay';
-        } else {
-          labelEl.innerHTML = '<i class="fa-solid fa-chart-bar"></i> Select Indicator';
-        }
+        labelEl.innerHTML = sectorKey === 'edit' 
+          ? '<i class="fa-solid fa-map-pin"></i> Select Barangay' 
+          : '<i class="fa-solid fa-chart-bar"></i> Select Indicator';
       }
       
-      // Clear inputs & previews
       valuePreviewBox.style.display = 'none';
       valueInput.value = '';
-      
-      // Disable controls while loading
       disableForm(true);
 
-      // Fetch data for the new sector
-      await loadSectorData(config.table);
+      await loadSectorData(config.sectorId);
     }
 
-    // Disable or Enable the Form Inputs & Button
     function disableForm(disabled) {
       brgySelect.disabled = disabled;
       yearSelect.disabled = disabled;
@@ -991,330 +811,220 @@
       submitBtn.disabled = disabled;
     }
 
-    function updateRemoveYearBtn() {
-      removeYearBtn.disabled = Number.isNaN(parseInt(yearSelect.value, 10));
-    }
-
-    async function persistSectorData(tableName) {
-      const payload = { data: appData, labels: HISTORICAL_LABELS };
-      let savedToSupabase = false;
-      let saveError = null;
-
-      try {
-        const { error } = await supabaseClient
-          .from(tableName)
-          .upsert({ id: 1, data: payload.data, labels: payload.labels });
-        if (!error) {
-          savedToSupabase = true;
-        } else {
-          saveError = error;
-          console.error('Supabase upsert error:', error);
-        }
-      } catch (err) {
-        saveError = err;
-        console.warn('Supabase save error:', err);
-      }
-
-      localStorage.setItem(`muntinlupa_sector_data_${currentSectorKey}`, JSON.stringify(payload));
-
-      return { savedToSupabase, saveError };
-    }
-
-    async function addYear() {
-      const rawValue = newYearInput.value.trim();
-      const yearValue = Number(rawValue);
-      if (!rawValue || Number.isNaN(yearValue) || yearValue < 1900) {
-        showNotification('err', 'Enter a valid year to add.', 'fa-circle-xmark');
-        return;
-      }
-
-      const yearString = String(yearValue);
-      if (HISTORICAL_LABELS.includes(yearString)) {
-        showNotification('err', `Year ${yearString} already exists.`, 'fa-circle-xmark');
-        return;
-      }
-
-      const nextLabels = [...HISTORICAL_LABELS, yearString]
-        .map(String)
-        .sort((a, b) => Number(a) - Number(b));
-      const insertIndex = nextLabels.indexOf(yearString);
-      HISTORICAL_LABELS = nextLabels;
-
-      Object.keys(appData).forEach(key => {
-        const history = Array.isArray(appData[key].history) ? [...appData[key].history] : [];
-        history.splice(insertIndex, 0, null);
-        appData[key].history = history;
-      });
-
-      await saveYearChanges(`Added year ${yearString} to ${SECTORS[currentSectorKey].table}`);
-      newYearInput.value = '';
-      populateYears();
-      yearSelect.value = insertIndex;
-      syncValuePreview();
-      updateRemoveYearBtn();
-    }
-
-    async function removeYear() {
-      const yearIndex = parseInt(yearSelect.value, 10);
-      if (Number.isNaN(yearIndex)) {
-        showNotification('err', 'Select a year to remove.', 'fa-circle-xmark');
-        return;
-      }
-      if (HISTORICAL_LABELS.length <= 1) {
-        showNotification('err', 'At least one year must remain.', 'fa-circle-xmark');
-        return;
-      }
-
-      const removedYear = HISTORICAL_LABELS.splice(yearIndex, 1)[0];
-      Object.keys(appData).forEach(key => {
-        const history = Array.isArray(appData[key].history) ? [...appData[key].history] : [];
-        history.splice(yearIndex, 1);
-        appData[key].history = history;
-      });
-
-      await saveYearChanges(`Removed year ${removedYear} from ${SECTORS[currentSectorKey].table}`);
-      populateYears();
-      yearSelect.selectedIndex = 0;
-      syncValuePreview();
-      updateRemoveYearBtn();
-    }
-
-    async function saveYearChanges(message) {
-      showNotification('info', `${message} Saving changes...`, 'fa-spinner fa-spin');
-      disableForm(true);
-      const tableName = SECTORS[currentSectorKey].table;
-      const { savedToSupabase, saveError } = await persistSectorData(tableName);
-      disableForm(false);
-
-      if (savedToSupabase) {
-        showNotification('ok', `Year update saved to Supabase table '${tableName}'.`, 'fa-circle-check');
-      } else if (saveError) {
-        showNotification('err', `Save failed: ${saveError.message || saveError}`, 'fa-circle-xmark');
-      } else {
-        showNotification('ok', `Year update saved locally.`, 'fa-circle-exclamation');
-      }
-    }
-
-    // Set the overall header status banner
-    function updateHeaderStatus(state, message) {
-      statusTextEl.textContent = message;
-      statusDotEl.className = 'status-dot ' + state;
-    }
-
-    // Show inline alert in form
-    function showNotification(type, message, iconClass = 'fa-circle-info') {
-      const parent = document.getElementById('notification-area');
-      parent.innerHTML = `
-        <div id="status" class="notification ${type}">
-          <i class="fa-solid ${iconClass}"></i> ${message}
-        </div>
-      `;
-    }
-
-    // Load data from selected Table in Supabase (with LocalStorage fallbacks)
-    async function loadSectorData(tableName) {
-      updateHeaderStatus('connecting', `Connecting table: [${tableName}]...`);
-      showNotification('info', `Retrieving sector data from table '${tableName}'...`, 'fa-spinner fa-spin');
-      
-      const sectorConfig = SECTORS[currentSectorKey];
-      const fallbackLabels = sectorConfig.defaultLabels || DEFAULT_HISTORICAL_LABELS;
-      const fallbackKeys = sectorConfig.defaultKeys || DEFAULT_BARANGAY_LIST;
+    // Load data from Master Table filtered by Sector
+    async function loadSectorData(sectorId) {
+      updateHeaderStatus('connecting', `Querying master table for [${sectorId}]...`);
+      showNotification('info', `Fetching matching rows from ${MASTER_TABLE_NAME}...`, 'fa-spinner fa-spin');
       
       try {
         const { data, error } = await supabaseClient
-          .from(tableName)
-          .select('data, labels')
-          .eq('id', 1)
-          .single();
+          .from(MASTER_TABLE_NAME)
+          .select('*')
+          .eq('sector', sectorId);
 
-        if (error) {
-          if (error.code === 'PGRST116') {
-            // Check LocalStorage fallback
-            const localStored = localStorage.getItem(`muntinlupa_sector_data_${currentSectorKey}`);
-            if (localStored) {
-              const parsed = JSON.parse(localStored);
-              appData = parsed.data || {};
-              HISTORICAL_LABELS = parsed.labels || fallbackLabels;
-              showNotification('info', `Loaded '${tableName}' records from LocalStorage fallback.`, 'fa-circle-exclamation');
-            } else {
-              // Create fallback skeleton using default data or default keys
-              appData = {};
-              if (sectorConfig.defaultData) {
-                appData = JSON.parse(JSON.stringify(sectorConfig.defaultData));
-              } else {
-                fallbackKeys.forEach(k => {
-                  appData[k] = { history: new Array(fallbackLabels.length).fill(null) };
-                });
-              }
-              HISTORICAL_LABELS = fallbackLabels;
-              showNotification('info', `No active records found in table '${tableName}'. Operating with default indicators.`, 'fa-circle-exclamation');
-            }
-            updateHeaderStatus('online', `Connected (LocalStorage Fallback Mode)`);
-          } else {
-            throw error;
-          }
-        } else {
-          appData = data.data || {};
-          if (sectorConfig.defaultData) {
-            const defaults = JSON.parse(JSON.stringify(sectorConfig.defaultData));
-            appData = { ...defaults, ...appData };
-          }
-          HISTORICAL_LABELS = (Array.isArray(data.labels) && data.labels.length) ? data.labels : fallbackLabels;
-          showNotification('info', `Ready. Select an item and year to modify this sector.`, 'fa-circle-check');
-          updateHeaderStatus('online', `Live & Connected (Table: ${tableName})`);
-        }
+        if (error) throw error;
 
-        // Re-populate choices
-        populateBarangays();
-        populateYears();
-        disableForm(false);
+        activeIndicators = data || [];
         
+        populateIndicatorDropdown();
+        updateHeaderStatus('online', `Live & Connected (Sector: ${sectorId})`);
+        showNotification('ok', `Loaded ${activeIndicators.length} records successfully.`, 'fa-circle-check');
+        disableForm(false);
+        yearSelect.disabled = true; // explicitly lock until an indicator row is chosen
       } catch (err) {
-        console.warn("Database connection failed. Falling back to LocalStorage.", err);
-        const localStored = localStorage.getItem(`muntinlupa_sector_data_${currentSectorKey}`);
-        if (localStored) {
-          const parsed = JSON.parse(localStored);
-          appData = parsed.data || {};
-          HISTORICAL_LABELS = parsed.labels || fallbackLabels;
-          showNotification('info', `Database offline. Loaded data from LocalStorage fallback.`, 'fa-triangle-exclamation');
-          updateHeaderStatus('error', `Offline (LocalStorage Mode)`);
-        } else {
-          appData = {};
-          if (sectorConfig.defaultData) {
-            appData = JSON.parse(JSON.stringify(sectorConfig.defaultData));
-          } else {
-            fallbackKeys.forEach(k => {
-              appData[k] = { history: new Array(fallbackLabels.length).fill(null) };
-            });
-          }
-          HISTORICAL_LABELS = fallbackLabels;
-          showNotification('err', `Database offline. Loaded default indicators.`, 'fa-triangle-exclamation');
-          updateHeaderStatus('error', `Offline Mode`);
-        }
-        
-        populateBarangays();
-        populateYears();
-        disableForm(false);
+        console.error(err);
+        updateHeaderStatus('error', 'Database Error');
+        showNotification('err', `Failed to pull data: ${err.message}. Ensure your table table contains 'sector', 'indicator_name', 'labels', and 'history' columns.`, 'fa-triangle-exclamation');
       }
     }
 
-    // Populate Barangay/Indicator Select options
-    function populateBarangays() {
-      const config = SECTORS[currentSectorKey];
+    // Populate the dropdown selection options
+    function populateIndicatorDropdown() {
       const isPop = currentSectorKey === 'edit';
-      const defaultTxt = isPop ? '-- Choose Barangay --' : '-- Choose Indicator --';
+      brgySelect.innerHTML = `<option value="" disabled selected>${isPop ? '-- Choose Barangay --' : '-- Choose Indicator --'}</option>`;
       
-      brgySelect.innerHTML = `<option value="" disabled selected>${defaultTxt}</option>`;
-      const names = Object.keys(appData).filter(k => k !== '_cityHistory' && k !== 'history');
-      
-      const fallbackKeys = config.defaultKeys || DEFAULT_BARANGAY_LIST;
-      const listToUse = names.length > 0 ? names : fallbackKeys;
-      
-      listToUse.forEach(n => {
+      activeIndicators.forEach(row => {
         const o = document.createElement('option');
-        o.value = n;
-        o.textContent = n;
+        o.value = row.id; // Store row id as value
+        o.textContent = row.indicator_name;
         brgySelect.appendChild(o);
       });
+      
+      yearSelect.innerHTML = '<option value="" disabled selected>-- Choose Year --</option>';
     }
 
-    // Populate Year Select options
-    function populateYears() {
+    // Sync values when indicator changes
+    brgySelect.addEventListener('change', () => {
+      const rowId = brgySelect.value;
+      selectedIndicatorRow = activeIndicators.find(r => String(r.id) === String(rowId));
+      
+      if (!selectedIndicatorRow) return;
+
+      // Populate year selector based on chosen indicator's individual timelines
       yearSelect.innerHTML = '<option value="" disabled selected>-- Choose Year --</option>';
-      HISTORICAL_LABELS.forEach((lbl, idx) => {
+      const labels = selectedIndicatorRow.labels || [];
+      labels.forEach((lbl, idx) => {
         const o = document.createElement('option');
         o.value = idx;
         o.textContent = lbl;
         yearSelect.appendChild(o);
       });
-      updateRemoveYearBtn();
-    }
-
-    // Listener for syncing stored database value
-    function syncValuePreview() {
-      const brgy = brgySelect.value;
-      const yearIndex = parseInt(yearSelect.value, 10);
       
-      if (!brgy || Number.isNaN(yearIndex)) {
+      yearSelect.disabled = false;
+      valuePreviewBox.style.display = 'none';
+      valueInput.value = '';
+      removeYearBtn.disabled = true;
+    });
+
+    // Sync selected year preview values
+    function syncValuePreview() {
+      const yearIndex = parseInt(yearSelect.value, 10);
+      if (!selectedIndicatorRow || Number.isNaN(yearIndex)) {
         valuePreviewBox.style.display = 'none';
         return;
       }
       
-      let val = null;
-      if (appData[brgy] && Array.isArray(appData[brgy].history)) {
-        val = appData[brgy].history[yearIndex];
-      }
+      const val = (selectedIndicatorRow.history && selectedIndicatorRow.history[yearIndex] !== undefined) 
+        ? selectedIndicatorRow.history[yearIndex] 
+        : null;
       
       valuePreviewBox.style.display = 'flex';
-      if (val !== undefined && val !== null) {
+      if (val !== null) {
         currentValueDisplay.textContent = Number(val).toLocaleString();
         valueInput.value = val;
       } else {
         currentValueDisplay.textContent = 'None (Empty)';
         valueInput.value = '';
       }
+      removeYearBtn.disabled = false;
     }
 
-    brgySelect.addEventListener('change', syncValuePreview);
-    yearSelect.addEventListener('change', () => {
-      syncValuePreview();
-      updateRemoveYearBtn();
-    });
-    addYearBtn.addEventListener('click', addYear);
-    removeYearBtn.addEventListener('click', removeYear);
+    yearSelect.addEventListener('change', syncValuePreview);
 
-    // Form Submit Event Handler
+    // Save/Update Numerical Values in Master Table
     document.getElementById('edit-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      
-      const brgy = brgySelect.value;
       const yearIndex = parseInt(yearSelect.value, 10);
-      const valText = valueInput.value;
+      const valText = valueInput.value.trim();
       const val = valText === '' ? null : parseFloat(valText);
-      const tableName = SECTORS[currentSectorKey].table;
 
-      if (!brgy) { alert('Choose a barangay / indicator'); return; }
-      if (Number.isNaN(yearIndex)) { alert('Choose a year'); return; }
+      if (!selectedIndicatorRow) { alert('Please select an item first.'); return; }
+      if (Number.isNaN(yearIndex)) { alert('Please select a year target.'); return; }
 
-      showNotification('info', `Saving value...`, 'fa-spinner fa-spin');
+      showNotification('info', `Writing changes to master record...`, 'fa-spinner fa-spin');
       submitBtn.disabled = true;
       
       try {
-        if (!appData[brgy]) {
-          appData[brgy] = { history: [] };
+        // Prepare local array updates safely
+        if (!Array.isArray(selectedIndicatorRow.history)) selectedIndicatorRow.history = [];
+        while (selectedIndicatorRow.history.length <= yearIndex) {
+          selectedIndicatorRow.history.push(null);
         }
-        
-        if (!Array.isArray(appData[brgy].history)) {
-          appData[brgy].history = [];
-        }
-        
-        while (appData[brgy].history.length <= yearIndex) {
-          appData[brgy].history.push(null);
-        }
+        selectedIndicatorRow.history[yearIndex] = val;
 
-        appData[brgy].history[yearIndex] = val;
+        // Perform standard direct structural record update
+        const { error } = await supabaseClient
+          .from(MASTER_TABLE_NAME)
+          .update({ history: selectedIndicatorRow.history })
+          .eq('id', selectedIndicatorRow.id);
 
-        const { savedToSupabase, saveError } = await persistSectorData(tableName);
+        if (error) throw error;
 
-        if (savedToSupabase) {
-          showNotification('ok', `Successfully saved changes to Supabase table '${tableName}'.`, 'fa-circle-check');
-        } else if (saveError) {
-          showNotification('err', `Save Failed: ${saveError.message || saveError}`, 'fa-circle-xmark');
-        } else {
-          showNotification('ok', `Saved changes locally (LocalStorage Fallback).`, 'fa-circle-exclamation');
-        }
-
+        showNotification('ok', `Successfully updated tracking line for '${selectedIndicatorRow.indicator_name}'.`, 'fa-circle-check');
         currentValueDisplay.textContent = val !== null ? Number(val).toLocaleString() : 'None (Empty)';
-        
       } catch (err) {
         console.error(err);
-        showNotification('err', `Save Failed: ${err.message || err}`, 'fa-circle-xmark');
+        showNotification('err', `Save operation rejected: ${err.message}`, 'fa-circle-xmark');
       } finally {
         submitBtn.disabled = false;
       }
     });
 
-    // Initial page load triggers sector loading
+    // Timeline adjustments: Add Year
+    addYearBtn.addEventListener('click', async () => {
+      const rawYear = newYearInput.value.trim();
+      if (!selectedIndicatorRow || !rawYear || rawYear < 1900) {
+        alert("Select an indicator and provide a valid numerical target year.");
+        return;
+      }
+
+      if (!Array.isArray(selectedIndicatorRow.labels)) selectedIndicatorRow.labels = [];
+      if (!Array.isArray(selectedIndicatorRow.history)) selectedIndicatorRow.history = [];
+
+      if (selectedIndicatorRow.labels.includes(rawYear)) {
+        alert("This timeline reference tag point already exists.");
+        return;
+      }
+
+      // Merge & sequence structural order arrays
+      let completeTimeline = selectedIndicatorRow.labels.map((l, idx) => ({ label: String(l), value: selectedIndicatorRow.history[idx] }));
+      completeTimeline.push({ label: String(rawYear), value: null });
+      completeTimeline.sort((a, b) => Number(a.label) - Number(b.label));
+
+      selectedIndicatorRow.labels = completeTimeline.map(t => t.label);
+      selectedIndicatorRow.history = completeTimeline.map(t => t.value);
+
+      disableForm(true);
+      try {
+        const { error } = await supabaseClient
+          .from(MASTER_TABLE_NAME)
+          .update({ labels: selectedIndicatorRow.labels, history: selectedIndicatorRow.history })
+          .eq('id', selectedIndicatorRow.id);
+        
+        if (error) throw error;
+        
+        newYearInput.value = '';
+        // Refresh local items
+        brgySelect.dispatchEvent(new Event('change')); 
+        showNotification('ok', `Timeline expanded.`, 'fa-circle-check');
+      } catch(err) {
+        alert(`Failed to add timeline item: ${err.message}`);
+      } finally {
+        disableForm(false);
+      }
+    });
+
+    // Timeline adjustments: Remove Year
+    removeYearBtn.addEventListener('click', async () => {
+      const yearIndex = parseInt(yearSelect.value, 10);
+      if (!selectedIndicatorRow || Number.isNaN(yearIndex)) return;
+
+      if (!confirm(`Are you sure you want to drop year index point '${selectedIndicatorRow.labels[yearIndex]}'?`)) return;
+
+      selectedIndicatorRow.labels.splice(yearIndex, 1);
+      selectedIndicatorRow.history.splice(yearIndex, 1);
+
+      disableForm(true);
+      try {
+        const { error } = await supabaseClient
+          .from(MASTER_TABLE_NAME)
+          .update({ labels: selectedIndicatorRow.labels, history: selectedIndicatorRow.history })
+          .eq('id', selectedIndicatorRow.id);
+        
+        if (error) throw error;
+        brgySelect.dispatchEvent(new Event('change'));
+        showNotification('ok', `Timeline adjusted.`, 'fa-circle-check');
+      } catch(err) {
+        alert(`Failed to remove year: ${err.message}`);
+      } finally {
+        disableForm(false);
+      }
+    });
+
+    function updateHeaderStatus(state, message) {
+      statusTextEl.textContent = message;
+      statusDotEl.className = 'status-dot ' + state;
+    }
+
+    function showNotification(type, message, iconClass) {
+      document.getElementById('notification-area').innerHTML = `
+        <div class="notification ${type}">
+          <i class="fa-solid ${iconClass}"></i> ${message}
+        </div>
+      `;
+    }
+
+    // Fire off initialization
     switchSector("edit");
   </script>
 </body>
