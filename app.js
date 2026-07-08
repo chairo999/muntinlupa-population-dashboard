@@ -36,6 +36,7 @@ let barangayBarChartInstance = null;
 // Initialize Application
 document.addEventListener("DOMContentLoaded", async () => {
     await initData();
+    populateYearSelect();
     initClock();
     initEventListeners();
     renderDashboard();
@@ -98,7 +99,21 @@ function loadFromLocalStorageFallback() {
         restoreDefaultDataSync();
     }
 }
-
+function populateYearSelect() {
+    const sel = document.getElementById("year-select");
+    if (!sel) return;
+    sel.innerHTML = "";
+    HISTORICAL_LABELS.forEach(year => {
+        const opt = document.createElement("option");
+        opt.value = year;
+        opt.textContent = year;
+        sel.appendChild(opt);
+    });
+    if (!HISTORICAL_LABELS.includes(selectedYear)) {
+        selectedYear = HISTORICAL_LABELS[HISTORICAL_LABELS.length - 1] || "2024";
+    }
+    sel.value = selectedYear;
+}
 async function restoreDefaultData() {
     appData = JSON.parse(JSON.stringify(DEFAULT_DEMOGRAPHIC_DATA));
     HISTORICAL_LABELS = ["2015", "2020", "2024"];
@@ -108,6 +123,7 @@ async function restoreDefaultData() {
 function restoreDefaultDataSync() {
     appData = JSON.parse(JSON.stringify(DEFAULT_DEMOGRAPHIC_DATA));
     HISTORICAL_LABELS = ["2015", "2020", "2024"];
+    populateYearSelect();
     saveDataSync();
 }
 
