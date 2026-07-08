@@ -274,19 +274,21 @@
 		function renderEnvCharts() {
 			// Upstream chart
 			const upCtx = document.getElementById('riverUpstreamChart').getContext('2d');
+			const upDatasets = [
+				{ label: 'Chloride (mg/L)', data: envData.upstream.Chloride, backgroundColor: 'rgba(250,204,21,0.95)', yAxisID: 'y_chl' },
+				{ label: 'Nitrate (mg/L)', data: envData.upstream.Nitrate, backgroundColor: 'rgba(99,102,241,0.9)', yAxisID: 'y_nit' },
+				{ label: 'Temperature (°C)', data: envData.upstream.Temperature, type: 'line', borderColor: '#06b6d4', backgroundColor: 'transparent', yAxisID: 'y_temp', tension:0.2, pointRadius:4 },
+				{ label: 'pH', data: envData.upstream.pH, type: 'line', borderColor: '#f97316', backgroundColor: 'transparent', yAxisID: 'y_ph', tension:0.2, pointRadius:4 },
+				{ label: 'Turbidity (NTU)', data: envData.upstream.Turbidity, type: 'line', borderColor: '#7c3aed', backgroundColor: 'transparent', yAxisID: 'y_turb', tension:0.2, pointRadius:3 },
+				{ label: 'RDO (mg/L)', data: envData.upstream.RDO, type: 'line', borderColor: '#10b981', backgroundColor: 'transparent', yAxisID: 'y_rdo', tension:0.2, pointRadius:3 },
+				{ label: 'TDS (g/L)', data: envData.upstream.TDS, type: 'line', borderColor: '#64748b', backgroundColor: 'transparent', yAxisID: 'y_tds', tension:0.2, pointRadius:3 }
+			];
+			upDatasets.forEach((d,i)=> d.hidden = i !== 0);
 			new Chart(upCtx, {
 				type: 'bar',
 				data: {
 					labels: envLabels,
-					datasets: [
-						{ label: 'Chloride (mg/L)', data: envData.upstream.Chloride, backgroundColor: 'rgba(250,204,21,0.95)', yAxisID: 'y_chl' },
-						{ label: 'Nitrate (mg/L)', data: envData.upstream.Nitrate, backgroundColor: 'rgba(99,102,241,0.9)', yAxisID: 'y_nit' },
-						{ label: 'Temperature (°C)', data: envData.upstream.Temperature, type: 'line', borderColor: '#06b6d4', backgroundColor: 'transparent', yAxisID: 'y_temp', tension:0.2, pointRadius:4 },
-						{ label: 'pH', data: envData.upstream.pH, type: 'line', borderColor: '#f97316', backgroundColor: 'transparent', yAxisID: 'y_ph', tension:0.2, pointRadius:4 },
-						{ label: 'Turbidity (NTU)', data: envData.upstream.Turbidity, type: 'line', borderColor: '#7c3aed', backgroundColor: 'transparent', yAxisID: 'y_turb', tension:0.2, pointRadius:3 },
-						{ label: 'RDO (mg/L)', data: envData.upstream.RDO, type: 'line', borderColor: '#10b981', backgroundColor: 'transparent', yAxisID: 'y_rdo', tension:0.2, pointRadius:3 },
-						{ label: 'TDS (g/L)', data: envData.upstream.TDS, type: 'line', borderColor: '#64748b', backgroundColor: 'transparent', yAxisID: 'y_tds', tension:0.2, pointRadius:3 }
-					]
+					datasets: upDatasets
 				},
 				options: {
 					responsive:true, maintainAspectRatio:false,
@@ -311,19 +313,21 @@
 
 			// Downstream chart (similar configuration)
 			const downCtx = document.getElementById('riverDownstreamChart').getContext('2d');
+			const downDatasets = [
+				{ label: 'Chloride (mg/L)', data: envData.downstream.Chloride, backgroundColor: 'rgba(250,204,21,0.95)', yAxisID: 'y_chl' },
+				{ label: 'Nitrate (mg/L)', data: envData.downstream.Nitrate, backgroundColor: 'rgba(99,102,241,0.9)', yAxisID: 'y_nit' },
+				{ label: 'Temperature (°C)', data: envData.downstream.Temperature, type: 'line', borderColor: '#06b6d4', backgroundColor: 'transparent', yAxisID: 'y_temp', tension:0.2, pointRadius:4 },
+				{ label: 'pH', data: envData.downstream.pH, type: 'line', borderColor: '#f97316', backgroundColor: 'transparent', yAxisID: 'y_ph', tension:0.2, pointRadius:4 },
+				{ label: 'Turbidity (NTU)', data: envData.downstream.Turbidity, type: 'line', borderColor: '#7c3aed', backgroundColor: 'transparent', yAxisID: 'y_turb', tension:0.2, pointRadius:3 },
+				{ label: 'RDO (mg/L)', data: envData.downstream.RDO, type: 'line', borderColor: '#10b981', backgroundColor: 'transparent', yAxisID: 'y_rdo', tension:0.2, pointRadius:3 },
+				{ label: 'TDS (g/L)', data: envData.downstream.TDS, type: 'line', borderColor: '#64748b', backgroundColor: 'transparent', yAxisID: 'y_tds', tension:0.2, pointRadius:3 }
+			];
+			downDatasets.forEach((d,i)=> d.hidden = i !== 0);
 			new Chart(downCtx, {
 				type: 'bar',
 				data: {
 					labels: envLabels,
-					datasets: [
-						{ label: 'Chloride (mg/L)', data: envData.downstream.Chloride, backgroundColor: 'rgba(250,204,21,0.95)', yAxisID: 'y_chl' },
-						{ label: 'Nitrate (mg/L)', data: envData.downstream.Nitrate, backgroundColor: 'rgba(99,102,241,0.9)', yAxisID: 'y_nit' },
-						{ label: 'Temperature (°C)', data: envData.downstream.Temperature, type: 'line', borderColor: '#06b6d4', backgroundColor: 'transparent', yAxisID: 'y_temp', tension:0.2, pointRadius:4 },
-						{ label: 'pH', data: envData.downstream.pH, type: 'line', borderColor: '#f97316', backgroundColor: 'transparent', yAxisID: 'y_ph', tension:0.2, pointRadius:4 },
-						{ label: 'Turbidity (NTU)', data: envData.downstream.Turbidity, type: 'line', borderColor: '#7c3aed', backgroundColor: 'transparent', yAxisID: 'y_turb', tension:0.2, pointRadius:3 },
-						{ label: 'RDO (mg/L)', data: envData.downstream.RDO, type: 'line', borderColor: '#10b981', backgroundColor: 'transparent', yAxisID: 'y_rdo', tension:0.2, pointRadius:3 },
-						{ label: 'TDS (g/L)', data: envData.downstream.TDS, type: 'line', borderColor: '#64748b', backgroundColor: 'transparent', yAxisID: 'y_tds', tension:0.2, pointRadius:3 }
-					]
+					datasets: downDatasets
 				},
 				options: {
 					responsive:true, maintainAspectRatio:false,
@@ -348,14 +352,16 @@
 				try {
 					const waste = envData.waste || DEFAULT_ENV_DATA.waste;
 					const wasteCtx = document.getElementById('wasteMaterialsChart').getContext('2d');
+					const wasteDatasets = [
+						{ label: 'Volume (m³)', data: waste.volume_m3, backgroundColor: 'rgba(59,130,246,0.85)' },
+						{ label: 'Weight (tons)', data: waste.weight_tons, backgroundColor: 'rgba(16,185,129,0.9)' }
+					];
+					wasteDatasets.forEach((d,i)=> d.hidden = i !== 0);
 					new Chart(wasteCtx, {
 						type: 'bar',
 						data: {
 							labels: waste.categories,
-							datasets: [
-								{ label: 'Volume (m³)', data: waste.volume_m3, backgroundColor: 'rgba(59,130,246,0.85)' },
-								{ label: 'Weight (tons)', data: waste.weight_tons, backgroundColor: 'rgba(16,185,129,0.9)' }
-							]
+							datasets: wasteDatasets
 						},
 						options: {
 							responsive:true, maintainAspectRatio:false,
@@ -385,6 +391,7 @@
 						spanGaps: true,
 						pointRadius: 3
 					}));
+					datasets.forEach((d,i)=> d.hidden = i !== 0);
 					new Chart(pm10Ctx, {
 						type: 'line',
 						data: { labels: pm10.months, datasets },
@@ -413,6 +420,7 @@
 						spanGaps: true,
 						pointRadius: 3
 					}));
+					datasets25.forEach((d,i)=> d.hidden = i !== 0);
 					new Chart(pm25Ctx, {
 						type: 'line',
 						data: { labels: pm25.months, datasets: datasets25 },
