@@ -754,9 +754,9 @@
       }
     };
     const ECONOMIC_INDICATORS = {
-      "Competitiveness Rank": { table: "economic_competitiveness_rank", labelCol: "year", valueCol: "rank" },
-      "Total Establishments": { table: "economic_total_establishment", labelCol: "year", valueCol: "total_establishments" },
-      "Hotel Arrivals": { table: "economic_hotel_arrivals", labelCol: "year", valueCol: "hotel_arrivals" },
+      "Competitiveness Rank": { table: "economic_competitiveness_rank", labelCol: "year", valueCol: "rank", conflictCols: "year" },
+      "Total Establishments": { table: "economic_total_establishment", labelCol: "year", valueCol: "total_establishments", conflictCols: "year" },
+      "Hotel Arrivals": { table: "economic_hotel_arrivals", labelCol: "year", valueCol: "hotel_arrivals", conflictCols: "year" },
     };
 
     const BARANGAY_NAMES = ["Alabang", "Ayala Alabang", "Bayanan", "Buli", "Cupang", "Poblacion", "Putatan", "Sucat", "Tunasan"];
@@ -940,7 +940,8 @@ async function loadEconomicData() {
                 history: data ? data.map(r => r[cfg.valueCol]) : [],
                 _table: cfg.table,
                 _labelCol: cfg.labelCol,
-                _valueCol: cfg.valueCol
+                _valueCol: cfg.valueCol,
+                _conflictCols: cfg.conflictCols
             });
         }
 
@@ -1135,8 +1136,8 @@ if (currentSectorKey === 'edit') {
      upsertObj[selectedIndicatorRow._labelCol] = selectedIndicatorRow._labelCol === 'year' ? parseInt(label) : label;
      upsertObj[selectedIndicatorRow._valueCol] = val;
      ({ error } = await supabaseClient
-         .from(selectedIndicatorRow._table)
-         .upsert(upsertObj, { onConflict: Object.keys(upsertObj).join(',') }));
+    .from(selectedIndicatorRow._table)
+    .upsert(upsertObj, { onConflict: selectedIndicatorRow._conflictCols }));
  } else {
      ({ error } = await supabaseClient
          .from(MASTER_TABLE_NAME)
@@ -1194,26 +1195,27 @@ if (currentSectorKey === 'edit') {
          .from('barangay_population')
          .upsert(rows, { onConflict: 'barangay_name,year' }));
  } else if (currentSectorKey === 'economic') {
-     const ecoIndicators = activeIndicators.filter(r => r._table);
-     const rows = ecoIndicators.map(r => {
-         const obj = {};
-         if (r._entityCol) obj[r._entityCol] = r._entity || r.indicator_name;
-         obj[r._labelCol] = r._labelCol === 'year' ? parseInt(rawYear) : rawYear;
-         obj[r._valueCol] = null;
-         return obj;
-     });
-     const seen = new Set();
-     const deduped = rows.filter(r => {
-         const key = Object.values(r).join('|');
-         if (seen.has(key)) return false;
-         seen.add(key);
-         return true;
-     });
-     if (deduped.length > 0) {
-         const firstTable = deduped[0].hasOwnProperty('barangay_name') ? 'economic_employment' : 'economic_registered_business';
+     if (selectedIndicatorRow._labelCol !== 'year') {
+         alert("Cannot add year to category-based indicators.");
+         return;
+     }
+     const tbl = selectedIndicatorRow._table;
+     if (selectedIndicatorRow._entityCol) {
+         // Per-barangay: add year for all entities
+         const rows = BARANGAY_NAMES.map(name => ({
+             [selectedIndicatorRow._entityCol]: name,
+             year: parseInt(rawYear),
+             [selectedIndicatorRow._valueCol]: null
+         }));
          ({ error } = await supabaseClient
-             .from(firstTable)
-             .upsert(deduped, { onConflict: Object.keys(deduped[0]).join(',') }));
+             .from(tbl)
+             .upsert(rows, { onConflict: `${selectedIndicatorRow._entityCol},year` }));
+     } else {
+         // City-level: add single row
+         const obj = { year: parseInt(rawYear), [selectedIndicatorRow._valueCol]: null };
+         ({ error } = await supabaseClient
+             .from(tbl)
+             .upsert(obj, { onConflict: 'year' }));
      }
  } else {
      ({ error } = await supabaseClient
