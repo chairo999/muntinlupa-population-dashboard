@@ -1038,10 +1038,152 @@ body {
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
+.lp-slide-title-with-description .lp-slide-heading-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--slide-gap, 250px);
+    flex-wrap: nowrap;
+    text-align: left;
+    width: 100%;
+}
+
+.lp-slide-part .lp-slide-title-with-description {
+    position: absolute;
+    top: 50%;
+    left: var(--slide-left, 300px);
+    transform: translate(-20px, -50%);
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+    width: min(92%, 900px);
+    opacity: 0;
+}
+
+.lp-slide-title-with-description .lp-slide-heading-group > h1 {
+    flex: 0 0 auto;
+}
+
+.lp-slide-title-with-description .lp-slide-description {
+    /* flex: 1 1 340px; */
+    min-width: 600px;
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.5;
+    color: #f7f7f7;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+    text-align: justify;
+    opacity: 0;
+    transform: translateX(20px);
+}
+
+.lp-slide-part.active-slide .lp-slide-title-with-description {
+    animation: populationTitleIn 0.7s ease-out forwards;
+}
+
+.lp-slide-part.active-slide .lp-slide-title-with-description .lp-slide-description {
+    animation: populationDescriptionIn 0.7s ease-out 0.18s forwards;
+}
+
+.lp-slide-part .lp-slide-nav-link {
+    opacity: 0;
+}
+
+.lp-slide-part.active-slide .lp-slide-nav-link {
+    animation: populationButtonIn 0.7s ease-out 0.32s forwards;
+}
+
+#population-slide {
+    --slide-gap: 250px;
+    --slide-left: 300px;
+}
+
+#economic-slide {
+    --slide-gap: 280px;
+    --slide-left: 350px;
+}
+
+#education-slide {
+    --slide-gap: 295px;
+    --slide-left: 300px;
+}
+
+#health-slide {
+    --slide-gap: 390px;
+    --slide-left: 350px;
+}
+
+#protective-slide {
+    --slide-gap: 250px;
+    --slide-left: 320px;
+}
+
+#socwel-slide {
+    --slide-gap: 180px;
+    --slide-left: 200px;
+}
+
+#environment-slide {
+    --slide-gap: 265px;
+    --slide-left: 220px;
+}
+
+#institutional-slide {
+    --slide-gap: 248px;
+    --slide-left: 220px;
+}
+
+#sdg-localization-slide {
+    --slide-gap: 152px;
+    --slide-left: 160px;
+}
+
+@keyframes populationTitleIn {
+    from {
+        opacity: 0;
+        transform: translate(-20px, -50%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(0, -50%);
+    }
+}
+
+@keyframes populationDescriptionIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes populationButtonIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* .lp-slide-title-with-description .lp-slide-description {
+    max-width: 500px;
+    margin: 0;
+    font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+    line-height: 1.5;
+    color: #f7f7f7;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+} */
+
 .lp-slide-nav-link {
     position: absolute;
-    right: 30px;
-    bottom: 30px;
+    right: 255px;
+    bottom: 280px;
     z-index: 2;
     background: white;
     padding: 20px 20px;
