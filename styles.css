@@ -92,6 +92,7 @@ body {
     display: flex;
     align-items: center;
     gap: 16px;
+    text-decoration: none;
 }
 
 .header-logo-img {
@@ -125,6 +126,14 @@ body {
     padding: 10px 6px;
     display: flex;
     align-items: center;
+    gap: 40px;
+}
+
+.header-sector-text {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 25px;
+    letter-spacing: 1px;
 }
 
 .sidebar-sectors {
