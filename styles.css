@@ -928,11 +928,13 @@ select option {
     }
 }
 
-.dashboard-header h1, 
-.dashboard-header .subtitle, 
-.dashboard-header #date-time,
+.dashboard-header h1,
 .dashboard-header i {
     color: white !important;
+}
+
+.dashboard-header .subtitle {
+    color: #ffcf01 !important;
 }
 /* ==========================================
    ISOLATED LANDING PAGE SLIDER STYLES
