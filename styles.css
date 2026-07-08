@@ -1043,8 +1043,7 @@ body {
     right: 30px;
     bottom: 30px;
     z-index: 2;
-    background: #ffcf01;
-    color: #003397;
+    background: white;
     padding: 20px 20px;
     border-radius: 999px;
     text-decoration: none;
@@ -1059,6 +1058,42 @@ body {
 .lp-slide-nav-link:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+}
+
+#population-slide .lp-slide-nav-link {
+    color:#00576d;
+}
+
+#economic-slide .lp-slide-nav-link {
+    color:#5f4600;
+}
+
+#education-slide .lp-slide-nav-link {
+    color:#00025e;
+}
+
+#health-slide .lp-slide-nav-link {
+    color:#550000;
+}
+
+#protective-slide .lp-slide-nav-link {
+    color:#460066;
+}
+
+#socwel-slide .lp-slide-nav-link {
+    color:#690041;
+}
+
+#environment-slide .lp-slide-nav-link {
+    color:#005229;
+}
+
+#institutional-slide .lp-slide-nav-link {
+    color:#202020;
+}
+
+#sdg-localization-slide .lp-slide-nav-link {
+    color:#00224e;
 }
 
 .lp-header-actions {

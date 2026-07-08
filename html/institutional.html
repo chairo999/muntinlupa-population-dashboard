@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MunTHINK Hub — Institutional Sector</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../styles.css">
+
+    <style>
+        /* Specific Institutional Dashboard Layout tweaks */
+        .institutional-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-top: 10px;
+        }
+
+        .charts-container-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-container-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.02);
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .chart-card:hover {
+            border-color: rgba(79, 70, 229, 0.2);
+            box-shadow: 0 12px 35px rgba(79, 70, 229, 0.04);
+        }
+
+        .chart-title-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+            padding-bottom: 12px;
+        }
+
+        .chart-card h5 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-card h5 i {
+            color: #4f46e5; /* Institutional Indigo */
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 380px;
+        }
+
+        /* Stats Cards Indigo Touches */
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-lg);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(79, 70, 229, 0.2);
+            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.08);
+        }
+
+        .stat-icon-wrapper.inst-icon-indigo {
+            width: 54px;
+            height: 54px;
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            background: rgba(79, 70, 229, 0.08);
+            color: #4f46e5;
+        }
+
+        /* Indicator detail card list */
+        .indicator-cards-section {
+            margin-top: 10px;
+        }
+
+        .section-header {
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+            padding-bottom: 8px;
+        }
+
+        .section-header h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header h4 i {
+            color: #4f46e5;
+        }
+
+        .indicators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .ind-card {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.06);
+            border-radius: var(--border-radius-md);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: var(--transition-smooth);
+        }
+
+        .ind-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(79, 70, 229, 0.25);
+            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.04);
+        }
+
+        .ind-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ind-card-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            max-width: 75%;
+            line-height: 1.3;
+        }
+
+        .ind-card-icon {
+            font-size: 1.1rem;
+            color: #4f46e5;
+        }
+
+        .ind-card-value-box {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .ind-card-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #4f46e5;
+        }
+
+        .ind-card-year {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .ind-card-desc {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            border-top: 1px solid rgba(15, 23, 42, 0.04);
+            padding-top: 8px;
+        }
+
+        /* Database Status overlay */
+        .db-status-bar {
+            background: #f1f5f9;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-md);
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .db-status-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .db-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-emerald);
+            box-shadow: 0 0 6px var(--accent-emerald);
+        }
+
+        .db-dot.offline {
+            background-color: #f59e0b;
+            box-shadow: 0 0 6px #f59e0b;
+        }
+
+        .admin-link-btn {
+            color: #4f46e5;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: var(--transition-smooth);
+        }
+
+        .admin-link-btn:hover {
+            color: #4338ca;
+            text-decoration: underline;
+        }
+
+        /* Custom spinner overlay */
+        .loading-cover {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            font-family: var(--font-outfit);
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-cover.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(79, 70, 229, 0.1);
+            border-top-color: #4f46e5;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Cover -->
+    <div id="loading-cover" class="loading-cover">
+        <div class="spinner"></div>
+        <div style="font-weight: 600; color: var(--text-primary);">MunTHINK Institutional Database Loading...</div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="dashboard-header">
+        <div class="header-logo">
+            <img src="../assets/images/muntinlupa-city-logo.png" alt="MunTHINK Logo" class="header-logo-img">
+            <div class="header-titles">
+                <h1>MunTHINK Hub</h1>
+                <p class="subtitle">Smarter Data for a Smarter Muntinlupa</p>
+            </div>
+        </div>
+        <div class="header-info">
+             <img src="../assets/images/hamburger.png" alt="sidebar" class="sidebar-sectors" id="hamburger-btn">
+        </div>
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <aside class="sector-sidebar" id="sector-sidebar">
+        <div class="sidebar-header">
+            <h2>Dashboard Sectors</h2>
+            <i class="fa-solid fa-xmark" id="close-sidebar-btn"></i>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="population.html" class="nav-item"><i class="fa-solid fa-users"></i> Population</a>
+            <a href="economic.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Economic</a>
+            <a href="education.html" class="nav-item"><i class="fa-solid fa-graduation-cap"></i> Education</a>
+            <a href="health.html" class="nav-item"><i class="fa-solid fa-notes-medical"></i> Health</a>
+            <a href="protective.html" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Protective</a>
+            <a href="socwel.html" class="nav-item"><i class="fa-solid fa-hand-holding-heart"></i> Social Welfare</a>
+            <a href="environment.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Environment</a>
+            <a href="institutional.html" class="nav-item active" style="background: rgba(79, 70, 229, 0.08); color: #312e81; border-left: 4px solid #4f46e5;"><i class="fa-solid fa-building-columns" style="color: #4f46e5;"></i> Institutional</a>
+        </nav>
+    </aside>
+
+    <div class="dashboard-container">
+
+        <!-- Live Connection Status Alert Bar -->
+        <div class="db-status-bar">
+            <div class="db-status-left">
+                <div id="db-dot" class="db-dot"></div>
+                <span id="db-status-txt">Connected to live Supabase DB</span>
+            </div>
+            <a href="admin_edit.html" class="admin-link-btn">
+                <i class="fa-solid fa-screwdriver-wrench"></i> Manage Institutional Records in Admin
+            </a>
+        </div>
+
+        <!-- Main Stats Summary Banner -->
+        <section class="stats-banner">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper inst-icon-indigo">
+                    <i class="fa-solid fa-sack-dollar"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Total Appropriation</span>
+                    <h2 id="card-total">--</h2>
+                    <span class="stat-pct" id="card-total-year" style="color: var(--text-muted)">Latest Year</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper inst-icon-indigo">
+                    <i class="fa-solid fa-hand-holding-heart"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Social Services Sector</span>
+                    <h2 id="card-social">--</h2>
+                    <span class="stat-pct" id="card-social-year" style="color: var(--text-muted)">Latest Year</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper inst-icon-indigo">
+                    <i class="fa-solid fa-building-columns"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">General Public Services</span>
+                    <h2 id="card-general">--</h2>
+                    <span class="stat-pct" id="card-general-year" style="color: var(--text-muted)">Latest Year</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper inst-icon-indigo">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Economic Services Sector</span>
+                    <h2 id="card-economic">--</h2>
+                    <span class="stat-pct" id="card-economic-year" style="color: var(--text-muted)">Latest Year</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Charts Workspace -->
+        <div class="institutional-grid">
+            <div class="charts-container-grid">
+
+                <!-- Chart 1: Comparative Budget Allocation -->
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-chart-column"></i> Comparative Budget Allocation — Per Sector</h5>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Hover bars to show values</div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Revenue Stability & Reliability -->
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-pie-chart"></i> Revenue Stability & Reliability</h5>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">2024 vs 2025 comparison</div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Detailed Indicators Cards Grid -->
+        <section class="indicator-cards-section">
+            <div class="section-header">
+                <h4><i class="fa-solid fa-circle-info"></i> Institutional Indicators Summary</h4>
+            </div>
+            <div class="indicators-grid" id="indicators-grid-container">
+                <!-- Javascript builds these dynamically -->
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer" aria-hidden="true" style="margin-top: 40px;">
+            <img src="../assets/images/footer.jpg" alt="" class="footer-image">
+        </footer>
+
+    </div>
+
+    <!-- Supabase JS CDN (v2) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Page Logic Javascript -->
+    <script>
+        // Supabase DB credentials
+        const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
+        const STORAGE_KEY = "muntinlupa_sector_data_institutional";
+
+        const BUDGET_YEARS = ["2019", "2020", "2021", "2022", "2023", "2024", "2025"];
+        const REVENUE_YEARS = ["2024", "2025"];
+
+        // Default institutional dataset (budget allocation per sector + revenue sources)
+        const DEFAULT_INSTITUTIONAL_DATA = {
+            "General Public Services Sector": {
+                labels: BUDGET_YEARS,
+                history: [1508351664.08, 1595247588.83, 1388784992.42, 1922311944.50, 3291813621.17, 3981017924.87, 2490195633.90]
+            },
+            "Social Services Sector": {
+                labels: BUDGET_YEARS,
+                history: [3304810231.94, 2941612043.16, 2099515164.29, 2915947338.48, 1221875012.59, 1405204916.51, 5458060418.31]
+            },
+            "Economic Services Sector": {
+                labels: BUDGET_YEARS,
+                history: [1086838103.98, 2071487983.01, 893254214.29, 1129093653.30, 1823617678.24, 1791747272.62, 888851065.54]
+            },
+            "TOTAL APPROPRIATION": {
+                labels: BUDGET_YEARS,
+                history: [4406171686.00, 4939534552.87, 4381554371.00, 5967352936.28, 6337306312.00, 7177970114.00, 8837107117.75]
+            },
+            "Business Tax": { labels: REVENUE_YEARS, history: [2285661191.75, 2405811415.17] },
+            "Real Property Tax": { labels: REVENUE_YEARS, history: [615757403.59, 631015370.47] },
+            "Special Education Tax": { labels: REVENUE_YEARS, history: [487867463.77, 498291829.72] },
+            "Other Taxes": { labels: REVENUE_YEARS, history: [623370424.83, 632497342.37] },
+            "Fines and Penalties": { labels: REVENUE_YEARS, history: [59078232.47, 61150554.99] },
+            "Permits and Licenses": { labels: REVENUE_YEARS, history: [331338497.77, 361918211.71] },
+            "Service Income": { labels: REVENUE_YEARS, history: [162074247.18, 162046706.39] },
+            "Business Income": { labels: REVENUE_YEARS, history: [608244838.32, 1024876287.68] },
+            "National Tax Allotment": { labels: REVENUE_YEARS, history: [1606535244.00, 1905588000.00] },
+            "Other Income": { labels: REVENUE_YEARS, history: [52008998.62, 81521948.47] },
+            "TOTAL REVENUE": { labels: REVENUE_YEARS, history: [6831936542.00, 7764717667.00] }
+        };
+
+        // Indicator configuration details for cards (icons, descriptions)
+        const INDICATORS_METADATA = {
+            "TOTAL APPROPRIATION": { icon: "fa-sack-dollar", desc: "Total annual budget appropriation of the city across all sectors." },
+            "Social Services Sector": { icon: "fa-hand-holding-heart", desc: "Appropriation for social welfare, health, and community services." },
+            "General Public Services Sector": { icon: "fa-building-columns", desc: "Appropriation for general governance and public administration." },
+            "Economic Services Sector": { icon: "fa-chart-line", desc: "Appropriation for economic development and livelihood programs." },
+            "TOTAL REVENUE": { icon: "fa-money-bill-trend-up", desc: "Total locally-sourced and national revenue collected by the city." },
+            "Business Tax": { icon: "fa-briefcase", desc: "Taxes collected from business establishments operating in the city." },
+            "Real Property Tax": { icon: "fa-house", desc: "Taxes collected on real property and land holdings." },
+            "Special Education Tax": { icon: "fa-graduation-cap", desc: "Dedicated tax allocation for educational programs." },
+            "Other Taxes": { icon: "fa-percent", desc: "Miscellaneous local taxes outside the major tax headings." },
+            "Fines and Penalties": { icon: "fa-gavel", desc: "Revenue from fines, penalties, and regulatory fees." },
+            "Permits and Licenses": { icon: "fa-id-card", desc: "Fees collected from permits and business licensing." },
+            "Service Income": { icon: "fa-hand-holding-dollar", desc: "Income from public service fees and charges." },
+            "Business Income": { icon: "fa-store", desc: "Income generated from city-owned business enterprises." },
+            "National Tax Allotment": { icon: "fa-landmark", desc: "Internal Revenue Allotment (IRA) from the national government." },
+            "Other Income": { icon: "fa-coins", desc: "Other miscellaneous revenue sources of the city." }
+        };
+
+        // Revenue labels (used for the revenue stability chart)
+        const REVENUE_SOURCES = [
+            "Business Tax", "Real Property Tax", "Special Education Tax", "Other Taxes",
+            "Fines and Penalties", "Permits and Licenses", "Service Income",
+            "Business Income", "National Tax Allotment", "Other Income"
+        ];
+
+        let institutionalData = {};
+        let supabaseClient = null;
+
+        // Initialize Supabase safely
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        // Initialize Page
+        document.addEventListener("DOMContentLoaded", async () => {
+            initSidebar();
+            await fetchInstitutionalData();
+            renderStatsBanner();
+            renderCharts();
+            renderIndicatorCards();
+
+            // Hide loading cover
+            const cover = document.getElementById("loading-cover");
+            cover.classList.add("fade-out");
+            setTimeout(() => cover.style.display = 'none', 300);
+        });
+
+        // Sidebar navigation toggling
+        function initSidebar() {
+            const hamburgerBtn = document.getElementById("hamburger-btn");
+            const sidebar = document.getElementById("sector-sidebar");
+            const overlay = document.getElementById("sidebar-overlay");
+            const closeBtn = document.getElementById("close-sidebar-btn");
+
+            if (hamburgerBtn) {
+                hamburgerBtn.addEventListener("click", () => {
+                    sidebar.classList.add("active");
+                    overlay.classList.add("active");
+                });
+            }
+            if (closeBtn) {
+                closeBtn.addEventListener("click", () => {
+                    sidebar.classList.remove("active");
+                    overlay.classList.remove("active");
+                });
+            }
+            if (overlay) {
+                overlay.addEventListener("click", () => {
+                    sidebar.classList.remove("active");
+                    overlay.classList.remove("active");
+                });
+            }
+        }
+
+        // Fetch Live Database or Local Storage Fallback
+        async function fetchInstitutionalData() {
+            const statusTxt = document.getElementById("db-status-txt");
+            const statusDot = document.getElementById("db-dot");
+
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('institutional')
+                        .select('data')
+                        .eq('id', 1)
+                        .single();
+
+                    if (error) {
+                        if (error.code === 'PGRST116') {
+                            console.log("Institutional table empty in Supabase. Attempting to seed default data.");
+                            await supabaseClient.from('institutional').insert({ id: 1, data: DEFAULT_INSTITUTIONAL_DATA });
+                            institutionalData = DEFAULT_INSTITUTIONAL_DATA;
+                        } else {
+                            throw error;
+                        }
+                    } else {
+                        institutionalData = data.data || DEFAULT_INSTITUTIONAL_DATA;
+                    }
+
+                    statusTxt.textContent = "Live Supabase Database Connected";
+                    statusDot.className = "db-dot";
+                } catch (e) {
+                    console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
+                    loadOfflineFallback();
+                }
+            } else {
+                console.warn("Supabase library not loaded. Loading from LocalStorage fallback.");
+                loadOfflineFallback();
+            }
+        }
+
+        function loadOfflineFallback() {
+            const statusTxt = document.getElementById("db-status-txt");
+            const statusDot = document.getElementById("db-dot");
+
+            statusTxt.textContent = "Offline Mode (LocalStorage Fallback)";
+            statusDot.className = "db-dot offline";
+
+            const localData = localStorage.getItem(STORAGE_KEY);
+            if (localData) {
+                try {
+                    const parsed = JSON.parse(localData);
+                    institutionalData = parsed.data || DEFAULT_INSTITUTIONAL_DATA;
+                } catch (e) {
+                    console.error("Error parsing localstorage data.", e);
+                    institutionalData = DEFAULT_INSTITUTIONAL_DATA;
+                }
+            } else {
+                institutionalData = DEFAULT_INSTITUTIONAL_DATA;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: DEFAULT_INSTITUTIONAL_DATA }));
+            }
+        }
+
+        // Helper to grab latest non-null value from an indicator object
+        function getLatestValue(indicator) {
+            if (!indicator || !Array.isArray(indicator.history) || !Array.isArray(indicator.labels)) {
+                return { val: '--', year: '--' };
+            }
+            for (let i = indicator.history.length - 1; i >= 0; i--) {
+                if (indicator.history[i] !== null && indicator.history[i] !== undefined) {
+                    return { val: indicator.history[i], year: indicator.labels[i] };
+                }
+            }
+            return { val: '--', year: '--' };
+        }
+
+        // Compact currency formatter (₱ with B/M suffixes)
+        function fmtCurrency(v) {
+            if (v === null || v === undefined || v === '--' || isNaN(v)) return '--';
+            const num = Number(v);
+            if (Math.abs(num) >= 1e9) return '₱' + (num / 1e9).toFixed(2) + 'B';
+            if (Math.abs(num) >= 1e6) return '₱' + (num / 1e6).toFixed(2) + 'M';
+            return '₱' + num.toLocaleString('en-US');
+        }
+
+        // Populate Stats Banner Cards
+        function renderStatsBanner() {
+            const total = getLatestValue(institutionalData["TOTAL APPROPRIATION"]);
+            document.getElementById("card-total").textContent = total.val !== '--' ? fmtCurrency(total.val) : '--';
+            document.getElementById("card-total-year").textContent = `Fiscal Year: ${total.year}`;
+
+            const social = getLatestValue(institutionalData["Social Services Sector"]);
+            document.getElementById("card-social").textContent = social.val !== '--' ? fmtCurrency(social.val) : '--';
+            document.getElementById("card-social-year").textContent = `Fiscal Year: ${social.year}`;
+
+            const general = getLatestValue(institutionalData["General Public Services Sector"]);
+            document.getElementById("card-general").textContent = general.val !== '--' ? fmtCurrency(general.val) : '--';
+            document.getElementById("card-general-year").textContent = `Fiscal Year: ${general.year}`;
+
+            const economic = getLatestValue(institutionalData["Economic Services Sector"]);
+            document.getElementById("card-economic").textContent = economic.val !== '--' ? fmtCurrency(economic.val) : '--';
+            document.getElementById("card-economic-year").textContent = `Fiscal Year: ${economic.year}`;
+        }
+
+        // Draw Interactive Charts
+        function renderCharts() {
+            // Chart 1: Comparative Budget Allocation per Sector (2019-2025)
+            const ctxA = document.getElementById("budgetChart").getContext("2d");
+            new Chart(ctxA, {
+                type: 'bar',
+                data: {
+                    labels: BUDGET_YEARS,
+                    datasets: [
+                        {
+                            label: 'General Public Services',
+                            data: institutionalData["General Public Services Sector"]?.history || [],
+                            backgroundColor: 'rgba(59, 130, 246, 0.85)',
+                            borderColor: '#3b82f6',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Social Services',
+                            data: institutionalData["Social Services Sector"]?.history || [],
+                            backgroundColor: 'rgba(239, 68, 68, 0.85)',
+                            borderColor: '#ef4444',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Economic Services',
+                            data: institutionalData["Economic Services Sector"]?.history || [],
+                            backgroundColor: 'rgba(16, 185, 129, 0.85)',
+                            borderColor: '#10b981',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'TOTAL APPROPRIATION',
+                            data: institutionalData["TOTAL APPROPRIATION"]?.history || [],
+                            type: 'line',
+                            borderColor: '#0f172a',
+                            backgroundColor: 'transparent',
+                            borderWidth: 3,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#0f172a',
+                            fill: false,
+                            yAxisID: 'y'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 12, font: { family: 'Outfit', size: 11, weight: '500' }, padding: 14 }
+                        },
+                        tooltip: {
+                            font: { family: 'Outfit' },
+                            callbacks: {
+                                label: function (context) {
+                                    return context.dataset.label + ': ' + fmtCurrency(context.parsed.y);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Appropriation (₱)', font: { family: 'Outfit', weight: 'bold', size: 12 } },
+                            ticks: { callback: v => fmtCurrency(v) },
+                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // Chart 2: Revenue Stability & Reliability (2024 vs 2025)
+            const ctxB = document.getElementById("revenueChart").getContext("2d");
+            const rev2024 = REVENUE_SOURCES.map(k => institutionalData[k]?.history?.[0] ?? 0);
+            const rev2025 = REVENUE_SOURCES.map(k => institutionalData[k]?.history?.[1] ?? 0);
+            new Chart(ctxB, {
+                type: 'bar',
+                data: {
+                    labels: REVENUE_SOURCES,
+                    datasets: [
+                        {
+                            label: '2024',
+                            data: rev2024,
+                            backgroundColor: 'rgba(59, 130, 246, 0.85)',
+                            borderColor: '#3b82f6',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        },
+                        {
+                            label: '2025',
+                            data: rev2025,
+                            backgroundColor: 'rgba(79, 70, 229, 0.85)',
+                            borderColor: '#4f46e5',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 12, font: { family: 'Outfit', size: 11, weight: '500' }, padding: 14 }
+                        },
+                        tooltip: {
+                            font: { family: 'Outfit' },
+                            callbacks: {
+                                label: function (context) {
+                                    return context.dataset.label + ': ' + fmtCurrency(context.parsed.y);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Revenue (₱)', font: { family: 'Outfit', weight: 'bold', size: 12 } },
+                            ticks: { callback: v => fmtCurrency(v) },
+                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
+                        },
+                        x: { ticks: { autoSkip: false, maxRotation: 60, minRotation: 45 }, grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // Render detailed cards for each indicator
+        function renderIndicatorCards() {
+            const container = document.getElementById("indicators-grid-container");
+            container.innerHTML = "";
+
+            Object.keys(INDICATORS_METADATA).forEach(indicatorName => {
+                const meta = INDICATORS_METADATA[indicatorName];
+                const indicator = institutionalData[indicatorName];
+                const latest = getLatestValue(indicator);
+
+                const card = document.createElement("div");
+                card.className = "ind-card";
+
+                let displayVal = '--';
+                if (latest.val !== '--') {
+                    displayVal = fmtCurrency(latest.val);
+                }
+
+                card.innerHTML = `
+                    <div class="ind-card-header">
+                        <span class="ind-card-title">${indicatorName}</span>
+                        <i class="fa-solid ${meta.icon} ind-card-icon"></i>
+                    </div>
+                    <div class="ind-card-value-box">
+                        <span class="ind-card-value">${displayVal}</span>
+                        <span class="ind-card-year">${latest.year !== '--' ? `(Latest: ${latest.year})` : ''}</span>
+                    </div>
+                    <div class="ind-card-desc">
+                        ${meta.desc}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
