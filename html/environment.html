@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>MunTHINK Hub — Environment Sector</title>
+	<!-- Google Fonts: Outfit -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+	<!-- FontAwesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<!-- Chart.js CDN -->
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<link rel="stylesheet" href="../styles.css">
+
+	<style>
+		/* Environment page specific tweaks to match existing layout */
+		.env-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 10px; }
+		.charts-container-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+		@media (max-width: 1024px) { .charts-container-grid { grid-template-columns: 1fr; } }
+		.chart-card { background: #ffffff; border: 1px solid rgba(15, 23, 42, 0.08); border-radius: var(--border-radius-lg); padding: 20px; box-shadow: 0 8px 20px rgba(15,23,42,0.03); }
+		.chart-title-wrapper { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(15,23,42,0.04); padding-bottom:10px; margin-bottom:10px }
+		.canvas-container { position: relative; width:100%; height:380px }
+		.badge { font-size:0.75rem; color:var(--text-secondary) }
+		.db-status-bar { background: #f1f5f9; border:1px solid var(--card-border); border-radius: var(--border-radius-md); padding:8px 16px; font-size:0.8rem; font-weight:600; color:var(--text-secondary); display:flex; align-items:center; justify-content:space-between; margin-bottom:8px }
+		.db-dot { width:8px; height:8px; border-radius:50%; background-color:var(--accent-emerald); box-shadow:0 0 6px var(--accent-emerald) }
+		.db-dot.offline { background-color:#f59e0b; box-shadow:0 0 6px #f59e0b }
+	</style>
+</head>
+<body>
+
+	<!-- Header Section (shared layout) -->
+	<header class="dashboard-header">
+		<div class="header-logo">
+			<img src="../assets/images/muntinlupa-city-logo.png" alt="MunTHINK Logo" class="header-logo-img">
+			<div class="header-titles">
+				<h1>MunTHINK Hub</h1>
+				<p class="subtitle">Smarter Data for a Smarter Muntinlupa</p>
+			</div>
+		</div>
+		<div class="header-info">
+			 <img src="../assets/images/hamburger.png" alt="sidebar" class="sidebar-sectors" id="hamburger-btn">
+		</div>
+	</header>
+
+	<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+	<aside class="sector-sidebar" id="sector-sidebar">
+		<div class="sidebar-header">
+			<h2>Dashboard Sectors</h2>
+			<i class="fa-solid fa-xmark" id="close-sidebar-btn"></i>
+		</div>
+		<nav class="sidebar-nav">
+			<a href="population.html" class="nav-item"><i class="fa-solid fa-users"></i> Population</a>
+			<a href="economic.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Economic</a>
+			<a href="education.html" class="nav-item"><i class="fa-solid fa-graduation-cap"></i> Education</a>
+			<a href="health.html" class="nav-item"><i class="fa-solid fa-notes-medical"></i> Health</a>
+			<a href="protective.html" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Protective</a>
+			<a href="socwel.html" class="nav-item"><i class="fa-solid fa-hand-holding-heart"></i> Social Welfare</a>
+			<a href="environment.html" class="nav-item active" style="background: rgba(0, 51, 151, 0.08); color: #003397; border-left: 4px solid #10b981;"><i class="fa-solid fa-leaf" style="color:#10b981"></i> Environment</a>
+			<a href="institutional.html" class="nav-item"><i class="fa-solid fa-building-columns"></i> Institutional</a>
+		</nav>
+	</aside>
+
+	<div class="dashboard-container">
+
+		<div class="db-status-bar">
+			<div style="display:flex;align-items:center;gap:8px">
+				<div id="db-dot" class="db-dot"></div>
+				<span id="db-status-txt">Connected to live Supabase DB</span>
+			</div>
+			<a href="admin_edit.html" class="admin-link-btn" style="color:#10b981"><i class="fa-solid fa-screwdriver-wrench"></i> Manage Environment Records in Admin</a>
+		</div>
+
+		<!-- Environment Charts -->
+		<section class="env-grid">
+			<div class="charts-container-grid">
+				<div class="chart-card">
+					<div class="chart-title-wrapper">
+						<h5><i class="fa-solid fa-water"></i> River Upstream Sampling</h5>
+						<div class="badge">Hover data points for values • Editable in Admin</div>
+					</div>
+					<div class="canvas-container">
+						<canvas id="riverUpstreamChart"></canvas>
+					</div>
+				</div>
+
+				<div class="chart-card">
+					<div class="chart-title-wrapper">
+						<h5><i class="fa-solid fa-water"></i> River Downstream Sampling</h5>
+						<div class="badge">Hover data points for values • Editable in Admin</div>
+					</div>
+					<div class="canvas-container">
+						<canvas id="riverDownstreamChart"></canvas>
+					</div>
+				</div>
+				<!-- Waste Materials Chart (Table 1) -->
+				<div class="chart-card" style="margin-top:12px">
+					<div class="chart-title-wrapper">
+						<h5><i class="fa-solid fa-recycle"></i> Measure of Collected Waste Materials — 2023</h5>
+						<div class="badge">Hover slices/bars for values • Editable in Admin</div>
+					</div>
+					<div class="canvas-container">
+						<canvas id="wasteMaterialsChart"></canvas>
+					</div>
+					<div style="margin-top:10px; font-weight:600; color:var(--text-secondary)">Diversion Rate: <span id="diversion-rate">--</span></div>
+				</div>
+			</div>
+			<!-- PM10 Monthly & Annual Mean (2015-2023) -->
+			<div class="chart-card" style="margin-top:12px">
+				<div class="chart-title-wrapper">
+					<h5><i class="fa-solid fa-wind"></i> PM10 Monthly & Annual Mean (2015-2023)</h5>
+					<div class="badge">Hover points for monthly values — tentative transcription</div>
+				</div>
+				<div class="canvas-container">
+					<canvas id="pm10Chart"></canvas>
+				</div>
+			</div>
+			<!-- PM2.5 Monthly & Annual Mean (2015-2023) -->
+			<div class="chart-card" style="margin-top:12px">
+				<div class="chart-title-wrapper">
+					<h5><i class="fa-solid fa-smog"></i> PM2.5 Monthly & Annual Mean (2015-2023)</h5>
+					<div class="badge">Hover points for monthly values — tentative transcription</div>
+				</div>
+				<div class="canvas-container">
+					<canvas id="pm25Chart"></canvas>
+				</div>
+			</div>
+		</section>
+
+		<footer class="dashboard-footer" style="margin-top:30px"><img src="../assets/images/footer.jpg" alt="" class="footer-image"></footer>
+	</div>
+
+	<!-- Supabase JS CDN (v2) -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+	<script>
+		// Supabase config (shared project keys) - replace if different
+		const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
+		const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
+		const STORAGE_KEY = "muntinlupa_sector_data_environment";
+
+		// Default (tentative) environment dataset — editable in admin
+		const DEFAULT_ENV_DATA = {
+			labels: ["1","2","3","4","5","6","7","8","9","10","11"],
+			upstream: {
+				Temperature: [29.1,29.1,29.7,28,26.7,29.6,28,27.5,28.1,30,30],
+				pH: [6.65,6.61,6.29,6.79,7.38,6.72,6.81,6.33,6.51,6.51,5.68],
+				Nitrate: [4030.9,5279.28,8765.39,35583.45,60.7,179.67,0,281.72,8215.52,8215.52,5073.19],
+				Chloride: [291.7,21203.77,76048.25,75788.57,75862.87,75873.7,665.4,32900.5,842.8,8.2,3542.5],
+				Turbidity: [316.43,11.53,27.99,67,61.5,42.36,38.84,10.14,72.9,72.98,204.95],
+				RDO: [0.22,3.68,3.01,0.04,0.05,0.04,0.038,0.03,0.09,0.4,0.07],
+				TDS: [0.63,0.29,0.79,0.65,0.24,0.55,0.57,0.39,0.61,0.61,0.61]
+			},
+			downstream: {
+				Temperature: [28,30.9,26.6,30.5,28,29.9,27.8,29.3,28.9,27.7,27.9],
+				pH: [6.6,7.01,6.94,7.25,6.71,6.61,6.29,6.36,6.79,6.61,6.79],
+				Nitrate: [5635.81,2784.69,3.5,19.22,6702.15,5467.4,17544.79,2951.46,4628.16,5467.4,0],
+				Chloride: [341.2,28882.9,65487.1,28194.7,447.81,46058,75724.6,75872.4,75888.2,4961.6,9497.58],
+				Turbidity: [33.93,58.31,45.3,61.2,27.32,56.59,69.47,17.8,80.11,56.59,987.11],
+				RDO: [1.27,0.52,0.36,0.09,0.03,0.83,0.05,0.05,0.18,0.06,0.08],
+				TDS: [0.56,0.45,0.37,0.6,0.55,0.4,0.49,0.13,0.55,0.4,0.65]
+				},
+				waste: {
+				categories: [
+					'Total Garbage Collected',
+					'Total Recyclables Recovered',
+					'Total Compostable Recovered',
+					'Total Residual Waste'
+				],
+					volume_m3: [500955.00, 149378.98, 19806.13, 1214.09],
+					weight_tons: [76260.38, 22739.96, 3019.19, 184.82],
+					diversion_rate_pct: 34.02
+				},
+			pm10: {
+				months: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+				years: [
+					{ year: 2015, values: [37,24,21,30,25,23,31,33,25,40,21,24] },
+					{ year: 2016, values: [27.2,24,29.07,26.68,30.8,34,27.6,21.02,27.64,25.46,23.88,23.37] },
+					{ year: 2017, values: [23.62,21.69,30.19,48.65,null,null,null,null,null,null,null,null] },
+					{ year: 2018, values: [26,20.25,27.2,33.4,17.2,24,20.4,32.5,21.6,29,23,41] },
+					{ year: 2019, values: [17,20.67,21,18,20.33,19.5,24.2,55.17,24.33,21.17,27.6,26.6] },
+					{ year: 2020, values: [40,25,29,null,null,null,31,25,27,19,15,23] },
+					{ year: 2021, values: [14,17,18,21,14,31,null,17,21,29,22,null] },
+					{ year: 2022, values: [null,16,14,18,23,25,20,22,20,23,16,12] },
+					{ year: 2023, values: [null,null,null,null,null,null,null,null,9,11,8,null] }
+				]
+			}
+			,
+			pm25: {
+				months: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+				years: [
+					{ year: 2015, values: [null,null,null,null,null,null,null,null,null,null,null,null] },
+					{ year: 2016, values: [15.23,13.64,18.1,16.36,26,17.63,null,15.64,20.28,16.94,15.38,17.16] },
+					{ year: 2017, values: [17.2,14.36,18.79,29.15,null,32.28,18.32,27.74,24.86,24.52,18.85,null] },
+					{ year: 2018, values: [17.15,24.33,14.49,15.18,15.28,17.53,15.92,25.65,19.6,24,20,19] },
+					{ year: 2019, values: [11.72,13.09,18.33,15.87,26.86,26.43,28.89,27.26,15.46,16.06,21.77,13.62] },
+					{ year: 2020, values: [12.63,12.16,12.63,12.35,17.75,13.99,16,16,19,14,13,13] },
+					{ year: 2021, values: [11.3,13.12,13.93,16.6,15.71,17.95,24,null,null,null,null,null] },
+					{ year: 2022, values: [null,null,null,null,null,null,null,null,null,null,null,null] },
+					{ year: 2023, values: [null,null,null,null,null,null,null,null,null,null,null,null] }
+				]
+			}
+		};
+
+		let envData = {};
+		let envLabels = [];
+		let supabaseClient = null;
+
+		if (typeof supabase !== 'undefined') {
+			supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+		}
+
+		document.addEventListener('DOMContentLoaded', async () => {
+			initSidebar();
+			await fetchEnvData();
+			renderEnvCharts();
+		});
+
+		function initSidebar() {
+			const hamburgerBtn = document.getElementById("hamburger-btn");
+			const sidebar = document.getElementById("sector-sidebar");
+			const overlay = document.getElementById("sidebar-overlay");
+			const closeBtn = document.getElementById("close-sidebar-btn");
+			if (hamburgerBtn) hamburgerBtn.addEventListener('click', ()=>{ sidebar.classList.add('active'); overlay.classList.add('active'); });
+			if (closeBtn) closeBtn.addEventListener('click', ()=>{ sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+			if (overlay) overlay.addEventListener('click', ()=>{ sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+		}
+
+		async function fetchEnvData() {
+			const statusTxt = document.getElementById('db-status-txt');
+			const statusDot = document.getElementById('db-dot');
+
+			if (supabaseClient) {
+				try {
+					const { data, error } = await supabaseClient.from('environment').select('data, labels').eq('id', 1).single();
+					if (error) {
+						if (error.code === 'PGRST116') {
+							// seed default
+							await supabaseClient.from('environment').insert({ id: 1, data: DEFAULT_ENV_DATA, labels: DEFAULT_ENV_DATA.labels });
+							envData = DEFAULT_ENV_DATA;
+							envLabels = DEFAULT_ENV_DATA.labels;
+						} else throw error;
+					} else {
+						envData = data.data || DEFAULT_ENV_DATA;
+						envLabels = data.labels || DEFAULT_ENV_DATA.labels;
+					}
+					statusTxt.textContent = 'Live Supabase Database Connected';
+					statusDot.className = 'db-dot';
+				} catch (e) {
+					console.warn('Supabase load failed. Using local fallback.', e);
+					loadEnvFallback();
+				}
+			} else {
+				loadEnvFallback();
+			}
+		}
+
+		function loadEnvFallback() {
+			const statusTxt = document.getElementById('db-status-txt');
+			const statusDot = document.getElementById('db-dot');
+			statusTxt.textContent = 'Offline Mode (LocalStorage Fallback)';
+			statusDot.className = 'db-dot offline';
+			const local = localStorage.getItem(STORAGE_KEY);
+			if (local) {
+				try { const parsed = JSON.parse(local); envData = parsed.data || DEFAULT_ENV_DATA; envLabels = parsed.labels || DEFAULT_ENV_DATA.labels; }
+				catch(e){ envData = DEFAULT_ENV_DATA; envLabels = DEFAULT_ENV_DATA.labels; localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: DEFAULT_ENV_DATA, labels: DEFAULT_ENV_DATA.labels })); }
+			} else {
+				envData = DEFAULT_ENV_DATA; envLabels = DEFAULT_ENV_DATA.labels; localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: DEFAULT_ENV_DATA, labels: DEFAULT_ENV_DATA.labels }));
+			}
+		}
+
+		function renderEnvCharts() {
+			// Upstream chart
+			const upCtx = document.getElementById('riverUpstreamChart').getContext('2d');
+			new Chart(upCtx, {
+				type: 'bar',
+				data: {
+					labels: envLabels,
+					datasets: [
+						{ label: 'Chloride (mg/L)', data: envData.upstream.Chloride, backgroundColor: 'rgba(250,204,21,0.95)', yAxisID: 'y_chl' },
+						{ label: 'Nitrate (mg/L)', data: envData.upstream.Nitrate, backgroundColor: 'rgba(99,102,241,0.9)', yAxisID: 'y_nit' },
+						{ label: 'Temperature (°C)', data: envData.upstream.Temperature, type: 'line', borderColor: '#06b6d4', backgroundColor: 'transparent', yAxisID: 'y_temp', tension:0.2, pointRadius:4 },
+						{ label: 'pH', data: envData.upstream.pH, type: 'line', borderColor: '#f97316', backgroundColor: 'transparent', yAxisID: 'y_ph', tension:0.2, pointRadius:4 },
+						{ label: 'Turbidity (NTU)', data: envData.upstream.Turbidity, type: 'line', borderColor: '#7c3aed', backgroundColor: 'transparent', yAxisID: 'y_turb', tension:0.2, pointRadius:3 },
+						{ label: 'RDO (mg/L)', data: envData.upstream.RDO, type: 'line', borderColor: '#10b981', backgroundColor: 'transparent', yAxisID: 'y_rdo', tension:0.2, pointRadius:3 },
+						{ label: 'TDS (g/L)', data: envData.upstream.TDS, type: 'line', borderColor: '#64748b', backgroundColor: 'transparent', yAxisID: 'y_tds', tension:0.2, pointRadius:3 }
+					]
+				},
+				options: {
+					responsive:true, maintainAspectRatio:false,
+					plugins: {
+						legend: { position:'bottom' },
+						tooltip: { callbacks: {
+							label: function(ctx){ const lab = ctx.dataset.label || ''; let v = ctx.parsed.y; if (v===null) return lab+': N/A'; return lab+': '+v; }
+						}}
+					},
+					scales: {
+						x: { grid:{ display:false } },
+						y_chl: { type:'linear', display:true, position:'left', title: { display:true, text:'Chloride (mg/L)' } },
+						y_nit: { type:'linear', display:false, position:'left', title: { display:true, text:'Nitrate (mg/L)' } },
+						y_temp: { display:true, position:'right', title:{ display:true, text:'Temperature (°C)' }, grid:{ drawOnChartArea:false } },
+						y_ph: { display:false, position:'right', grid:{ drawOnChartArea:false } },
+						y_turb: { display:false, position:'right', grid:{ drawOnChartArea:false } },
+						y_rdo: { display:false, position:'right', grid:{ drawOnChartArea:false } },
+						y_tds: { display:false, position:'right', grid:{ drawOnChartArea:false } }
+					}
+				}
+			});
+
+			// Downstream chart (similar configuration)
+			const downCtx = document.getElementById('riverDownstreamChart').getContext('2d');
+			new Chart(downCtx, {
+				type: 'bar',
+				data: {
+					labels: envLabels,
+					datasets: [
+						{ label: 'Chloride (mg/L)', data: envData.downstream.Chloride, backgroundColor: 'rgba(250,204,21,0.95)', yAxisID: 'y_chl' },
+						{ label: 'Nitrate (mg/L)', data: envData.downstream.Nitrate, backgroundColor: 'rgba(99,102,241,0.9)', yAxisID: 'y_nit' },
+						{ label: 'Temperature (°C)', data: envData.downstream.Temperature, type: 'line', borderColor: '#06b6d4', backgroundColor: 'transparent', yAxisID: 'y_temp', tension:0.2, pointRadius:4 },
+						{ label: 'pH', data: envData.downstream.pH, type: 'line', borderColor: '#f97316', backgroundColor: 'transparent', yAxisID: 'y_ph', tension:0.2, pointRadius:4 },
+						{ label: 'Turbidity (NTU)', data: envData.downstream.Turbidity, type: 'line', borderColor: '#7c3aed', backgroundColor: 'transparent', yAxisID: 'y_turb', tension:0.2, pointRadius:3 },
+						{ label: 'RDO (mg/L)', data: envData.downstream.RDO, type: 'line', borderColor: '#10b981', backgroundColor: 'transparent', yAxisID: 'y_rdo', tension:0.2, pointRadius:3 },
+						{ label: 'TDS (g/L)', data: envData.downstream.TDS, type: 'line', borderColor: '#64748b', backgroundColor: 'transparent', yAxisID: 'y_tds', tension:0.2, pointRadius:3 }
+					]
+				},
+				options: {
+					responsive:true, maintainAspectRatio:false,
+					plugins: {
+						legend: { position:'bottom' },
+						tooltip: { callbacks: { label: function(ctx){ const lab = ctx.dataset.label || ''; let v = ctx.parsed.y; if (v===null) return lab+': N/A'; return lab+': '+v; } } }
+					},
+					scales: {
+						x: { grid:{ display:false } },
+						y_chl: { type:'linear', display:true, position:'left', title: { display:true, text:'Chloride (mg/L)' } },
+						y_nit: { type:'linear', display:false, position:'left', title: { display:true, text:'Nitrate (mg/L)' } },
+						y_temp: { display:true, position:'right', title:{ display:true, text:'Temperature (°C)' }, grid:{ drawOnChartArea:false } },
+						y_ph: { display:false, position:'right', grid:{ drawOnChartArea:false } },
+						y_turb: { display:false, position:'right', grid:{ drawOnChartArea:false } },
+						y_rdo: { display:false, position:'right', grid:{ drawOnChartArea:false } },
+						y_tds: { display:false, position:'right', grid:{ drawOnChartArea:false } }
+					}
+				}
+			});
+
+				// Waste Materials chart (Table 1)
+				try {
+					const waste = envData.waste || DEFAULT_ENV_DATA.waste;
+					const wasteCtx = document.getElementById('wasteMaterialsChart').getContext('2d');
+					new Chart(wasteCtx, {
+						type: 'bar',
+						data: {
+							labels: waste.categories,
+							datasets: [
+								{ label: 'Volume (m³)', data: waste.volume_m3, backgroundColor: 'rgba(59,130,246,0.85)' },
+								{ label: 'Weight (tons)', data: waste.weight_tons, backgroundColor: 'rgba(16,185,129,0.9)' }
+							]
+						},
+						options: {
+							responsive:true, maintainAspectRatio:false,
+							plugins: {
+								legend: { position: 'bottom' },
+								tooltip: { callbacks: { label: function(ctx){ const lab = ctx.dataset.label||''; const v = ctx.parsed.y; if (v==null) return lab+': N/A'; return lab+': '+v.toLocaleString(); } } }
+							},
+							scales: { x: { grid:{ display:false } }, y: { beginAtZero:true, title: { display:true, text:'Value' } } }
+						}
+					});
+					// show diversion rate if available
+					const drEl = document.getElementById('diversion-rate');
+					if (drEl && waste.diversion_rate_pct !== undefined) drEl.textContent = waste.diversion_rate_pct + '%';
+				} catch(e) { console.warn('Waste chart render failed', e); }
+
+				// PM10 monthly chart (2015-2023) - tentative transcription
+				try {
+					const pm10 = envData.pm10 || DEFAULT_ENV_DATA.pm10;
+					const pm10Ctx = document.getElementById('pm10Chart').getContext('2d');
+					const colors = ['#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6','#ec4899','#06b6d4','#7c3aed','#a3e635'];
+					const datasets = pm10.years.map((y, idx) => ({
+						label: String(y.year),
+						data: y.values,
+						borderColor: colors[idx % colors.length],
+						backgroundColor: 'transparent',
+						tension: 0.15,
+						spanGaps: true,
+						pointRadius: 3
+					}));
+					new Chart(pm10Ctx, {
+						type: 'line',
+						data: { labels: pm10.months, datasets },
+						options: {
+							responsive:true, maintainAspectRatio:false,
+							plugins: {
+								legend: { position:'bottom' },
+								tooltip: { callbacks: { label: function(ctx){ const lab = ctx.dataset.label||''; const v = ctx.parsed.y; return lab+': '+(v==null?'N/A':v); } } }
+							},
+							scales: { y: { beginAtZero:true, title:{ display:true, text:'PM10 (µg/Ncm)' } } }
+						}
+					});
+				} catch(e){ console.warn('PM10 chart render failed', e); }
+
+				// PM2.5 monthly chart (2015-2023) - tentative transcription
+				try {
+					const pm25 = envData.pm25 || DEFAULT_ENV_DATA.pm25;
+					const pm25Ctx = document.getElementById('pm25Chart').getContext('2d');
+					const colors = ['#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6','#ec4899','#06b6d4','#7c3aed','#a3e635'];
+					const datasets25 = pm25.years.map((y, idx) => ({
+						label: String(y.year),
+						data: y.values,
+						borderColor: colors[idx % colors.length],
+						backgroundColor: 'transparent',
+						tension: 0.15,
+						spanGaps: true,
+						pointRadius: 3
+					}));
+					new Chart(pm25Ctx, {
+						type: 'line',
+						data: { labels: pm25.months, datasets: datasets25 },
+						options: {
+							responsive:true, maintainAspectRatio:false,
+							plugins: { legend: { position:'bottom' }, tooltip: { callbacks: { label: function(ctx){ const lab = ctx.dataset.label||''; const v = ctx.parsed.y; return lab+': '+(v==null?'N/A':v); } } } },
+							scales: { y: { beginAtZero:true, title:{ display:true, text:'PM2.5 (µg/Ncm)' } } }
+						}
+					});
+				} catch(e){ console.warn('PM2.5 chart render failed', e); }
+		}
+	</script>
+</body>
+</html>
