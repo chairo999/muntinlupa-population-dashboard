@@ -418,25 +418,95 @@
             try {
                 if (!supabaseClient) throw new Error("Supabase client failed initialization.");
 
-                const { data, error } = await supabaseClient
-                    .from(MASTER_TABLE_NAME)
+                const allData = {};
+
+                const { data: rankData } = await supabaseClient
+                    .from('economic_competitiveness_rank')
+                    .select('year, rank')
+                    .order('year', { ascending: true });
+                if (rankData && rankData.length > 0) {
+                    allData["Competitiveness Rank"] = {
+                        labels: rankData.map(r => String(r.year)),
+                        history: rankData.map(r => r.rank)
+                    };
+                }
+
+                const { data: estData } = await supabaseClient
+                    .from('economic_total_establishment')
+                    .select('year, total_establishments')
+                    .order('year', { ascending: true });
+                if (estData && estData.length > 0) {
+                    allData["Total Establishments"] = {
+                        labels: estData.map(r => String(r.year)),
+                        history: estData.map(r => r.total_establishments)
+                    };
+                }
+
+                const { data: hotelData } = await supabaseClient
+                    .from('economic_hotel_arrivals')
+                    .select('year, hotel_arrivals')
+                    .order('year', { ascending: true });
+                if (hotelData && hotelData.length > 0) {
+                    allData["Hotel Arrivals"] = {
+                        labels: hotelData.map(r => String(r.year)),
+                        history: hotelData.map(r => r.hotel_arrivals)
+                    };
+                }
+
+                const { data: empData } = await supabaseClient
+                    .from('economic_employment')
+                    .select('barangay_name, year, employment')
+                    .order('year', { ascending: true });
+                if (empData && empData.length > 0) {
+                    const empByBrgy = {};
+                    empData.forEach(r => {
+                        if (!empByBrgy[r.barangay_name]) empByBrgy[r.barangay_name] = { labels: [], history: [] };
+                        empByBrgy[r.barangay_name].labels.push(String(r.year));
+                        empByBrgy[r.barangay_name].history.push(r.employment);
+                    });
+                    BARANGAY_NAMES.forEach(b => {
+                        if (empByBrgy[b]) {
+                            allData[`${b} - Number of Employment`] = empByBrgy[b];
+                        }
+                    });
+                }
+
+                const { data: bizData } = await supabaseClient
+                    .from('economic_registered_business')
+                    .select('barangay_name, category, count')
+                    .order('category', { ascending: true });
+                if (bizData && bizData.length > 0) {
+                    const bizByBrgy = {};
+                    bizData.forEach(r => {
+                        if (!bizByBrgy[r.barangay_name]) bizByBrgy[r.barangay_name] = { labels: [], history: [] };
+                        bizByBrgy[r.barangay_name].labels.push(r.category);
+                        bizByBrgy[r.barangay_name].history.push(r.count);
+                    });
+                    BARANGAY_NAMES.forEach(b => {
+                        if (bizByBrgy[b]) {
+                            allData[`${b} Registered Businesses`] = bizByBrgy[b];
+                        }
+                    });
+                }
+
+                const { data: brgyEstData } = await supabaseClient
+                    .from('municipal_indicators')
                     .select('indicator_name, labels, history')
-                    .eq('sector', SECTOR_ID);
-
-                if (error) throw error;
-
-                const parsedMap = {};
-                if (data && data.length > 0) {
-                    data.forEach(row => {
-                        parsedMap[row.indicator_name] = {
+                    .eq('sector', 'economic')
+                    .like('indicator_name', '% - Total Establishments');
+                if (brgyEstData && brgyEstData.length > 0) {
+                    brgyEstData.forEach(row => {
+                        allData[row.indicator_name] = {
                             labels: row.labels || [],
                             history: row.history || []
                         };
                     });
                 }
 
-                economicData = parsedMap;
-                statusTxt.textContent = "Live Connected: Syncing data from master table";
+                economicData = allData;
+
+
+                statusTxt.textContent = "Live Connected: Syncing from dedicated economic tables";
                 statusDot.className = "db-dot";
                 statusDot.style.backgroundColor = "#10b981";
             } catch (e) {

@@ -753,7 +753,14 @@
         icon: "fa-building-columns"
       }
     };
+    const ECONOMIC_INDICATORS = {
+      "Competitiveness Rank": { table: "economic_competitiveness_rank", labelCol: "year", valueCol: "rank" },
+      "Total Establishments": { table: "economic_total_establishment", labelCol: "year", valueCol: "total_establishments" },
+      "Hotel Arrivals": { table: "economic_hotel_arrivals", labelCol: "year", valueCol: "hotel_arrivals" },
+    };
 
+    const BARANGAY_NAMES = ["Alabang", "Ayala Alabang", "Bayanan", "Buli", "Cupang", "Poblacion", "Putatan", "Sucat", "Tunasan"];
+    
     // State parameters
     let currentSectorKey = "edit";
     let activeIndicators = []; // Holds the rows fetched for the current sector
@@ -807,7 +814,7 @@
       // Update Titles
       sectorTitle.innerHTML = `<i class="fa-solid ${config.icon}"></i> ${config.name}`;
       sectorDesc.textContent = config.desc;
-      tableNameBadge.textContent = `${MASTER_TABLE_NAME} (${config.sectorId})`;
+      tableNameBadge.textContent = config.tables ? config.tables : `${MASTER_TABLE_NAME} (${config.sectorId})`;
       
       // Toggle dropdown labels depending on mode
       const labelEl = document.querySelector('label[for="brgy"]');
@@ -845,8 +852,11 @@
 
     // Load data from Master Table filtered by Sector
     async function loadSectorData(sectorId) {
-    if (sectorId === 'population') {
+        if (sectorId === 'population') {
         return loadPopulationData();
+    }
+    if (sectorId === 'economic') {
+        return loadEconomicData();
     }
     updateHeaderStatus('connecting', `Querying master table for [${sectorId}]...`);
     showNotification('info', `Fetching matching rows from ${MASTER_TABLE_NAME}...`, 'fa-spinner fa-spin');
@@ -906,6 +916,100 @@ async function loadPopulationData() {
         console.error(err);
         updateHeaderStatus('error', 'Database Error');
         showNotification('err', `Failed to load population: ${err.message}`, 'fa-triangle-exclamation');
+    }
+}
+async function loadEconomicData() {
+    updateHeaderStatus('connecting', 'Loading economic data...');
+    showNotification('info', 'Fetching from dedicated economic tables...', 'fa-spinner fa-spin');
+    try {
+        const allIndicators = [];
+        let idx = 0;
+
+        for (const [name, cfg] of Object.entries(ECONOMIC_INDICATORS)) {
+            idx++;
+            const { data, error } = await supabaseClient
+                .from(cfg.table)
+                .select('*')
+                .order(cfg.labelCol, { ascending: true });
+            if (error) throw error;
+
+            allIndicators.push({
+                id: idx,
+                indicator_name: name,
+                labels: data ? data.map(r => String(r[cfg.labelCol])) : [],
+                history: data ? data.map(r => r[cfg.valueCol]) : [],
+                _table: cfg.table,
+                _labelCol: cfg.labelCol,
+                _valueCol: cfg.valueCol
+            });
+        }
+
+        const { data: empData } = await supabaseClient
+            .from('economic_employment')
+            .select('*')
+            .order('year', { ascending: true });
+        if (empData) {
+            const years = [...new Set(empData.map(r => r.year))].sort();
+            BARANGAY_NAMES.forEach(b => {
+                idx++;
+                const brgyRows = empData.filter(r => r.barangay_name === b);
+                const history = new Array(years.length).fill(null);
+                brgyRows.forEach(r => {
+                    const yi = years.indexOf(r.year);
+                    if (yi !== -1) history[yi] = r.employment;
+                });
+                allIndicators.push({
+                    id: idx,
+                    indicator_name: `${b} - Number of Employment`,
+                    labels: years.map(String),
+                    history,
+                    _table: 'economic_employment',
+                    _labelCol: 'year',
+                    _valueCol: 'employment',
+                    _entityCol: 'barangay_name',
+                    _entity: b
+                });
+            });
+        }
+
+        const { data: bizData } = await supabaseClient
+            .from('economic_registered_business')
+            .select('*')
+            .order('category', { ascending: true });
+        if (bizData) {
+            const categories = [...new Set(bizData.map(r => r.category))];
+            BARANGAY_NAMES.forEach(b => {
+                idx++;
+                const brgyRows = bizData.filter(r => r.barangay_name === b);
+                const history = new Array(categories.length).fill(null);
+                brgyRows.forEach(r => {
+                    const ci = categories.indexOf(r.category);
+                    if (ci !== -1) history[ci] = r.count;
+                });
+                allIndicators.push({
+                    id: idx,
+                    indicator_name: `${b} Registered Businesses`,
+                    labels: [...categories],
+                    history,
+                    _table: 'economic_registered_business',
+                    _labelCol: 'category',
+                    _valueCol: 'count',
+                    _entityCol: 'barangay_name',
+                    _entity: b
+                });
+            });
+        }
+
+        activeIndicators = allIndicators;
+        populateIndicatorDropdown();
+        updateHeaderStatus('online', 'Live & Connected (Economic)');
+        showNotification('ok', `Loaded ${allIndicators.length} economic indicators.`, 'fa-circle-check');
+        disableForm(false);
+        yearSelect.disabled = true;
+    } catch (err) {
+        console.error(err);
+        updateHeaderStatus('error', 'Database Error');
+        showNotification('err', `Failed to load economic data: ${err.message}`, 'fa-triangle-exclamation');
     }
 }
     // Populate the dropdown selection options
@@ -1014,20 +1118,31 @@ async function loadPopulationData() {
         // Perform standard direct structural record update
         let error;
 if (currentSectorKey === 'edit') {
-    const yearLabel = selectedIndicatorRow.labels[yearIndex];
-    ({ error } = await supabaseClient
-        .from('barangay_population')
-        .upsert({
-            barangay_name: selectedIndicatorRow.indicator_name,
-            year: parseInt(yearLabel),
-            population: val
-        }, { onConflict: 'barangay_name,year' }));
-} else {
-    ({ error } = await supabaseClient
-        .from(MASTER_TABLE_NAME)
-        .update({ history: selectedIndicatorRow.history })
-        .eq('id', selectedIndicatorRow.id));
-}
+     const yearLabel = selectedIndicatorRow.labels[yearIndex];
+     ({ error } = await supabaseClient
+         .from('barangay_population')
+         .upsert({
+             barangay_name: selectedIndicatorRow.indicator_name,
+             year: parseInt(yearLabel),
+             population: val
+         }, { onConflict: 'barangay_name,year' }));
+ } else if (currentSectorKey === 'economic' && selectedIndicatorRow._table) {
+     const label = selectedIndicatorRow.labels[yearIndex];
+     const upsertObj = {};
+     if (selectedIndicatorRow._entityCol) {
+         upsertObj[selectedIndicatorRow._entityCol] = selectedIndicatorRow._entity || selectedIndicatorRow.indicator_name;
+     }
+     upsertObj[selectedIndicatorRow._labelCol] = selectedIndicatorRow._labelCol === 'year' ? parseInt(label) : label;
+     upsertObj[selectedIndicatorRow._valueCol] = val;
+     ({ error } = await supabaseClient
+         .from(selectedIndicatorRow._table)
+         .upsert(upsertObj, { onConflict: Object.keys(upsertObj).join(',') }));
+ } else {
+     ({ error } = await supabaseClient
+         .from(MASTER_TABLE_NAME)
+         .update({ history: selectedIndicatorRow.history })
+         .eq('id', selectedIndicatorRow.id));
+ }
 
         if (error) throw error;
 
@@ -1069,21 +1184,43 @@ if (currentSectorKey === 'edit') {
       try {
         let error;
 if (currentSectorKey === 'edit') {
-    const existingNames = activeIndicators.map(r => r.indicator_name);
-    const rows = existingNames.map(name => ({
-        barangay_name: name,
-        year: parseInt(rawYear),
-        population: null
-    }));
-    ({ error } = await supabaseClient
-        .from('barangay_population')
-        .upsert(rows, { onConflict: 'barangay_name,year' }));
-} else {
-    ({ error } = await supabaseClient
-        .from(MASTER_TABLE_NAME)
-        .update({ labels: selectedIndicatorRow.labels, history: selectedIndicatorRow.history })
-        .eq('id', selectedIndicatorRow.id));
-}
+     const existingNames = activeIndicators.map(r => r.indicator_name);
+     const rows = existingNames.map(name => ({
+         barangay_name: name,
+         year: parseInt(rawYear),
+         population: null
+     }));
+     ({ error } = await supabaseClient
+         .from('barangay_population')
+         .upsert(rows, { onConflict: 'barangay_name,year' }));
+ } else if (currentSectorKey === 'economic') {
+     const ecoIndicators = activeIndicators.filter(r => r._table);
+     const rows = ecoIndicators.map(r => {
+         const obj = {};
+         if (r._entityCol) obj[r._entityCol] = r._entity || r.indicator_name;
+         obj[r._labelCol] = r._labelCol === 'year' ? parseInt(rawYear) : rawYear;
+         obj[r._valueCol] = null;
+         return obj;
+     });
+     const seen = new Set();
+     const deduped = rows.filter(r => {
+         const key = Object.values(r).join('|');
+         if (seen.has(key)) return false;
+         seen.add(key);
+         return true;
+     });
+     if (deduped.length > 0) {
+         const firstTable = deduped[0].hasOwnProperty('barangay_name') ? 'economic_employment' : 'economic_registered_business';
+         ({ error } = await supabaseClient
+             .from(firstTable)
+             .upsert(deduped, { onConflict: Object.keys(deduped[0]).join(',') }));
+     }
+ } else {
+     ({ error } = await supabaseClient
+         .from(MASTER_TABLE_NAME)
+         .update({ labels: selectedIndicatorRow.labels, history: selectedIndicatorRow.history })
+         .eq('id', selectedIndicatorRow.id));
+ }
         
         if (error) throw error;
         
@@ -1113,16 +1250,26 @@ if (currentSectorKey === 'edit') {
       try {
         let error;
 if (currentSectorKey === 'edit') {
-    ({ error } = await supabaseClient
-        .from('barangay_population')
-        .delete()
-        .eq('year', parseInt(yearToRemove)));
-} else {
-    ({ error } = await supabaseClient
-        .from(MASTER_TABLE_NAME)
-        .update({ labels: selectedIndicatorRow.labels, history: selectedIndicatorRow.history })
-        .eq('id', selectedIndicatorRow.id));
-}
+     ({ error } = await supabaseClient
+         .from('barangay_population')
+         .delete()
+         .eq('year', parseInt(yearToRemove)));
+ } else if (currentSectorKey === 'economic' && selectedIndicatorRow._table) {
+     const filter = {};
+     if (selectedIndicatorRow._entityCol) {
+         filter[selectedIndicatorRow._entityCol] = selectedIndicatorRow._entity || selectedIndicatorRow.indicator_name;
+     }
+     filter[selectedIndicatorRow._labelCol] = selectedIndicatorRow._labelCol === 'year' ? parseInt(yearToRemove) : yearToRemove;
+     ({ error } = await supabaseClient
+         .from(selectedIndicatorRow._table)
+         .delete()
+         .match(filter)); 
+ } else {
+     ({ error } = await supabaseClient
+         .from(MASTER_TABLE_NAME)
+         .update({ labels: selectedIndicatorRow.labels, history: selectedIndicatorRow.history })
+         .eq('id', selectedIndicatorRow.id));
+ }
         
         if (error) throw error;
         brgySelect.dispatchEvent(new Event('change'));
