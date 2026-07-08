@@ -334,12 +334,21 @@
 
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
-                        <h5><i class="fa-solid fa-chart-area"></i> City Establishments & Hotel Arrivals</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Establishments (Bar)
-                            vs Hotels (Line)</div>
+                        <h5><i class="fa-solid fa-store"></i> City Establishments (Timeline)</h5>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Total Registered Establishments Over Time</div>
                     </div>
                     <div class="canvas-container">
-                        <canvas id="growthChart"></canvas>
+                        <canvas id="establishmentsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-hotel"></i> Hotel Arrivals (Timeline)</h5>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Annual Hotel Arrivals</div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="hotelArrivalsChart"></canvas>
                     </div>
                 </div>
 
@@ -381,7 +390,8 @@
         let supabaseClient = null;
 
         let rankingChartInstance = null;
-        let growthChartInstance = null;
+        let establishmentsChartInstance = null;
+        let hotelArrivalsChartInstance = null;
         let barangayEconChartInstance = null;
 
         if (typeof supabase !== 'undefined') {
@@ -439,6 +449,8 @@
                 statusTxt.textContent = "Live Connected: Syncing data from master table";
                 statusDot.className = "db-dot";
                 statusDot.style.backgroundColor = "#10b981";
+                // Debug: list loaded indicator keys for troubleshooting
+                console.info('Loaded economic indicator keys:', Object.keys(economicData));
             } catch (e) {
                 console.error("Database connection failure:", e);
                 statusTxt.textContent = "Database Error: Please verify table connection fields.";
@@ -460,6 +472,36 @@
             return "--";
         }
 
+        // Attempts multiple naming patterns to find the latest value for barangay-scoped indicators
+        function resolveLatestBarangayValue(barangay, labelVariants) {
+            const candidates = [];
+            labelVariants.forEach(variant => {
+                candidates.push(`${barangay} - ${variant}`);
+                candidates.push(`${barangay} ${variant}`);
+                candidates.push(`${variant} - ${barangay}`);
+                candidates.push(`${variant} ${barangay}`);
+            });
+
+            // Also try bare barangay + short suffixes
+            labelVariants.forEach(variant => {
+                const short = variant.replace(/\s+\(.+\)/, '').split(' ')[0];
+                if (short && short.length > 1) {
+                    candidates.push(`${barangay} - ${short}`);
+                    candidates.push(`${barangay} ${short}`);
+                }
+            });
+
+            for (let key of candidates) {
+                if (economicData[key]) {
+                    const hist = economicData[key].history || [];
+                    for (let i = hist.length - 1; i >= 0; i--) {
+                        if (hist[i] !== null && hist[i] !== undefined) return hist[i];
+                    }
+                }
+            }
+            return "--";
+        }
+
         function renderStatsBanner() {
             const rank = getLatestValue("Competitiveness Rank");
             document.getElementById("card-rank").textContent = rank !== "--" ? `#${rank}` : "--";
@@ -474,7 +516,7 @@
             let totalEmp = 0;
             let foundEmp = false;
             BARANGAY_NAMES.forEach(b => {
-                const latestEmp = getLatestValue(`${b} - Number of Employment`);
+                const latestEmp = resolveLatestBarangayValue(b, ['Number of Employment', 'Number of Employment - b', 'Number of Employment (b)', 'Employment', 'Number of Employment']);
                 if (latestEmp !== "--") {
                     totalEmp += Number(latestEmp);
                     foundEmp = true;
@@ -526,78 +568,72 @@
                 }
             });
 
-            // --- 2. PERFECTLY ALIGNED BUSINESS VS HOTEL TIMELINE ---
+            // --- 2a. CITY ESTABLISHMENTS TIMELINE ---
             const estObj = economicData["Total Establishments"] || { labels: [], history: [] };
-            const hotelObj = economicData["Hotel Arrivals"] || { labels: [], history: [] };
-
             const estCoordinates = estObj.history.map((val, i) => {
                 return (val !== null && val !== undefined) ? { x: String(estObj.labels[i]), y: val } : null;
             }).filter(item => item !== null);
 
-            const hotelCoordinates = hotelObj.history.map((val, i) => {
-                return (val !== null && val !== undefined) ? { x: String(hotelObj.labels[i]), y: val } : null;
-            }).filter(item => item !== null);
-
-            // Union of all active timeline years from BOTH indicators to serve as shared X grid line labels
-            const combinedYears = [...new Set([
-                ...estObj.labels.map(String),
-                ...hotelObj.labels.map(String)
-            ])].sort((a, b) => Number(a) - Number(b));
-
-            const ctxB = document.getElementById("growthChart").getContext("2d");
-            growthChartInstance = new Chart(ctxB, {
+            const estYears = [...new Set(estCoordinates.map(c => c.x))].sort((a, b) => Number(a) - Number(b));
+            const ctxEst = document.getElementById("establishmentsChart").getContext("2d");
+            establishmentsChartInstance = new Chart(ctxEst, {
                 type: 'bar',
                 data: {
-                    labels: combinedYears,
-                    datasets: [
-                        {
-                            label: 'Active Establishments',
-                            data: estCoordinates,
-                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                            borderColor: '#3b82f6',
-                            borderWidth: 1,
-                            borderRadius: 4,
-                            yAxisID: 'y'
-                        },
-                        {
-                            label: 'Hotel Arrivals',
-                            data: hotelCoordinates,
-                            borderColor: '#ef4444',
-                            borderWidth: 3,
-                            type: 'line',
-                            yAxisID: 'y1',
-                            spanGaps: true,
-                            tension: 0.15
-                        }
-                    ]
+                    labels: estYears,
+                    datasets: [{
+                        label: 'Total Establishments',
+                        data: estCoordinates,
+                        backgroundColor: 'rgba(59, 130, 246, 0.9)',
+                        borderColor: '#3b82f6',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        y: {
-                            type: 'linear',
-                            display: true,
-                            position: 'left',
-                            title: { display: true, text: 'Total Active Businesses' },
-                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
-                        },
-                        y1: {
-                            type: 'linear',
-                            display: true,
-                            position: 'right',
-                            title: { display: true, text: 'Annual Hotel Arrivals' },
-                            grid: { drawOnChartArea: false }
-                        },
-                        x: {
-                            type: 'category',
-                            grid: { display: false }
-                        }
+                        y: { beginAtZero: true, title: { display: true, text: 'Total Active Businesses' }, grid: { color: 'rgba(15, 23, 42, 0.04)' } },
+                        x: { grid: { display: false } }
                     },
-                    plugins: { legend: { position: 'bottom' } }
+                    plugins: { legend: { display: false } }
                 }
             });
 
+            // --- 2b. HOTEL ARRIVALS TIMELINE ---
+            const hotelObj = economicData["Hotel Arrivals"] || { labels: [], history: [] };
+            const hotelCoordinates = hotelObj.history.map((val, i) => {
+                return (val !== null && val !== undefined) ? { x: String(hotelObj.labels[i]), y: val } : null;
+            }).filter(item => item !== null);
+
+            const hotelYears = [...new Set(hotelCoordinates.map(c => c.x))].sort((a, b) => Number(a) - Number(b));
+            const ctxHotel = document.getElementById("hotelArrivalsChart").getContext("2d");
+            hotelArrivalsChartInstance = new Chart(ctxHotel, {
+                type: 'line',
+                data: {
+                    labels: hotelYears,
+                    datasets: [{
+                        label: 'Hotel Arrivals',
+                        data: hotelCoordinates,
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                        borderWidth: 3,
+                        tension: 0.15,
+                        fill: true,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#ef4444'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'Annual Hotel Arrivals' }, grid: { color: 'rgba(15, 23, 42, 0.04)' } },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
             // --- 3. BARANGAY COMPARISON BASICS ---
             const ctxC = document.getElementById("barangayEconChart").getContext("2d");
             barangayEconChartInstance = new Chart(ctxC, {
@@ -644,7 +680,7 @@
 
             if (mode === "compare-establishments") {
                 const counts = BARANGAY_NAMES.map(b => {
-                    const rawVal = getLatestValue(`${b} - Total Establishments`);
+                    const rawVal = resolveLatestBarangayValue(b, ['Total Establishments', 'Registered Businesses', 'Total Establishments (a)', 'Establishments']);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
 
@@ -662,25 +698,65 @@
                 barangayEconChartInstance.options.scales.y.stacked = false;
                 barangayEconChartInstance.options.plugins.legend.display = false;
 
+
             } else if (mode === "compare-employment") {
-                const jobs = BARANGAY_NAMES.map(b => {
-                    const rawVal = getLatestValue(`${b} - Number of Employment`);
+                // Build category arrays across barangays for employment breakdown
+                const microArr = BARANGAY_NAMES.map(b => {
+                    const rawVal = resolveLatestBarangayValue(b, ['Micro Employment', 'Micro', 'Micro - Employment']);
+                    return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
+                });
+                const smallArr = BARANGAY_NAMES.map(b => {
+                    const rawVal = resolveLatestBarangayValue(b, ['Small Employment', 'Small', 'Small - Employment']);
+                    return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
+                });
+                const mediumArr = BARANGAY_NAMES.map(b => {
+                    const rawVal = resolveLatestBarangayValue(b, ['Medium Employment', 'Medium', 'Medium - Employment']);
+                    return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
+                });
+                const largeArr = BARANGAY_NAMES.map(b => {
+                    const rawVal = resolveLatestBarangayValue(b, ['Large Employment', 'Large', 'Large - Employment']);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
 
-                barangayEconChartInstance.config.type = 'bar';
-                barangayEconChartInstance.data.labels = BARANGAY_NAMES;
-                barangayEconChartInstance.data.datasets = [{
-                    label: 'Most Recent Employment Positions',
-                    data: jobs,
-                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                    borderColor: '#3b82f6',
-                    borderWidth: 1,
-                    borderRadius: 4
-                }];
-                barangayEconChartInstance.options.scales.x.stacked = false;
-                barangayEconChartInstance.options.scales.y.stacked = false;
-                barangayEconChartInstance.options.plugins.legend.display = false;
+                const hasCategoryData = microArr.some(v => v > 0) || smallArr.some(v => v > 0) || mediumArr.some(v => v > 0) || largeArr.some(v => v > 0);
+
+                if (hasCategoryData) {
+                    barangayEconChartInstance.config.type = 'bar';
+                    barangayEconChartInstance.data.labels = BARANGAY_NAMES;
+                    barangayEconChartInstance.data.datasets = [
+                        { label: 'Micro Employment', data: microArr, backgroundColor: '#d97706', borderWidth: 1, borderRadius: 4 },
+                        { label: 'Small Employment', data: smallArr, backgroundColor: '#eab308', borderWidth: 1, borderRadius: 4 },
+                        { label: 'Medium Employment', data: mediumArr, backgroundColor: '#10b981', borderWidth: 1, borderRadius: 4 },
+                        { label: 'Large Employment', data: largeArr, backgroundColor: '#ef4444', borderWidth: 1, borderRadius: 4 }
+                    ];
+
+                    barangayEconChartInstance.options.scales.x.stacked = true;
+                    barangayEconChartInstance.options.scales.y.stacked = true;
+                    barangayEconChartInstance.options.plugins.legend.display = true;
+                    barangayEconChartInstance.options.plugins.legend.position = 'bottom';
+                } else {
+                    const totalArr = BARANGAY_NAMES.map(b => {
+                        const rawVal = resolveLatestBarangayValue(b, ['Number of Employment', 'Number of Employment - b', 'Number of Employment (b)', 'Employment']);
+                        return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
+                    });
+
+                    barangayEconChartInstance.config.type = 'bar';
+                    barangayEconChartInstance.data.labels = BARANGAY_NAMES;
+                    barangayEconChartInstance.data.datasets = [{
+                        label: 'Total Employment',
+                        data: totalArr,
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderColor: '#3b82f6',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }];
+
+                    barangayEconChartInstance.options.scales.x.stacked = false;
+                    barangayEconChartInstance.options.scales.y.stacked = false;
+                    barangayEconChartInstance.options.plugins.legend.display = true;
+                    barangayEconChartInstance.options.plugins.legend.position = 'bottom';
+                }
+            
 
             } else {
                 let micro = 0, small = 0, medium = 0, large = 0;
