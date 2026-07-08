@@ -622,6 +622,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     links.forEach(l => l.classList.remove('active'));
                     link.classList.add('active');
                 }
+
+                section.classList.toggle('active-slide', isInView);
             }
         });
     }
