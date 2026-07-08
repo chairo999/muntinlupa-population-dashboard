@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MunTHINK Hub — Economic Sector</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="../styles.css">
-    
+
     <style>
         .economic-grid {
             display: grid;
@@ -212,10 +214,13 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
 
     <div id="loading-cover" class="loading-cover">
@@ -232,7 +237,7 @@
             </div>
         </div>
         <div class="header-info">
-             <img src="../assets/images/hamburger.png" alt="sidebar" class="sidebar-sectors" id="hamburger-btn">
+            <img src="../assets/images/hamburger.png" alt="sidebar" class="sidebar-sectors" id="hamburger-btn">
         </div>
     </header>
 
@@ -243,10 +248,12 @@
             <h2>Dashboard Sectors</h2>
             <i class="fa-solid fa-xmark" id="close-sidebar-btn"></i>
         </div>
-    
+
         <nav class="sidebar-nav">
             <a href="population.html" class="nav-item"><i class="fa-solid fa-users"></i> Population</a>
-            <a href="economic.html" class="nav-item active" style="background: rgba(0, 51, 151, 0.08); color: #003397; border-left: 4px solid #ef4444;"><i class="fa-solid fa-chart-line" style="color: #ef4444;"></i> Economic</a>
+            <a href="economic.html" class="nav-item active"
+                style="background: rgba(0, 51, 151, 0.08); color: #003397; border-left: 4px solid #ef4444;"><i
+                    class="fa-solid fa-chart-line" style="color: #ef4444;"></i> Economic</a>
             <a href="education.html" class="nav-item"><i class="fa-solid fa-graduation-cap"></i> Education</a>
             <a href="health.html" class="nav-item"><i class="fa-solid fa-notes-medical"></i> Health</a>
             <a href="protective.html" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Protective</a>
@@ -257,7 +264,7 @@
     </aside>
 
     <div class="dashboard-container">
-        
+
         <div class="db-status-bar">
             <div class="db-status-left">
                 <div id="db-dot" class="db-dot offline"></div>
@@ -313,11 +320,12 @@
 
         <div class="economic-grid">
             <div class="charts-container-grid">
-                
+
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-arrow-trend-up"></i> Municipal Competitiveness Rankings (CMCI)</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Lower Rank = Better Position</div>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Lower Rank = Better
+                            Position</div>
                     </div>
                     <div class="canvas-container">
                         <canvas id="rankingChart"></canvas>
@@ -327,7 +335,8 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-chart-area"></i> City Establishments & Hotel Arrivals</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Establishments (Bar) vs Hotels (Line)</div>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Establishments (Bar)
+                            vs Hotels (Line)</div>
                     </div>
                     <div class="canvas-container">
                         <canvas id="growthChart"></canvas>
@@ -385,7 +394,7 @@
             renderStatsBanner();
             renderCharts();
             initChartControls();
-            
+
             const cover = document.getElementById("loading-cover");
             cover.classList.add("fade-out");
             setTimeout(() => cover.style.display = 'none', 300);
@@ -405,10 +414,10 @@
         async function fetchEconomicData() {
             const statusTxt = document.getElementById("db-status-txt");
             const statusDot = document.getElementById("db-dot");
-            
+
             try {
                 if (!supabaseClient) throw new Error("Supabase client failed initialization.");
-                
+
                 const { data, error } = await supabaseClient
                     .from(MASTER_TABLE_NAME)
                     .select('indicator_name, labels, history')
@@ -425,7 +434,7 @@
                         };
                     });
                 }
-                
+
                 economicData = parsedMap;
                 statusTxt.textContent = "Live Connected: Syncing data from master table";
                 statusDot.className = "db-dot";
@@ -441,7 +450,7 @@
         function getLatestValue(indicatorKey) {
             const indicator = economicData[indicatorKey];
             if (!indicator || !Array.isArray(indicator.history) || indicator.history.length === 0) return "--";
-            
+
             // Loop backwards to find the most recent non-null number
             for (let i = indicator.history.length - 1; i >= 0; i--) {
                 if (indicator.history[i] !== null && indicator.history[i] !== undefined) {
@@ -482,7 +491,7 @@
             }).filter(item => item !== null);
 
             // Extract unique sorted years present in data to act as local grid lines
-            const rankYears = [...new Set(rankCoordinates.map(c => c.x))].sort((a,b) => Number(a)-Number(b));
+            const rankYears = [...new Set(rankCoordinates.map(c => c.x))].sort((a, b) => Number(a) - Number(b));
 
             const ctxA = document.getElementById("rankingChart").getContext("2d");
             rankingChartInstance = new Chart(ctxA, {
@@ -531,7 +540,7 @@
 
             // Union of all active timeline years from BOTH indicators to serve as shared X grid line labels
             const combinedYears = [...new Set([
-                ...estObj.labels.map(String), 
+                ...estObj.labels.map(String),
                 ...hotelObj.labels.map(String)
             ])].sort((a, b) => Number(a) - Number(b));
 
@@ -543,7 +552,7 @@
                     datasets: [
                         {
                             label: 'Active Establishments',
-                            data: estCoordinates, 
+                            data: estCoordinates,
                             backgroundColor: 'rgba(59, 130, 246, 0.8)',
                             borderColor: '#3b82f6',
                             borderWidth: 1,
@@ -552,7 +561,7 @@
                         },
                         {
                             label: 'Hotel Arrivals',
-                            data: hotelCoordinates, 
+                            data: hotelCoordinates,
                             borderColor: '#ef4444',
                             borderWidth: 3,
                             type: 'line',
@@ -580,9 +589,9 @@
                             title: { display: true, text: 'Annual Hotel Arrivals' },
                             grid: { drawOnChartArea: false }
                         },
-                        x: { 
+                        x: {
                             type: 'category',
-                            grid: { display: false } 
+                            grid: { display: false }
                         }
                     },
                     plugins: { legend: { position: 'bottom' } }
@@ -675,75 +684,94 @@
 
             } else {
                 let micro = 0, small = 0, medium = 0, large = 0;
-                
-                // Retrieve combined category-based data if present, or fallback to separate indicator rows
+
+                // 1. DYNAMIC KEY RESOLUTION: Look for the unified text block row or its sub-indicator suffixes
                 const regBizKey = `${selectedBrgy} Registered Businesses`;
+
                 if (economicData[regBizKey]) {
                     const bizData = economicData[regBizKey];
                     const labels = bizData.labels || [];
                     const history = bizData.history || [];
-                    
+
                     const microIdx = labels.indexOf("Micro");
                     const smallIdx = labels.indexOf("Small");
                     const mediumIdx = labels.indexOf("Medium");
                     const largeIdx = labels.indexOf("Large");
-                    
+
                     if (microIdx !== -1) micro = parseFloat(history[microIdx]) || 0;
                     if (smallIdx !== -1) small = parseFloat(history[smallIdx]) || 0;
                     if (mediumIdx !== -1) medium = parseFloat(history[mediumIdx]) || 0;
                     if (largeIdx !== -1) large = parseFloat(history[largeIdx]) || 0;
                 } else {
+                    // Fallback to separate indicator string schemas if row isn't grouping them
                     micro = parseFloat(getLatestValue(`${selectedBrgy} - Micro Establishments`)) || 0;
                     small = parseFloat(getLatestValue(`${selectedBrgy} - Small Establishments`)) || 0;
                     medium = parseFloat(getLatestValue(`${selectedBrgy} - Medium Establishments`)) || 0;
                     large = parseFloat(getLatestValue(`${selectedBrgy} - Large Establishments`)) || 0;
                 }
 
+                // Calculate proportions for contextual percentage indicators inside the legend/tooltips
+                const totalCalculated = micro + small + medium + large;
+                const getPct = (val) => totalCalculated === 0 ? '0%' : ((val / totalCalculated) * 100).toFixed(1) + '%';
+
                 barangayEconChartInstance.config.type = 'bar';
-                // Provide a string array title axis label 
-                barangayEconChartInstance.data.labels = ["Capitalization Distribution Split"];
-                
-                // FIXED: Re-mapped into individual objects so Chart.js compiles separate stacked bars
+                // Provide a dynamic string title layout on the X-axis mapping to your active drop-down choice
+                barangayEconChartInstance.data.labels = [`${selectedBrgy} Enterprise Profile`];
+
+                // 2. RE-MAPPED STRUCTURAL ARRAYS: Compiles perfectly aligned separate stacked categories
                 barangayEconChartInstance.data.datasets = [
                     {
-                        label: 'Micro (≤ 3M Capitalization)',
+                        label: `Micro (≤ 3M) · ${getPct(micro)}`,
                         data: [micro],
-                        backgroundColor: '#d97706',
+                        backgroundColor: '#d97706', // Warm Amber Accent
                         borderWidth: 1,
                         borderRadius: 4
                     },
                     {
-                        label: 'Small (3.1M - 15M Capitalization)',
+                        label: `Small (3.1M - 15M) · ${getPct(small)}`,
                         data: [small],
-                        backgroundColor: '#eab308',
+                        backgroundColor: '#eab308', // Yellow Tint
                         borderWidth: 1,
                         borderRadius: 4
                     },
                     {
-                        label: 'Medium (15.1M - 100M Capitalization)',
+                        label: `Medium (15.1M - 100M) · ${getPct(medium)}`,
                         data: [medium],
-                        backgroundColor: '#10b981',
+                        backgroundColor: '#10b981', // Emerald Green
                         borderWidth: 1,
                         borderRadius: 4
                     },
                     {
-                        label: 'Large (≥ 100.1M Capitalization)',
+                        label: `Large (≥ 100.1M) · ${getPct(large)}`,
                         data: [large],
-                        backgroundColor: '#ef4444',
+                        backgroundColor: '#ef4444', // Red Accent
                         borderWidth: 1,
                         borderRadius: 4
                     }
                 ];
 
+                // 3. STACKING CONFIGURATIONS & RENDERING CONTROLS
                 barangayEconChartInstance.options.scales.x.stacked = true;
                 barangayEconChartInstance.options.scales.y.stacked = true;
+
                 barangayEconChartInstance.options.plugins.legend.display = true;
                 barangayEconChartInstance.options.plugins.legend.position = 'bottom';
+
+                // Formats the hover tooltips cleanly
+                barangayEconChartInstance.options.plugins.tooltip = {
+                    callbacks: {
+                        label: function (context) {
+                            const val = context.raw || 0;
+                            return ` Count: ${val.toLocaleString()} (${getPct(val)})`;
+                        }
+                    }
+                };
             }
 
             barangayEconChartInstance.update();
         }
-   
+
     </script>
 </body>
+
 </html>
