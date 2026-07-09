@@ -7,7 +7,7 @@
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome for Premium Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js CDN -->
@@ -250,62 +250,20 @@
             color: #dc2626;
             text-decoration: underline;
         }
-
-        /* Custom spinner overlay */
-        .loading-cover {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(255, 255, 255, 0.85);
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 16px;
-            font-family: var(--font-outfit);
-            transition: opacity 0.3s ease;
-        }
-
-        .loading-cover.fade-out {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(239, 68, 68, 0.1);
-            border-top-color: #ef4444;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
-
-    <!-- Loading Cover -->
-    <div id="loading-cover" class="loading-cover">
-        <div class="spinner"></div>
-        <div style="font-weight: 600; color: var(--text-primary);">MunTHINK Health Database Loading...</div>
-    </div>
-
     <!-- Header Section -->
     <header class="dashboard-header">
-        <div class="header-logo">
+        <a class="header-logo" href="landing-page.html">
             <img src="../assets/images/muntinlupa-city-logo.png" alt="MunTHINK Logo" class="header-logo-img">
             <div class="header-titles">
                 <h1>MunTHINK Hub</h1>
                 <p class="subtitle">Smarter Data for a Smarter Muntinlupa</p>
             </div>
-        </div>
+        </a>
         <div class="header-info">
+            <span class="header-sector-text">HEALTH</span>
              <img src="../assets/images/hamburger.png" alt="sidebar" class="sidebar-sectors" id="hamburger-btn">
         </div>
     </header>
@@ -320,14 +278,16 @@
         </div>
     
         <nav class="sidebar-nav">
+            <a href="landing-page.html" class="nav-item"><i class="fa-solid fa-house"></i> Home</a>
             <a href="population.html" class="nav-item"><i class="fa-solid fa-users"></i> Population</a>
             <a href="economic.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Economic</a>
             <a href="education.html" class="nav-item"><i class="fa-solid fa-graduation-cap"></i> Education</a>
-            <a href="health.html" class="nav-item active" style="background: rgba(0, 51, 151, 0.08); color: #003397; border-left: 4px solid #ef4444;"><i class="fa-solid fa-notes-medical" style="color: #ef4444;"></i> Health</a>
+            <a href="health.html" class="nav-item"><i class="fa-solid fa-notes-medical"></i> Health</a>
             <a href="protective.html" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Protective</a>
             <a href="socwel.html" class="nav-item"><i class="fa-solid fa-hand-holding-heart"></i> Social Welfare</a>
             <a href="environment.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Environment</a>
             <a href="institutional.html" class="nav-item"><i class="fa-solid fa-building-columns"></i> Institutional</a>
+            <a href="sdg-localization.html" class="nav-item"><i class="fa-solid fa-bullhorn"></i> SDG Localization</a>
         </nav>
     </aside>
 
@@ -431,7 +391,6 @@
         <footer class="dashboard-footer" aria-hidden="true" style="margin-top: 40px;">
             <img src="../assets/images/footer.jpg" alt="" class="footer-image">
         </footer>
-
     </div>
 
     <!-- Supabase JS CDN (v2) -->
@@ -495,11 +454,6 @@
             renderStatsBanner();
             renderCharts();
             renderIndicatorCards();
-            
-            // Hide loading cover
-            const cover = document.getElementById("loading-cover");
-            cover.classList.add("fade-out");
-            setTimeout(() => cover.style.display = 'none', 300);
         });
 
         // Sidebar navigation toggling

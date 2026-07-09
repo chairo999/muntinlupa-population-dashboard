@@ -7,8 +7,7 @@
     <title>MunTHINK Hub — Economic Sector</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="../styles.css">
@@ -181,62 +180,20 @@
         .chart-select:focus {
             border-color: #ef4444;
         }
-
-        .loading-cover {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(255, 255, 255, 0.85);
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 16px;
-            font-family: var(--font-outfit);
-            transition: opacity 0.3s ease;
-        }
-
-        .loading-cover.fade-out {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(239, 68, 68, 0.1);
-            border-top-color: #ef4444;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
     </style>
 </head>
 
 <body>
-
-    <div id="loading-cover" class="loading-cover">
-        <div class="spinner"></div>
-        <div style="font-weight: 600; color: var(--text-primary);">Syncing with MunTHINK Economic Database...</div>
-    </div>
-
     <header class="dashboard-header">
-        <div class="header-logo">
+        <a class="header-logo" href="landing-page.html">
             <img src="../assets/images/muntinlupa-city-logo.png" alt="MunTHINK Logo" class="header-logo-img">
             <div class="header-titles">
                 <h1>MunTHINK Hub</h1>
                 <p class="subtitle">Smarter Data for a Smarter Muntinlupa</p>
             </div>
-        </div>
+        </a>
         <div class="header-info">
+            <span class="header-sector-text">ECONOMIC</span>
             <img src="../assets/images/hamburger.png" alt="sidebar" class="sidebar-sectors" id="hamburger-btn">
         </div>
     </header>
@@ -250,16 +207,16 @@
         </div>
 
         <nav class="sidebar-nav">
+            <a href="landing-page.html" class="nav-item"><i class="fa-solid fa-house"></i> Home</a>
             <a href="population.html" class="nav-item"><i class="fa-solid fa-users"></i> Population</a>
-            <a href="economic.html" class="nav-item active"
-                style="background: rgba(0, 51, 151, 0.08); color: #003397; border-left: 4px solid #ef4444;"><i
-                    class="fa-solid fa-chart-line" style="color: #ef4444;"></i> Economic</a>
+            <a href="economic.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Economic</a>
             <a href="education.html" class="nav-item"><i class="fa-solid fa-graduation-cap"></i> Education</a>
             <a href="health.html" class="nav-item"><i class="fa-solid fa-notes-medical"></i> Health</a>
             <a href="protective.html" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Protective</a>
             <a href="socwel.html" class="nav-item"><i class="fa-solid fa-hand-holding-heart"></i> Social Welfare</a>
             <a href="environment.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Environment</a>
             <a href="institutional.html" class="nav-item"><i class="fa-solid fa-building-columns"></i> Institutional</a>
+            <a href="sdg-localization.html" class="nav-item"><i class="fa-solid fa-bullhorn"></i> SDG Localization</a>
         </nav>
     </aside>
 
@@ -376,6 +333,10 @@
 
     </div>
 
+    <footer class="dashboard-footer" aria-hidden="true">
+        <img src="../assets/images/footer.jpg" alt="" class="footer-image">
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
@@ -404,10 +365,6 @@
             renderStatsBanner();
             renderCharts();
             initChartControls();
-
-            const cover = document.getElementById("loading-cover");
-            cover.classList.add("fade-out");
-            setTimeout(() => cover.style.display = 'none', 300);
         });
 
         function initSidebar() {
@@ -428,25 +385,95 @@
             try {
                 if (!supabaseClient) throw new Error("Supabase client failed initialization.");
 
-                const { data, error } = await supabaseClient
-                    .from(MASTER_TABLE_NAME)
+                const allData = {};
+
+                const { data: rankData } = await supabaseClient
+                    .from('economic_competitiveness_rank')
+                    .select('year, rank')
+                    .order('year', { ascending: true });
+                if (rankData && rankData.length > 0) {
+                    allData["Competitiveness Rank"] = {
+                        labels: rankData.map(r => String(r.year)),
+                        history: rankData.map(r => r.rank)
+                    };
+                }
+
+                const { data: estData } = await supabaseClient
+                    .from('economic_total_establishment')
+                    .select('year, total_establishments')
+                    .order('year', { ascending: true });
+                if (estData && estData.length > 0) {
+                    allData["Total Establishments"] = {
+                        labels: estData.map(r => String(r.year)),
+                        history: estData.map(r => r.total_establishments)
+                    };
+                }
+
+                const { data: hotelData } = await supabaseClient
+                    .from('economic_hotel_arrivals')
+                    .select('year, hotel_arrivals')
+                    .order('year', { ascending: true });
+                if (hotelData && hotelData.length > 0) {
+                    allData["Hotel Arrivals"] = {
+                        labels: hotelData.map(r => String(r.year)),
+                        history: hotelData.map(r => r.hotel_arrivals)
+                    };
+                }
+
+                const { data: empData } = await supabaseClient
+                    .from('economic_employment')
+                    .select('barangay_name, year, employment')
+                    .order('year', { ascending: true });
+                if (empData && empData.length > 0) {
+                    const empByBrgy = {};
+                    empData.forEach(r => {
+                        if (!empByBrgy[r.barangay_name]) empByBrgy[r.barangay_name] = { labels: [], history: [] };
+                        empByBrgy[r.barangay_name].labels.push(String(r.year));
+                        empByBrgy[r.barangay_name].history.push(r.employment);
+                    });
+                    BARANGAY_NAMES.forEach(b => {
+                        if (empByBrgy[b]) {
+                            allData[`${b} - Number of Employment`] = empByBrgy[b];
+                        }
+                    });
+                }
+
+                const { data: bizData } = await supabaseClient
+                    .from('economic_registered_business')
+                    .select('barangay_name, category, count')
+                    .order('category', { ascending: true });
+                if (bizData && bizData.length > 0) {
+                    const bizByBrgy = {};
+                    bizData.forEach(r => {
+                        if (!bizByBrgy[r.barangay_name]) bizByBrgy[r.barangay_name] = { labels: [], history: [] };
+                        bizByBrgy[r.barangay_name].labels.push(r.category);
+                        bizByBrgy[r.barangay_name].history.push(r.count);
+                    });
+                    BARANGAY_NAMES.forEach(b => {
+                        if (bizByBrgy[b]) {
+                            allData[`${b} Registered Businesses`] = bizByBrgy[b];
+                        }
+                    });
+                }
+
+                const { data: brgyEstData } = await supabaseClient
+                    .from('municipal_indicators')
                     .select('indicator_name, labels, history')
-                    .eq('sector', SECTOR_ID);
-
-                if (error) throw error;
-
-                const parsedMap = {};
-                if (data && data.length > 0) {
-                    data.forEach(row => {
-                        parsedMap[row.indicator_name] = {
+                    .eq('sector', 'economic')
+                    .like('indicator_name', '% - Total Establishments');
+                if (brgyEstData && brgyEstData.length > 0) {
+                    brgyEstData.forEach(row => {
+                        allData[row.indicator_name] = {
                             labels: row.labels || [],
                             history: row.history || []
                         };
                     });
                 }
 
-                economicData = parsedMap;
-                statusTxt.textContent = "Live Connected: Syncing data from master table";
+                economicData = allData;
+
+
+                statusTxt.textContent = "Live Connected: Syncing from dedicated economic tables";
                 statusDot.className = "db-dot";
                 statusDot.style.backgroundColor = "#10b981";
                 // Debug: list loaded indicator keys for troubleshooting

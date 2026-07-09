@@ -92,6 +92,7 @@ body {
     display: flex;
     align-items: center;
     gap: 16px;
+    text-decoration: none;
 }
 
 .header-logo-img {
@@ -125,6 +126,14 @@ body {
     padding: 10px 6px;
     display: flex;
     align-items: center;
+    gap: 40px;
+}
+
+.header-sector-text {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 25px;
+    letter-spacing: 1px;
 }
 
 .sidebar-sectors {
@@ -919,11 +928,13 @@ select option {
     }
 }
 
-.dashboard-header h1, 
-.dashboard-header .subtitle, 
-.dashboard-header #date-time,
+.dashboard-header h1,
 .dashboard-header i {
     color: white !important;
+}
+
+.dashboard-header .subtitle {
+    color: #ffcf01 !important;
 }
 /* ==========================================
    ISOLATED LANDING PAGE SLIDER STYLES
