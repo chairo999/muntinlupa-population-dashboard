@@ -422,18 +422,23 @@
 
                 const { data: empData } = await supabaseClient
                     .from('economic_employment')
-                    .select('barangay_name, year, employment')
-                    .order('year', { ascending: true });
+                    .select('barangay_name, category, count')
+                    .order('category', { ascending: true });
                 if (empData && empData.length > 0) {
-                    const empByBrgy = {};
+                    const empSumByBrgy = {};
                     empData.forEach(r => {
-                        if (!empByBrgy[r.barangay_name]) empByBrgy[r.barangay_name] = { labels: [], history: [] };
-                        empByBrgy[r.barangay_name].labels.push(String(r.year));
-                        empByBrgy[r.barangay_name].history.push(r.employment);
+                        allData[`${r.barangay_name} - ${r.category} Employment`] = {
+                            labels: [String(new Date().getFullYear())],
+                            history: [r.count]
+                        };
+                        empSumByBrgy[r.barangay_name] = (empSumByBrgy[r.barangay_name] || 0) + r.count;
                     });
                     BARANGAY_NAMES.forEach(b => {
-                        if (empByBrgy[b]) {
-                            allData[`${b} - Number of Employment`] = empByBrgy[b];
+                        if (empSumByBrgy[b] !== undefined) {
+                            allData[`${b} - Number of Employment`] = {
+                                labels: [String(new Date().getFullYear())],
+                                history: [empSumByBrgy[b]]
+                            };
                         }
                     });
                 }
@@ -745,19 +750,19 @@
 
             } else if (mode === "compare-employment") {
                 let microArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Micro Establishments', 'Micro', 'Micro - Establishments']);
+                    const rawVal = resolveLatestBarangayValue(b, ['Micro Employment', 'Micro', 'Micro - Establishments']);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
                 let smallArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Small Establishments', 'Small', 'Small - Establishments']);
+                    const rawVal = resolveLatestBarangayValue(b, ['Small Employment', 'Small', 'Small - Establishments']);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
                 let mediumArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Medium Establishments', 'Medium', 'Medium - Establishments']);
+                    const rawVal = resolveLatestBarangayValue(b, ['Medium Employment', 'Medium', 'Medium - Establishments']);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
                 let largeArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Large Establishments', 'Large', 'Large - Establishments']);
+                    const rawVal = resolveLatestBarangayValue(b, ['Large Employment', 'Large', 'Large - Establishments']);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
 
