@@ -1251,12 +1251,12 @@ body {
 
 .lp-header-actions {
     position: fixed;
-    top: 30px;
-    right: 10px;
+    top: 4%;
+    right: .5%;
     z-index: 101;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 5px;
     max-width: calc(100vw - 180px);
     justify-content: flex-end;
     padding-right: 8px;
@@ -1278,7 +1278,7 @@ body {
     justify-content: center;
     padding: 0px 6px;
     color: white;
-    font-size: 15px;
+    font-size: 85%;
     font-weight: 800;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -1310,8 +1310,8 @@ body {
 }
 
 .lp-slide-logo img {
-    width: 90px !important;  
-    height: 90px !important; 
+    width: 80px !important;  
+    height: 80px !important; 
     object-fit: contain;
     /* filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4)); */
     flex-shrink: 0;
@@ -1327,7 +1327,7 @@ body {
 
 .lp-header-text p {
     margin: 0;
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 600;
     color: #fbce13; 
     letter-spacing: 1px;
