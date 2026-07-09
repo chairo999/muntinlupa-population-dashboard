@@ -539,7 +539,7 @@ function renderBarangayBarChart() {
             // Apply a modern gradient matching your custom theme variables
             const gradient = ctx4.createLinearGradient(0, 0, 0, 300);
             gradient.addColorStop(0, "#e1271a"); // Cyan primary color accent
-            gradient.addColorStop(1, "#e1271a4c");
+            gradient.addColorStop(1, "#e1271a9a");
 
             barangayBarChartInstance = new Chart(ctx4, {
                 type: "bar",
