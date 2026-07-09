@@ -318,7 +318,7 @@
                         <div class="chart-controls">
                             <select id="barangay-view-mode" class="chart-select">
                                 <option value="compare-establishments">Registered Businesses</option>
-                                <option value="compare-employment">Establishment Size Split</option>
+                                <option value="compare-employment">Employment</option>
                                 <option value="category-split">Barangay Category Split</option>
                             </select>
                             <select id="barangay-select" class="chart-select" style="display: none;"></select>
@@ -422,18 +422,23 @@
 
                 const { data: empData } = await supabaseClient
                     .from('economic_employment')
-                    .select('barangay_name, year, employment')
-                    .order('year', { ascending: true });
+                    .select('barangay_name, category, count')
+                    .order('category', { ascending: true });
                 if (empData && empData.length > 0) {
-                    const empByBrgy = {};
+                    const empSumByBrgy = {};
                     empData.forEach(r => {
-                        if (!empByBrgy[r.barangay_name]) empByBrgy[r.barangay_name] = { labels: [], history: [] };
-                        empByBrgy[r.barangay_name].labels.push(String(r.year));
-                        empByBrgy[r.barangay_name].history.push(r.employment);
+                        allData[`${r.barangay_name} - ${r.category} Employment`] = {
+                            labels: [String(new Date().getFullYear())],
+                            history: [r.count]
+                        };
+                        empSumByBrgy[r.barangay_name] = (empSumByBrgy[r.barangay_name] || 0) + r.count;
                     });
                     BARANGAY_NAMES.forEach(b => {
-                        if (empByBrgy[b]) {
-                            allData[`${b} - Number of Employment`] = empByBrgy[b];
+                        if (empSumByBrgy[b] !== undefined) {
+                            allData[`${b} - Number of Employment`] = {
+                                labels: [String(new Date().getFullYear())],
+                                history: [empSumByBrgy[b]]
+                            };
                         }
                     });
                 }
@@ -443,15 +448,21 @@
                     .select('barangay_name, category, count')
                     .order('category', { ascending: true });
                 if (bizData && bizData.length > 0) {
-                    const bizByBrgy = {};
+                    const bizSumByBrgy = {};
+                    const bizSplitByBrgy = {};
                     bizData.forEach(r => {
-                        if (!bizByBrgy[r.barangay_name]) bizByBrgy[r.barangay_name] = { labels: [], history: [] };
-                        bizByBrgy[r.barangay_name].labels.push(r.category);
-                        bizByBrgy[r.barangay_name].history.push(r.count);
+                        bizSumByBrgy[r.barangay_name] = (bizSumByBrgy[r.barangay_name] || 0) + r.count;
+                        if (!bizSplitByBrgy[r.barangay_name]) bizSplitByBrgy[r.barangay_name] = { labels: [], history: [] };
+                        bizSplitByBrgy[r.barangay_name].labels.push(r.category);
+                        bizSplitByBrgy[r.barangay_name].history.push(r.count);
                     });
+                    const currentYear = String(new Date().getFullYear());
                     BARANGAY_NAMES.forEach(b => {
-                        if (bizByBrgy[b]) {
-                            allData[`${b} Registered Businesses`] = bizByBrgy[b];
+                        if (bizSumByBrgy[b] !== undefined) {
+                            allData[`${b} Registered Businesses`] = { labels: [currentYear], history: [bizSumByBrgy[b]] };
+                        }
+                        if (bizSplitByBrgy[b]) {
+                            allData[`${b} Registered Biz Split`] = bizSplitByBrgy[b];
                         }
                     });
                 }
@@ -739,19 +750,19 @@
 
             } else if (mode === "compare-employment") {
                 let microArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Micro Establishments', 'Micro', 'Micro - Establishments']);
+                    const rawVal = resolveLatestBarangayValue(b, ['Micro Employment', 'Micro', 'Micro - Establishments']);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
                 let smallArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Small Establishments', 'Small', 'Small - Establishments']);
+                    const rawVal = resolveLatestBarangayValue(b, ['Small Employment', 'Small', 'Small - Establishments']);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
                 let mediumArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Medium Establishments', 'Medium', 'Medium - Establishments']);
+                    const rawVal = resolveLatestBarangayValue(b, ['Medium Employment', 'Medium', 'Medium - Establishments']);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
                 let largeArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Large Establishments', 'Large', 'Large - Establishments']);
+                    const rawVal = resolveLatestBarangayValue(b, ['Large Employment', 'Large', 'Large - Establishments']);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
 
@@ -809,7 +820,7 @@
 
             } else {
                 let micro = 0, small = 0, medium = 0, large = 0;
-                const regBizKey = `${selectedBrgy} Registered Businesses`;
+                const regBizKey = `${selectedBrgy} Registered Biz Split`;
 
                 if (economicData[regBizKey]) {
                     const bizData = economicData[regBizKey];

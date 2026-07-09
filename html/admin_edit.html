@@ -948,26 +948,27 @@ async function loadEconomicData() {
         const { data: empData } = await supabaseClient
             .from('economic_employment')
             .select('*')
-            .order('year', { ascending: true });
+            .order('category', { ascending: true });
         if (empData) {
-            const years = [...new Set(empData.map(r => r.year))].sort();
+            const categories = [...new Set(empData.map(r => r.category))];
             BARANGAY_NAMES.forEach(b => {
                 idx++;
                 const brgyRows = empData.filter(r => r.barangay_name === b);
-                const history = new Array(years.length).fill(null);
+                const history = new Array(categories.length).fill(null);
                 brgyRows.forEach(r => {
-                    const yi = years.indexOf(r.year);
-                    if (yi !== -1) history[yi] = r.employment;
+                    const ci = categories.indexOf(r.category);
+                    if (ci !== -1) history[ci] = r.count;
                 });
                 allIndicators.push({
                     id: idx,
                     indicator_name: `${b} - Number of Employment`,
-                    labels: years.map(String),
+                    labels: [...categories],
                     history,
                     _table: 'economic_employment',
-                    _labelCol: 'year',
-                    _valueCol: 'employment',
+                    _labelCol: 'category',
+                    _valueCol: 'count',
                     _entityCol: 'barangay_name',
+                    _conflictCols: 'barangay_name,category',
                     _entity: b
                 });
             });
@@ -996,6 +997,7 @@ async function loadEconomicData() {
                     _labelCol: 'category',
                     _valueCol: 'count',
                     _entityCol: 'barangay_name',
+                    _conflictCols: 'barangay_name,category',
                     _entity: b
                 });
             });
