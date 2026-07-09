@@ -803,7 +803,7 @@ select option {
     gap: 20px;
     overflow-y: auto;
     flex-grow: 1;
-    max-height: 700px;
+    max-height: 900px;
 }
 
 .chart-card {
@@ -846,7 +846,7 @@ select option {
 }
 
 .trend-container {
-    height: 160px;
+    height: 350px;
 }
 
 /* Footer styling */
