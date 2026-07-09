@@ -292,9 +292,8 @@ body {
 
 /* Card Icons Accents */
 .total-icon {
-    background: rgba(139, 92, 246, 0.15);
-    color: var(--accent-violet);
-    border: 1px solid rgba(139, 92, 246, 0.3);
+    background: #e1271a;
+    color: white;
     box-shadow: 0 0 15px rgba(139, 92, 246, 0.1) inset;
 }
 
@@ -313,9 +312,8 @@ body {
 }
 
 .target-icon {
-    background: rgba(16, 185, 129, 0.15);
-    color: var(--accent-emerald);
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: #e1271a;
+    color: white;
     box-shadow: 0 0 15px rgba(16, 185, 129, 0.1) inset;
 }
 
@@ -397,9 +395,8 @@ body {
 .badge {
     font-size: 0.75rem;
     font-weight: 600;
-    background: var(--accent-cyan-glow);
-    color: var(--accent-cyan);
-    border: 1px solid rgba(6, 182, 212, 0.4);
+    background: #e1271a;
+    color: white;
     padding: 4px 10px;
     border-radius: 12px;
 }
@@ -835,7 +832,7 @@ select option {
 }
 
 .chart-card h5 i {
-    color: var(--accent-cyan);
+    color: #e1271a;
 }
 
 .canvas-container {

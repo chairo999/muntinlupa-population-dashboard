@@ -11,6 +11,18 @@ const DEFAULT_DEMOGRAPHIC_DATA = {
     "Ayala Alabang": { "history": [19500, 20500, 21400] }
 };
 
+const BARANGAY_COLORS = {
+    "Sucat": "#e1271a",
+    "Buli": "#f97316",
+    "Cupang": "#eab308",
+    "Alabang": "#22c55e",
+    "Ayala Alabang": "#06b6d4",
+    "Bayanan": "#3b82f6",
+    "Putatan": "#8b5cf6",
+    "Poblacion": "#d946ef",
+    "Tunasan": "#ec4899"
+};
+
 const STORAGE_KEY = "muntinlupa_demographics_data";
 let HISTORICAL_LABELS = ["2015", "2020", "2024"];
 // Supabase Configuration
@@ -426,7 +438,7 @@ function renderDashboard() {
 
 function renderTrendChart(historyData) {
     Chart.defaults.color = '#94a3b8';
-    Chart.defaults.font.family = 'Outfit';
+    Chart.defaults.font.family = 'Montserrat, sans-serif';
     Chart.defaults.font.size = 11;
 
     if (trendChartInstance) {
@@ -436,8 +448,8 @@ function renderTrendChart(historyData) {
         const ctx3 = document.getElementById("trendChart")?.getContext("2d");
         if (ctx3) {
             const gradient = ctx3.createLinearGradient(0, 0, 0, 160);
-            gradient.addColorStop(0, "rgba(139, 92, 246, 0.35)");
-            gradient.addColorStop(1, "rgba(139, 92, 246, 0.0)");
+            gradient.addColorStop(0, "#e1271a");
+            gradient.addColorStop(1, "#e1271a89");
 
             trendChartInstance = new Chart(ctx3, {
                 type: "line",
@@ -446,9 +458,9 @@ function renderTrendChart(historyData) {
                     datasets: [{
                         label: "Overall Population Total", 
                         data: historyData, 
-                        borderColor: "#8b5cf6", 
+                        borderColor: "#d91406", 
                         borderWidth: 3, 
-                        pointBackgroundColor: "#8b5cf6", 
+                        pointBackgroundColor: "#c20d00", 
                         pointBorderColor: "#f8fafc", 
                         pointBorderWidth: 2, 
                         pointRadius: 5, 
@@ -463,13 +475,13 @@ function renderTrendChart(historyData) {
                     maintainAspectRatio: false,
                     plugins: {
                         legend: { display: false },
-                        tooltip: { backgroundColor: "rgba(15, 23, 42, 0.95)", padding: 10, borderWidth: 1, borderColor: "rgba(255, 255, 255, 0.15)" }
+                        tooltip: { backgroundColor: "rgba(0, 0, 0, 0.72)", padding: 10, borderWidth: 1, borderColor: "rgba(255, 255, 255, 0.15)" }
                     },
                     scales: {
-                        x: { grid: { display: false }, ticks: { color: "#94a3b8" } },
+                        x: { grid: { display: false }, ticks: { color: "#000000b3" } },
                         y: {
                             grid: { color: "rgba(255, 255, 255, 0.05)" },
-                            ticks: { color: "#94a3b8", callback: function (value) { return value.toLocaleString(); } }
+                            ticks: { color: "#000000b3", callback: function (value) { return value.toLocaleString(); } }
                         }
                     }
                 }
@@ -526,8 +538,8 @@ function renderBarangayBarChart() {
         if (ctx4) {
             // Apply a modern gradient matching your custom theme variables
             const gradient = ctx4.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, "#06b6d4"); // Cyan primary color accent
-            gradient.addColorStop(1, "rgba(6, 182, 212, 0.2)");
+            gradient.addColorStop(0, "#e1271a"); // Cyan primary color accent
+            gradient.addColorStop(1, "#e1271a4c");
 
             barangayBarChartInstance = new Chart(ctx4, {
                 type: "bar",
@@ -537,11 +549,9 @@ function renderBarangayBarChart() {
                         label: `Population in ${selectedYear}`,
                         data: dataValues,
                         backgroundColor: gradient,
-                        borderColor: "#06b6d4",
-                        borderWidth: 1.5,
                         borderRadius: 6, // Smooth rounded corners for structural columns
-                        hoverBackgroundColor: "#8b5cf6", // Hover color shift matching your style tokens
-                        hoverBorderColor: "#8b5cf6"
+                        hoverBackgroundColor: "#e1271a71", // Hover color shift matching your style tokens
+                        hoverBorderColor: "#e1271a71"
                     }]
                 },
                 options: {
@@ -564,13 +574,13 @@ function renderBarangayBarChart() {
                     scales: {
                         x: {
                             grid: { display: false },
-                            ticks: { color: "#94a3b8" }
+                            ticks: { color: "#000000b3" }
                         },
                         y: {
                             grid: { color: "rgba(255, 255, 255, 0.05)" },
                             ticks: {
-                                color: "#94a3b8",
-                                callback: function (value) {
+                                color: "#000000b3",
+                                callback: function (value) {    
                                     return value.toLocaleString();
                                 }
                             }
