@@ -617,7 +617,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const targetElement = document.getElementById(targetId);
             if (!targetElement) return;
 
-            animatedScrollTo(targetElement, 750);
+            animatedScrollTo(targetElement, 10);
             history.replaceState(null, '', '#' + targetId);
         });
     });
