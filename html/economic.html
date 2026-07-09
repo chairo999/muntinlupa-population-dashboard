@@ -48,11 +48,6 @@
             gap: 16px;
         }
 
-        .chart-card:hover {
-            border-color: rgba(239, 68, 68, 0.2);
-            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.04);
-        }
-
         .chart-title-wrapper {
             display: flex;
             justify-content: space-between;
@@ -92,12 +87,6 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
         }
 
-        .stat-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(239, 68, 68, 0.2);
-            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.08);
-        }
-
         .stat-icon-wrapper.econ-icon-red {
             width: 54px;
             height: 54px;
@@ -106,8 +95,8 @@
             align-items: center;
             justify-content: center;
             font-size: 1.4rem;
-            background: rgba(239, 68, 68, 0.08);
-            color: #ef4444;
+            background: #e1271a;
+            color: white;
         }
 
         .db-status-bar {
@@ -281,7 +270,7 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-arrow-trend-up"></i> Municipal Competitiveness Rankings (CMCI)</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Lower Rank = Better
+                        <div class="badge" style="font-size:0.75rem; color: white">Lower Rank = Better
                             Position</div>
                     </div>
                     <div class="canvas-container">
@@ -292,7 +281,7 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-store"></i> City Establishments (Timeline)</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Total Registered Establishments Over Time</div>
+                        <div class="badge" style="font-size:0.75rem; color: white">Total Registered Establishments Over Time</div>
                     </div>
                     <div class="canvas-container">
                         <canvas id="establishmentsChart"></canvas>
@@ -302,7 +291,7 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-hotel"></i> Hotel Arrivals (Timeline)</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Annual Hotel Arrivals</div>
+                        <div class="badge" style="font-size:0.75rem; color: white">Annual Hotel Arrivals</div>
                     </div>
                     <div class="canvas-container">
                         <canvas id="hotelArrivalsChart"></canvas>
