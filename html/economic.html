@@ -318,7 +318,7 @@
                         <div class="chart-controls">
                             <select id="barangay-view-mode" class="chart-select">
                                 <option value="compare-establishments">Registered Businesses</option>
-                                <option value="compare-employment">Establishment Size Split</option>
+                                <option value="compare-employment">Employment</option>
                                 <option value="category-split">Barangay Category Split</option>
                             </select>
                             <select id="barangay-select" class="chart-select" style="display: none;"></select>
@@ -443,15 +443,21 @@
                     .select('barangay_name, category, count')
                     .order('category', { ascending: true });
                 if (bizData && bizData.length > 0) {
-                    const bizByBrgy = {};
+                    const bizSumByBrgy = {};
+                    const bizSplitByBrgy = {};
                     bizData.forEach(r => {
-                        if (!bizByBrgy[r.barangay_name]) bizByBrgy[r.barangay_name] = { labels: [], history: [] };
-                        bizByBrgy[r.barangay_name].labels.push(r.category);
-                        bizByBrgy[r.barangay_name].history.push(r.count);
+                        bizSumByBrgy[r.barangay_name] = (bizSumByBrgy[r.barangay_name] || 0) + r.count;
+                        if (!bizSplitByBrgy[r.barangay_name]) bizSplitByBrgy[r.barangay_name] = { labels: [], history: [] };
+                        bizSplitByBrgy[r.barangay_name].labels.push(r.category);
+                        bizSplitByBrgy[r.barangay_name].history.push(r.count);
                     });
+                    const currentYear = String(new Date().getFullYear());
                     BARANGAY_NAMES.forEach(b => {
-                        if (bizByBrgy[b]) {
-                            allData[`${b} Registered Businesses`] = bizByBrgy[b];
+                        if (bizSumByBrgy[b] !== undefined) {
+                            allData[`${b} Registered Businesses`] = { labels: [currentYear], history: [bizSumByBrgy[b]] };
+                        }
+                        if (bizSplitByBrgy[b]) {
+                            allData[`${b} Registered Biz Split`] = bizSplitByBrgy[b];
                         }
                     });
                 }
@@ -809,7 +815,7 @@
 
             } else {
                 let micro = 0, small = 0, medium = 0, large = 0;
-                const regBizKey = `${selectedBrgy} Registered Businesses`;
+                const regBizKey = `${selectedBrgy} Registered Biz Split`;
 
                 if (economicData[regBizKey]) {
                     const bizData = economicData[regBizKey];
