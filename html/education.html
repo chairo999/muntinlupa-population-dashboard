@@ -469,6 +469,27 @@
                 </div>
 
             </div>
+
+            <div class="charts-container-grid">
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-graduation-cap"></i> PLMUN Enrollment by College Program</h5>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">AY 2022-2023 male/female enrolled counts</div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="plmunChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-tools"></i> TESDA MCTI Training Trainees</h5>
+                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">2025 trainees by course and sex</div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="tesdaChart"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -543,6 +564,8 @@
         let enrollmentChartInst = null;
         let cdmChartInst = null;
         let daycareChartInst = null;
+        let plmunChartInst = null;
+        let tesdaChartInst = null;
 
         // Initialize Supabase safely
         if (typeof supabase !== 'undefined') {
@@ -794,6 +817,101 @@
                     scales: {
                         x: { grid: { color: 'rgba(15, 23, 42, 0.04)' } },
                         y: { grid: { display: false } }
+                    }
+                }
+            });
+
+            renderAdditionalEducationCharts();
+        }
+
+        function renderAdditionalEducationCharts() {
+            const plmunPrograms = [
+                'AB Com', 'AB PolSci', 'BS Psy', 'BSA', 'BSBA', 'BS Crim', 'ACT', 'BSCS', 'BSIT', 'BEED', 'BSE'
+            ];
+            const plmunMale = [395, 301, 265, 48, 877, 1004, 363, 428, 1656, 42, 195];
+            const plmunFemale = [753, 440, 926, 180, 1840, 519, 265, 220, 933, 225, 390];
+
+            const ctxE = document.getElementById("plmunChart").getContext("2d");
+            if (plmunChartInst) plmunChartInst.destroy();
+            plmunChartInst = new Chart(ctxE, {
+                type: 'bar',
+                data: {
+                    labels: plmunPrograms,
+                    datasets: [
+                        {
+                            label: 'Male',
+                            data: plmunMale,
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                            borderColor: '#3b82f6',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Female',
+                            data: plmunFemale,
+                            backgroundColor: 'rgba(236, 72, 153, 0.8)',
+                            borderColor: '#ec4899',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true, grid: { display: false } },
+                        y: { stacked: true, beginAtZero: true, grid: { color: 'rgba(15, 23, 42, 0.04)' } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+
+            const tesdaCourses = [
+                'Automotive Servicing 1', 'Automotive Servicing 2', 'Barista', 'Basic Computer', 'Bread & Pastry', 'Caregiving', 'English Proficiency',
+                'Computer Systems Servicing', 'Cookery', 'Electrical Installation', 'Electronic Products', 'Food & Beverage Services', 'Housekeeping',
+                'Motorcycle Servicing', 'SMAW Welding', 'Web Development', 'Beauty Care', 'Hairdressing', 'Dressmaking', 'Hilot Wellness', 'Urban Gardening'
+            ];
+            const tesdaMale = [48, 55, 0, 19, 18, 22, 17, 33, 28, 99, 23, 20, 12, 20, 82, 7, 0, 5, 3, 11, 4];
+            const tesdaFemale = [4, 3, 0, 49, 44, 69, 43, 20, 24, 9, 11, 27, 38, 1, 7, 8, 12, 14, 17, 35, 40];
+
+            const ctxF = document.getElementById("tesdaChart").getContext("2d");
+            if (tesdaChartInst) tesdaChartInst.destroy();
+            tesdaChartInst = new Chart(ctxF, {
+                type: 'bar',
+                data: {
+                    labels: tesdaCourses,
+                    datasets: [
+                        {
+                            label: 'Male Trainees',
+                            data: tesdaMale,
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                            borderColor: '#3b82f6',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Female Trainees',
+                            data: tesdaFemale,
+                            backgroundColor: 'rgba(236, 72, 153, 0.8)',
+                            borderColor: '#ec4899',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true, beginAtZero: true, grid: { color: 'rgba(15, 23, 42, 0.04)' } },
+                        y: { grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
                     }
                 }
             });

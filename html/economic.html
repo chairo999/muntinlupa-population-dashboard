@@ -361,7 +361,7 @@
                         <div class="chart-controls">
                             <select id="barangay-view-mode" class="chart-select">
                                 <option value="compare-establishments">Registered Businesses</option>
-                                <option value="compare-employment">Employment</option>
+                                <option value="compare-employment">Establishment Size Split</option>
                                 <option value="category-split">Barangay Category Split</option>
                             </select>
                             <select id="barangay-select" class="chart-select" style="display: none;"></select>
@@ -678,90 +678,110 @@
             const mode = document.getElementById("barangay-view-mode").value;
             const selectedBrgy = document.getElementById("barangay-select").value;
 
+            let labels = BARANGAY_NAMES;
+            let datasets = [];
+            const options = {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(15, 23, 42, 0.04)' } },
+                    x: { grid: { display: false }, stacked: false }
+                },
+                plugins: {
+                    legend: { display: true, position: 'bottom' }
+                }
+            };
+
             if (mode === "compare-establishments") {
                 const counts = BARANGAY_NAMES.map(b => {
                     const rawVal = resolveLatestBarangayValue(b, ['Total Establishments', 'Registered Businesses', 'Total Establishments (a)', 'Establishments']);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
 
-                barangayEconChartInstance.config.type = 'bar';
-                barangayEconChartInstance.data.labels = BARANGAY_NAMES;
-                barangayEconChartInstance.data.datasets = [{
-                    label: 'Most Recent Registered Businesses Count',
+                datasets = [{
+                    label: 'Registered Businesses',
                     data: counts,
                     backgroundColor: 'rgba(239, 68, 68, 0.8)',
                     borderColor: '#ef4444',
                     borderWidth: 1,
                     borderRadius: 4
                 }];
-                barangayEconChartInstance.options.scales.x.stacked = false;
-                barangayEconChartInstance.options.scales.y.stacked = false;
-                barangayEconChartInstance.options.plugins.legend.display = false;
-
+                options.scales.x.stacked = false;
+                options.scales.y.stacked = false;
+                options.plugins.legend.display = false;
 
             } else if (mode === "compare-employment") {
-                // Build category arrays across barangays for employment breakdown
-                const microArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Micro Employment', 'Micro', 'Micro - Employment']);
+                let microArr = BARANGAY_NAMES.map(b => {
+                    const rawVal = resolveLatestBarangayValue(b, ['Micro Establishments', 'Micro', 'Micro - Establishments']);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
-                const smallArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Small Employment', 'Small', 'Small - Employment']);
+                let smallArr = BARANGAY_NAMES.map(b => {
+                    const rawVal = resolveLatestBarangayValue(b, ['Small Establishments', 'Small', 'Small - Establishments']);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
-                const mediumArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Medium Employment', 'Medium', 'Medium - Employment']);
+                let mediumArr = BARANGAY_NAMES.map(b => {
+                    const rawVal = resolveLatestBarangayValue(b, ['Medium Establishments', 'Medium', 'Medium - Establishments']);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
-                const largeArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Large Employment', 'Large', 'Large - Employment']);
+                let largeArr = BARANGAY_NAMES.map(b => {
+                    const rawVal = resolveLatestBarangayValue(b, ['Large Establishments', 'Large', 'Large - Establishments']);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
+
+                const totalArr = BARANGAY_NAMES.map(b => {
+                    const rawVal = resolveLatestBarangayValue(b, ['Number of Employment', 'Number of Employment - b', 'Number of Employment (b)', 'Employment']);
+                    return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
+                });
+
+                const estMicroArr = [...microArr];
+                const estSmallArr = [...smallArr];
+                const estMediumArr = [...mediumArr];
+                const estLargeArr = [...largeArr];
 
                 const hasCategoryData = microArr.some(v => v > 0) || smallArr.some(v => v > 0) || mediumArr.some(v => v > 0) || largeArr.some(v => v > 0);
 
-                if (hasCategoryData) {
-                    barangayEconChartInstance.config.type = 'bar';
-                    barangayEconChartInstance.data.labels = BARANGAY_NAMES;
-                    barangayEconChartInstance.data.datasets = [
-                        { label: 'Micro Employment', data: microArr, backgroundColor: '#d97706', borderWidth: 1, borderRadius: 4 },
-                        { label: 'Small Employment', data: smallArr, backgroundColor: '#eab308', borderWidth: 1, borderRadius: 4 },
-                        { label: 'Medium Employment', data: mediumArr, backgroundColor: '#10b981', borderWidth: 1, borderRadius: 4 },
-                        { label: 'Large Employment', data: largeArr, backgroundColor: '#ef4444', borderWidth: 1, borderRadius: 4 }
-                    ];
+                if (!hasCategoryData && totalArr.some(v => v > 0)) {
+                    const estTotalArr = BARANGAY_NAMES.map((_, i) => estMicroArr[i] + estSmallArr[i] + estMediumArr[i] + estLargeArr[i]);
+                    const canProxy = estTotalArr.some(v => v > 0);
 
-                    barangayEconChartInstance.options.scales.x.stacked = true;
-                    barangayEconChartInstance.options.scales.y.stacked = true;
-                    barangayEconChartInstance.options.plugins.legend.display = true;
-                    barangayEconChartInstance.options.plugins.legend.position = 'bottom';
-                } else {
-                    const totalArr = BARANGAY_NAMES.map(b => {
-                        const rawVal = resolveLatestBarangayValue(b, ['Number of Employment', 'Number of Employment - b', 'Number of Employment (b)', 'Employment']);
-                        return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
-                    });
-
-                    barangayEconChartInstance.config.type = 'bar';
-                    barangayEconChartInstance.data.labels = BARANGAY_NAMES;
-                    barangayEconChartInstance.data.datasets = [{
-                        label: 'Total Employment',
-                        data: totalArr,
-                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                        borderColor: '#3b82f6',
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }];
-
-                    barangayEconChartInstance.options.scales.x.stacked = false;
-                    barangayEconChartInstance.options.scales.y.stacked = false;
-                    barangayEconChartInstance.options.plugins.legend.display = true;
-                    barangayEconChartInstance.options.plugins.legend.position = 'bottom';
+                    if (canProxy) {
+                        microArr = BARANGAY_NAMES.map((_, i) => estTotalArr[i] > 0 ? Math.round(totalArr[i] * (estMicroArr[i] / estTotalArr[i])) : 0);
+                        smallArr = BARANGAY_NAMES.map((_, i) => estTotalArr[i] > 0 ? Math.round(totalArr[i] * (estSmallArr[i] / estTotalArr[i])) : 0);
+                        mediumArr = BARANGAY_NAMES.map((_, i) => estTotalArr[i] > 0 ? Math.round(totalArr[i] * (estMediumArr[i] / estTotalArr[i])) : 0);
+                        largeArr = BARANGAY_NAMES.map((_, i) => {
+                            if (estTotalArr[i] > 0) {
+                                const remainder = totalArr[i] - (microArr[i] + smallArr[i] + mediumArr[i]);
+                                return remainder >= 0 ? remainder : Math.round(totalArr[i] * (estLargeArr[i] / estTotalArr[i]));
+                            }
+                            return totalArr[i];
+                        });
+                    } else {
+                        microArr = totalArr.map(() => 0);
+                        smallArr = totalArr.map(() => 0);
+                        mediumArr = totalArr.map(() => 0);
+                        largeArr = [...totalArr];
+                    }
                 }
-            
+
+                console.info('employment arrays', { microArr, smallArr, mediumArr, largeArr, totalArr, estMicroArr, estSmallArr, estMediumArr, estLargeArr });
+
+                datasets = [
+                    { label: 'Micro Employment', data: microArr, backgroundColor: '#d97706', borderWidth: 1, borderRadius: 4, barThickness: 24, maxBarThickness: 40 },
+                    { label: 'Small Employment', data: smallArr, backgroundColor: '#eab308', borderWidth: 1, borderRadius: 4, barThickness: 24, maxBarThickness: 40 },
+                    { label: 'Medium Employment', data: mediumArr, backgroundColor: '#10b981', borderWidth: 1, borderRadius: 4, barThickness: 24, maxBarThickness: 40 },
+                    { label: 'Large Employment', data: largeArr, backgroundColor: '#ef4444', borderWidth: 1, borderRadius: 4, barThickness: 24, maxBarThickness: 40 }
+                ];
+                options.scales.x.stacked = true;
+                options.scales.y.stacked = true;
+                options.plugins.legend.display = true;
+                options.plugins.legend.position = 'bottom';
+                options.scales.x.stacked = true;
+                options.scales.y.stacked = true;
+                options.plugins.legend.display = true;
+                options.plugins.legend.position = 'bottom';
 
             } else {
                 let micro = 0, small = 0, medium = 0, large = 0;
-
-                // 1. DYNAMIC KEY RESOLUTION: Look for the unified text block row or its sub-indicator suffixes
                 const regBizKey = `${selectedBrgy} Registered Businesses`;
 
                 if (economicData[regBizKey]) {
@@ -779,62 +799,28 @@
                     if (mediumIdx !== -1) medium = parseFloat(history[mediumIdx]) || 0;
                     if (largeIdx !== -1) large = parseFloat(history[largeIdx]) || 0;
                 } else {
-                    // Fallback to separate indicator string schemas if row isn't grouping them
                     micro = parseFloat(getLatestValue(`${selectedBrgy} - Micro Establishments`)) || 0;
                     small = parseFloat(getLatestValue(`${selectedBrgy} - Small Establishments`)) || 0;
                     medium = parseFloat(getLatestValue(`${selectedBrgy} - Medium Establishments`)) || 0;
                     large = parseFloat(getLatestValue(`${selectedBrgy} - Large Establishments`)) || 0;
                 }
 
-                // Calculate proportions for contextual percentage indicators inside the legend/tooltips
                 const totalCalculated = micro + small + medium + large;
                 const getPct = (val) => totalCalculated === 0 ? '0%' : ((val / totalCalculated) * 100).toFixed(1) + '%';
 
-                barangayEconChartInstance.config.type = 'bar';
-                // Provide a dynamic string title layout on the X-axis mapping to your active drop-down choice
-                barangayEconChartInstance.data.labels = [`${selectedBrgy} Enterprise Profile`];
-
-                // 2. RE-MAPPED STRUCTURAL ARRAYS: Compiles perfectly aligned separate stacked categories
-                barangayEconChartInstance.data.datasets = [
-                    {
-                        label: `Micro (≤ 3M) · ${getPct(micro)}`,
-                        data: [micro],
-                        backgroundColor: '#d97706', // Warm Amber Accent
-                        borderWidth: 1,
-                        borderRadius: 4
-                    },
-                    {
-                        label: `Small (3.1M - 15M) · ${getPct(small)}`,
-                        data: [small],
-                        backgroundColor: '#eab308', // Yellow Tint
-                        borderWidth: 1,
-                        borderRadius: 4
-                    },
-                    {
-                        label: `Medium (15.1M - 100M) · ${getPct(medium)}`,
-                        data: [medium],
-                        backgroundColor: '#10b981', // Emerald Green
-                        borderWidth: 1,
-                        borderRadius: 4
-                    },
-                    {
-                        label: `Large (≥ 100.1M) · ${getPct(large)}`,
-                        data: [large],
-                        backgroundColor: '#ef4444', // Red Accent
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }
+                labels = [`${selectedBrgy} Enterprise Profile`];
+                datasets = [
+                    { label: `Micro (≤ 3M) · ${getPct(micro)}`, data: [micro], backgroundColor: '#d97706', borderWidth: 1, borderRadius: 4 },
+                    { label: `Small (3.1M - 15M) · ${getPct(small)}`, data: [small], backgroundColor: '#eab308', borderWidth: 1, borderRadius: 4 },
+                    { label: `Medium (15.1M - 100M) · ${getPct(medium)}`, data: [medium], backgroundColor: '#10b981', borderWidth: 1, borderRadius: 4 },
+                    { label: `Large (≥ 100.1M) · ${getPct(large)}`, data: [large], backgroundColor: '#ef4444', borderWidth: 1, borderRadius: 4 }
                 ];
 
-                // 3. STACKING CONFIGURATIONS & RENDERING CONTROLS
-                barangayEconChartInstance.options.scales.x.stacked = true;
-                barangayEconChartInstance.options.scales.y.stacked = true;
-
-                barangayEconChartInstance.options.plugins.legend.display = true;
-                barangayEconChartInstance.options.plugins.legend.position = 'bottom';
-
-                // Formats the hover tooltips cleanly
-                barangayEconChartInstance.options.plugins.tooltip = {
+                options.scales.x.stacked = true;
+                options.scales.y.stacked = true;
+                options.plugins.legend.display = true;
+                options.plugins.legend.position = 'bottom';
+                options.plugins.tooltip = {
                     callbacks: {
                         label: function (context) {
                             const val = context.raw || 0;
@@ -844,7 +830,18 @@
                 };
             }
 
-            barangayEconChartInstance.update();
+            if (barangayEconChartInstance) {
+                barangayEconChartInstance.destroy();
+            }
+            const ctxC = document.getElementById("barangayEconChart").getContext("2d");
+            barangayEconChartInstance = new Chart(ctxC, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets
+                },
+                options
+            });
         }
 
     </script>
