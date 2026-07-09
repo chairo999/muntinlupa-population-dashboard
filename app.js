@@ -624,6 +624,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Add scroll event listener to update active link based on visible section
     function updateActiveLink() {
+        const heroSection = document.getElementById('hero-slide');
+        if (heroSection) {
+            const heroRect = heroSection.getBoundingClientRect();
+            const heroInView = heroRect.top <= window.innerHeight * 0.5 && heroRect.bottom >= window.innerHeight * 0.5;
+            heroSection.classList.toggle('active-slide', heroInView);
+            if (heroInView) {
+                document.querySelectorAll('.lp-header-action-link').forEach(l => l.classList.remove('active'));
+            }
+        }
+
         const links = document.querySelectorAll('.lp-header-action-link');
         
         links.forEach(link => {

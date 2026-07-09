@@ -1029,16 +1029,16 @@ body {
 
 .lp-slide-title {
     position: relative;
-    z-index: 2; 
+    z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 24px;
+    padding: 1.5rem;
     width: 100%;
     max-width: 900px;
-    margin-top: 0 !important; 
+    margin-top: 0 !important;
 }
 
 .lp-slide-title h1 {
@@ -1050,6 +1050,12 @@ body {
     text-transform: uppercase;
     text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); 
     line-height: 1.1;
+    opacity: 0;
+    transform: translateY(-2rem);
+}
+
+.lp-slide-part.active-slide .lp-slide-title h1 {
+    animation: heroTitleTop 0.7s ease-out forwards;
 }
 
 .lp-slide-title h2 {
@@ -1060,6 +1066,12 @@ body {
     letter-spacing: 0.2em;
     text-transform: uppercase;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transform: translateY(2rem);
+}
+
+.lp-slide-part.active-slide .lp-slide-title h2 {
+    animation: heroTitleBottom 0.7s ease-out 0.15s forwards;
 }
 
 .lp-slide-content {
@@ -1175,6 +1187,28 @@ body {
 #sdg-localization-slide {
     --slide-gap: 152px;
     --slide-left: 160px;
+}
+
+@keyframes heroTitleTop {
+    from {
+        opacity: 0;
+        transform: translateY(-2rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes heroTitleBottom {
+    from {
+        opacity: 0;
+        transform: translateY(2rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes populationTitleIn {
@@ -1317,15 +1351,22 @@ body {
 }
 
 .lp-slide-logo {
-    position: fixed; /* Changed from absolute to fixed to lock it in place while scrolling */
-    top: 15px;  
-    left: 18px; 
-    z-index: 100; /* High z-index ensures it sits safely on top of all sliding panels */
-    
+    position: fixed;
+    top: 15px;
+    left: 18px;
+    z-index: 100;
     display: flex;
     align-items: center;
-    gap: 16px;  
-    pointer-events: none; /* Allows mouse wheels/swipes over the header area to still trigger the scroll snap */
+    gap: 16px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.lp-slide-logo:hover,
+.lp-slide-logo:visited,
+.lp-slide-logo:active {
+    text-decoration: none;
+    color: inherit;
 }
 
 .lp-slide-logo img {
