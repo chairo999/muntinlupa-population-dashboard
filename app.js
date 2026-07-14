@@ -44,6 +44,9 @@ let selectedYear = "2024";   // Synchronized variable for year tracking ("2015",
 // Chart Instances
 let trendChartInstance = null;
 let barangayBarChartInstance = null;
+let trendChartType = "line";
+let barangayChartType = "bar";
+let lastHistoryData = [];
 
 // Initialize Application
 document.addEventListener("DOMContentLoaded", async () => {
@@ -441,53 +444,89 @@ function renderTrendChart(historyData) {
     Chart.defaults.font.family = 'Montserrat, sans-serif';
     Chart.defaults.font.size = 11;
 
-    if (trendChartInstance) {
-        trendChartInstance.data.datasets[0].data = historyData;
-        trendChartInstance.update();
-    } else {
-        const ctx3 = document.getElementById("trendChart")?.getContext("2d");
-        if (ctx3) {
-            const gradient = ctx3.createLinearGradient(0, 0, 0, 160);
-            gradient.addColorStop(0, "#e1271a");
-            gradient.addColorStop(1, "#e1271a89");
+    lastHistoryData = historyData;
 
-            trendChartInstance = new Chart(ctx3, {
-                type: "line",
-                data: {
-                    labels: HISTORICAL_LABELS,
-                    datasets: [{
-                        label: "Overall Population Total", 
-                        data: historyData, 
-                        borderColor: "#d91406", 
-                        borderWidth: 3, 
-                        pointBackgroundColor: "#c20d00", 
-                        pointBorderColor: "#f8fafc", 
-                        pointBorderWidth: 2, 
-                        pointRadius: 5, 
-                        pointHoverRadius: 7, 
-                        backgroundColor: gradient, 
-                        fill: true, 
-                        tension: 0.2
-                    }]
+    if (trendChartInstance) {
+        trendChartInstance.destroy();
+        trendChartInstance = null;
+    }
+
+    const ctx3 = document.getElementById("trendChart")?.getContext("2d");
+    if (!ctx3) return;
+
+    const gradient = ctx3.createLinearGradient(0, 0, 0, 160);
+    gradient.addColorStop(0, "#e1271a");
+    gradient.addColorStop(1, "#e1271a89");
+
+    const pieColors = ["#e1271a", "#f44336", "#ff9800"];
+
+    const baseDataset = {
+        label: "Overall Population Total",
+        data: historyData
+    };
+
+    let config;
+
+    if (trendChartType === "pie") {
+        config = {
+            type: "pie",
+            data: {
+                labels: HISTORICAL_LABELS,
+                datasets: [{
+                    ...baseDataset,
+                    backgroundColor: pieColors,
+                    borderColor: "#fff",
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true, labels: { color: "#000000b3" } },
+                    tooltip: { backgroundColor: "rgba(0, 0, 0, 0.72)", padding: 10, borderWidth: 1, borderColor: "rgba(255, 255, 255, 0.15)" }
+                }
+            }
+        };
+    } else {
+        config = {
+            type: trendChartType,
+            data: {
+                labels: HISTORICAL_LABELS,
+                datasets: [{
+                    ...baseDataset,
+                    borderColor: "#d91406",
+                    borderWidth: 3,
+                    pointBackgroundColor: "#c20d00",
+                    pointBorderColor: "#f8fafc",
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    backgroundColor: trendChartType === "bar" ? gradient : gradient,
+                    fill: trendChartType === "line",
+                    tension: 0.2,
+                    borderRadius: trendChartType === "bar" ? 6 : 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { backgroundColor: "rgba(0, 0, 0, 0.72)", padding: 10, borderWidth: 1, borderColor: "rgba(255, 255, 255, 0.15)" }
                 },
-                options: {
-                    responsive: true, 
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { backgroundColor: "rgba(0, 0, 0, 0.72)", padding: 10, borderWidth: 1, borderColor: "rgba(255, 255, 255, 0.15)" }
-                    },
-                    scales: {
-                        x: { grid: { display: false }, ticks: { color: "#000000b3" } },
-                        y: {
-                            grid: { color: "rgba(255, 255, 255, 0.05)" },
-                            ticks: { color: "#000000b3", callback: function (value) { return value.toLocaleString(); } }
-                        }
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: "#000000b3" } },
+                    y: {
+                        grid: { color: "rgba(255, 255, 255, 0.05)" },
+                        ticks: { color: "#000000b3", callback: function (value) { return value.toLocaleString(); } }
                     }
                 }
-            });
-        }
+            }
+        };
     }
+
+    trendChartInstance = new Chart(ctx3, config);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -520,76 +559,142 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.style.overflow = ""; // Restore scrolling
     }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const trendSelect = document.getElementById("trendChartType");
+    const barangaySelect = document.getElementById("barangayChartType");
+
+    if (trendSelect) {
+        trendSelect.addEventListener("change", (e) => {
+            trendChartType = e.target.value;
+            renderTrendChart(lastHistoryData);
+        });
+    }
+
+    if (barangaySelect) {
+        barangaySelect.addEventListener("change", (e) => {
+            barangayChartType = e.target.value;
+            renderBarangayBarChart();
+        });
+    }
+});
 function renderBarangayBarChart() {
-    // 1. Gather all individual barangay names and their population values for the selected year
     const labels = Object.keys(appData);
     const dataValues = labels.map(brgyName => {
         const stats = getBarangayStats(brgyName, selectedYear);
         return stats.total;
     });
 
-    // 2. If chart instance already exists, update data and label variables seamlessly
     if (barangayBarChartInstance) {
-        barangayBarChartInstance.data.datasets[0].label = `Population in ${selectedYear}`;
-        barangayBarChartInstance.data.datasets[0].data = dataValues;
-        barangayBarChartInstance.update();
-    } else {
-        const ctx4 = document.getElementById("barangayBarChart")?.getContext("2d");
-        if (ctx4) {
-            // Apply a modern gradient matching your custom theme variables
-            const gradient = ctx4.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, "#e1271a"); // Cyan primary color accent
-            gradient.addColorStop(1, "#e1271a9a");
+        barangayBarChartInstance.destroy();
+        barangayBarChartInstance = null;
+    }
 
-            barangayBarChartInstance = new Chart(ctx4, {
-                type: "bar",
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: `Population in ${selectedYear}`,
-                        data: dataValues,
-                        backgroundColor: gradient,
-                        borderRadius: 6, // Smooth rounded corners for structural columns
-                        hoverBackgroundColor: "#e1271a71", // Hover color shift matching your style tokens
-                        hoverBorderColor: "#e1271a71"
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: "rgba(15, 23, 42, 0.95)",
-                            padding: 10,
-                            borderWidth: 1,
-                            borderColor: "rgba(255, 255, 255, 0.15)",
-                            callbacks: {
-                                label: function(context) {
-                                    return ` Population: ${context.raw.toLocaleString()}`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: "#000000b3" }
-                        },
-                        y: {
-                            grid: { color: "rgba(255, 255, 255, 0.05)" },
-                            ticks: {
-                                color: "#000000b3",
-                                callback: function (value) {    
-                                    return value.toLocaleString();
-                                }
+    const ctx4 = document.getElementById("barangayBarChart")?.getContext("2d");
+    if (!ctx4) return;
+
+    const gradient = ctx4.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, "#e1271a");
+    gradient.addColorStop(1, "#e1271a9a");
+
+    const pieColors = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548"];
+
+    const baseDataset = {
+        label: `Population in ${selectedYear}`,
+        data: dataValues
+    };
+
+    let config;
+
+    if (barangayChartType === "pie") {
+        config = {
+            type: "pie",
+            data: {
+                labels: labels,
+                datasets: [{
+                    ...baseDataset,
+                    backgroundColor: pieColors,
+                    borderColor: "#fff",
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true, labels: { color: "#000000b3" } },
+                    tooltip: {
+                        backgroundColor: "rgba(15, 23, 42, 0.95)",
+                        padding: 10,
+                        borderWidth: 1,
+                        borderColor: "rgba(255, 255, 255, 0.15)",
+                        callbacks: {
+                            label: function(context) {
+                                return ` Population: ${context.raw.toLocaleString()}`;
                             }
                         }
                     }
                 }
-            });
-        }
+            }
+        };
+    } else {
+        config = {
+            type: barangayChartType,
+            data: {
+                labels: labels,
+                datasets: [{
+                    ...baseDataset,
+                    backgroundColor: barangayChartType === "bar" ? gradient : gradient,
+                    borderRadius: barangayChartType === "bar" ? 6 : 0,
+                    hoverBackgroundColor: "#e1271a71",
+                    hoverBorderColor: "#e1271a71",
+                    borderColor: barangayChartType === "line" ? "#d91406" : undefined,
+                    borderWidth: barangayChartType === "line" ? 3 : undefined,
+                    pointBackgroundColor: barangayChartType === "line" ? "#c20d00" : undefined,
+                    pointBorderColor: barangayChartType === "line" ? "#f8fafc" : undefined,
+                    pointBorderWidth: barangayChartType === "line" ? 2 : undefined,
+                    pointRadius: barangayChartType === "line" ? 5 : undefined,
+                    fill: barangayChartType === "line",
+                    tension: 0.2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: "rgba(15, 23, 42, 0.95)",
+                        padding: 10,
+                        borderWidth: 1,
+                        borderColor: "rgba(255, 255, 255, 0.15)",
+                        callbacks: {
+                            label: function(context) {
+                                return ` Population: ${context.raw.toLocaleString()}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: "#000000b3" }
+                    },
+                    y: {
+                        grid: { color: "rgba(255, 255, 255, 0.05)" },
+                        ticks: {
+                            color: "#000000b3",
+                            callback: function (value) {    
+                                return value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        };
     }
+
+    barangayBarChartInstance = new Chart(ctx4, config);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
