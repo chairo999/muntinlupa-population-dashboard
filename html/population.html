@@ -295,6 +295,11 @@
                     <div class="chart-card span-full">
                         <div class="chart-title-wrapper">
                             <h5><i class="fa-solid fa-chart-area"></i> Population Growth & Updates Trend</h5>
+                            <select id="trendChartType" class="chart-type-select">
+                                <option value="line">Line Graph</option>
+                                <option value="bar">Bar Graph</option>
+                                <option value="pie">Pie Graph</option>
+                            </select>
                         </div>
                         <div class="canvas-container trend-container">
                             <canvas id="trendChart"></canvas>
@@ -304,6 +309,11 @@
                     <div class="chart-card span-full">
                         <div class="chart-title-wrapper">
                             <h5><i class="fa-solid fa-chart-bar"></i> Barangay Population</h5>
+                            <select id="barangayChartType" class="chart-type-select">
+                                <option value="bar">Bar Graph</option>
+                                <option value="line">Line Graph</option>
+                                <option value="pie">Pie Graph</option>
+                            </select>
                         </div>
                         <div class="canvas-container trend-container">
                             <canvas id="barangayBarChart"></canvas>
