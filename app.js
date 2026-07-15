@@ -1,45 +1,3 @@
-// Baseline Demographic Seed Data representing Muntinlupa City Census estimates
-const DEFAULT_DEMOGRAPHIC_DATA = {
-    "Buli": { "history": [63793, 71075, 69215] },
-    "Sucat": { "history": [42500, 44100, 46200] },
-    "Cupang": { "history": [49000, 51200, 53500] },
-    "Alabang": { "history": [57000, 60100, 63000] },
-    "Bayanan": { "history": [33000, 34500, 36000] },
-    "Putatan": { "history": [75000, 78800, 82500] },
-    "Tunasan": { "history": [50000, 52500, 55000] },
-    "Poblacion": { "history": [98000, 102500, 107000] },
-    "Ayala Alabang": { "history": [19500, 20500, 21400] }
-};
-
-const BARANGAY_COLORS = {
-    "Sucat": "#e1271a",
-    "Buli": "#f97316",
-    "Cupang": "#eab308",
-    "Alabang": "#22c55e",
-    "Ayala Alabang": "#06b6d4",
-    "Bayanan": "#3b82f6",
-    "Putatan": "#8b5cf6",
-    "Poblacion": "#d946ef",
-    "Tunasan": "#ec4899"
-};
-
-const STORAGE_KEY = "muntinlupa_demographics_data";
-let HISTORICAL_LABELS = ["2015", "2020", "2024"];
-// Supabase Configuration
-const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
-
-let supabaseClient = null;
-
-// Initialize Supabase Client Safely
-if (typeof supabase !== 'undefined' && SUPABASE_URL !== "YOUR_SUPABASE_URL") {
-    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-}
-
-// State Variables
-let appData = {};
-let selectedBarangay = null; // null represents City-Wide view
-let selectedYear = "2024";   // Synchronized variable for year tracking ("2015", "2020", "2024")
 
 // Chart Instances
 let trendChartInstance = null;
@@ -57,123 +15,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderDashboard();
 });
 
-// Show/Hide Database Loading Overlay
-function showLoading(show) {
-    const overlay = document.getElementById("loading-overlay");
-    if (overlay) {
-        if (show) overlay.classList.add("active");
-        else overlay.classList.remove("active");
-    }
-}
-
-// Load data from Supabase DB or LocalStorage fallback
-async function initData() {
-    if (supabaseClient) {
-        try {
-            const { data, error } = await supabaseClient
-                .from('barangay_population')
-                .select('*')
-                .order('year', { ascending: true });
-
-            if (error) throw error;
-
-            if (data && data.length > 0) {
-                const years = [...new Set(data.map(r => r.year))].sort();
-                HISTORICAL_LABELS = years.map(String);
-                appData = {};
-                data.forEach(row => {
-                    if (!appData[row.barangay_name]) {
-                        appData[row.barangay_name] = { history: new Array(years.length).fill(0) };
-                    }
-                    const yearIdx = years.indexOf(row.year);
-                    appData[row.barangay_name].history[yearIdx] = row.population || 0;
-                });
-            } else {
-                await restoreDefaultData();
-            }
-        } catch (e) {
-            console.error("Error loading from Supabase. Falling back to LocalStorage.", e);
-            loadFromLocalStorageFallback();
-        }
-    } else {
-        loadFromLocalStorageFallback();
-    }
-}
-
-function loadFromLocalStorageFallback() {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-        try {
-            const parsed = JSON.parse(stored);
-            appData = parsed.data || parsed;
-        } catch (e) {
-            console.error("Error parsing local demographic data. Resetting to defaults.", e);
-            restoreDefaultDataSync();
-        }
-    } else {
-        restoreDefaultDataSync();
-    }
-}
-function populateYearSelect() {
-    const sel = document.getElementById("year-select");
-    if (!sel) return;
-    sel.innerHTML = "";
-    HISTORICAL_LABELS.forEach(year => {
-        const opt = document.createElement("option");
-        opt.value = year;
-        opt.textContent = year;
-        sel.appendChild(opt);
-    });
-    if (!HISTORICAL_LABELS.includes(selectedYear)) {
-        selectedYear = HISTORICAL_LABELS[HISTORICAL_LABELS.length - 1] || "2024";
-    }
-    sel.value = selectedYear;
-}
-async function restoreDefaultData() {
-    appData = JSON.parse(JSON.stringify(DEFAULT_DEMOGRAPHIC_DATA));
-    HISTORICAL_LABELS = ["2015", "2020", "2024"];
-    await saveData();
-}
-
-function restoreDefaultDataSync() {
-    appData = JSON.parse(JSON.stringify(DEFAULT_DEMOGRAPHIC_DATA));
-    HISTORICAL_LABELS = ["2015", "2020", "2024"];
-    populateYearSelect();
-    saveDataSync();
-}
-
-async function saveData() {
-    if (supabaseClient) {
-        try {
-            const rows = [];
-            Object.keys(appData).forEach(name => {
-                HISTORICAL_LABELS.forEach((year, idx) => {
-                    rows.push({
-                        barangay_name: name,
-                        year: parseInt(year),
-                        population: (appData[name].history[idx] || 0)
-                    });
-                });
-            });
-            if (rows.length > 0) {
-                const { error } = await supabaseClient
-                    .from('barangay_population')
-                    .upsert(rows, { onConflict: 'barangay_name,year' });
-                if (error) throw error;
-            }
-        } catch (e) {
-            console.error("Error saving to Supabase. Falling back to LocalStorage.", e);
-            saveDataSync();
-        }
-    } else {
-        saveDataSync();
-    }
-}
-
-function saveDataSync() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: appData }));
-}
-
 function initClock() {
     const timeEl = document.getElementById("date-time");
     if (!timeEl) return;
@@ -189,12 +30,6 @@ function initClock() {
 
     updateClock();
     setInterval(updateClock, 1000);
-}
-
-// Map index year text values to numerical array indices
-function getYearIndex(year) {
-    const idx = HISTORICAL_LABELS.indexOf(String(year));
-    return idx >= 0 ? idx : HISTORICAL_LABELS.length - 1;
 }
 
 // Setup Event Handlers for Map and Form Selections
@@ -364,37 +199,6 @@ function selectBarangay(name, updateForm = true) {
     renderDashboard();
 }
 
-// Get population metrics for a given barangay and year
-function getBarangayStats(name, year = selectedYear) {
-    const brgy = appData[name];
-    if (!brgy || !Array.isArray(brgy.history)) return { total: 0 };
-
-    const idx = getYearIndex(year);
-    const populationVal = brgy.history[idx] || 0;
-
-    return { total: populationVal };
-}
-
-// Aggregate city-wide metrics as the sum of all individual records
-function getCityWideStats() {
-    const historyLength = HISTORICAL_LABELS.length;
-    let history = new Array(historyLength).fill(0);
-
-    for (let brgyName in appData) {
-        const brgy = appData[brgyName];
-        if (brgy && Array.isArray(brgy.history)) {
-            for (let i = 0; i < historyLength; i++) {
-                history[i] += brgy.history[i] || 0;
-            }
-        }
-    }
-
-    const currentIdx = getYearIndex(selectedYear);
-    return {
-        total: history[currentIdx] || 0,
-        history: history
-    };
-}
 
 function renderDashboard() {
     let totalPopulation = 0;
