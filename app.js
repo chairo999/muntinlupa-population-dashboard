@@ -475,6 +475,9 @@ function renderTrendChart(historyData) {
                 datasets: [{
                     ...baseDataset,
                     backgroundColor: pieColors,
+                    hoverBackgroundColor: ["#ff2a2a", "#ff6666", "#ffb347"],
+                    hoverBorderColor: "#fff",
+                    hoverBorderWidth: 3,
                     borderColor: "#fff",
                     borderWidth: 2
                 }]
@@ -482,6 +485,7 @@ function renderTrendChart(historyData) {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                hover: { mode: 'nearest', intersect: true },
                 plugins: {
                     legend: { display: true, labels: { color: "#000000b3" } },
                     tooltip: { backgroundColor: "rgba(0, 0, 0, 0.72)", padding: 10, borderWidth: 1, borderColor: "rgba(255, 255, 255, 0.15)" }
@@ -495,26 +499,45 @@ function renderTrendChart(historyData) {
                 labels: HISTORICAL_LABELS,
                 datasets: [{
                     ...baseDataset,
-                    borderColor: "#d91406",
-                    borderWidth: 3,
-                    pointBackgroundColor: "#c20d00",
-                    pointBorderColor: "#f8fafc",
-                    pointBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHoverRadius: 7,
-                    backgroundColor: trendChartType === "bar" ? gradient : gradient,
+                    backgroundColor: gradient,
+                    borderRadius: trendChartType === "bar" ? 6 : 0,
+                    hoverBackgroundColor: "#e1271a52",
+                    hoverBorderColor: "#e1271a52",
+                    hoverBorderWidth: 4,
+                    borderColor: trendChartType === "line" ? "#d91406" : undefined,
+                    borderWidth: trendChartType === "line" ? 3 : undefined,
+                    pointBackgroundColor: trendChartType === "line" ? "#e1271a" : undefined,
+                    pointBorderColor: trendChartType === "line" ? "#f8fafc" : undefined,
+                    pointBorderWidth: trendChartType === "line" ? 2 : undefined,
+                    pointRadius: trendChartType === "line" ? 5 : undefined,
+                    pointHoverRadius: trendChartType === "line" ? 9 : undefined,
+                    pointHoverBackgroundColor: trendChartType === "line" ? "#ff2a2a" : undefined,
+                    pointHoverBorderColor: trendChartType === "line" ? "#fff" : undefined,
+                    pointHoverBorderWidth: trendChartType === "line" ? 3 : undefined,
                     fill: trendChartType === "line",
-                    tension: 0.2,
-                    borderRadius: trendChartType === "bar" ? 6 : 0
+                    tension: 0.2
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                hover: { mode: 'nearest', intersect: true },
+                interaction: { mode: 'nearest', intersect: true },
                 plugins: {
                     legend: { display: false },
-                    tooltip: { backgroundColor: "rgba(0, 0, 0, 0.72)", padding: 10, borderWidth: 1, borderColor: "rgba(255, 255, 255, 0.15)" }
+                    tooltip: {
+                        backgroundColor: "rgba(15, 23, 42, 0.95)",
+                        padding: 10,
+                        borderWidth: 1,
+                        borderColor: "rgba(255, 255, 255, 0.15)",
+                        callbacks: {
+                            label: function(context) {
+                                return ` Population: ${context.raw.toLocaleString()}`;
+                            }
+                        }
+                    }
                 },
+                animation: { duration: 200, easing: 'easeOutQuart' },
                 scales: {
                     x: { grid: { display: false }, ticks: { color: "#000000b3" } },
                     y: {
@@ -614,6 +637,9 @@ function renderBarangayBarChart() {
                 datasets: [{
                     ...baseDataset,
                     backgroundColor: pieColors,
+                    hoverBackgroundColor: ["rgba(255, 42, 42, 0.7)", "#f44336c2", "rgba(255, 178, 71, 0.77)", "#4caf4fc5", "rgba(66, 164, 245, 0.74)", "rgba(170, 71, 188, 0.77)", "#00bbd4be", "#ff5622cc", "rgba(141, 110, 99, 0.78)"],
+                    hoverBorderColor: "#fff",
+                    hoverBorderWidth: 3,
                     borderColor: "#fff",
                     borderWidth: 2
                 }]
@@ -621,10 +647,12 @@ function renderBarangayBarChart() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                hover: { mode: 'nearest', intersect: true },
+                interaction: { mode: 'nearest', intersect: true },
                 plugins: {
                     legend: { display: true, labels: { color: "#000000b3" } },
                     tooltip: {
-                        backgroundColor: "rgba(15, 23, 42, 0.95)",
+                        backgroundColor: "rgba(2, 6, 17, 0.95)",
                         padding: 10,
                         borderWidth: 1,
                         borderColor: "rgba(255, 255, 255, 0.15)",
@@ -646,14 +674,19 @@ function renderBarangayBarChart() {
                     ...baseDataset,
                     backgroundColor: barangayChartType === "bar" ? gradient : gradient,
                     borderRadius: barangayChartType === "bar" ? 6 : 0,
-                    hoverBackgroundColor: "#e1271a71",
-                    hoverBorderColor: "#e1271a71",
+                    hoverBackgroundColor: "#e1271a52",
+                    hoverBorderColor: "#e1271a52",
+                    hoverBorderWidth: 4,
                     borderColor: barangayChartType === "line" ? "#d91406" : undefined,
                     borderWidth: barangayChartType === "line" ? 3 : undefined,
                     pointBackgroundColor: barangayChartType === "line" ? "#c20d00" : undefined,
                     pointBorderColor: barangayChartType === "line" ? "#f8fafc" : undefined,
                     pointBorderWidth: barangayChartType === "line" ? 2 : undefined,
                     pointRadius: barangayChartType === "line" ? 5 : undefined,
+                    pointHoverRadius: barangayChartType === "line" ? 9 : undefined,
+                    pointHoverBackgroundColor: barangayChartType === "line" ? "#ff2a2a" : undefined,
+                    pointHoverBorderColor: barangayChartType === "line" ? "#fff" : undefined,
+                    pointHoverBorderWidth: barangayChartType === "line" ? 3 : undefined,
                     fill: barangayChartType === "line",
                     tension: 0.2
                 }]
@@ -661,6 +694,9 @@ function renderBarangayBarChart() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                hover: { mode: 'nearest', intersect: true },
+                interaction: { mode: 'nearest', intersect: true },
+                animation: { duration: 200, easing: 'easeOutQuart' },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
