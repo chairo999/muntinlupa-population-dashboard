@@ -132,20 +132,6 @@
             box-shadow: 0 0 6px #ef4444;
         }
 
-        .admin-link-btn {
-            color: #ef4444;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: var(--transition-smooth);
-        }
-
-        .admin-link-btn:hover {
-            color: #dc2626;
-            text-decoration: underline;
-        }
-
         .chart-controls {
             display: flex;
             align-items: center;
@@ -168,6 +154,18 @@
 
         .chart-select:focus {
             border-color: #ef4444;
+        }
+
+        .chart-type-select {
+            background-color: #e1271a;
+            color: #f8fafc;
+            border-radius: 0.375rem;
+            padding: 5px 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            outline: none;
+            border: none;
         }
     </style>
 </head>
@@ -216,9 +214,6 @@
                 <div id="db-dot" class="db-dot offline"></div>
                 <span id="db-status-txt">Connecting to Supabase...</span>
             </div>
-            <a href="admin_edit.html" class="admin-link-btn">
-                <i class="fa-solid fa-screwdriver-wrench"></i> Open Admin Editor
-            </a>
         </div>
 
         <section class="stats-banner">
@@ -270,8 +265,11 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-arrow-trend-up"></i> Municipal Competitiveness Rankings (CMCI)</h5>
-                        <div class="badge" style="font-size:0.75rem; color: white">Lower Rank = Better
-                            Position</div>
+                        <select id="rankingChartType" class="chart-type-select">
+                            <option value="line">Line Graph</option>
+                            <option value="bar">Bar Graph</option>
+                            <option value="pie">Pie Graph</option>
+                        </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="rankingChart"></canvas>
@@ -281,7 +279,11 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-store"></i> City Establishments (Timeline)</h5>
-                        <div class="badge" style="font-size:0.75rem; color: white">Total Registered Establishments Over Time</div>
+                        <select id="establishmentsChartType" class="chart-type-select">
+                            <option value="bar">Bar Graph</option>
+                            <option value="line">Line Graph</option>
+                            <option value="pie">Pie Graph</option>
+                        </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="establishmentsChart"></canvas>
@@ -291,20 +293,26 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-hotel"></i> Hotel Arrivals (Timeline)</h5>
-                        <div class="badge" style="font-size:0.75rem; color: white">Annual Hotel Arrivals</div>
+                        <select id="hotelChartType" class="chart-type-select">
+                            <option value="line">Line Graph</option>
+                            <option value="bar">Bar Graph</option>
+                            <option value="pie">Pie Graph</option>
+                        </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="hotelArrivalsChart"></canvas>
                     </div>
                 </div>
 
-            </div>
-
-            <div class="charts-container-grid full-width">
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
-                        <h5><i class="fa-solid fa-map-pin"></i> Barangay Business & Employment Generation</h5>
+                        <h5><i class="fa-solid fa-map-pin"></i> Barangay Business & Employment</h5>
                         <div class="chart-controls">
+                            <select id="barangayChartType" class="chart-type-select">
+                                <option value="bar">Bar Graph</option>
+                                <option value="line">Line Graph</option>
+                                <option value="pie">Pie Graph</option>
+                            </select>
                             <select id="barangay-view-mode" class="chart-select">
                                 <option value="compare-establishments">Registered Businesses</option>
                                 <option value="compare-employment">Employment</option>
@@ -313,11 +321,13 @@
                             <select id="barangay-select" class="chart-select" style="display: none;"></select>
                         </div>
                     </div>
-                    <div class="canvas-container" style="height: 380px;">
+                    <div class="canvas-container">
                         <canvas id="barangayEconChart"></canvas>
                     </div>
                 </div>
+
             </div>
+
         </div>
 
     </div>
@@ -336,6 +346,9 @@
 
         const BARANGAY_NAMES = ["Alabang", "Ayala Alabang", "Bayanan", "Buli", "Cupang", "Poblacion", "Putatan", "Sucat", "Tunasan"];
 
+        const PIE_COLORS = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548"];
+        const PIE_HOVER_COLORS = ["#ff2a2a", "#ff6666", "#ffb347", "#4caf50", "#42a5f5", "#ab47bc", "#26c6da", "#ff7043", "#8d6e63"];
+
         let economicData = {};
         let supabaseClient = null;
 
@@ -343,6 +356,11 @@
         let establishmentsChartInstance = null;
         let hotelArrivalsChartInstance = null;
         let barangayEconChartInstance = null;
+
+        let rankingChartType = 'line';
+        let establishmentsChartType = 'bar';
+        let hotelChartType = 'line';
+        let barangayEconChartType = 'bar';
 
         if (typeof supabase !== 'undefined') {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -352,8 +370,9 @@
             initSidebar();
             await fetchEconomicData();
             renderStatsBanner();
-            renderCharts();
+            renderAllCharts();
             initChartControls();
+            initChartTypeControls();
         });
 
         function initSidebar() {
@@ -472,11 +491,9 @@
 
                 economicData = allData;
 
-
                 statusTxt.textContent = "Live Connected: Syncing from dedicated economic tables";
                 statusDot.className = "db-dot";
                 statusDot.style.backgroundColor = "#10b981";
-                // Debug: list loaded indicator keys for troubleshooting
                 console.info('Loaded economic indicator keys:', Object.keys(economicData));
             } catch (e) {
                 console.error("Database connection failure:", e);
@@ -489,8 +506,6 @@
         function getLatestValue(indicatorKey) {
             const indicator = economicData[indicatorKey];
             if (!indicator || !Array.isArray(indicator.history) || indicator.history.length === 0) return "--";
-
-            // Loop backwards to find the most recent non-null number
             for (let i = indicator.history.length - 1; i >= 0; i--) {
                 if (indicator.history[i] !== null && indicator.history[i] !== undefined) {
                     return indicator.history[i];
@@ -499,7 +514,6 @@
             return "--";
         }
 
-        // Attempts multiple naming patterns to find the latest value for barangay-scoped indicators
         function resolveLatestBarangayValue(barangay, labelVariants) {
             const candidates = [];
             labelVariants.forEach(variant => {
@@ -508,8 +522,6 @@
                 candidates.push(`${variant} - ${barangay}`);
                 candidates.push(`${variant} ${barangay}`);
             });
-
-            // Also try bare barangay + short suffixes
             labelVariants.forEach(variant => {
                 const short = variant.replace(/\s+\(.+\)/, '').split(' ')[0];
                 if (short && short.length > 1) {
@@ -517,7 +529,6 @@
                     candidates.push(`${barangay} ${short}`);
                 }
             });
-
             for (let key of candidates) {
                 if (economicData[key]) {
                     const hist = economicData[key].history || [];
@@ -539,7 +550,6 @@
             const hotel = getLatestValue("Hotel Arrivals");
             document.getElementById("card-hotels").textContent = hotel !== "--" ? Number(hotel).toLocaleString() : "--";
 
-            // Aggregate values dynamically across all barangay employment history rows
             let totalEmp = 0;
             let foundEmp = false;
             BARANGAY_NAMES.forEach(b => {
@@ -552,134 +562,221 @@
             document.getElementById("card-employment").textContent = foundEmp ? totalEmp.toLocaleString() : "--";
         }
 
-        function renderCharts() {
-            // --- 1. DYNAMIC RANK LINE CHART ---
+        function renderAllCharts() {
+            renderRankingChart();
+            renderEstablishmentsChart();
+            renderHotelArrivalsChart();
+            updateBarangayEconChart();
+        }
+
+        function makeGradient(ctx) {
+            const g = ctx.createLinearGradient(0, 0, 0, 350);
+            g.addColorStop(0, "#e1271a");
+            g.addColorStop(1, "#e1271a89");
+            return g;
+        }
+
+        function baseTooltip(callback) {
+            return Object.assign({
+                backgroundColor: "rgba(15, 23, 42, 0.95)",
+                padding: 10,
+                borderWidth: 1,
+                borderColor: "rgba(255, 255, 255, 0.15)"
+            }, callback ? { callbacks: { label: callback } } : {});
+        }
+
+        function baseLineOpts(extra) {
+            return Object.assign({
+                responsive: true,
+                maintainAspectRatio: false,
+                hover: { mode: 'nearest', intersect: true },
+                interaction: { mode: 'nearest', intersect: true },
+                animation: { duration: 200, easing: 'easeOutQuart' },
+                plugins: { legend: { display: false }, tooltip: baseTooltip() }
+            }, extra || {});
+        }
+
+        function renderRankingChart() {
             const rankObj = economicData["Competitiveness Rank"] || { labels: [], history: [] };
             const rankCoordinates = rankObj.history.map((val, i) => {
                 return (val !== null && val !== undefined) ? { x: String(rankObj.labels[i]), y: val } : null;
             }).filter(item => item !== null);
-
-            // Extract unique sorted years present in data to act as local grid lines
             const rankYears = [...new Set(rankCoordinates.map(c => c.x))].sort((a, b) => Number(a) - Number(b));
 
-            const ctxA = document.getElementById("rankingChart").getContext("2d");
-            rankingChartInstance = new Chart(ctxA, {
-                type: 'line',
-                data: {
-                    labels: rankYears,
-                    datasets: [{
-                        label: 'Competitiveness Rank',
-                        data: rankCoordinates,
-                        borderColor: '#ef4444',
-                        backgroundColor: 'rgba(239, 68, 68, 0.05)',
-                        borderWidth: 3.5,
-                        tension: 0.15,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            reverse: true,
-                            min: 1,
-                            max: 15,
-                            ticks: { stepSize: 2 },
-                            title: { display: true, text: 'Rank Rating Position' },
-                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
-                        },
-                        x: { grid: { display: false } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
+            if (rankingChartInstance) { rankingChartInstance.destroy(); rankingChartInstance = null; }
+            const ctx = document.getElementById("rankingChart").getContext("2d");
+            const gradient = makeGradient(ctx);
 
-            // --- 2a. CITY ESTABLISHMENTS TIMELINE ---
+            const yScale = { reverse: true, min: 1, max: 15, ticks: { stepSize: 2, color: "#000000b3" }, title: { display: true, text: 'Rank Rating Position' }, grid: { color: "rgba(255, 255, 255, 0.05)" } };
+            const xScale = { grid: { display: false }, ticks: { color: "#000000b3" } };
+
+            let config;
+
+            if (rankingChartType === "pie") {
+                const vals = rankYears.map(y => { const c = rankCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
+                config = {
+                    type: "pie",
+                    data: { labels: rankYears, datasets: [{ label: 'Competitiveness Rank', data: vals, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Rank: #${ctx.raw}`) } }
+                };
+            } else {
+                const vals = rankYears.map(y => { const c = rankCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
+                config = {
+                    type: rankingChartType,
+                    data: {
+                        labels: rankYears,
+                        datasets: [{
+                            label: 'Competitiveness Rank',
+                            data: rankingChartType === "line" ? rankCoordinates : vals,
+                            borderColor: "#d91406",
+                            borderWidth: rankingChartType === "line" ? 3 : undefined,
+                            pointBackgroundColor: "#e1271a",
+                            pointBorderColor: "#f8fafc",
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 9,
+                            pointHoverBackgroundColor: "#ff2a2a",
+                            pointHoverBorderColor: "#fff",
+                            pointHoverBorderWidth: 3,
+                            hoverBackgroundColor: "#e1271a52",
+                            hoverBorderColor: "#e1271a52",
+                            hoverBorderWidth: 4,
+                            backgroundColor: gradient,
+                            fill: rankingChartType === "line",
+                            tension: 0.15,
+                            borderRadius: rankingChartType === "bar" ? 6 : 0
+                        }]
+                    },
+                    options: baseLineOpts({
+                        scales: { y: yScale, x: xScale },
+                        plugins: { legend: { display: false }, tooltip: baseTooltip(ctx => ` Rank: #${ctx.raw}`) }
+                    })
+                };
+            }
+
+            rankingChartInstance = new Chart(ctx, config);
+        }
+
+        function renderEstablishmentsChart() {
             const estObj = economicData["Total Establishments"] || { labels: [], history: [] };
             const estCoordinates = estObj.history.map((val, i) => {
                 return (val !== null && val !== undefined) ? { x: String(estObj.labels[i]), y: val } : null;
             }).filter(item => item !== null);
-
             const estYears = [...new Set(estCoordinates.map(c => c.x))].sort((a, b) => Number(a) - Number(b));
-            const ctxEst = document.getElementById("establishmentsChart").getContext("2d");
-            establishmentsChartInstance = new Chart(ctxEst, {
-                type: 'bar',
-                data: {
-                    labels: estYears,
-                    datasets: [{
-                        label: 'Total Establishments',
-                        data: estCoordinates,
-                        backgroundColor: 'rgba(59, 130, 246, 0.9)',
-                        borderColor: '#3b82f6',
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, title: { display: true, text: 'Total Active Businesses' }, grid: { color: 'rgba(15, 23, 42, 0.04)' } },
-                        x: { grid: { display: false } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
 
-            // --- 2b. HOTEL ARRIVALS TIMELINE ---
+            if (establishmentsChartInstance) { establishmentsChartInstance.destroy(); establishmentsChartInstance = null; }
+            const ctx = document.getElementById("establishmentsChart").getContext("2d");
+            const gradient = makeGradient(ctx);
+
+            const yScale = { beginAtZero: true, title: { display: true, text: 'Total Active Businesses' }, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } };
+            const xScale = { grid: { display: false }, ticks: { color: "#000000b3" } };
+
+            let config;
+
+            if (establishmentsChartType === "pie") {
+                const vals = estYears.map(y => { const c = estCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
+                config = {
+                    type: "pie",
+                    data: { labels: estYears, datasets: [{ label: 'Total Establishments', data: vals, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Establishments: ${ctx.raw.toLocaleString()}`) } }
+                };
+            } else {
+                const vals = estYears.map(y => { const c = estCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
+                config = {
+                    type: establishmentsChartType,
+                    data: {
+                        labels: estYears,
+                        datasets: [{
+                            label: 'Total Establishments',
+                            data: establishmentsChartType === "line" ? estCoordinates : vals,
+                            borderColor: establishmentsChartType === "line" ? "#d91406" : undefined,
+                            borderWidth: establishmentsChartType === "line" ? 3 : undefined,
+                            pointBackgroundColor: "#e1271a",
+                            pointBorderColor: "#f8fafc",
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 9,
+                            pointHoverBackgroundColor: "#ff2a2a",
+                            pointHoverBorderColor: "#fff",
+                            pointHoverBorderWidth: 3,
+                            hoverBackgroundColor: "#e1271a52",
+                            hoverBorderColor: "#e1271a52",
+                            hoverBorderWidth: 4,
+                            backgroundColor: gradient,
+                            fill: establishmentsChartType === "line",
+                            tension: 0.2,
+                            borderRadius: establishmentsChartType === "bar" ? 6 : 0
+                        }]
+                    },
+                    options: baseLineOpts({
+                        scales: { y: yScale, x: xScale },
+                        plugins: { legend: { display: false }, tooltip: baseTooltip(ctx => ` Establishments: ${ctx.raw.toLocaleString()}`) }
+                    })
+                };
+            }
+
+            establishmentsChartInstance = new Chart(ctx, config);
+        }
+
+        function renderHotelArrivalsChart() {
             const hotelObj = economicData["Hotel Arrivals"] || { labels: [], history: [] };
             const hotelCoordinates = hotelObj.history.map((val, i) => {
                 return (val !== null && val !== undefined) ? { x: String(hotelObj.labels[i]), y: val } : null;
             }).filter(item => item !== null);
-
             const hotelYears = [...new Set(hotelCoordinates.map(c => c.x))].sort((a, b) => Number(a) - Number(b));
-            const ctxHotel = document.getElementById("hotelArrivalsChart").getContext("2d");
-            hotelArrivalsChartInstance = new Chart(ctxHotel, {
-                type: 'line',
-                data: {
-                    labels: hotelYears,
-                    datasets: [{
-                        label: 'Hotel Arrivals',
-                        data: hotelCoordinates,
-                        borderColor: '#ef4444',
-                        backgroundColor: 'rgba(239, 68, 68, 0.15)',
-                        borderWidth: 3,
-                        tension: 0.15,
-                        fill: true,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#ef4444'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, title: { display: true, text: 'Annual Hotel Arrivals' }, grid: { color: 'rgba(15, 23, 42, 0.04)' } },
-                        x: { grid: { display: false } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-            // --- 3. BARANGAY COMPARISON BASICS ---
-            const ctxC = document.getElementById("barangayEconChart").getContext("2d");
-            barangayEconChartInstance = new Chart(ctxC, {
-                type: 'bar',
-                data: {
-                    labels: BARANGAY_NAMES,
-                    datasets: [{ label: 'Data Loading', data: [] }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(15, 23, 42, 0.04)' } },
-                        x: { grid: { display: false } }
-                    }
-                }
-            });
 
-            updateBarangayEconChart();
+            if (hotelArrivalsChartInstance) { hotelArrivalsChartInstance.destroy(); hotelArrivalsChartInstance = null; }
+            const ctx = document.getElementById("hotelArrivalsChart").getContext("2d");
+            const gradient = makeGradient(ctx);
+
+            const yScale = { beginAtZero: true, title: { display: true, text: 'Annual Hotel Arrivals' }, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } };
+            const xScale = { grid: { display: false }, ticks: { color: "#000000b3" } };
+
+            let config;
+
+            if (hotelChartType === "pie") {
+                const vals = hotelYears.map(y => { const c = hotelCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
+                config = {
+                    type: "pie",
+                    data: { labels: hotelYears, datasets: [{ label: 'Hotel Arrivals', data: vals, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Arrivals: ${ctx.raw.toLocaleString()}`) } }
+                };
+            } else {
+                const vals = hotelYears.map(y => { const c = hotelCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
+                config = {
+                    type: hotelChartType,
+                    data: {
+                        labels: hotelYears,
+                        datasets: [{
+                            label: 'Hotel Arrivals',
+                            data: hotelChartType === "line" ? hotelCoordinates : vals,
+                            borderColor: hotelChartType === "line" ? "#d91406" : undefined,
+                            borderWidth: hotelChartType === "line" ? 3 : undefined,
+                            pointBackgroundColor: "#e1271a",
+                            pointBorderColor: "#f8fafc",
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 9,
+                            pointHoverBackgroundColor: "#ff2a2a",
+                            pointHoverBorderColor: "#fff",
+                            pointHoverBorderWidth: 3,
+                            hoverBackgroundColor: "#e1271a52",
+                            hoverBorderColor: "#e1271a52",
+                            hoverBorderWidth: 4,
+                            backgroundColor: gradient,
+                            fill: hotelChartType === "line",
+                            tension: 0.2,
+                            borderRadius: hotelChartType === "bar" ? 6 : 0
+                        }]
+                    },
+                    options: baseLineOpts({
+                        scales: { y: yScale, x: xScale },
+                        plugins: { legend: { display: false }, tooltip: baseTooltip(ctx => ` Arrivals: ${ctx.raw.toLocaleString()}`) }
+                    })
+                };
+            }
+
+            hotelArrivalsChartInstance = new Chart(ctx, config);
         }
 
         function initChartControls() {
@@ -701,21 +798,34 @@
             selectBrgy.addEventListener("change", updateBarangayEconChart);
         }
 
+        function initChartTypeControls() {
+            document.getElementById("rankingChartType").addEventListener("change", e => { rankingChartType = e.target.value; renderRankingChart(); });
+            document.getElementById("establishmentsChartType").addEventListener("change", e => { establishmentsChartType = e.target.value; renderEstablishmentsChart(); });
+            document.getElementById("hotelChartType").addEventListener("change", e => { hotelChartType = e.target.value; renderHotelArrivalsChart(); });
+            document.getElementById("barangayChartType").addEventListener("change", e => { barangayEconChartType = e.target.value; updateBarangayEconChart(); });
+        }
+
         function updateBarangayEconChart() {
             const mode = document.getElementById("barangay-view-mode").value;
             const selectedBrgy = document.getElementById("barangay-select").value;
+            const chartType = barangayEconChartType;
 
+            let config;
             let labels = BARANGAY_NAMES;
             let datasets = [];
             const options = {
                 responsive: true,
                 maintainAspectRatio: false,
+                hover: { mode: 'nearest', intersect: true },
+                interaction: { mode: 'nearest', intersect: true },
+                animation: { duration: 200, easing: 'easeOutQuart' },
                 scales: {
-                    y: { beginAtZero: true, grid: { color: 'rgba(15, 23, 42, 0.04)' } },
-                    x: { grid: { display: false }, stacked: false }
+                    y: { beginAtZero: true, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } },
+                    x: { grid: { display: false }, ticks: { color: "#000000b3" }, stacked: false }
                 },
                 plugins: {
-                    legend: { display: true, position: 'bottom' }
+                    legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } },
+                    tooltip: baseTooltip()
                 }
             };
 
@@ -725,17 +835,39 @@
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
 
-                datasets = [{
-                    label: 'Registered Businesses',
-                    data: counts,
-                    backgroundColor: 'rgba(239, 68, 68, 0.8)',
-                    borderColor: '#ef4444',
-                    borderWidth: 1,
-                    borderRadius: 4
-                }];
-                options.scales.x.stacked = false;
-                options.scales.y.stacked = false;
-                options.plugins.legend.display = false;
+                if (chartType === "pie") {
+                    config = {
+                        type: "pie",
+                        data: { labels: BARANGAY_NAMES, datasets: [{ label: 'Registered Businesses', data: counts, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                        options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Businesses: ${ctx.raw.toLocaleString()}`) } }
+                    };
+                } else {
+                    datasets = [{
+                        label: 'Registered Businesses',
+                        data: counts,
+                        backgroundColor: makeGradient(document.getElementById("barangayEconChart").getContext("2d")),
+                        hoverBackgroundColor: "#e1271a52",
+                        hoverBorderColor: "#e1271a52",
+                        hoverBorderWidth: 4,
+                        borderColor: chartType === "line" ? "#d91406" : undefined,
+                        borderWidth: chartType === "line" ? 3 : undefined,
+                        pointBackgroundColor: "#e1271a",
+                        pointBorderColor: "#f8fafc",
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 9,
+                        pointHoverBackgroundColor: "#ff2a2a",
+                        pointHoverBorderColor: "#fff",
+                        pointHoverBorderWidth: 3,
+                        fill: chartType === "line",
+                        tension: 0.2,
+                        borderRadius: chartType === "bar" ? 6 : 0
+                    }];
+                    options.scales.x.stacked = false;
+                    options.scales.y.stacked = false;
+                    options.plugins.legend.display = false;
+                    options.plugins.tooltip = baseTooltip(ctx => ` Businesses: ${ctx.raw.toLocaleString()}`);
+                }
 
             } else if (mode === "compare-employment") {
                 let microArr = BARANGAY_NAMES.map(b => {
@@ -790,22 +922,25 @@
                     }
                 }
 
-                console.info('employment arrays', { microArr, smallArr, mediumArr, largeArr, totalArr, estMicroArr, estSmallArr, estMediumArr, estLargeArr });
-
-                datasets = [
-                    { label: 'Micro Employment', data: microArr, backgroundColor: '#d97706', borderWidth: 1, borderRadius: 4, barThickness: 24, maxBarThickness: 40 },
-                    { label: 'Small Employment', data: smallArr, backgroundColor: '#eab308', borderWidth: 1, borderRadius: 4, barThickness: 24, maxBarThickness: 40 },
-                    { label: 'Medium Employment', data: mediumArr, backgroundColor: '#10b981', borderWidth: 1, borderRadius: 4, barThickness: 24, maxBarThickness: 40 },
-                    { label: 'Large Employment', data: largeArr, backgroundColor: '#ef4444', borderWidth: 1, borderRadius: 4, barThickness: 24, maxBarThickness: 40 }
-                ];
-                options.scales.x.stacked = true;
-                options.scales.y.stacked = true;
-                options.plugins.legend.display = true;
-                options.plugins.legend.position = 'bottom';
-                options.scales.x.stacked = true;
-                options.scales.y.stacked = true;
-                options.plugins.legend.display = true;
-                options.plugins.legend.position = 'bottom';
+                if (chartType === "pie") {
+                    const totals = BARANGAY_NAMES.map((_, i) => microArr[i] + smallArr[i] + mediumArr[i] + largeArr[i]);
+                    config = {
+                        type: "pie",
+                        data: { labels: BARANGAY_NAMES, datasets: [{ label: 'Total Employment', data: totals, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                        options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Employment: ${ctx.raw.toLocaleString()}`) } }
+                    };
+                } else {
+                    datasets = [
+                        { label: 'Micro Employment', data: microArr, backgroundColor: '#d97706', hoverBackgroundColor: '#d97706', borderWidth: 1, borderRadius: chartType === "bar" ? 4 : 0, barThickness: chartType === "bar" ? 24 : undefined, maxBarThickness: chartType === "bar" ? 40 : undefined },
+                        { label: 'Small Employment', data: smallArr, backgroundColor: '#eab308', hoverBackgroundColor: '#eab308', borderWidth: 1, borderRadius: chartType === "bar" ? 4 : 0, barThickness: chartType === "bar" ? 24 : undefined, maxBarThickness: chartType === "bar" ? 40 : undefined },
+                        { label: 'Medium Employment', data: mediumArr, backgroundColor: '#10b981', hoverBackgroundColor: '#10b981', borderWidth: 1, borderRadius: chartType === "bar" ? 4 : 0, barThickness: chartType === "bar" ? 24 : undefined, maxBarThickness: chartType === "bar" ? 40 : undefined },
+                        { label: 'Large Employment', data: largeArr, backgroundColor: '#ef4444', hoverBackgroundColor: '#ef4444', borderWidth: 1, borderRadius: chartType === "bar" ? 4 : 0, barThickness: chartType === "bar" ? 24 : undefined, maxBarThickness: chartType === "bar" ? 40 : undefined }
+                    ];
+                    options.scales.x.stacked = true;
+                    options.scales.y.stacked = true;
+                    options.plugins.legend.display = true;
+                    options.plugins.legend.position = 'bottom';
+                }
 
             } else {
                 let micro = 0, small = 0, medium = 0, large = 0;
@@ -813,13 +948,13 @@
 
                 if (economicData[regBizKey]) {
                     const bizData = economicData[regBizKey];
-                    const labels = bizData.labels || [];
+                    const bLabels = bizData.labels || [];
                     const history = bizData.history || [];
 
-                    const microIdx = labels.indexOf("Micro");
-                    const smallIdx = labels.indexOf("Small");
-                    const mediumIdx = labels.indexOf("Medium");
-                    const largeIdx = labels.indexOf("Large");
+                    const microIdx = bLabels.indexOf("Micro");
+                    const smallIdx = bLabels.indexOf("Small");
+                    const mediumIdx = bLabels.indexOf("Medium");
+                    const largeIdx = bLabels.indexOf("Large");
 
                     if (microIdx !== -1) micro = parseFloat(history[microIdx]) || 0;
                     if (smallIdx !== -1) small = parseFloat(history[smallIdx]) || 0;
@@ -835,40 +970,62 @@
                 const totalCalculated = micro + small + medium + large;
                 const getPct = (val) => totalCalculated === 0 ? '0%' : ((val / totalCalculated) * 100).toFixed(1) + '%';
 
-                labels = [`${selectedBrgy} Enterprise Profile`];
-                datasets = [
-                    { label: `Micro (≤ 3M) · ${getPct(micro)}`, data: [micro], backgroundColor: '#d97706', borderWidth: 1, borderRadius: 4 },
-                    { label: `Small (3.1M - 15M) · ${getPct(small)}`, data: [small], backgroundColor: '#eab308', borderWidth: 1, borderRadius: 4 },
-                    { label: `Medium (15.1M - 100M) · ${getPct(medium)}`, data: [medium], backgroundColor: '#10b981', borderWidth: 1, borderRadius: 4 },
-                    { label: `Large (≥ 100.1M) · ${getPct(large)}`, data: [large], backgroundColor: '#ef4444', borderWidth: 1, borderRadius: 4 }
-                ];
+                const catLabels = ['Micro (≤ 3M)', 'Small (3.1M - 15M)', 'Medium (15.1M - 100M)', 'Large (≥ 100.1M)'];
+                const catValues = [micro, small, medium, large];
+                const catColors = ['#d97706', '#eab308', '#10b981', '#ef4444'];
+                const catHoverColors = ['#b45309', '#ca8a04', '#059669', '#dc2626'];
 
-                options.scales.x.stacked = true;
-                options.scales.y.stacked = true;
-                options.plugins.legend.display = true;
-                options.plugins.legend.position = 'bottom';
-                options.plugins.tooltip = {
-                    callbacks: {
-                        label: function (context) {
-                            const val = context.raw || 0;
-                            return ` Count: ${val.toLocaleString()} (${getPct(val)})`;
+                if (chartType === "pie") {
+                    config = {
+                        type: "pie",
+                        data: {
+                            labels: catLabels.map((l, i) => `${l} · ${getPct(catValues[i])}`),
+                            datasets: [{ label: `${selectedBrgy} Enterprise Profile`, data: catValues, backgroundColor: catColors, hoverBackgroundColor: catHoverColors, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }]
+                        },
+                        options: {
+                            responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true },
+                            plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => { const val = ctx.raw || 0; return ` Count: ${val.toLocaleString()} (${getPct(val)})`; }) }
                         }
-                    }
-                };
+                    };
+                } else {
+                    labels = [`${selectedBrgy} Enterprise Profile`];
+                    datasets = [
+                        { label: `Micro (≤ 3M) · ${getPct(micro)}`, data: [micro], backgroundColor: '#d97706', hoverBackgroundColor: '#d97706', borderWidth: 1, borderRadius: 4 },
+                        { label: `Small (3.1M - 15M) · ${getPct(small)}`, data: [small], backgroundColor: '#eab308', hoverBackgroundColor: '#eab308', borderWidth: 1, borderRadius: 4 },
+                        { label: `Medium (15.1M - 100M) · ${getPct(medium)}`, data: [medium], backgroundColor: '#10b981', hoverBackgroundColor: '#10b981', borderWidth: 1, borderRadius: 4 },
+                        { label: `Large (≥ 100.1M) · ${getPct(large)}`, data: [large], backgroundColor: '#ef4444', hoverBackgroundColor: '#ef4444', borderWidth: 1, borderRadius: 4 }
+                    ];
+                    options.scales.x.stacked = true;
+                    options.scales.y.stacked = true;
+                    options.plugins.legend.display = true;
+                    options.plugins.legend.position = 'bottom';
+                    options.plugins.tooltip = {
+                        backgroundColor: "rgba(15, 23, 42, 0.95)",
+                        padding: 10,
+                        borderWidth: 1,
+                        borderColor: "rgba(255, 255, 255, 0.15)",
+                        callbacks: {
+                            label: function (context) {
+                                const val = context.raw || 0;
+                                return ` Count: ${val.toLocaleString()} (${getPct(val)})`;
+                            }
+                        }
+                    };
+                }
             }
 
-            if (barangayEconChartInstance) {
-                barangayEconChartInstance.destroy();
-            }
+            if (barangayEconChartInstance) { barangayEconChartInstance.destroy(); }
             const ctxC = document.getElementById("barangayEconChart").getContext("2d");
-            barangayEconChartInstance = new Chart(ctxC, {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets
-                },
-                options
-            });
+
+            if (typeof config !== 'undefined') {
+                barangayEconChartInstance = new Chart(ctxC, config);
+            } else {
+                barangayEconChartInstance = new Chart(ctxC, {
+                    type: chartType === "pie" ? "pie" : chartType,
+                    data: { labels, datasets },
+                    options
+                });
+            }
         }
 
     </script>
