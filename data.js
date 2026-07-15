@@ -32,14 +32,13 @@ async function initData() {
             const { data: brgyData } = await supabaseClient
                 .from('barangays')
                 .select('barangay_id, barangay_name');
-
             const idToName = {};
             if (brgyData) brgyData.forEach(b => { idToName[b.barangay_id] = b.barangay_name; });
 
             const { data, error } = await supabaseClient
                 .from('data_values')
                 .select('value, year, barangay_id')
-                .eq('category', 'Total Population')
+                .eq('indicator_id', 2)
                 .not('value', 'is', null)
                 .order('year', { ascending: true });
             if (error) throw error;
