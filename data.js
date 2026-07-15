@@ -1,14 +1,3 @@
-const DEFAULT_DEMOGRAPHIC_DATA = {
-    "Buli": { "history": [63793, 71075, 69215] },
-    "Sucat": { "history": [42500, 44100, 46200] },
-    "Cupang": { "history": [49000, 51200, 53500] },
-    "Alabang": { "history": [57000, 60100, 63000] },
-    "Bayanan": { "history": [33000, 34500, 36000] },
-    "Putatan": { "history": [75000, 78800, 82500] },
-    "Tunasan": { "history": [50000, 52500, 55000] },
-    "Poblacion": { "history": [98000, 102500, 107000] },
-    "Ayala Alabang": { "history": [19500, 20500, 21400] }
-};
 
 const BARANGAY_COLORS = {
     "Sucat": "#e1271a", "Buli": "#f97316", "Cupang": "#eab308",
@@ -16,7 +5,6 @@ const BARANGAY_COLORS = {
     "Putatan": "#8b5cf6", "Poblacion": "#d946ef", "Tunasan": "#ec4899"
 };
 
-const STORAGE_KEY = "muntinlupa_demographics_data";
 let HISTORICAL_LABELS = ["2015", "2020", "2024"];
 const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
@@ -41,40 +29,42 @@ function showLoading(show) {
 async function initData() {
     if (supabaseClient) {
         try {
+            const { data: brgyData } = await supabaseClient
+                .from('barangays')
+                .select('barangay_id, barangay_name');
+
+            const idToName = {};
+            if (brgyData) brgyData.forEach(b => { idToName[b.barangay_id] = b.barangay_name; });
+
             const { data, error } = await supabaseClient
-                .from('barangay_population')
-                .select('*')
+                .from('data_values')
+                .select('value, year, barangay_id')
+                .eq('category', 'Total Population')
+                .not('value', 'is', null)
                 .order('year', { ascending: true });
             if (error) throw error;
-            if (data && data.length > 0) {
-                const years = [...new Set(data.map(r => r.year))].sort();
+
+            const validYears = [2015, 2020, 2024];
+            const filtered = (data || []).filter(r => validYears.includes(r.year));
+            if (filtered.length > 0) {
+                const years = [...new Set(filtered.map(r => r.year))].sort();
                 HISTORICAL_LABELS = years.map(String);
                 appData = {};
-                data.forEach(row => {
-                    if (!appData[row.barangay_name]) {
-                        appData[row.barangay_name] = { history: new Array(years.length).fill(0) };
+                filtered.forEach(row => {
+                    const name = idToName[row.barangay_id];
+                    if (!name) return;
+                    if (!appData[name]) {
+                        appData[name] = { history: new Array(years.length).fill(0) };
                     }
-                    appData[row.barangay_name].history[years.indexOf(row.year)] = row.population || 0;
+                    appData[name].history[years.indexOf(row.year)] = row.value;
                 });
-            } else {
-                await restoreDefaultData();
             }
         } catch (e) {
-            console.error("Error loading from Supabase. Falling back to LocalStorage.", e);
-            loadFromLocalStorageFallback();
+            console.error("Error loading from Supabase.", e);
         }
-    } else {
-        loadFromLocalStorageFallback();
     }
 }
 
-function loadFromLocalStorageFallback() {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-        try { appData = JSON.parse(stored).data || JSON.parse(stored); }
-        catch (e) { restoreDefaultDataSync(); }
-    } else { restoreDefaultDataSync(); }
-}
 
 function populateYearSelect() {
     const sel = document.getElementById("year-select");
@@ -88,42 +78,6 @@ function populateYearSelect() {
         selectedYear = HISTORICAL_LABELS[HISTORICAL_LABELS.length - 1] || "2024";
     }
     sel.value = selectedYear;
-}
-
-async function restoreDefaultData() {
-    appData = JSON.parse(JSON.stringify(DEFAULT_DEMOGRAPHIC_DATA));
-    HISTORICAL_LABELS = ["2015", "2020", "2024"];
-    await saveData();
-}
-
-function restoreDefaultDataSync() {
-    appData = JSON.parse(JSON.stringify(DEFAULT_DEMOGRAPHIC_DATA));
-    HISTORICAL_LABELS = ["2015", "2020", "2024"];
-    populateYearSelect();
-    saveDataSync();
-}
-
-async function saveData() {
-    if (supabaseClient) {
-        try {
-            const rows = [];
-            Object.keys(appData).forEach(name => {
-                HISTORICAL_LABELS.forEach((year, idx) => {
-                    rows.push({ barangay_name: name, year: parseInt(year), population: (appData[name].history[idx] || 0) });
-                });
-            });
-            if (rows.length > 0) {
-                const { error } = await supabaseClient
-                    .from('barangay_population')
-                    .upsert(rows, { onConflict: 'barangay_name,year' });
-                if (error) throw error;
-            }
-        } catch (e) { saveDataSync(); }
-    } else { saveDataSync(); }
-}
-
-function saveDataSync() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: appData }));
 }
 
 function getYearIndex(year) {
@@ -146,4 +100,39 @@ function getCityWideStats() {
         }
     }
     return { total: history[getYearIndex(selectedYear)] || 0, history };
+}
+
+let dataValuesCache = [];
+
+async function fetchDataValues() {
+    if (!supabaseClient) return [];
+    try {
+        const { data, error } = await supabaseClient
+            .from("data_values")
+            .select("data_id, value, year, category, subcategory, indicator_id, barangay_id, indicators(indicator_name, unit, sectors(sector_name)), barangays(barangay_name)")
+            .eq("category", "Total Population")
+            .order("year", { ascending: true });
+        if (error) throw error;
+        dataValuesCache = data || [];
+        return dataValuesCache;
+    } catch (e) {
+        console.error("Error fetching data_values:", e);
+        dataValuesCache = [];
+        return [];
+    }
+}
+
+function getDataValuesFiltered(barangayName, year) {
+    return dataValuesCache.filter(row => {
+        const matchBarangay = !barangayName || (row.barangays && row.barangays.barangay_name === barangayName);
+        const matchYear = !year || row.year === parseInt(year);
+        return matchBarangay && matchYear;
+    });
+}
+
+function getDataValuesCityWide(year) {
+    return dataValuesCache.filter(row => {
+        const matchYear = !year || row.year === parseInt(year);
+        return matchYear;
+    });
 }
