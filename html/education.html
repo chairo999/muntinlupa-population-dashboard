@@ -7,7 +7,7 @@
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome for Premium Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js CDN -->
@@ -96,12 +96,6 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
         }
 
-        .stat-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(239, 68, 68, 0.2);
-            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.08);
-        }
-
         .stat-icon-wrapper.edu-icon-red {
             width: 54px;
             height: 54px;
@@ -110,8 +104,8 @@
             align-items: center;
             justify-content: center;
             font-size: 1.4rem;
-            background: rgba(239, 68, 68, 0.08);
-            color: #ef4444;
+            background: #e1271a;
+            color: white;
         }
 
         /* Database Status Overlay */
@@ -148,20 +142,6 @@
             box-shadow: 0 0 6px #f59e0b;
         }
 
-        .admin-link-btn {
-            color: #ef4444;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: var(--transition-smooth);
-        }
-
-        .admin-link-btn:hover {
-            color: #dc2626;
-            text-decoration: underline;
-        }
-
         /* Interactive controls for charts */
         .chart-controls {
             display: flex;
@@ -175,7 +155,7 @@
             border: 1px solid rgba(15, 23, 42, 0.1);
             border-radius: 0.375rem;
             padding: 5px 10px;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
@@ -183,8 +163,25 @@
             transition: var(--transition-smooth);
         }
 
-        .chart-select:focus {
-            border-color: #ef4444;
+        .chart-select:focus,
+        .chart-select:active,
+        .chart-select:hover {
+            background-color: #f1f5f9 !important;
+            border-color: rgba(15, 23, 42, 0.1);
+            color: var(--text-primary);
+        }
+
+        .chart-type-select {
+            background-color: #e1271a;
+            color: #f8fafc;
+            border-radius: 0.375rem;
+            padding: 5px 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+            border: none;
         }
 
         /* Daycare details spotlight panel */
@@ -295,9 +292,6 @@
                 <div id="db-dot" class="db-dot"></div>
                 <span id="db-status-txt">Connected to live Supabase DB</span>
             </div>
-            <a href="admin_edit.html" class="admin-link-btn">
-                <i class="fa-solid fa-screwdriver-wrench"></i> Manage Education Records in Admin
-            </a>
         </div>
 
         <!-- Main Stats Summary Banner -->
@@ -352,7 +346,11 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-chart-line"></i> Historical Functional Literacy Rate</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Census data: 2007-2024</div>
+                        <select id="literacyChartType" class="chart-type-select">
+                            <option value="line">Line Graph</option>
+                            <option value="bar">Bar Graph</option>
+                            <option value="pie">Pie Graph</option>
+                        </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="literacyChart"></canvas>
@@ -363,7 +361,11 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-chart-bar"></i> Enrollment by Education Level (SY 2025)</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Public vs Private School distribution</div>
+                        <select id="enrollmentChartType" class="chart-type-select">
+                            <option value="bar">Bar Graph</option>
+                            <option value="line">Line Graph</option>
+                            <option value="pie">Pie Graph</option>
+                        </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="enrollmentChart"></canvas>
@@ -378,7 +380,11 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-building-columns"></i> Colegio de Muntinlupa (CDM) Enrollment</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Engineering & Architecture program size</div>
+                        <select id="cdmChartType" class="chart-type-select">
+                            <option value="bar">Bar Graph</option>
+                            <option value="line">Line Graph</option>
+                            <option value="pie">Pie Graph</option>
+                        </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="cdmChart"></canvas>
@@ -393,6 +399,11 @@
                             <label for="daycare-brgy-select" style="font-size: 0.8rem; font-weight:700; color:var(--text-secondary)">Barangay:</label>
                             <select id="daycare-brgy-select" class="chart-select">
                                 <!-- Loaded dynamically -->
+                            </select>
+                            <select id="daycareChartType" class="chart-type-select">
+                                <option value="bar">Bar Graph</option>
+                                <option value="line">Line Graph</option>
+                                <option value="pie">Pie Graph</option>
                             </select>
                         </div>
                     </div>
@@ -434,7 +445,11 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-graduation-cap"></i> PLMUN Enrollment by College Program</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">AY 2022-2023 male/female enrolled counts</div>
+                        <select id="plmunChartType" class="chart-type-select">
+                            <option value="bar">Bar Graph</option>
+                            <option value="line">Line Graph</option>
+                            <option value="pie">Pie Graph</option>
+                        </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="plmunChart"></canvas>
@@ -443,7 +458,11 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-tools"></i> TESDA MCTI Training Trainees</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">2025 trainees by course and sex</div>
+                        <select id="tesdaChartType" class="chart-type-select">
+                            <option value="bar">Bar Graph</option>
+                            <option value="line">Line Graph</option>
+                            <option value="pie">Pie Graph</option>
+                        </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="tesdaChart"></canvas>
@@ -469,6 +488,36 @@
 
         const EDUCATION_LABELS = ["2007", "2010", "2015", "2020", "2024", "2025"];
         const BARANGAY_NAMES = ["Alabang", "Ayala Alabang", "Bayanan", "Buli", "Cupang", "Poblacion", "Putatan", "Sucat", "Tunasan"];
+
+        const PIE_COLORS = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548"];
+        const PIE_HOVER_COLORS = ["#ff2a2a", "#ff6666", "#ffb347", "#4caf50", "#42a5f5", "#ab47bc", "#26c6da", "#ff7043", "#8d6e63"];
+
+        function makeGradient(ctx) {
+            const g = ctx.createLinearGradient(0, 0, 0, 350);
+            g.addColorStop(0, "#e1271a");
+            g.addColorStop(1, "#e1271a89");
+            return g;
+        }
+
+        function baseTooltip(callback) {
+            return Object.assign({
+                backgroundColor: "rgba(15, 23, 42, 0.95)",
+                padding: 10,
+                borderWidth: 1,
+                borderColor: "rgba(255, 255, 255, 0.15)"
+            }, callback ? { callbacks: { label: callback } } : {});
+        }
+
+        function baseLineOpts(extra) {
+            return Object.assign({
+                responsive: true,
+                maintainAspectRatio: false,
+                hover: { mode: 'nearest', intersect: true },
+                interaction: { mode: 'nearest', intersect: true },
+                animation: { duration: 200, easing: 'easeOutQuart' },
+                plugins: { legend: { display: false }, tooltip: baseTooltip() }
+            }, extra || {});
+        }
 
         // Static default values
         const DEFAULT_EDU_DATA = {
@@ -506,7 +555,6 @@
             "CDM - BS Mechanical Engineering": { history: [null, null, null, null, null, 344] }
         };
 
-        // Static Day Care age groups sex split data (for dynamic widget computations)
         const daycareDetailsRaw = {
             "Alabang": { age2: [31, 37], age3: [80, 88], age4: [269, 272] },
             "Ayala Alabang": { age2: [14, 13], age3: [12, 20], age4: [25, 34] },
@@ -523,7 +571,6 @@
         let eduLabels = [];
         let supabaseClient = null;
 
-        // Chart instances
         let literacyChartInst = null;
         let enrollmentChartInst = null;
         let cdmChartInst = null;
@@ -531,21 +578,30 @@
         let plmunChartInst = null;
         let tesdaChartInst = null;
 
-        // Initialize Supabase safely
+        let literacyChartType = 'line';
+        let enrollmentChartType = 'bar';
+        let cdmChartType = 'bar';
+        let daycareChartType = 'bar';
+        let plmunChartType = 'bar';
+        let tesdaChartType = 'bar';
+
         if (typeof supabase !== 'undefined') {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         }
 
-        // Initialize Page
         document.addEventListener("DOMContentLoaded", async () => {
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.font.family = 'Montserrat, sans-serif';
+            Chart.defaults.font.size = 11;
+            Chart.defaults.font.weight = '700';
+
             initSidebar();
+            initChartTypeControls();
             await fetchEducationData();
             renderStatsBanner();
-            renderCharts();
-            initDaycareWidget();
+            renderAllCharts();
         });
 
-        // Sidebar Navigation
         function initSidebar() {
             const hamburgerBtn = document.getElementById("hamburger-btn");
             const sidebar = document.getElementById("sector-sidebar");
@@ -572,7 +628,15 @@
             }
         }
 
-        // Fetch Live Database or Local Storage Fallback
+        function initChartTypeControls() {
+            document.getElementById("literacyChartType").addEventListener("change", e => { literacyChartType = e.target.value; renderLiteracyChart(); });
+            document.getElementById("enrollmentChartType").addEventListener("change", e => { enrollmentChartType = e.target.value; renderEnrollmentChart(); });
+            document.getElementById("cdmChartType").addEventListener("change", e => { cdmChartType = e.target.value; renderCDMChart(); });
+            document.getElementById("daycareChartType").addEventListener("change", e => { daycareChartType = e.target.value; updateDaycareWidget(); });
+            document.getElementById("plmunChartType").addEventListener("change", e => { plmunChartType = e.target.value; renderPLMUNChart(); });
+            document.getElementById("tesdaChartType").addEventListener("change", e => { tesdaChartType = e.target.value; renderTESDAChart(); });
+        }
+
         async function fetchEducationData() {
             const statusTxt = document.getElementById("db-status-txt");
             const statusDot = document.getElementById("db-dot");
@@ -587,7 +651,6 @@
 
                     if (error) {
                         if (error.code === 'PGRST116') {
-                            console.log("Education table empty in Supabase. Seeding default data.");
                             await supabaseClient.from('education').insert({ id: 1, data: DEFAULT_EDU_DATA, labels: EDUCATION_LABELS });
                             eduData = DEFAULT_EDU_DATA;
                             eduLabels = EDUCATION_LABELS;
@@ -602,11 +665,9 @@
                     statusTxt.textContent = "Live Supabase Database Connected";
                     statusDot.className = "db-dot";
                 } catch (e) {
-                    console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
                     loadOfflineFallback();
                 }
             } else {
-                console.warn("Supabase library not loaded. Loading from LocalStorage fallback.");
                 loadOfflineFallback();
             }
         }
@@ -625,7 +686,6 @@
                     eduData = parsed.data || DEFAULT_EDU_DATA;
                     eduLabels = parsed.labels || EDUCATION_LABELS;
                 } catch (e) {
-                    console.error("Error parsing localstorage data.", e);
                     eduData = DEFAULT_EDU_DATA;
                     eduLabels = EDUCATION_LABELS;
                 }
@@ -636,25 +696,20 @@
             }
         }
 
-        // Helper to grab value safely for a key and yearIndex
         function getValue(key, yearIdx = 5) {
             const history = eduData[key]?.history || [];
             return history[yearIdx] !== undefined && history[yearIdx] !== null ? history[yearIdx] : 0;
         }
 
-        // Populate Scoreboard counts
         function renderStatsBanner() {
-            // Literacy
-            const litVal = eduData["Literacy Rate"]?.history[4] || 93.10; // idx 4 corresponds to 2024
+            const litVal = eduData["Literacy Rate"]?.history[4] || 93.10;
             document.getElementById("card-literacy").textContent = `${litVal}%`;
 
-            // Schools
             const pubSchools = getValue("Public Schools Count");
             const privSchools = getValue("Private Schools Count");
             document.getElementById("card-schools").textContent = (pubSchools + privSchools).toString();
             document.getElementById("card-schools-split").textContent = `${pubSchools} Public, ${privSchools} Private`;
 
-            // Total K-12 Enrollment
             let totEnroll = 0;
             const levels = ["Kinder", "Elementary", "Junior High", "Senior High"];
             levels.forEach(lvl => {
@@ -662,7 +717,6 @@
             });
             document.getElementById("card-enrollment").textContent = totEnroll.toLocaleString();
 
-            // CDM College Enrollment
             let cdmTot = 0;
             const courses = ["BS Architecture", "BS Civil Engineering", "BS Computer Engineering", "BS Electronics Engineering", "BS Electrical Engineering", "BS Environmental Engineering", "BS Industrial Engineering", "BS Mechanical Engineering"];
             courses.forEach(c => {
@@ -671,163 +725,290 @@
             document.getElementById("card-cdm").textContent = cdmTot.toLocaleString();
         }
 
-        // Render Page Charts
-        function renderCharts() {
-            // Chart 1: Literacy Rate (2007-2024)
-            const ctxA = document.getElementById("literacyChart").getContext("2d");
-            literacyChartInst = new Chart(ctxA, {
-                type: 'line',
-                data: {
-                    labels: eduLabels.slice(0, 5), // 2007 to 2024
-                    datasets: [{
-                        label: 'Functional Literacy Rate (%)',
-                        data: eduLabels.slice(0, 5).map((l, i) => eduData["Literacy Rate"]?.history[i]),
-                        borderColor: '#ef4444', // Touch of red
-                        backgroundColor: 'rgba(239, 68, 68, 0.05)',
-                        borderWidth: 3.5,
-                        tension: 0.15,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            min: 75,
-                            max: 100,
-                            title: { display: true, text: 'Percentage (%)', font: { family: 'Outfit', weight: 'bold' } },
-                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
-                        },
-                        x: { grid: { display: false } }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-
-            // Chart 2: Public vs Private Enrollment by Level
-            const levels = ["Kinder", "Elementary", "Junior High", "Senior High"];
-            const publicData = levels.map(lvl => getValue(`Public Enrollment - ${lvl}`));
-            const privateData = levels.map(lvl => getValue(`Private Enrollment - ${lvl}`));
-
-            const ctxB = document.getElementById("enrollmentChart").getContext("2d");
-            enrollmentChartInst = new Chart(ctxB, {
-                type: 'bar',
-                data: {
-                    labels: ['Kindergarten', 'Elementary', 'Junior High', 'Senior High'],
-                    datasets: [
-                        {
-                            label: 'Public School',
-                            data: publicData,
-                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                            borderColor: '#3b82f6',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        },
-                        {
-                            label: 'Private School',
-                            data: privateData,
-                            backgroundColor: 'rgba(245, 158, 11, 0.8)',
-                            borderColor: '#f59e0b',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { grid: { display: false } },
-                        y: { grid: { color: 'rgba(15, 23, 42, 0.04)' } }
-                    },
-                    plugins: {
-                        legend: { position: 'bottom', labels: { font: { family: 'Outfit', weight: '500' } } }
-                    }
-                }
-            });
-
-            // Chart 3: CDM Courses Program size
-            const courses = ["BS Architecture", "BS Civil Engineering", "BS Computer Engineering", "BS Electronics Engineering", "BS Electrical Engineering", "BS Environmental Engineering", "BS Industrial Engineering", "BS Mechanical Engineering"];
-            const cdmCounts = courses.map(c => getValue(`CDM - ${c}`));
-
-            const ctxC = document.getElementById("cdmChart").getContext("2d");
-            cdmChartInst = new Chart(ctxC, {
-                type: 'bar',
-                data: {
-                    labels: ['Architecture', 'Civil Eng', 'Computer Eng', 'Electronics Eng', 'Electrical Eng', 'Environmental Eng', 'Industrial Eng', 'Mechanical Eng'],
-                    datasets: [{
-                        data: cdmCounts,
-                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                        borderColor: '#3b82f6',
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    indexAxis: 'y', // Horizontal bars
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        x: { grid: { color: 'rgba(15, 23, 42, 0.04)' } },
-                        y: { grid: { display: false } }
-                    }
-                }
-            });
-
-            renderAdditionalEducationCharts();
+        function renderAllCharts() {
+            renderLiteracyChart();
+            renderEnrollmentChart();
+            renderCDMChart();
+            renderPLMUNChart();
+            renderTESDAChart();
+            initDaycareWidget();
         }
 
-        function renderAdditionalEducationCharts() {
-            const plmunPrograms = [
-                'AB Com', 'AB PolSci', 'BS Psy', 'BSA', 'BSBA', 'BS Crim', 'ACT', 'BSCS', 'BSIT', 'BEED', 'BSE'
-            ];
+        function renderLiteracyChart() {
+            if (literacyChartInst) { literacyChartInst.destroy(); literacyChartInst = null; }
+            const labels = eduLabels.slice(0, 5);
+            const data = labels.map((l, i) => eduData["Literacy Rate"]?.history[i]);
+            const ctx = document.getElementById("literacyChart").getContext("2d");
+            const gradient = makeGradient(ctx);
+
+            let config;
+
+            if (literacyChartType === "pie") {
+                config = {
+                    type: "pie",
+                    data: { labels, datasets: [{ label: 'Functional Literacy Rate (%)', data, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.raw}%`) } }
+                };
+            } else {
+                config = {
+                    type: literacyChartType,
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: 'Functional Literacy Rate (%)',
+                            data,
+                            borderColor: literacyChartType === "line" ? "#d91406" : undefined,
+                            borderWidth: literacyChartType === "line" ? 3 : undefined,
+                            pointBackgroundColor: "#e1271a",
+                            pointBorderColor: "#f8fafc",
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 9,
+                            pointHoverBackgroundColor: "#ff2a2a",
+                            pointHoverBorderColor: "#fff",
+                            pointHoverBorderWidth: 3,
+                            hoverBackgroundColor: "#e1271a52",
+                            hoverBorderColor: "#e1271a52",
+                            hoverBorderWidth: 4,
+                            backgroundColor: gradient,
+                            fill: literacyChartType === "line",
+                            tension: 0.15,
+                            borderRadius: literacyChartType === "bar" ? 6 : 0
+                        }]
+                    },
+                    options: baseLineOpts({
+                        scales: {
+                            y: { min: 75, max: 100, title: { display: true, text: 'Percentage (%)' }, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } },
+                            x: { grid: { display: false }, ticks: { color: "#000000b3" } }
+                        },
+                        plugins: { legend: { display: false }, tooltip: baseTooltip(ctx => ` ${ctx.raw}%`) }
+                    })
+                };
+            }
+
+            literacyChartInst = new Chart(ctx, config);
+        }
+
+        function renderEnrollmentChart() {
+            if (enrollmentChartInst) { enrollmentChartInst.destroy(); enrollmentChartInst = null; }
+            const levels = ["Kinder", "Elementary", "Junior High", "Senior High"];
+            const labels = ['Kindergarten', 'Elementary', 'Junior High', 'Senior High'];
+            const publicData = levels.map(lvl => getValue(`Public Enrollment - ${lvl}`));
+            const privateData = levels.map(lvl => getValue(`Private Enrollment - ${lvl}`));
+            const ctx = document.getElementById("enrollmentChart").getContext("2d");
+            const gradient = makeGradient(ctx);
+
+            let config;
+
+            if (enrollmentChartType === "pie") {
+                const merged = labels.map((l, i) => publicData[i] + privateData[i]);
+                config = {
+                    type: "pie",
+                    data: { labels, datasets: [{ label: 'Total Enrollment', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Enrollment: ${ctx.raw.toLocaleString()}`) } }
+                };
+            } else {
+                config = {
+                    type: enrollmentChartType,
+                    data: {
+                        labels,
+                        datasets: [
+                            {
+                                label: 'Public School',
+                                data: publicData,
+                                backgroundColor: gradient,
+                                hoverBackgroundColor: "#e1271a52",
+                                hoverBorderColor: "#e1271a52",
+                                hoverBorderWidth: 4,
+                                borderColor: enrollmentChartType === "line" ? "#d91406" : undefined,
+                                borderWidth: enrollmentChartType === "line" ? 3 : undefined,
+                                pointBackgroundColor: "#e1271a",
+                                pointBorderColor: "#f8fafc",
+                                pointBorderWidth: 2,
+                                pointRadius: 5,
+                                pointHoverRadius: 9,
+                                pointHoverBackgroundColor: "#ff2a2a",
+                                pointHoverBorderColor: "#fff",
+                                pointHoverBorderWidth: 3,
+                                fill: enrollmentChartType === "line",
+                                tension: 0.2,
+                                borderRadius: enrollmentChartType === "bar" ? 6 : 0
+                            },
+                            {
+                                label: 'Private School',
+                                data: privateData,
+                                backgroundColor: enrollmentChartType === "line" ? "rgba(239, 68, 68, 0.3)" : "rgba(239, 68, 68, 0.4)",
+                                hoverBackgroundColor: "#e1271a52",
+                                hoverBorderColor: "#e1271a52",
+                                hoverBorderWidth: 4,
+                                borderColor: enrollmentChartType === "line" ? "#ef4444" : undefined,
+                                borderWidth: enrollmentChartType === "line" ? 2 : undefined,
+                                pointBackgroundColor: "#ef4444",
+                                pointBorderColor: "#f8fafc",
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 8,
+                                pointHoverBackgroundColor: "#ff6666",
+                                pointHoverBorderColor: "#fff",
+                                pointHoverBorderWidth: 3,
+                                fill: enrollmentChartType === "line",
+                                tension: 0.2,
+                                borderRadius: enrollmentChartType === "bar" ? 6 : 0
+                            }
+                        ]
+                    },
+                    options: baseLineOpts({
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: "#000000b3" } },
+                            y: { beginAtZero: true, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } }
+                        },
+                        plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`) }
+                    })
+                };
+            }
+
+            enrollmentChartInst = new Chart(ctx, config);
+        }
+
+        function renderCDMChart() {
+            if (cdmChartInst) { cdmChartInst.destroy(); cdmChartInst = null; }
+            const courses = ["BS Architecture", "BS Civil Engineering", "BS Computer Engineering", "BS Electronics Engineering", "BS Electrical Engineering", "BS Environmental Engineering", "BS Industrial Engineering", "BS Mechanical Engineering"];
+            const shortLabels = ['Architecture', 'Civil Eng', 'Computer Eng', 'Electronics Eng', 'Electrical Eng', 'Environmental Eng', 'Industrial Eng', 'Mechanical Eng'];
+            const cdmCounts = courses.map(c => getValue(`CDM - ${c}`));
+            const ctx = document.getElementById("cdmChart").getContext("2d");
+            const gradient = makeGradient(ctx);
+
+            let config;
+
+            if (cdmChartType === "pie") {
+                config = {
+                    type: "pie",
+                    data: { labels: shortLabels, datasets: [{ label: 'CDM Enrollment', data: cdmCounts, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Enrollees: ${ctx.raw.toLocaleString()}`) } }
+                };
+            } else {
+                config = {
+                    type: cdmChartType,
+                    data: {
+                        labels: shortLabels,
+                        datasets: [{
+                            label: 'CDM Enrollment',
+                            data: cdmCounts,
+                            backgroundColor: gradient,
+                            hoverBackgroundColor: "#e1271a52",
+                            hoverBorderColor: "#e1271a52",
+                            hoverBorderWidth: 4,
+                            borderColor: cdmChartType === "line" ? "#d91406" : undefined,
+                            borderWidth: cdmChartType === "line" ? 3 : undefined,
+                            pointBackgroundColor: "#e1271a",
+                            pointBorderColor: "#f8fafc",
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 9,
+                            pointHoverBackgroundColor: "#ff2a2a",
+                            pointHoverBorderColor: "#fff",
+                            pointHoverBorderWidth: 3,
+                            fill: cdmChartType === "line",
+                            tension: 0.2,
+                            borderRadius: cdmChartType === "bar" ? 6 : 0
+                        }]
+                    },
+                    options: baseLineOpts({
+                        indexAxis: cdmChartType === "bar" ? "y" : "x",
+                        scales: {
+                            x: { grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } },
+                            y: { grid: { display: false }, ticks: { color: "#000000b3" } }
+                        },
+                        plugins: { legend: { display: false }, tooltip: baseTooltip(ctx => ` Enrollees: ${ctx.raw.toLocaleString()}`) }
+                    })
+                };
+            }
+
+            cdmChartInst = new Chart(ctx, config);
+        }
+
+        function renderPLMUNChart() {
+            if (plmunChartInst) { plmunChartInst.destroy(); plmunChartInst = null; }
+            const plmunPrograms = ['AB Com', 'AB PolSci', 'BS Psy', 'BSA', 'BSBA', 'BS Crim', 'ACT', 'BSCS', 'BSIT', 'BEED', 'BSE'];
             const plmunMale = [395, 301, 265, 48, 877, 1004, 363, 428, 1656, 42, 195];
             const plmunFemale = [753, 440, 926, 180, 1840, 519, 265, 220, 933, 225, 390];
+            const ctx = document.getElementById("plmunChart").getContext("2d");
+            const gradient = makeGradient(ctx);
 
-            const ctxE = document.getElementById("plmunChart").getContext("2d");
-            if (plmunChartInst) plmunChartInst.destroy();
-            plmunChartInst = new Chart(ctxE, {
-                type: 'bar',
-                data: {
-                    labels: plmunPrograms,
-                    datasets: [
-                        {
-                            label: 'Male',
-                            data: plmunMale,
-                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                            borderColor: '#3b82f6',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        },
-                        {
-                            label: 'Female',
-                            data: plmunFemale,
-                            backgroundColor: 'rgba(236, 72, 153, 0.8)',
-                            borderColor: '#ec4899',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { stacked: true, grid: { display: false } },
-                        y: { stacked: true, beginAtZero: true, grid: { color: 'rgba(15, 23, 42, 0.04)' } }
+            let config;
+
+            if (plmunChartType === "pie") {
+                const merged = plmunPrograms.map((_, i) => plmunMale[i] + plmunFemale[i]);
+                config = {
+                    type: "pie",
+                    data: { labels: plmunPrograms, datasets: [{ label: 'Total Enrollment', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Total: ${ctx.raw.toLocaleString()}`) } }
+                };
+            } else {
+                config = {
+                    type: plmunChartType,
+                    data: {
+                        labels: plmunPrograms,
+                        datasets: [
+                            {
+                                label: 'Male',
+                                data: plmunMale,
+                                backgroundColor: gradient,
+                                hoverBackgroundColor: "#e1271a52",
+                                hoverBorderColor: "#e1271a52",
+                                hoverBorderWidth: 4,
+                                borderColor: plmunChartType === "line" ? "#d91406" : undefined,
+                                borderWidth: plmunChartType === "line" ? 3 : undefined,
+                                pointBackgroundColor: "#e1271a",
+                                pointBorderColor: "#f8fafc",
+                                pointBorderWidth: 2,
+                                pointRadius: 5,
+                                pointHoverRadius: 9,
+                                pointHoverBackgroundColor: "#ff2a2a",
+                                pointHoverBorderColor: "#fff",
+                                pointHoverBorderWidth: 3,
+                                fill: plmunChartType === "line",
+                                tension: 0.2,
+                                borderRadius: plmunChartType === "bar" ? 6 : 0
+                            },
+                            {
+                                label: 'Female',
+                                data: plmunFemale,
+                                backgroundColor: plmunChartType === "line" ? "rgba(239, 68, 68, 0.3)" : "rgba(239, 68, 68, 0.4)",
+                                hoverBackgroundColor: "#e1271a52",
+                                hoverBorderColor: "#e1271a52",
+                                hoverBorderWidth: 4,
+                                borderColor: plmunChartType === "line" ? "#ef4444" : undefined,
+                                borderWidth: plmunChartType === "line" ? 2 : undefined,
+                                pointBackgroundColor: "#ef4444",
+                                pointBorderColor: "#f8fafc",
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 8,
+                                pointHoverBackgroundColor: "#ff6666",
+                                pointHoverBorderColor: "#fff",
+                                pointHoverBorderWidth: 3,
+                                fill: plmunChartType === "line",
+                                tension: 0.2,
+                                borderRadius: plmunChartType === "bar" ? 6 : 0
+                            }
+                        ]
                     },
-                    plugins: {
-                        legend: { position: 'bottom' }
-                    }
-                }
-            });
+                    options: baseLineOpts({
+                        scales: {
+                            x: { stacked: plmunChartType === "bar", grid: { display: false }, ticks: { color: "#000000b3" } },
+                            y: { stacked: plmunChartType === "bar", beginAtZero: true, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } }
+                        },
+                        plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`) }
+                    })
+                };
+            }
 
+            plmunChartInst = new Chart(ctx, config);
+        }
+
+        function renderTESDAChart() {
+            if (tesdaChartInst) { tesdaChartInst.destroy(); tesdaChartInst = null; }
             const tesdaCourses = [
                 'Automotive Servicing 1', 'Automotive Servicing 2', 'Barista', 'Basic Computer', 'Bread & Pastry', 'Caregiving', 'English Proficiency',
                 'Computer Systems Servicing', 'Cookery', 'Electrical Installation', 'Electronic Products', 'Food & Beverage Services', 'Housekeeping',
@@ -835,117 +1016,105 @@
             ];
             const tesdaMale = [48, 55, 0, 19, 18, 22, 17, 33, 28, 99, 23, 20, 12, 20, 82, 7, 0, 5, 3, 11, 4];
             const tesdaFemale = [4, 3, 0, 49, 44, 69, 43, 20, 24, 9, 11, 27, 38, 1, 7, 8, 12, 14, 17, 35, 40];
+            const ctx = document.getElementById("tesdaChart").getContext("2d");
+            const gradient = makeGradient(ctx);
 
-            const ctxF = document.getElementById("tesdaChart").getContext("2d");
-            if (tesdaChartInst) tesdaChartInst.destroy();
-            tesdaChartInst = new Chart(ctxF, {
-                type: 'bar',
-                data: {
-                    labels: tesdaCourses,
-                    datasets: [
-                        {
-                            label: 'Male Trainees',
-                            data: tesdaMale,
-                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                            borderColor: '#3b82f6',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        },
-                        {
-                            label: 'Female Trainees',
-                            data: tesdaFemale,
-                            backgroundColor: 'rgba(236, 72, 153, 0.8)',
-                            borderColor: '#ec4899',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        }
-                    ]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { stacked: true, beginAtZero: true, grid: { color: 'rgba(15, 23, 42, 0.04)' } },
-                        y: { grid: { display: false } }
+            let config;
+
+            if (tesdaChartType === "pie") {
+                const merged = tesdaCourses.map((_, i) => tesdaMale[i] + tesdaFemale[i]);
+                config = {
+                    type: "pie",
+                    data: { labels: tesdaCourses, datasets: [{ label: 'Total Trainees', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Trainees: ${ctx.raw.toLocaleString()}`) } }
+                };
+            } else {
+                config = {
+                    type: tesdaChartType,
+                    data: {
+                        labels: tesdaCourses,
+                        datasets: [
+                            {
+                                label: 'Male Trainees',
+                                data: tesdaMale,
+                                backgroundColor: gradient,
+                                hoverBackgroundColor: "#e1271a52",
+                                hoverBorderColor: "#e1271a52",
+                                hoverBorderWidth: 4,
+                                borderColor: tesdaChartType === "line" ? "#d91406" : undefined,
+                                borderWidth: tesdaChartType === "line" ? 3 : undefined,
+                                pointBackgroundColor: "#e1271a",
+                                pointBorderColor: "#f8fafc",
+                                pointBorderWidth: 2,
+                                pointRadius: 5,
+                                pointHoverRadius: 9,
+                                pointHoverBackgroundColor: "#ff2a2a",
+                                pointHoverBorderColor: "#fff",
+                                pointHoverBorderWidth: 3,
+                                fill: tesdaChartType === "line",
+                                tension: 0.2,
+                                borderRadius: tesdaChartType === "bar" ? 6 : 0
+                            },
+                            {
+                                label: 'Female Trainees',
+                                data: tesdaFemale,
+                                backgroundColor: tesdaChartType === "line" ? "rgba(239, 68, 68, 0.3)" : "rgba(239, 68, 68, 0.4)",
+                                hoverBackgroundColor: "#e1271a52",
+                                hoverBorderColor: "#e1271a52",
+                                hoverBorderWidth: 4,
+                                borderColor: tesdaChartType === "line" ? "#ef4444" : undefined,
+                                borderWidth: tesdaChartType === "line" ? 2 : undefined,
+                                pointBackgroundColor: "#ef4444",
+                                pointBorderColor: "#f8fafc",
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 8,
+                                pointHoverBackgroundColor: "#ff6666",
+                                pointHoverBorderColor: "#fff",
+                                pointHoverBorderWidth: 3,
+                                fill: tesdaChartType === "line",
+                                tension: 0.2,
+                                borderRadius: tesdaChartType === "bar" ? 6 : 0
+                            }
+                        ]
                     },
-                    plugins: {
-                        legend: { position: 'bottom' }
-                    }
-                }
-            });
+                    options: baseLineOpts({
+                        indexAxis: tesdaChartType === "bar" ? "y" : "x",
+                        scales: {
+                            x: { stacked: tesdaChartType === "bar", beginAtZero: true, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } },
+                            y: { stacked: tesdaChartType === "bar", grid: { display: false }, ticks: { color: "#000000b3" } }
+                        },
+                        plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`) }
+                    })
+                };
+            }
+
+            tesdaChartInst = new Chart(ctx, config);
         }
 
-        // Initialize Daycare widget
         function initDaycareWidget() {
             const select = document.getElementById("daycare-brgy-select");
-
             select.innerHTML = "";
             BARANGAY_NAMES.forEach(b => {
                 const o = document.createElement("option");
                 o.value = b;
                 o.textContent = b;
-                if (b === "Poblacion") o.selected = true; // default Poblacion
+                if (b === "Poblacion") o.selected = true;
                 select.appendChild(o);
             });
-
             select.addEventListener("change", updateDaycareWidget);
-            
-            // Draw initial Daycare Chart inside widget
-            const ctxD = document.getElementById("daycareChart").getContext("2d");
-            daycareChartInst = new Chart(ctxD, {
-                type: 'bar',
-                data: {
-                    labels: ['Ages 2-2.11', 'Ages 3-3.11', 'Ages 4-4.11'],
-                    datasets: [
-                        {
-                            label: 'Male Students',
-                            data: [],
-                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                            borderColor: '#3b82f6',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        },
-                        {
-                            label: 'Female Students',
-                            data: [],
-                            backgroundColor: 'rgba(236, 72, 153, 0.8)',
-                            borderColor: '#ec4899',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { grid: { display: false } },
-                        y: { beginAtZero: true, grid: { color: 'rgba(15, 23, 42, 0.04)' } }
-                    },
-                    plugins: {
-                        legend: { position: 'bottom', labels: { font: { family: 'Outfit', weight: '500' } } }
-                    }
-                }
-            });
-
             updateDaycareWidget();
         }
 
-        // Update Daycare stats and chart dynamically
         function updateDaycareWidget() {
             const brgyName = document.getElementById("daycare-brgy-select").value;
             const raw = daycareDetailsRaw[brgyName];
-
-            // Grab the database edited value of Age 4 (to keep database edits dynamic!)
-            const dbEditedAge4 = getValue(`${brgyName} - Day Care`); // index 5 (2025)
+            const dbEditedAge4 = getValue(`${brgyName} - Day Care`);
             
-            // Calculate ratios for Male/Female split based on raw static values
             const totalRawAge4 = raw.age4[0] + raw.age4[1];
             const maleRatio = raw.age4[0] / totalRawAge4;
             const femaleRatio = raw.age4[1] / totalRawAge4;
 
-            // Apply ratio to edited database totals to show live edits on child charts!
             const dynamicMaleAge4 = Math.round(dbEditedAge4 * maleRatio);
             const dynamicFemaleAge4 = Math.round(dbEditedAge4 * femaleRatio);
 
@@ -953,17 +1122,90 @@
             const age3Total = raw.age3[0] + raw.age3[1];
             const grandTotal = age2Total + age3Total + dbEditedAge4;
 
-            // Update scoreboard text
             document.getElementById("daycare-name").textContent = brgyName;
             document.getElementById("daycare-total").textContent = grandTotal.toLocaleString();
             document.getElementById("daycare-age2").textContent = age2Total.toLocaleString();
             document.getElementById("daycare-age3").textContent = age3Total.toLocaleString();
             document.getElementById("daycare-age4").textContent = dbEditedAge4.toLocaleString();
 
-            // Update Chart datasets
-            daycareChartInst.data.datasets[0].data = [raw.age2[0], raw.age3[0], dynamicMaleAge4];
-            daycareChartInst.data.datasets[1].data = [raw.age2[1], raw.age3[1], dynamicFemaleAge4];
-            daycareChartInst.update();
+            const labels = ['Ages 2-2.11', 'Ages 3-3.11', 'Ages 4-4.11'];
+            const maleData = [raw.age2[0], raw.age3[0], dynamicMaleAge4];
+            const femaleData = [raw.age2[1], raw.age3[1], dynamicFemaleAge4];
+            const ctx = document.getElementById("daycareChart").getContext("2d");
+            const gradient = makeGradient(ctx);
+
+            if (daycareChartInst) { daycareChartInst.destroy(); daycareChartInst = null; }
+
+            let config;
+
+            if (daycareChartType === "pie") {
+                const merged = labels.map((_, i) => maleData[i] + femaleData[i]);
+                config = {
+                    type: "pie",
+                    data: { labels, datasets: [{ label: 'Total Enrollment', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Total: ${ctx.raw.toLocaleString()}`) } }
+                };
+            } else {
+                config = {
+                    type: daycareChartType,
+                    data: {
+                        labels,
+                        datasets: [
+                            {
+                                label: 'Male Students',
+                                data: maleData,
+                                backgroundColor: gradient,
+                                hoverBackgroundColor: "#e1271a52",
+                                hoverBorderColor: "#e1271a52",
+                                hoverBorderWidth: 4,
+                                borderColor: daycareChartType === "line" ? "#d91406" : undefined,
+                                borderWidth: daycareChartType === "line" ? 3 : undefined,
+                                pointBackgroundColor: "#e1271a",
+                                pointBorderColor: "#f8fafc",
+                                pointBorderWidth: 2,
+                                pointRadius: 5,
+                                pointHoverRadius: 9,
+                                pointHoverBackgroundColor: "#ff2a2a",
+                                pointHoverBorderColor: "#fff",
+                                pointHoverBorderWidth: 3,
+                                fill: daycareChartType === "line",
+                                tension: 0.2,
+                                borderRadius: daycareChartType === "bar" ? 6 : 0
+                            },
+                            {
+                                label: 'Female Students',
+                                data: femaleData,
+                                backgroundColor: daycareChartType === "line" ? "rgba(239, 68, 68, 0.3)" : "rgba(239, 68, 68, 0.4)",
+                                hoverBackgroundColor: "#e1271a52",
+                                hoverBorderColor: "#e1271a52",
+                                hoverBorderWidth: 4,
+                                borderColor: daycareChartType === "line" ? "#ef4444" : undefined,
+                                borderWidth: daycareChartType === "line" ? 2 : undefined,
+                                pointBackgroundColor: "#ef4444",
+                                pointBorderColor: "#f8fafc",
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 8,
+                                pointHoverBackgroundColor: "#ff6666",
+                                pointHoverBorderColor: "#fff",
+                                pointHoverBorderWidth: 3,
+                                fill: daycareChartType === "line",
+                                tension: 0.2,
+                                borderRadius: daycareChartType === "bar" ? 6 : 0
+                            }
+                        ]
+                    },
+                    options: baseLineOpts({
+                        scales: {
+                            x: { stacked: daycareChartType === "bar", grid: { display: false }, ticks: { color: "#000000b3" } },
+                            y: { stacked: daycareChartType === "bar", beginAtZero: true, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } }
+                        },
+                        plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`) }
+                    })
+                };
+            }
+
+            daycareChartInst = new Chart(ctx, config);
         }
     </script>
 </body>
