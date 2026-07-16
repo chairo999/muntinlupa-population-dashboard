@@ -278,7 +278,7 @@ function renderTrendChart(historyData) {
                     pointHoverBackgroundColor: trendChartType === "line" ? "#ff2a2a" : undefined,
                     pointHoverBorderColor: trendChartType === "line" ? "#fff" : undefined,
                     pointHoverBorderWidth: trendChartType === "line" ? 3 : undefined,
-                    fill: trendChartType === "line",
+                    fill: false,
                     tension: 0.2
                 }]
             },
@@ -451,7 +451,7 @@ function renderBarangayBarChart() {
                     pointHoverBackgroundColor: barangayChartType === "line" ? "#ff2a2a" : undefined,
                     pointHoverBorderColor: barangayChartType === "line" ? "#fff" : undefined,
                     pointHoverBorderWidth: barangayChartType === "line" ? 3 : undefined,
-                    fill: barangayChartType === "line",
+                    fill: false,
                     tension: 0.2
                 }]
             },
