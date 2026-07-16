@@ -80,48 +80,6 @@ function initEventListeners() {
         const name = polygon.getAttribute("data-name");
         if (!name) return;
 
-        polygon.addEventListener("mouseenter", () => {
-            const stats = getBarangayStats(name, selectedYear);
-            if (tooltipTitle) tooltipTitle.textContent = `${name} (${selectedYear})`;
-            if (tooltipPop) tooltipPop.textContent = stats.total.toLocaleString();
-            if (tooltip) tooltip.classList.add("visible");
-
-            if (zoomLayer && mapWrapper) {
-                const { points, originX, originY } = getPolygonHoverData(polygon, mapWrapper);
-                zoomLayer.style.clipPath = `polygon(${points})`;
-                zoomLayer.style.transformOrigin = `${originX}% ${originY}%`;
-                zoomLayer.classList.add("visible");
-                zoomLayer.style.transform = "scale(1.03)";
-            }
-
-            if (blurLayer && mapWrapper) {
-                const { points } = getPolygonHoverData(polygon, mapWrapper);
-                blurLayer.style.clipPath = `polygon(${points})`;
-                blurLayer.classList.add("visible");
-            }
-        });
-
-        polygon.addEventListener("mousemove", (e) => {
-            if (!tooltip || !mapWrapper) return;
-            const rect = mapWrapper.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            tooltip.style.left = `${x}px`;
-            tooltip.style.top = `${y}px`;
-        });
-
-        polygon.addEventListener("mouseleave", () => {
-            if (tooltip) tooltip.classList.remove("visible");
-            if (zoomLayer) {
-                zoomLayer.classList.remove("visible");
-                zoomLayer.style.transform = "scale(1)";
-            }
-            if (blurLayer) {
-                blurLayer.classList.remove("visible");
-            }
-        });
-
         polygon.addEventListener("click", (e) => {
             e.stopPropagation(); 
             selectBarangay(name);
