@@ -6,6 +6,31 @@ let trendChartType = "line";
 let barangayChartType = "bar";
 let lastHistoryData = [];
 
+// Entrance animation helper
+function animateEntrance(selector) {
+    document.querySelectorAll(selector).forEach(el => {
+        el.classList.remove("animate-in");
+        void el.offsetWidth;
+        el.classList.add("animate-in");
+    });
+}
+
+// Count-up animation for numeric stat values
+function countUp(element, target, duration) {
+    if (!element) return;
+    duration = duration || 600;
+    const start = performance.now();
+    const from = 0;
+    function tick(now) {
+        const elapsed = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - elapsed, 3);
+        const current = Math.round(from + (target - from) * eased);
+        element.textContent = current.toLocaleString();
+        if (elapsed < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+}
+
 // Initialize Application
 document.addEventListener("DOMContentLoaded", async () => {
     await initData();
@@ -88,7 +113,7 @@ function initEventListeners() {
 
     if (mapWrapper) {
         mapWrapper.addEventListener("click", () => {
-            selectBarangay(null);
+            if (selectedBarangay) selectBarangay(null);
         });
     }
 
@@ -197,7 +222,15 @@ function renderDashboard() {
 
     // Update main overall Counter widget
     const totalEl = document.getElementById("total-pop-val");
-    if (totalEl) totalEl.textContent = totalPopulation.toLocaleString();
+    countUp(totalEl, totalPopulation, 600);
+
+    // Animate current view label
+    const selectedEl = document.getElementById("selected-brgy-val");
+    if (selectedEl) {
+        selectedEl.classList.remove("animate-in");
+        void selectedEl.offsetWidth;
+        selectedEl.classList.add("animate-in");
+    }
 
     renderTrendChart(historyData);
     renderBarangayBarChart();
@@ -223,11 +256,7 @@ function renderTrendChart(historyData) {
     gradient.addColorStop(1, "#e1271a89");
 
     const pieColors = ["#e1271a", "#f44336", "#ff9800"];
-
-    const baseDataset = {
-        label: "Overall Population Total",
-        data: historyData
-    };
+    const zeroData = new Array(historyData.length).fill(0);
 
     let config;
 
@@ -237,7 +266,8 @@ function renderTrendChart(historyData) {
             data: {
                 labels: HISTORICAL_LABELS,
                 datasets: [{
-                    ...baseDataset,
+                    label: "Overall Population Total",
+                    data: zeroData,
                     backgroundColor: pieColors,
                     hoverBackgroundColor: ["#ff2a2a", "#ff6666", "#ffb347"],
                     hoverBorderColor: "#fff",
@@ -250,19 +280,26 @@ function renderTrendChart(historyData) {
                 responsive: true,
                 maintainAspectRatio: false,
                 hover: { mode: 'nearest', intersect: true },
+                animation: { animateRotate: true, animateScale: true, duration: 1000 },
                 plugins: {
                     legend: { display: true, labels: { color: "#000000b3" } },
                     tooltip: { backgroundColor: "rgba(0, 0, 0, 0.72)", padding: 10, borderWidth: 1, borderColor: "rgba(255, 255, 255, 0.15)" }
                 }
             }
         };
+        trendChartInstance = new Chart(ctx3, config);
+        setTimeout(function() {
+            trendChartInstance.data.datasets[0].data = historyData;
+            trendChartInstance.update();
+        }, 50);
     } else {
         config = {
             type: trendChartType,
             data: {
                 labels: HISTORICAL_LABELS,
                 datasets: [{
-                    ...baseDataset,
+                    label: "Overall Population Total",
+                    data: zeroData,
                     backgroundColor: gradient,
                     borderRadius: trendChartType === "bar" ? 6 : 0,
                     hoverBackgroundColor: "#e1271a52",
@@ -287,6 +324,7 @@ function renderTrendChart(historyData) {
                 maintainAspectRatio: false,
                 hover: { mode: 'nearest', intersect: true },
                 interaction: { mode: 'nearest', intersect: true },
+                animation: { duration: 1000, easing: 'easeOutQuart' },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
@@ -301,7 +339,6 @@ function renderTrendChart(historyData) {
                         }
                     }
                 },
-                animation: { duration: 200, easing: 'easeOutQuart' },
                 scales: {
                     x: { grid: { display: false }, ticks: { color: "#000000b3" } },
                     y: {
@@ -311,9 +348,12 @@ function renderTrendChart(historyData) {
                 }
             }
         };
+        trendChartInstance = new Chart(ctx3, config);
+        setTimeout(function() {
+            trendChartInstance.data.datasets[0].data = historyData;
+            trendChartInstance.update();
+        }, 50);
     }
-
-    trendChartInstance = new Chart(ctx3, config);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -385,11 +425,7 @@ function renderBarangayBarChart() {
     gradient.addColorStop(1, "#e1271a9a");
 
     const pieColors = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548"];
-
-    const baseDataset = {
-        label: `Population in ${selectedYear}`,
-        data: dataValues
-    };
+    const zeroData = new Array(labels.length).fill(0);
 
     let config;
 
@@ -399,7 +435,8 @@ function renderBarangayBarChart() {
             data: {
                 labels: labels,
                 datasets: [{
-                    ...baseDataset,
+                    label: `Population in ${selectedYear}`,
+                    data: zeroData,
                     backgroundColor: pieColors,
                     hoverBackgroundColor: ["rgba(255, 42, 42, 0.7)", "#f44336c2", "rgba(255, 178, 71, 0.77)", "#4caf4fc5", "rgba(66, 164, 245, 0.74)", "rgba(170, 71, 188, 0.77)", "#00bbd4be", "#ff5622cc", "rgba(141, 110, 99, 0.78)"],
                     hoverBorderColor: "#fff",
@@ -413,6 +450,7 @@ function renderBarangayBarChart() {
                 maintainAspectRatio: false,
                 hover: { mode: 'nearest', intersect: true },
                 interaction: { mode: 'nearest', intersect: true },
+                animation: { animateRotate: true, animateScale: true, duration: 1000 },
                 plugins: {
                     legend: { display: true, labels: { color: "#000000b3" } },
                     tooltip: {
@@ -429,14 +467,20 @@ function renderBarangayBarChart() {
                 }
             }
         };
+        barangayBarChartInstance = new Chart(ctx4, config);
+        setTimeout(function() {
+            barangayBarChartInstance.data.datasets[0].data = dataValues;
+            barangayBarChartInstance.update();
+        }, 50);
     } else {
         config = {
             type: barangayChartType,
             data: {
                 labels: labels,
                 datasets: [{
-                    ...baseDataset,
-                    backgroundColor: barangayChartType === "bar" ? gradient : gradient,
+                    label: `Population in ${selectedYear}`,
+                    data: zeroData,
+                    backgroundColor: gradient,
                     borderRadius: barangayChartType === "bar" ? 6 : 0,
                     hoverBackgroundColor: "#e1271a52",
                     hoverBorderColor: "#e1271a52",
@@ -460,7 +504,7 @@ function renderBarangayBarChart() {
                 maintainAspectRatio: false,
                 hover: { mode: 'nearest', intersect: true },
                 interaction: { mode: 'nearest', intersect: true },
-                animation: { duration: 200, easing: 'easeOutQuart' },
+                animation: { duration: 1000, easing: 'easeOutQuart' },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
@@ -492,9 +536,12 @@ function renderBarangayBarChart() {
                 }
             }
         };
+        barangayBarChartInstance = new Chart(ctx4, config);
+        setTimeout(function() {
+            barangayBarChartInstance.data.datasets[0].data = dataValues;
+            barangayBarChartInstance.update();
+        }, 50);
     }
-
-    barangayBarChartInstance = new Chart(ctx4, config);
 }
 
 document.addEventListener('DOMContentLoaded', function () {

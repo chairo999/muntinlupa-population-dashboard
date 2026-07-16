@@ -757,6 +757,22 @@ select option {
     filter: drop-shadow(0 0 12px var(--accent-cyan-glow));
 }
 
+/* Stat value entrance animation */
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-in {
+    animation: fadeSlideUp 0.4s ease-out both;
+}
+
 /* Floating Tooltip */
 .floating-tooltip {
     position: absolute;
