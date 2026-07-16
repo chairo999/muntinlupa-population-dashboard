@@ -473,28 +473,38 @@
             
             if (supabaseClient) {
                 try {
-                    const { data, error } = await supabaseClient
-                        .from('health')
-                        .select('data, labels')
-                        .eq('id', 1)
-                        .single();
+                    const { data: allRows, error } = await supabaseClient
+                        .from('data_values')
+                        .select('value, year, category')
+                        .eq('indicator_id', 7)
+                        .order('year', { ascending: true });
 
-                    if (error) {
-                        if (error.code === 'PGRST116') {
-                            console.log("Health table empty in Supabase. Attempting to seed default data.");
-                            // Seed default health data to Supabase live
-                            await supabaseClient.from('health').insert({ id: 1, data: DEFAULT_HEALTH_DATA, labels: HEALTH_LABELS });
-                            healthData = DEFAULT_HEALTH_DATA;
-                            healthLabels = HEALTH_LABELS;
-                        } else {
-                            throw error;
-                        }
-                    } else {
-                        healthData = data.data || DEFAULT_HEALTH_DATA;
-                        healthLabels = data.labels || HEALTH_LABELS;
+                    if (error) throw error;
+
+                    const catToKey = {
+                        "Crude Birth Rate": "Crude Birth Rate (CBR)",
+                        "Crude Death Rate": "Crude Death Rate (CDR)",
+                        "Infant Mortality Rate": "Infant Mortality Rate",
+                        "Under Five Mortality Rate": "Under Five Mortality Rate (UMR)",
+                        "Maternal Mortality Rate": "Maternal Mortality Rate (MMR)",
+                        "Child Woman Ratio": "Child Woman Ratio (CWR)"
+                    };
+
+                    if (allRows && allRows.length > 0) {
+                        const years = [...new Set(allRows.map(r => String(r.year)))].sort((a, b) => a - b);
+                        healthLabels = years;
+                        const grouped = {};
+                        allRows.forEach(r => {
+                            const key = catToKey[r.category] || r.category;
+                            if (!grouped[key]) grouped[key] = {};
+                            grouped[key][String(r.year)] = r.value;
+                        });
+                        Object.entries(grouped).forEach(([key, yearMap]) => {
+                            healthData[key] = { history: years.map(y => yearMap[y] ?? null) };
+                        });
                     }
                     
-                    statusTxt.textContent = "Live Supabase Database Connected";
+                    statusTxt.textContent = "Live Connected: Syncing from data_values table";
                     statusDot.className = "db-dot";
                 } catch (e) {
                     console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
