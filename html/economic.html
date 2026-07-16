@@ -605,7 +605,7 @@
             const ctx = document.getElementById("rankingChart").getContext("2d");
             const gradient = makeGradient(ctx);
 
-            const yScale = { reverse: true, min: 1, max: 15, ticks: { stepSize: 2, color: "#000000b3" }, title: { display: true, text: 'Rank Rating Position' }, grid: { color: "rgba(255, 255, 255, 0.05)" } };
+            const yScale = { reverse: true, min: 1, max: 15, ticks: { stepSize: 2, color: "#000000b3" }, title: { display: true, text: 'Rank Rating Position' }, grid: { color: "rgba(3, 3, 3, 0.05)" } };
             const xScale = { grid: { display: false }, ticks: { color: "#000000b3" } };
 
             let config;
@@ -666,7 +666,7 @@
             const ctx = document.getElementById("establishmentsChart").getContext("2d");
             const gradient = makeGradient(ctx);
 
-            const yScale = { beginAtZero: true, title: { display: true, text: 'Total Active Businesses' }, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } };
+            const yScale = { beginAtZero: true, title: { display: true, text: 'Total Active Businesses' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } };
             const xScale = { grid: { display: false }, ticks: { color: "#000000b3" } };
 
             let config;
@@ -727,7 +727,7 @@
             const ctx = document.getElementById("hotelArrivalsChart").getContext("2d");
             const gradient = makeGradient(ctx);
 
-            const yScale = { beginAtZero: true, title: { display: true, text: 'Annual Hotel Arrivals' }, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } };
+            const yScale = { beginAtZero: true, title: { display: true, text: 'Annual Hotel Arrivals' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } };
             const xScale = { grid: { display: false }, ticks: { color: "#000000b3" } };
 
             let config;
@@ -818,7 +818,7 @@
                 interaction: { mode: 'nearest', intersect: true },
                 animation: { duration: 200, easing: 'easeOutQuart' },
                 scales: {
-                    y: { beginAtZero: true, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } },
+                    y: { beginAtZero: true, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } },
                     x: { grid: { display: false }, ticks: { color: "#000000b3" }, stacked: false }
                 },
                 plugins: {

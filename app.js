@@ -305,7 +305,7 @@ function renderTrendChart(historyData) {
                 scales: {
                     x: { grid: { display: false }, ticks: { color: "#000000b3" } },
                     y: {
-                        grid: { color: "rgba(255, 255, 255, 0.05)" },
+                        grid: { color: "rgba(3, 3, 3, 0.05)" },
                         ticks: { color: "#000000b3", callback: function (value) { return value.toLocaleString(); } }
                     }
                 }
@@ -481,7 +481,7 @@ function renderBarangayBarChart() {
                         ticks: { color: "#000000b3" }
                     },
                     y: {
-                        grid: { color: "rgba(255, 255, 255, 0.05)" },
+                        grid: { color: "rgba(3, 3, 3, 0.05)" },
                         ticks: {
                             color: "#000000b3",
                             callback: function (value) {    

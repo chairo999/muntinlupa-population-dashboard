@@ -778,7 +778,7 @@
                     },
                     options: baseLineOpts({
                         scales: {
-                            y: { min: 75, max: 100, title: { display: true, text: 'Percentage (%)' }, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } },
+                            y: { min: 75, max: 100, title: { display: true, text: 'Percentage (%)' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } },
                             x: { grid: { display: false }, ticks: { color: "#000000b3" } }
                         },
                         plugins: { legend: { display: false }, tooltip: baseTooltip(ctx => ` ${ctx.raw}%`) }
@@ -860,7 +860,7 @@
                     options: baseLineOpts({
                         scales: {
                             x: { grid: { display: false }, ticks: { color: "#000000b3" } },
-                            y: { beginAtZero: true, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } }
+                            y: { beginAtZero: true, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } }
                         },
                         plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`) }
                     })
@@ -916,7 +916,7 @@
                     options: baseLineOpts({
                         indexAxis: cdmChartType === "bar" ? "y" : "x",
                         scales: {
-                            x: { grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } },
+                            x: { grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } },
                             y: { grid: { display: false }, ticks: { color: "#000000b3" } }
                         },
                         plugins: { legend: { display: false }, tooltip: baseTooltip(ctx => ` Enrollees: ${ctx.raw.toLocaleString()}`) }
@@ -997,7 +997,7 @@
                     options: baseLineOpts({
                         scales: {
                             x: { stacked: plmunChartType === "bar", grid: { display: false }, ticks: { color: "#000000b3" } },
-                            y: { stacked: plmunChartType === "bar", beginAtZero: true, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } }
+                            y: { stacked: plmunChartType === "bar", beginAtZero: true, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } }
                         },
                         plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`) }
                     })
@@ -1081,7 +1081,7 @@
                     options: baseLineOpts({
                         indexAxis: tesdaChartType === "bar" ? "y" : "x",
                         scales: {
-                            x: { stacked: tesdaChartType === "bar", beginAtZero: true, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } },
+                            x: { stacked: tesdaChartType === "bar", beginAtZero: true, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } },
                             y: { stacked: tesdaChartType === "bar", grid: { display: false }, ticks: { color: "#000000b3" } }
                         },
                         plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`) }
@@ -1198,7 +1198,7 @@
                     options: baseLineOpts({
                         scales: {
                             x: { stacked: daycareChartType === "bar", grid: { display: false }, ticks: { color: "#000000b3" } },
-                            y: { stacked: daycareChartType === "bar", beginAtZero: true, grid: { color: "rgba(255, 255, 255, 0.05)" }, ticks: { color: "#000000b3" } }
+                            y: { stacked: daycareChartType === "bar", beginAtZero: true, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } }
                         },
                         plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`) }
                     })
