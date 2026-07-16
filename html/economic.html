@@ -401,104 +401,95 @@
                 if (!supabaseClient) throw new Error("Supabase client failed initialization.");
 
                 const allData = {};
+                
 
-                const { data: rankData } = await supabaseClient
-                    .from('economic_competitiveness_rank')
-                    .select('year, rank')
+                const { data: allRows } = await supabaseClient
+                    .from('data_values')
+                    .select('value, year, indicator_id, barangay_id, category, barangays(barangay_name)')
+                    .in('indicator_id', [2, 3, 4, 5, 6])
+                    .not('value', 'is', null)
                     .order('year', { ascending: true });
-                if (rankData && rankData.length > 0) {
-                    allData["Competitiveness Rank"] = {
-                        labels: rankData.map(r => String(r.year)),
-                        history: rankData.map(r => r.rank)
-                    };
-                }
 
-                const { data: estData } = await supabaseClient
-                    .from('economic_total_establishment')
-                    .select('year, total_establishments')
-                    .order('year', { ascending: true });
-                if (estData && estData.length > 0) {
-                    allData["Total Establishments"] = {
-                        labels: estData.map(r => String(r.year)),
-                        history: estData.map(r => r.total_establishments)
-                    };
-                }
-
-                const { data: hotelData } = await supabaseClient
-                    .from('economic_hotel_arrivals')
-                    .select('year, hotel_arrivals')
-                    .order('year', { ascending: true });
-                if (hotelData && hotelData.length > 0) {
-                    allData["Hotel Arrivals"] = {
-                        labels: hotelData.map(r => String(r.year)),
-                        history: hotelData.map(r => r.hotel_arrivals)
-                    };
-                }
-
-                const { data: empData } = await supabaseClient
-                    .from('economic_employment')
-                    .select('barangay_name, category, count')
-                    .order('category', { ascending: true });
-                if (empData && empData.length > 0) {
+                if (allRows && allRows.length > 0) {
                     const empSumByBrgy = {};
-                    empData.forEach(r => {
-                        allData[`${r.barangay_name} - ${r.category} Employment`] = {
-                            labels: [String(new Date().getFullYear())],
-                            history: [r.count]
-                        };
-                        empSumByBrgy[r.barangay_name] = (empSumByBrgy[r.barangay_name] || 0) + r.count;
-                    });
-                    BARANGAY_NAMES.forEach(b => {
-                        if (empSumByBrgy[b] !== undefined) {
-                            allData[`${b} - Number of Employment`] = {
-                                labels: [String(new Date().getFullYear())],
-                                history: [empSumByBrgy[b]]
-                            };
-                        }
-                    });
-                }
-
-                const { data: bizData } = await supabaseClient
-                    .from('economic_registered_business')
-                    .select('barangay_name, category, count')
-                    .order('category', { ascending: true });
-                if (bizData && bizData.length > 0) {
+                    const empCatByBrgy = {};
                     const bizSumByBrgy = {};
                     const bizSplitByBrgy = {};
-                    bizData.forEach(r => {
-                        bizSumByBrgy[r.barangay_name] = (bizSumByBrgy[r.barangay_name] || 0) + r.count;
-                        if (!bizSplitByBrgy[r.barangay_name]) bizSplitByBrgy[r.barangay_name] = { labels: [], history: [] };
-                        bizSplitByBrgy[r.barangay_name].labels.push(r.category);
-                        bizSplitByBrgy[r.barangay_name].history.push(r.count);
-                    });
-                    const currentYear = String(new Date().getFullYear());
-                    BARANGAY_NAMES.forEach(b => {
-                        if (bizSumByBrgy[b] !== undefined) {
-                            allData[`${b} Registered Businesses`] = { labels: [currentYear], history: [bizSumByBrgy[b]] };
-                        }
-                        if (bizSplitByBrgy[b]) {
-                            allData[`${b} Registered Biz Split`] = bizSplitByBrgy[b];
-                        }
-                    });
-                }
+                    const brgyEstByBrgy = {};
+                    const brgyEstCatByBrgy = {};
+                    const cityEstByYear = {};
+                    const rankByYear = {};
+                    const hotelByYear = {};
 
-                const { data: brgyEstData } = await supabaseClient
-                    .from('municipal_indicators')
-                    .select('indicator_name, labels, history')
-                    .eq('sector', 'economic')
-                    .like('indicator_name', '% - Total Establishments');
-                if (brgyEstData && brgyEstData.length > 0) {
-                    brgyEstData.forEach(row => {
-                        allData[row.indicator_name] = {
-                            labels: row.labels || [],
-                            history: row.history || []
-                        };
+                    allRows.forEach(r => {
+                        const name = r.barangays ? r.barangays.barangay_name : null;
+                        const yr = String(r.year);
+
+                        if (r.indicator_id === 2 && !name) {
+                            rankByYear[yr] = r.value;
+                        } else if (r.indicator_id === 3 && name) {
+                            const cat = r.category || "Other";
+                            empSumByBrgy[name] = (empSumByBrgy[name] || 0) + r.value;
+                            if (!empCatByBrgy[name]) empCatByBrgy[name] = {};
+                            empCatByBrgy[name][cat] = r.value;
+                        } else if (r.indicator_id === 4 && !name) {
+                            hotelByYear[yr] = r.value;
+                        } else if (r.indicator_id === 5 && name) {
+                            const cat = r.category || "Other";
+                            bizSumByBrgy[name] = (bizSumByBrgy[name] || 0) + r.value;
+                            if (!bizSplitByBrgy[name]) bizSplitByBrgy[name] = { labels: [], history: [] };
+                            bizSplitByBrgy[name].labels.push(cat);
+                            bizSplitByBrgy[name].history.push(r.value);
+                        } else if (r.indicator_id === 6 && !name && !r.category) {
+                            cityEstByYear[yr] = (cityEstByYear[yr] || 0) + r.value;
+                        } else if (r.indicator_id === 6 && name && !r.category) {
+                            if (!brgyEstByBrgy[name]) brgyEstByBrgy[name] = {};
+                            brgyEstByBrgy[name][yr] = (brgyEstByBrgy[name][yr] || 0) + r.value;
+                        } else if (r.indicator_id === 6 && name && r.category) {
+                            if (!brgyEstCatByBrgy[name]) brgyEstCatByBrgy[name] = {};
+                            const key = `${name} - ${r.category} Establishments`;
+                            if (!brgyEstCatByBrgy[key]) brgyEstCatByBrgy[key] = {};
+                            brgyEstCatByBrgy[key][yr] = (brgyEstCatByBrgy[key][yr] || 0) + r.value;
+                        }
+                    });
+
+                    const rankYears = Object.keys(rankByYear).sort();
+                    if (rankYears.length) allData["Competitiveness Rank"] = { labels: rankYears, history: rankYears.map(y => rankByYear[y]) };
+
+                    const hotelYears = Object.keys(hotelByYear).sort();
+                    if (hotelYears.length) allData["Hotel Arrivals"] = { labels: hotelYears, history: hotelYears.map(y => hotelByYear[y]) };
+
+                    const cityEstYears = Object.keys(cityEstByYear).sort();
+                    if (cityEstYears.length) allData["Total Establishments"] = { labels: cityEstYears, history: cityEstYears.map(y => cityEstByYear[y]) };
+
+                    BARANGAY_NAMES.forEach(b => {
+                        if (empSumByBrgy[b] !== undefined) {
+                            allData[`${b} - Number of Employment`] = { labels: [String(new Date().getFullYear())], history: [empSumByBrgy[b]] };
+                        }
+                        if (empCatByBrgy[b]) {
+                            Object.entries(empCatByBrgy[b]).forEach(([cat, val]) => {
+                                allData[`${b} - ${cat} Employment`] = { labels: [String(new Date().getFullYear())], history: [val] };
+                            });
+                        }
+                        if (bizSumByBrgy[b] !== undefined) {
+                            allData[`${b} Registered Businesses`] = { labels: [String(new Date().getFullYear())], history: [bizSumByBrgy[b]] };
+                        }
+                        if (bizSplitByBrgy[b]) allData[`${b} Registered Biz Split`] = bizSplitByBrgy[b];
+                        if (brgyEstByBrgy[b]) {
+                            const yrs = Object.keys(brgyEstByBrgy[b]).sort();
+                            allData[`${b} - Total Establishments`] = { labels: yrs, history: yrs.map(y => brgyEstByBrgy[b][y]) };
+                        }
+                    });
+
+                    Object.entries(brgyEstCatByBrgy).forEach(([key, yearMap]) => {
+                        const yrs = Object.keys(yearMap).sort();
+                        allData[key] = { labels: yrs, history: yrs.map(y => yearMap[y]) };
                     });
                 }
 
                 economicData = allData;
 
-                statusTxt.textContent = "Live Connected: Syncing from dedicated economic tables";
+                statusTxt.textContent = "Live Connected: Syncing from data_values table";
                 statusDot.className = "db-dot";
                 statusDot.style.backgroundColor = "#10b981";
                 console.info('Loaded economic indicator keys:', Object.keys(economicData));

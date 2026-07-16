@@ -29,28 +29,20 @@ function showLoading(show) {
 async function initData() {
     if (supabaseClient) {
         try {
-            const { data: brgyData } = await supabaseClient
-                .from('barangays')
-                .select('barangay_id, barangay_name');
-            const idToName = {};
-            if (brgyData) brgyData.forEach(b => { idToName[b.barangay_id] = b.barangay_name; });
-
             const { data, error } = await supabaseClient
                 .from('data_values')
-                .select('value, year, barangay_id')
-                .eq('indicator_id', 2)
+                .select('value, year, barangays(barangay_name)')
+                .eq('indicator_id', 1)
                 .not('value', 'is', null)
                 .order('year', { ascending: true });
             if (error) throw error;
-
-            const validYears = [2015, 2020, 2024];
-            const filtered = (data || []).filter(r => validYears.includes(r.year));
+            const filtered = data || [];
             if (filtered.length > 0) {
                 const years = [...new Set(filtered.map(r => r.year))].sort();
                 HISTORICAL_LABELS = years.map(String);
                 appData = {};
                 filtered.forEach(row => {
-                    const name = idToName[row.barangay_id];
+                    const name = row.barangays?.barangay_name;
                     if (!name) return;
                     if (!appData[name]) {
                         appData[name] = { history: new Array(years.length).fill(0) };
