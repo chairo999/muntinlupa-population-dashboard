@@ -481,20 +481,37 @@
 
                     if (error) throw error;
 
+                    const { data: allRows2, error: error2 } = await supabaseClient
+                        .from('data_values')
+                        .select('value, year, category')
+                        .eq('indicator_id', 8)
+                        .order('year', { ascending: true });
+
+                    if (error2) throw error2;
+
+                    const combinedRows = [...(allRows || []), ...(allRows2 || [])];
+
                     const catToKey = {
                         "Crude Birth Rate": "Crude Birth Rate (CBR)",
                         "Crude Death Rate": "Crude Death Rate (CDR)",
                         "Infant Mortality Rate": "Infant Mortality Rate",
                         "Under Five Mortality Rate": "Under Five Mortality Rate (UMR)",
                         "Maternal Mortality Rate": "Maternal Mortality Rate (MMR)",
-                        "Child Woman Ratio": "Child Woman Ratio (CWR)"
+                        "Child Woman Ratio": "Child Woman Ratio (CWR)",
+                        "Percentage of Fully Immunized Children": "Percentage of Fully Immunized Children",
+                        "Prevalence of Underweight (UW) & Severely Underweight (SUW) Children": "Prevalence of Underweight (UW) & Severely Underweight (SUW) Children",
+                        "Infants Exclusively Breastfeed until 6 months": "Infants Exclusively Breastfeed until 6 months",
+                        "Percentage of Teenage Deliveries": "Percentage of Teenage Deliveries",
+                        "Percentage of Birth by Skilled Attendant": "Percentage of Birth by Skilled Attendant",
+                        "Births by Facility Based": "Births by Facility Based",
+                        "Contraceptive Prevalence Rate": "Contraceptive Prevalence Rate"
                     };
 
-                    if (allRows && allRows.length > 0) {
-                        const years = [...new Set(allRows.map(r => String(r.year)))].sort((a, b) => a - b);
+                    if (combinedRows.length > 0) {
+                        const years = [...new Set(combinedRows.map(r => String(r.year)))].sort((a, b) => a - b);
                         healthLabels = years;
                         const grouped = {};
-                        allRows.forEach(r => {
+                        combinedRows.forEach(r => {
                             const key = catToKey[r.category] || r.category;
                             if (!grouped[key]) grouped[key] = {};
                             grouped[key][String(r.year)] = r.value;
@@ -506,6 +523,7 @@
                     
                     statusTxt.textContent = "Live Connected: Syncing from data_values table";
                     statusDot.className = "db-dot";
+                    statusDot.style.backgroundColor = "#10b981";
                 } catch (e) {
                     console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
                     loadOfflineFallback();
