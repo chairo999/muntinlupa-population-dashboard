@@ -837,6 +837,66 @@ select option {
 .male-color { color: var(--accent-cyan); }
 .female-color { color: var(--accent-rose); }
 
+/* Map Hover Tooltip (Chart.js bar-style) */
+.map-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+    z-index: 100;
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 12px));
+    transition: opacity 0.15s ease;
+    white-space: nowrap;
+}
+
+.map-tooltip.visible {
+    opacity: 1;
+}
+
+.map-tooltip-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 0.8rem;
+}
+
+.map-tooltip-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.map-tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.map-tooltip-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+}
+
+.map-tooltip-value {
+    font-weight: 700;
+    color: #ffffff;
+}
+
 /* Charts Panel & Layout */
 .charts-panel {
     grid-column: span 2;
