@@ -109,6 +109,18 @@ function initEventListeners() {
             e.stopPropagation(); 
             selectBarangay(name);
         });
+
+        polygon.addEventListener("mouseenter", () => {
+            const bbox = polygon.getBBox();
+            const cx = bbox.x + bbox.width / 2;
+            const cy = bbox.y + bbox.height / 2;
+            polygon.style.transformOrigin = `${cx}px ${cy}px`;
+            polygon.classList.add("hovered");
+        });
+
+        polygon.addEventListener("mouseleave", () => {
+            polygon.classList.remove("hovered");
+        });
     });
 
     if (mapWrapper) {
