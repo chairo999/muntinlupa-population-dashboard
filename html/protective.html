@@ -411,46 +411,100 @@
                 });
             }
         }
+        
+            const INDICATOR_9_KEY_MAP = {
+            "Total Crime Volume": "Total Crime Volume (TCV)",
+            "Index Crime": "Index Crime",
+            "Average Monthly Crime Rate": "Average Monthly Crime Rate (AMCR)",
+            "Crime Solution Efficiency": "Crime Solution Efficiency (CSE)",
+            "Crime Clearance Solution": "Crime Clearance Solution"
+            };
 
-        // Fetch Live Database or Local Storage Fallback
+            const INDICATOR_11_KEY_MAP = {
+                "Number of Police Sub-Stations": "Police Sub-Stations",
+                "Number of Patrol Car": "Patrol Cars",
+                "Number of Motorcycle": "Motorcycles",
+                "Police to Population Ratio": "Police to Population Ratio (1:X)"
+            };
         async function fetchProtectiveData() {
-            const statusTxt = document.getElementById("db-status-txt");
-            const statusDot = document.getElementById("db-dot");
-            
-            if (supabaseClient) {
-                try {
-                    const { data, error } = await supabaseClient
-                        .from('protective')
-                        .select('data, labels')
-                        .eq('id', 1)
-                        .single();
+    const statusTxt = document.getElementById("db-status-txt");
+    const statusDot = document.getElementById("db-dot");
 
-                    if (error) {
-                        if (error.code === 'PGRST116') {
-                            console.log("Protective table empty in Supabase. Attempting to seed default data.");
-                            // Seed default protective data to Supabase live
-                            await supabaseClient.from('protective').insert({ id: 1, data: DEFAULT_PROTECTIVE_DATA, labels: PROTECTIVE_LABELS });
-                            protectiveData = DEFAULT_PROTECTIVE_DATA;
-                            protectiveLabels = PROTECTIVE_LABELS;
-                        } else {
-                            throw error;
+    if (supabaseClient) {
+        try {
+            const { data: allRows, error } = await supabaseClient
+                .from('data_values')
+                .select('value, year, indicator_id, category, subcategory, barangays(barangay_name)')
+                .in('indicator_id', [9, 10, 11])
+                .not('value', 'is', null)
+                .order('year', { ascending: true });
+
+            if (error) throw error;
+
+            const allData = {};
+            const yearSet = new Set();
+            const policemenByYear = {};
+
+            if (allRows && allRows.length > 0) {
+                allRows.forEach(r => {
+                    const yr = String(r.year);
+                    yearSet.add(yr);
+
+                    if (r.indicator_id === 9) {
+                        const key = INDICATOR_9_KEY_MAP[r.category] || r.category;
+                        if (!allData[key]) allData[key] = {};
+                        allData[key][yr] = r.value;
+                    } else if (r.indicator_id === 10) {
+                        const name = r.barangays?.barangay_name;
+                        if (name) {
+                            if (!allData[name]) allData[name] = {};
+                            allData[name][yr] = (allData[name][yr] || 0) + r.value;
                         }
-                    } else {
-                        protectiveData = data.data || DEFAULT_PROTECTIVE_DATA;
-                        protectiveLabels = data.labels || PROTECTIVE_LABELS;
+                        } else if (r.indicator_id === 11) {
+                        if (r.category === "Number of Policemen" || r.category === "Number of Non-Uniformed Personnel") {
+                            if (!allData[r.category]) allData[r.category] = {};
+                            allData[r.category][yr] = (allData[r.category][yr] || 0) + r.value;
+                        } else {
+                            const key = INDICATOR_11_KEY_MAP[r.category] || r.category;
+                            if (!allData[key]) allData[key] = {};
+                            allData[key][yr] = r.value;
+                        }
                     }
-                    
-                    statusTxt.textContent = "Live Supabase Database Connected";
-                    statusDot.className = "db-dot";
-                } catch (e) {
-                    console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
-                    loadOfflineFallback();
+                });
+
+                if (Object.keys(policemenByYear).length > 0) {
+                    allData["Number of Policemen"] = policemenByYear;
                 }
+
+                const years = [...yearSet].sort((a, b) => a - b);
+                protectiveLabels = years;
+
+                Object.keys(allData).forEach(key => {
+                    const yearMap = allData[key];
+                    allData[key] = {
+                        labels: years,
+                        history: years.map(y => yearMap[y] !== undefined ? yearMap[y] : null)
+                    };
+                });
+
+                protectiveData = allData;
             } else {
-                console.warn("Supabase library not loaded. Loading from LocalStorage fallback.");
-                loadOfflineFallback();
+                protectiveData = DEFAULT_PROTECTIVE_DATA;
+                protectiveLabels = PROTECTIVE_LABELS;
             }
+
+            statusTxt.textContent = "Live Connected: Syncing from data_values table";
+            statusDot.className = "db-dot";
+            statusDot.style.backgroundColor = "#10b981";
+        } catch (e) {
+            console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
+            loadOfflineFallback();
         }
+    } else {
+        console.warn("Supabase library not loaded. Loading from LocalStorage fallback.");
+        loadOfflineFallback();
+    }
+}
 
         function loadOfflineFallback() {
             const statusTxt = document.getElementById("db-status-txt");
