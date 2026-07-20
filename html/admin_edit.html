@@ -593,6 +593,12 @@
               <span>Institutional</span>
             </button>
           </li>
+          <li class="nav-item">
+            <button class="nav-btn" data-sector="infrastructure">
+              <i class="fa-solid fa-droplet"></i>
+              <span>Infrastructure (Water)</span>
+            </button>
+          </li>
         </nav>
         
         <a href="population.html" class="back-link">
@@ -751,6 +757,12 @@
         name: "Institutional Metrics",
         desc: "Edit governance ratings, administrative assets, and municipal indices.",
         icon: "fa-building-columns"
+      },
+      infrastructure: {
+        sectorId: "infrastructure",
+        name: "Infrastructure — Water Supply",
+        desc: "Edit MWSS Maynilad water customer counts, annual water sales, barangay connections, and household service data. Data is stored in browser LocalStorage (key: muntinlupa_sector_data_water).",
+        icon: "fa-droplet"
       }
     };
     const ECONOMIC_INDICATORS = {
@@ -857,6 +869,9 @@
     }
     if (sectorId === 'economic') {
         return loadEconomicData();
+    }
+    if (sectorId === 'infrastructure') {
+        return loadInfrastructureWaterData();
     }
     updateHeaderStatus('connecting', `Querying master table for [${sectorId}]...`);
     showNotification('info', `Fetching matching rows from ${MASTER_TABLE_NAME}...`, 'fa-spinner fa-spin');
@@ -1015,7 +1030,80 @@ async function loadEconomicData() {
         showNotification('err', `Failed to load economic data: ${err.message}`, 'fa-triangle-exclamation');
     }
 }
+
+// ─── Infrastructure (MWSS Water) Admin Editor ────────────────────────────
+const INFRA_WATER_KEY = 'muntinlupa_sector_data_water';
+
+const INFRA_WATER_DEFAULT = {
+    labels: ['2016','2017','2018','2019','2020','2021','2022'],
+    totalHouseholds: [58235,59612,61147,63140,65186,66872,65256],
+    customers: {
+        residential: [57413,58004,60992,63710,64963,65606,48139],
+        commercial:  [799,828,877,877,903,824,594],
+        industrial:  [83,90,68,542,702,702,702],
+        institutional:[null,null,null,null,null,null,null],
+        total:       [58295,58922,61954,65129,66568,67132,49435]
+    },
+    sales: {
+        residential: [1057340,1484777,1676347,1748000,1648908,1602414,1606784],
+        commercial:  [121634,137060,145762,149000,100781,57120,105042],
+        industrial:  [28384,38376,39534,43000,16880,16588,16253],
+        institutional:[null,null,null,null,null,null,null],
+        total:       [1207358,1660213,1861643,1940000,1766569,1676122,1728079]
+    },
+    barangay: {
+        labels:          ['Alabang','Ayala Alabang','Bayanan','Buli','Cupang','Poblacion','Putatan','Sucat','Tunasan'],
+        domestic_conn:   [201690,4754,1000,13855,null,63835,204493,43405,157761],
+        domestic_avg:    [237362,169267,34527,46793,null,188469,241589,148795,1014790],
+        commercial_conn: [92,3,16,111,null,204,209,42,503],
+        commercial_avg:  [5873,625,875,5023,null,9971,10892,1774,6287],
+        industrial_conn: [8,null,1,15,null,11,5,null,403],
+        industrial_avg:  [2121,null,60,5023,null,9371,1714,null,42000]
+    }
+};
+
+function loadInfrastructureWaterData() {
+    updateHeaderStatus('connecting', 'Reading water supply data from LocalStorage...');
+    showNotification('info', 'Loading MWSS water indicators from browser storage...', 'fa-spinner fa-spin');
+
+    let stored = null;
+    try { stored = JSON.parse(localStorage.getItem(INFRA_WATER_KEY)); } catch(e) {}
+    const d = stored || JSON.parse(JSON.stringify(INFRA_WATER_DEFAULT));
+
+    // Flatten nested data into activeIndicators rows for the standard form
+    const rows = [];
+    const labels = d.labels || [];
+
+    labels.forEach((yr, i) => {
+        rows.push({ id: `hh_${yr}`, label: `Total Households — ${yr}`, value: d.totalHouseholds?.[i] ?? '', _path: ['totalHouseholds', i] });
+        ['residential','commercial','industrial','institutional','total'].forEach(type => {
+            rows.push({ id: `cust_${type}_${yr}`, label: `Customers ${type.charAt(0).toUpperCase()+type.slice(1)} — ${yr}`, value: d.customers?.[type]?.[i] ?? '', _path: ['customers', type, i] });
+        });
+        ['residential','commercial','industrial','institutional','total'].forEach(type => {
+            rows.push({ id: `sales_${type}_${yr}`, label: `Water Sales ${type.charAt(0).toUpperCase()+type.slice(1)} (cu.m.) — ${yr}`, value: d.sales?.[type]?.[i] ?? '', _path: ['sales', type, i] });
+        });
+    });
+
+    const brgyLabels = d.barangay?.labels || [];
+    const brgyMetrics = ['domestic_conn','domestic_avg','commercial_conn','commercial_avg','industrial_conn','industrial_avg'];
+    brgyMetrics.forEach(metric => {
+        brgyLabels.forEach((brgy, bi) => {
+            rows.push({ id: `brgy_${metric}_${bi}`, label: `Barangay ${brgy} — ${metric.replace(/_/g,' ')}`, value: d.barangay?.[metric]?.[bi] ?? '', _path: ['barangay', metric, bi] });
+        });
+    });
+
+    activeIndicators = rows;
+    window._infraWaterData = d; // store reference for saving
+
+    populateIndicatorDropdown();
+    updateHeaderStatus('online', 'LocalStorage Mode — MWSS Water Supply');
+    showNotification('ok', `Loaded ${rows.length} water supply data points.`, 'fa-circle-check');
+    disableForm(false);
+    yearSelect.disabled = true;
+}
+
     // Populate the dropdown selection options
+
     function populateIndicatorDropdown() {
       const isPop = currentSectorKey === 'edit';
       brgySelect.innerHTML = `<option value="" disabled selected>${isPop ? '-- Choose Barangay --' : '-- Choose Indicator --'}</option>`;

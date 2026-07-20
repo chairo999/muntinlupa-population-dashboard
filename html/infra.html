@@ -205,6 +205,191 @@
                 width: 100%;
             }
         }
+
+        /* Day Care Facilities Listing */
+        .facility-section {
+            margin-top: 32px;
+        }
+
+        .facility-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 2px solid rgba(8,145,178,0.15);
+        }
+
+        .facility-header-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #0891b2, #06b6d4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .facility-header-icon i {
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        .facility-header h3 {
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .facility-header p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .facility-summary {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 18px;
+            padding: 14px 16px;
+            background: #ecfeff;
+            border: 1px solid rgba(8,145,178,0.12);
+            border-radius: 10px;
+        }
+
+        .district-block {
+            margin-bottom: 24px;
+        }
+
+        .district-label {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #0891b2;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid rgba(8,145,178,0.12);
+        }
+
+        .barangay-label {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            padding: 6px 12px;
+            background: #f8fafc;
+            border-left: 3px solid #0891b2;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .facility-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .facility-item {
+            padding: 8px 12px 8px 28px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.04);
+            position: relative;
+        }
+
+        .facility-item:last-child {
+            border-bottom: none;
+        }
+
+        .facility-item::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 14px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #0891b2;
+        }
+
+        .facility-item strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .facility-item .facility-loc {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            padding-left: 0;
+        }
+
+        .school-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            margin-top: 8px;
+        }
+        .school-table thead th {
+            background: #ecfeff;
+            color: #0f766e;
+            font-weight: 700;
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 2px solid rgba(8,145,178,0.15);
+        }
+        .school-table tbody td {
+            padding: 7px 10px;
+            border-bottom: 1px solid rgba(15,23,42,0.04);
+            color: var(--text-secondary);
+        }
+        .school-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .school-table tbody tr:hover td {
+            background: #f0fdfa;
+        }
+
+        /* Accordion styles */
+        .edu-accordion {}
+        .edu-accordion details {
+            margin-bottom: 8px;
+        }
+        .edu-accordion summary {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: #f0fdfa;
+            border: 1px solid rgba(8,145,178,0.15);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            list-style: none;
+            transition: var(--transition-smooth);
+        }
+        .edu-accordion summary::-webkit-details-marker {
+            display: none;
+        }
+        .edu-accordion summary:hover {
+            background: #ccfbf1;
+        }
+        .edu-accordion summary i {
+            transition: transform 0.2s ease;
+            color: #0891b2;
+        }
+        .edu-accordion details[open] summary i {
+            transform: rotate(90deg);
+        }
+        .edu-accordion .accordion-content {
+            padding: 16px 12px 4px;
+        }
     </style>
 </head>
 <body>
@@ -292,6 +477,55 @@
                     <span class="stat-label">Power Accessibility</span>
                     <h2 id="card-power">--</h2>
                     <span class="stat-pct" style="color: var(--text-muted)">Connected households</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- MWSS Water Supply Stat Cards -->
+        <div style="margin: 18px 0 6px; display:flex; align-items:center; gap:10px;">
+            <i class="fa-solid fa-droplet" style="color:#0891b2; font-size:1.1rem;"></i>
+            <span style="font-size:1rem; font-weight:700; color:var(--text-primary);">MWSS Water Supply Indicators</span>
+            <span style="font-size:0.78rem; color:var(--text-muted); font-weight:500;">Source: Maynilad, as of Oct. 2024</span>
+        </div>
+        <section class="stats-banner" style="margin-bottom:0;">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper infra-icon-cyan">
+                    <i class="fa-solid fa-people-roof"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Total Households</span>
+                    <h2 id="card-mwss-households">--</h2>
+                    <span class="stat-pct" style="color: var(--text-muted)">Maynilad service area (2022)</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper infra-icon-cyan">
+                    <i class="fa-solid fa-plug-circle-check"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Water Customers</span>
+                    <h2 id="card-mwss-customers">--</h2>
+                    <span class="stat-pct" style="color: var(--text-muted)">Total active connections (2022)</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper infra-icon-cyan">
+                    <i class="fa-solid fa-gauge-high"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Annual Water Sales</span>
+                    <h2 id="card-mwss-sales">--</h2>
+                    <span class="stat-pct" style="color: var(--text-muted)">cubic meters (2022)</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper infra-icon-cyan">
+                    <i class="fa-solid fa-water"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Barangay Connections</span>
+                    <h2 id="card-mwss-brgy-conn">--</h2>
+                    <span class="stat-pct" style="color: var(--text-muted)">Total across 9 barangays</span>
                 </div>
             </div>
         </section>
@@ -526,19 +760,7 @@
                     </div>
                 </div>
 
-                <div class="chart-card">
-                    <div class="chart-title-wrapper">
-                        <h5><i class="fa-solid fa-faucet-drip"></i> Water Coverage Proportion</h5>
-                        <select id="waterChartType" class="chart-type-select">
-                            <option value="bar">Bar Graph</option>
-                            <option value="line">Line Graph</option>
-                            <option value="pie">Pie Graph</option>
-                        </select>
-                    </div>
-                    <div class="canvas-container">
-                        <canvas id="waterChart"></canvas>
-                    </div>
-                </div>
+
 
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
@@ -575,7 +797,937 @@
                     </div>
                 </div>
             </div>
+
+            <div class="chart-card" style="margin-top: 4px;">
+                <div class="chart-title-wrapper">
+                    <h5><i class="fa-solid fa-database"></i> Data Sources & Tables</h5>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table style="width:100%; border-collapse:collapse; font-size:0.88rem; color:var(--text-primary);">
+                        <thead>
+                            <tr style="background:#f8fafc; text-align:left;">
+                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Table</th>
+                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Purpose</th>
+                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Key fields</th>
+                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Display note</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">data_values</td>
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Primary source for infrastructure indicators</td>
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">indicator_id, year, value, barangay_id</td>
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Used to populate road, water, housing, and power metrics</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">barangays</td>
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Barangay lookup and naming reference</td>
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">barangay_id, barangay_name</td>
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Maps indicator rows to the correct barangay on the interactive map</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">municipal_indicators</td>
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Dashboard configuration and indicator metadata</td>
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">indicator_id, sector_id, metric_label</td>
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Keeps the infrastructure sector grouped and labeled correctly</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top:12px; padding:10px 12px; background:#f8fafc; border-radius:10px; font-size:0.85rem; color:var(--text-secondary);">
+                    Infrastructure indicators kept in scope: <strong>7-11</strong> across the source tables.
+                </div>
+            </div>
         </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             MWSS WATER SUPPLY SECTION
+        ════════════════════════════════════════════════════════════════ -->
+        <div style="margin-top:32px;">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:18px; padding-bottom:14px; border-bottom:2px solid rgba(8,145,178,0.15);">
+                <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#0891b2,#06b6d4);display:flex;align-items:center;justify-content:center;">
+                    <i class="fa-solid fa-droplet" style="color:#fff;font-size:1.2rem;"></i>
+                </div>
+                <div>
+                    <h3 style="margin:0;font-size:1.15rem;font-weight:800;color:var(--text-primary);">MWSS Water Supply — Maynilad Service Area</h3>
+                    <p style="margin:0;font-size:0.8rem;color:var(--text-muted);">Muntinlupa City • Source: Maynilad, as of Oct. 2024 & 2023 data</p>
+                </div>
+            </div>
+
+            <!-- 3-column MWSS charts grid -->
+            <div class="charts-container-grid" style="grid-template-columns:1fr 1fr; margin-bottom:24px;">
+
+                <!-- Chart 1: Customer Users by Type -->
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-users"></i> Year-End Customer Users by Type</h5>
+                        <div class="chart-controls">
+                            <select id="mwssCustomersChartType" class="chart-type-select">
+                                <option value="bar">Bar Graph</option>
+                                <option value="line">Line Graph</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="canvas-container" style="height:320px;">
+                        <canvas id="mwssCustomersChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Annual Water Sales (cu.m.) -->
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-chart-area"></i> Annual Water Sales (cu.m.)</h5>
+                        <div class="chart-controls">
+                            <select id="mwssSalesChartType" class="chart-type-select">
+                                <option value="line">Line Graph</option>
+                                <option value="bar">Bar Graph</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="canvas-container" style="height:320px;">
+                        <canvas id="mwssSalesChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Chart 3: Barangay-Level Water Connections (full-width) -->
+            <div class="chart-card" style="margin-bottom:24px;">
+                <div class="chart-title-wrapper">
+                    <h5><i class="fa-solid fa-map-location-dot"></i> Barangay-Level Water Connections & Consumption (2022)</h5>
+                    <div class="chart-controls">
+                        <select id="mwssBrgyMetric" class="chart-select">
+                            <option value="domestic_conn">Domestic — No. of Connections</option>
+                            <option value="domestic_avg">Domestic — Avg. Consumption (cu.m.)</option>
+                            <option value="commercial_conn">Commercial — No. of Connections</option>
+                            <option value="commercial_avg">Commercial — Avg. Consumption</option>
+                            <option value="industrial_conn">Industrial — No. of Connections</option>
+                            <option value="industrial_avg">Industrial — Avg. Consumption</option>
+                        </select>
+                        <select id="mwssBrgyChartType" class="chart-type-select">
+                            <option value="bar">Bar Graph</option>
+                            <option value="line">Line Graph</option>
+                            <option value="pie">Pie Graph</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="canvas-container" style="height:340px;">
+                    <canvas id="mwssBrgyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Households Served Trend -->
+            <div class="chart-card">
+                <div class="chart-title-wrapper">
+                    <h5><i class="fa-solid fa-house-chimney-user"></i> Total Households in Service Area (2016–2022)</h5>
+                    <div class="chart-controls">
+                        <select id="mwssHHChartType" class="chart-type-select">
+                            <option value="line">Line Graph</option>
+                            <option value="bar">Bar Graph</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="canvas-container" style="height:280px;">
+                    <canvas id="mwssHHChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             POWER / ELECTRIFICATION SECTION (Meralco)
+        ════════════════════════════════════════════════════════════════ -->
+        <div style="margin-top:32px;">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:18px; padding-bottom:14px; border-bottom:2px solid rgba(245,158,11,0.15);">
+                <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#f97316);display:flex;align-items:center;justify-content:center;">
+                    <i class="fa-solid fa-bolt" style="color:#fff;font-size:1.2rem;"></i>
+                </div>
+                <div>
+                    <h3 style="margin:0;font-size:1.15rem;font-weight:800;color:var(--text-primary);">Power — Meralco Electrification</h3>
+                    <p style="margin:0;font-size:0.8rem;color:var(--text-muted);">Muntinlupa City • Source: Meralco – Utility Economics & CPDO, 2023</p>
+                </div>
+            </div>
+
+            <div style="font-size:0.88rem; color:var(--text-secondary); line-height:1.7; margin-bottom:18px; padding:14px 16px; background:#fffbeb; border:1px solid rgba(245,158,11,0.15); border-radius:10px;">
+                The City of Muntinlupa's sole electric provider is <strong>Meralco (Manila Electric Railroad and Light Company)</strong>. Meralco is the largest private electric distribution utility company in the Philippines, serving <strong>39 cities and 72 municipalities</strong> with over <strong>7,000 sq. km.</strong> of franchise area. Although it covers only about <strong>3% of the country's land area</strong>, it supplies approximately <strong>55% of the Philippines' electricity output</strong>. As of 2024, Meralco has been operating for <strong>121 years</strong>.
+            </div>
+
+            <!-- Power Stat Cards -->
+            <div class="stats-banner" style="margin-bottom:18px;">
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper" style="background:#f59e0b;">
+                        <i class="fa-solid fa-bolt" style="color:white;"></i>
+                    </div>
+                    <div class="stat-data">
+                        <span class="stat-label">Total Households (2023)</span>
+                        <h2>148,952</h2>
+                        <span class="stat-pct" style="color: var(--text-muted)">Projected from 2020 Census</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper" style="background:#f59e0b;">
+                        <i class="fa-solid fa-plug-circle-check" style="color:white;"></i>
+                    </div>
+                    <div class="stat-data">
+                        <span class="stat-label">Electrified Households (2023)</span>
+                        <h2>142,970</h2>
+                        <span class="stat-pct" style="color: var(--text-muted)">Estimated Meralco connections</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper" style="background:#f59e0b;">
+                        <i class="fa-solid fa-percent" style="color:white;"></i>
+                    </div>
+                    <div class="stat-data">
+                        <span class="stat-label">Electrification Rate (2023)</span>
+                        <h2>95.98%</h2>
+                        <span class="stat-pct" style="color: var(--text-muted)">Household electrification</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper" style="background:#f59e0b;">
+                        <i class="fa-solid fa-calendar-check" style="color:white;"></i>
+                    </div>
+                    <div class="stat-data">
+                        <span class="stat-label">Meralco Operating Years</span>
+                        <h2>121</h2>
+                        <span class="stat-pct" style="color: var(--text-muted)">As of 2024</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Household Electrification Trend Table -->
+            <div class="chart-card" style="margin-bottom:24px;">
+                <div class="chart-title-wrapper">
+                    <h5><i class="fa-solid fa-chart-line" style="color:#f59e0b;"></i> Household Electrification Statistics (2012–2023)</h5>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table style="width:100%; border-collapse:collapse; font-size:0.85rem; color:var(--text-primary);">
+                        <thead>
+                            <tr style="background:#fffbeb; text-align:center;">
+                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">Year</th>
+                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">Total Households</th>
+                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">Estimated Electrified Households</th>
+                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">Household Electrification (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2012</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">110,055</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">106,889</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">97.12%</td></tr>
+                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2013</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">111,298</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">108,639</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">97.61%</td></tr>
+                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2014</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">112,556</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">110,292</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">97.99%</td></tr>
+                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2015</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">113,828</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">111,890</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">98.30%</td></tr>
+                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2016</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">124,569</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">122,773</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">98.56%</td></tr>
+                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2017</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">126,895</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">125,352</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">98.78%</td></tr>
+                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2018</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">131,931</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">129,983</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">98.98%</td></tr>
+                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2019</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">133,931</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">132,809</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">99.16%</td></tr>
+                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2020</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">138,331</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">134,605</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">97.31%</td></tr>
+                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2021</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">141,789</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">138,250</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">97.50%</td></tr>
+                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2022</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;" colspan="3"><em>No available data</em></td></tr>
+                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2023</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">148,952</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">142,970</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">95.98%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top:10px; padding:8px 12px; background:#f8fafc; border-radius:8px; font-size:0.8rem; color:var(--text-muted);">
+                    Note: 2019 based on 2015 Census; 2020–2023 based on 2020 Census. No data for 2022.
+                </div>
+            </div>
+
+            <!-- Barangay-Level Electrification Table -->
+            <div class="chart-card">
+                <div class="chart-title-wrapper">
+                    <h5><i class="fa-solid fa-map-location-dot" style="color:#f59e0b;"></i> Household Electrification per Barangay (2019–2021)</h5>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table style="width:100%; border-collapse:collapse; font-size:0.85rem; color:var(--text-primary);">
+                        <thead>
+                            <tr style="background:#fffbeb; text-align:center;">
+                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">Barangay</th>
+                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">Total Households (2015 Census)</th>
+                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">2019</th>
+                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">2020</th>
+                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">2021</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Tunasan</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">12,944</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">14,164</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">14,408</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">14,736</td></tr>
+                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Poblacion</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">22,754</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">24,411</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">24,591</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">24,920</td></tr>
+                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Putatan</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">21,792</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">23,821</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">24,257</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">24,907</td></tr>
+                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Bayanan</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">9,492</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">10,241</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">10,489</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">10,715</td></tr>
+                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Alabang</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">17,505</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">19,544</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">19,796</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">21,097</td></tr>
+                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Ayala Alabang</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">4,063</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">4,341</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">4,358</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">4,380</td></tr>
+                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Cupang</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">15,476</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">16,739</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">17,013</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">17,315</td></tr>
+                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Buli</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">2,528</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">2,706</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">2,734</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">2,791</td></tr>
+                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Sucat</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">15,732</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">16,842</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">16,959</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">17,389</td></tr>
+                            <tr style="background:#f0fdf4; font-weight:700;">
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">City Total Est. Electrified</td>
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">122,286</td>
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">132,809</td>
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">134,605</td>
+                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">138,250</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top:10px; padding:8px 12px; background:#f8fafc; border-radius:8px; font-size:0.8rem; color:var(--text-muted);">
+                    Source: Meralco – Utility Economics, 2022. No recent barangay-level updates available up to 2023.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             EDUCATIONAL FACILITIES
+        ════════════════════════════════════════════════════════════════ -->
+        <div class="facility-section">
+            <div class="facility-header">
+                <div class="facility-header-icon">
+                    <i class="fa-solid fa-school"></i>
+                </div>
+                <div>
+                    <h3>11.2.1 Educational Facilities</h3>
+                    <p>Muntinlupa City • Source: City Engineering Office, 2022</p>
+                </div>
+            </div>
+
+            <div class="edu-accordion">
+                <details>
+                    <summary><i class="fa-solid fa-chevron-right"></i> Day Care Centers <span style="font-weight:400;color:var(--text-muted);font-size:0.82rem;">(92 centers + 13 others)</span></summary>
+                    <div class="accordion-content">
+
+            <!-- ═══ DISTRICT I ═══ -->
+            <div class="district-block">
+                <div class="district-label">District I</div>
+
+                <!-- TUNASAN -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Tunasan <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(16 centers)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>1. Carlos Quirino Daycare Center</strong>
+                            <span class="facility-loc">#29 Acacia St., Sikat Ville HOA Bldg., Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>2. F. Amorsolo Daycare Center</strong>
+                            <span class="facility-loc">Buendia St., Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>3. V. Mansala Child Development Center</strong>
+                            <span class="facility-loc">Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>4. Lucio San Pedro Daycare Center</strong>
+                            <span class="facility-loc">St. Peter Street, beside Tennis Court, Brgy. Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>5. V. S. Almario Daycare Center</strong>
+                            <span class="facility-loc">Central Park Golden Gate Avenue, Parkhomes Subdivision</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>6. J. Joya Child Development Center</strong>
+                            <span class="facility-loc">Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>7. C. Romolo Child Development Center</strong>
+                            <span class="facility-loc">Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>8. V. Hernandez Child Development Center</strong>
+                            <span class="facility-loc">Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>9. H. Ocampo Child Development Center</strong>
+                            <span class="facility-loc">Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>10. J. Nakpil Child Development Center</strong>
+                            <span class="facility-loc">Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>11. N. Joaquin Child Development Center</strong>
+                            <span class="facility-loc">Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>12. L. Celerio Child Development Center</strong>
+                            <span class="facility-loc">Villa Carolina 1 Plaza, Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>13. J. Fuentes Child Development Center</strong>
+                            <span class="facility-loc">Block 9 Lot 7, 1st Street, RVI Victoria Homes, Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>14. Daycare Center, JPA Subdivision</strong>
+                            <span class="facility-loc">JPA Subdivision, Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>15. Bulilit Daycare Center, Laguerta</strong>
+                            <span class="facility-loc">Laguerta, Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>16. Multi-purpose Building (Daycare Center &amp; OSCA Office)</strong>
+                            <span class="facility-loc">Sto. Niño Village Phase 3, St. Mary Street, JRF Building</span>
+                        </li>
+                    </ul>
+                </details>
+
+                <!-- POBLACION -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Poblacion <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(24 centers)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>17. Espeleta Pantalan Daycare Center</strong>
+                            <span class="facility-loc">Espeleta St., Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>18. Zinnia Daycare Center, Canto</strong>
+                            <span class="facility-loc">Beside Barangay Hall, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>19. Gardenia Daycare Center</strong>
+                            <span class="facility-loc">Promise Land, Madgaong Rd., Pasong Makipot, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>20. Dahlia Daycare Center, Tensuan Site</strong>
+                            <span class="facility-loc">Katihan Street, Brgy. Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>21. Marigold Daycare Center and Daisy Daycare Center</strong>
+                            <span class="facility-loc">NBP Residential Area, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>22. Rosemary Daycare Center, Sitio San Antonio</strong>
+                            <span class="facility-loc">Sitio San Antonio, Brgy. Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>23. Sampaguita Daycare Center, NBP Camp Sampaguita</strong>
+                            <span class="facility-loc">NBP Camp Sampaguita, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>24. Orchid Daycare Center, Type C NBP Residential Area</strong>
+                            <span class="facility-loc">Type C NBP Residential Area, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>25. Tulip 1 Daycare Center</strong>
+                            <span class="facility-loc">B20 L40 Phase 1 Southville 3, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>26. Tulip 2 Daycare Center</strong>
+                            <span class="facility-loc">B20 L40 Phase 1 Southville 3, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>27. Camia 1 Daycare Center, Southville 3</strong>
+                            <span class="facility-loc">Southville 3, Brgy. Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>28. Camia 2 Daycare Center, Southville 3</strong>
+                            <span class="facility-loc">Southville 3, Brgy. Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>29. Sunflower 1 Daycare Center</strong>
+                            <span class="facility-loc">B12 L12 Phase 2 Southville 3, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>30. Sunflower 2 Daycare Center</strong>
+                            <span class="facility-loc">B12 L12 Phase 2 Southville 3, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>31. Carnation 1 Daycare Center</strong>
+                            <span class="facility-loc">B1 L3 Phase 2 Southville 3, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>32. Gumamela Daycare Center, Phase 4</strong>
+                            <span class="facility-loc">Phase 3, Southville 3, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>33. Calla Lily 1 Daycare Center</strong>
+                            <span class="facility-loc">Block 6, Lot Phase 2, Southville 3, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>34. Hyacinth 1 Daycare Center</strong>
+                            <span class="facility-loc">Phase 2, Southville 2, NHA Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>35. Jasmine 1 Daycare Center</strong>
+                            <span class="facility-loc">B38 L2 Phase 4, Southville 3, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>36. Jasmine 2 Daycare Center</strong>
+                            <span class="facility-loc">B38 L2 Phase 4, Southville 3, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>37. Daisy Child Development Center</strong>
+                            <span class="facility-loc">Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>38. Veronica Child Development Center</strong>
+                            <span class="facility-loc">Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>39. Burma Daycare Center, NBP Residential Area</strong>
+                            <span class="facility-loc">NBP Residential Area, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>40. Katihan Daycare Center, Tensuan Site</strong>
+                            <span class="facility-loc">Tensuan Site, Poblacion</span>
+                        </li>
+                    </ul>
+                </details>
+
+                <!-- PUTATAN -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Putatan <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(10 centers)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>41. Hundred Islands Daycare Center</strong>
+                            <span class="facility-loc">F. De Mesa Elementary School, Putatan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>42. Mayon Daycare Center</strong>
+                            <span class="facility-loc">Block 17 Excess Lot, Soldiers Hills, Putatan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>43. Boracay Daycare Center</strong>
+                            <span class="facility-loc">Bruger Subdivision, Putatan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>44. Chocolate Hills Daycare Center</strong>
+                            <span class="facility-loc">Hillsview Homes (beside HOA Office), Putatan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>45. Bliss Daycare Center</strong>
+                            <span class="facility-loc">Bliss Compound, Putatan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>46. Camsur Child Development Center</strong>
+                            <span class="facility-loc">Block 35, Soldiers Hills, Putatan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>47. Puerto Princesa Child Development Center</strong>
+                            <span class="facility-loc">Margarita Street, Lakeview Homes, Putatan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>48. Dakak Child Development Center</strong>
+                            <span class="facility-loc">Pasong Makipot, Putatan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>49. Taal Child Development Center</strong>
+                            <span class="facility-loc">San Juan Compound, Putatan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>50. Multiland Child Development Center</strong>
+                            <span class="facility-loc">Multiland Subdivision, Putatan</span>
+                        </li>
+                    </ul>
+                </details>
+
+                <!-- BAYANAN -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Bayanan <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(12 centers)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>51. Topaz Daycare Center</strong>
+                            <span class="facility-loc">Purok 5, Plaza Bayanan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>52. Emerald Daycare Center</strong>
+                            <span class="facility-loc">Bagong Paraiso, Bayanan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>53. Diamond Daycare Center (Bayanan Bulilit A)</strong>
+                            <span class="facility-loc">Purok 5 Plaza, Baywalk, Bayanan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>54. Pearl Daycare Center (Bayanan Bulilit B)</strong>
+                            <span class="facility-loc">Purok 5 Plaza, Baywalk, Bayanan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>55. Jade Daycare Center (Holding 2 rooms)</strong>
+                            <span class="facility-loc">Purok 1 Block 5, Bayanan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>56. Amethyst Daycare Center</strong>
+                            <span class="facility-loc">Purok 1 Block 5, Bayanan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>57. Sapphire Child Development Center</strong>
+                            <span class="facility-loc">Block 8, Purok Bayanan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>58. Child Development Center, Block 10</strong>
+                            <span class="facility-loc">Block 10, Bayanan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>59. Block 5 Daycare Center</strong>
+                            <span class="facility-loc">Block 5, Bayanan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>60. Block 8 Daycare Center</strong>
+                            <span class="facility-loc">Block 8, Bayanan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>61. Bayanan Daycare Center</strong>
+                            <span class="facility-loc">Bayanan Baywalk</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>62. Khekinah Child Development</strong>
+                            <span class="facility-loc">Bayanan</span>
+                        </li>
+                    </ul>
+                </details>
+            </div>
+
+            <!-- DISTRICT II -->
+            <div class="district-block">
+                <div class="district-label">District II</div>
+
+                <!-- ALABANG -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Alabang <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(11 centers)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>63. 7C Daycare Center (Bayabas)</strong>
+                            <span class="facility-loc">7C Ilaya, Alabang</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>64. 7B Daycare Center (Langka)</strong>
+                            <span class="facility-loc">Bagong Umaga, 7B Ilaya, Alabang</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>65. 7A Daycare Center (Caimito)</strong>
+                            <span class="facility-loc">7A Ilaya, Alabang</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>66. Morning Breeze Daycare Center (Atis)</strong>
+                            <span class="facility-loc">Morning Breeze HOA Building, Ilaya, Alabang</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>67. Wawa Daycare Center</strong>
+                            <span class="facility-loc">Wawa, Alabang</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>68. Starfish Daycare Center</strong>
+                            <span class="facility-loc">UP Side Subdivision, Alabang</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>69. Lobster Daycare Center</strong>
+                            <span class="facility-loc">San Jose Bagong Pag-asa, Alabang</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>70. Sitio Masagana Daycare Center (Sampaloc)</strong>
+                            <span class="facility-loc">Sitio Masagana, Alabang Town Center</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>71. Haven for Women Daycare Center</strong>
+                            <span class="facility-loc">Alabang</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>72. Jellyfish Child Development Center</strong>
+                            <span class="facility-loc">Alabang</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>73. Blue Whale Child Development Center</strong>
+                            <span class="facility-loc">Alabang</span>
+                        </li>
+                    </ul>
+                </details>
+
+                <!-- CUPANG -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Cupang <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(6 centers)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>74. Neptune Daycare Center</strong>
+                            <span class="facility-loc">West Kabulusan, Cupang</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>75. Jupiter Daycare Center</strong>
+                            <span class="facility-loc">Sitio Sto. Niño, West Service Road, Cupang</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>76. Saturn Daycare Center</strong>
+                            <span class="facility-loc">Block 1 Mertinez Compound, Sitio Tuklas, East Service Road, Cupang</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>77. Mars Daycare Center</strong>
+                            <span class="facility-loc">2nd Floor, Bunyi Compound HOA Building, East Service Road, Cupang</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>78. Venus Child Development Center</strong>
+                            <span class="facility-loc">JRF Building, Mullet Compound, Purok 5, Cupang</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>79. Crismina Daycare Center</strong>
+                            <span class="facility-loc">Crismina Compound, Cupang</span>
+                        </li>
+                    </ul>
+                </details>
+
+                <!-- BULI -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Buli <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(3 centers)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>80. Molave Daycare Center</strong>
+                            <span class="facility-loc">Ecco Asia Street, Buli</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>81. Mahogany Child Development Center</strong>
+                            <span class="facility-loc">Brgy. Buli</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>82. Narra Child Development Center</strong>
+                            <span class="facility-loc">Block 5, Lot 2, Onsite, Buli</span>
+                        </li>
+                    </ul>
+                </details>
+
+                <!-- SUCAT -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Sucat <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(10 centers)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>83. Emilio Aguinaldo Daycare Center</strong>
+                            <span class="facility-loc">Upper Sucat</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>84. Sucat Daycare Center</strong>
+                            <span class="facility-loc">Purok 6, Sucat</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>85. Apolinario Mabini Daycare Center</strong>
+                            <span class="facility-loc">Purok 6 Creekside, Sucat</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>86. A. Bonifacio Child Development Center</strong>
+                            <span class="facility-loc">Inside Bagong Silang Elementary School Compound, Sucat</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>87. Antonio Luna Child Development Center</strong>
+                            <span class="facility-loc">Sucat</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>88. E. Jacinto Child Development Center</strong>
+                            <span class="facility-loc">Purok 4, Brgy. Sucat</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>89. G. Del Pilar Child Development Center</strong>
+                            <span class="facility-loc">Purok 6, Brgy. Sucat</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>90. G. Lopez-Jaena Child Development Center</strong>
+                            <span class="facility-loc">Zone 2, Sitio Pagkakaisa, Sucat</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>91. R. Solimon Child Development Center</strong>
+                            <span class="facility-loc">Zone 2, Sitio Pagkakaisa, Sucat</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>92. Bagong Silang Daycare Center</strong>
+                            <span class="facility-loc">Sucat</span>
+                        </li>
+                    </ul>
+                </details>
+            </div>
+
+            <!-- OTHERS -->
+            <details style="margin-bottom:8px;">
+                <summary style="cursor:pointer;padding:10px 16px;font-size:0.92rem;font-weight:700;color:#0891b2;border-radius:8px;background:#f0fdfa;border:1px solid rgba(8,145,178,0.12);list-style:none;display:flex;align-items:center;gap:8px;">
+                    <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Others <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(13 centers)</span>
+                </summary>
+                <ul class="facility-list" style="padding-left:20px;padding-top:8px;">
+                    <li class="facility-item">
+                        <strong>93. ALS</strong>
+                        <span class="facility-loc">ALS Building, Bayanan</span>
+                    </li>
+                    <li class="facility-item">
+                        <strong>94. Manulife GK</strong>
+                        <span class="facility-loc">GK Manulife, NHA Compound, Soldiers Hills, Putatan</span>
+                    </li>
+                    <li class="facility-item">
+                        <strong>95. Sitio Pagkakaisa</strong>
+                        <span class="facility-loc">Zone 4, Sitio Pagkakaisa</span>
+                    </li>
+                    <li class="facility-item">
+                        <strong>96. Kamias (Sitio Visaya)</strong>
+                    </li>
+                    <li class="facility-item">
+                        <strong>97. Makopa (CENA)</strong>
+                        <span class="facility-loc">#33 Crispin Extension, Sitio Rizal</span>
+                    </li>
+                    <li class="facility-item">
+                        <strong>98. Lansones (Filinvest)</strong>
+                        <span class="facility-loc">Inside Alabang Elementary Annex, Filinvest Housing</span>
+                    </li>
+                    <li class="facility-item">
+                        <strong>99. Mabolo (Kelly)</strong>
+                        <span class="facility-loc">#0141 BE (B) Estehonor Compound</span>
+                    </li>
+                    <li class="facility-item">
+                        <strong>100. Mangga (68)</strong>
+                    </li>
+                    <li class="facility-item">
+                        <strong>101. Duhat (San Roque)</strong>
+                        <span class="facility-loc">San Roque, Alabang</span>
+                    </li>
+                    <li class="facility-item">
+                        <strong>102. Ayala</strong>
+                        <span class="facility-loc">Basila St., Ayala Alabang Village</span>
+                    </li>
+                    <li class="facility-item">
+                        <strong>103. Hyacinth 2 Daycare Center</strong>
+                        <span class="facility-loc">B5 L88 Phase 2, Southville 3, Poblacion</span>
+                    </li>
+                    <li class="facility-item">
+                        <strong>104. Duhat</strong>
+                        <span class="facility-loc">94 Buendia St., Tunasan</span>
+                    </li>
+                    <li class="facility-item">
+                        <strong>105. Acacia</strong>
+                        <span class="facility-loc">2nd Floor, Buli Health Center Building</span>
+                    </li>
+                </ul>
+            </details>
+
+        </div>
+        </details>
+
+            <!-- ELEMENTARY SCHOOLS -->
+            <details>
+                <summary><i class="fa-solid fa-chevron-right"></i> Elementary Schools <span style="font-weight:400;color:var(--text-muted);font-size:0.82rem;">(18 schools)</span></summary>
+                <div class="accordion-content">
+                    <p class="facility-summary">Total: 18 Elementary Schools</p>
+
+                    <div class="district-block">
+                        <div class="district-label">District I</div>
+                        <table class="school-table">
+                            <thead>
+                                <tr><th>School Name</th><th>Location</th><th style="text-align:center;">Year Est.</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Muntinlupa Elementary School</td><td>Katihan St., Poblacion, Muntinlupa City</td><td style="text-align:center;">1914</td></tr>
+                                <tr><td>Bayanan Elementary School Main</td><td>Nat'l Road, Bayanan, Muntinlupa City</td><td style="text-align:center;">1939</td></tr>
+                                <tr><td>Itaas Elementary School</td><td>NBP Reservation, Poblacion, Muntinlupa City</td><td style="text-align:center;">1943</td></tr>
+                                <tr><td>Poblacion Elementary School</td><td>Southville 3, NHA, Poblacion, Muntinlupa City</td><td style="text-align:center;">2009</td></tr>
+                                <tr><td>Putatan Elementary School</td><td>San Guillermo, Putatan, Muntinlupa City</td><td style="text-align:center;">1954</td></tr>
+                                <tr><td>Tunasan Elementary School</td><td>Buendia St., Tunasan, Muntinlupa City</td><td style="text-align:center;">1945</td></tr>
+                                <tr><td>Victoria Homes Elementary School</td><td>Victoria Homes, Tunasan, Muntinlupa City</td><td style="text-align:center;">2000</td></tr>
+                                <tr><td>Soldiers' Hills Elementary School</td><td>Block 26, SHV, Putatan, Muntinlupa City</td><td style="text-align:center;">1979</td></tr>
+                                <tr><td>F. de Mesa Elementary School</td><td>Freedom Hills, Putatan, Muntinlupa City</td><td style="text-align:center;">1972</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="district-block">
+                        <div class="district-label">District II</div>
+                        <table class="school-table">
+                            <thead>
+                                <tr><th>School Name</th><th>Location</th><th style="text-align:center;">Year Est.</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Alabang Elementary School</td><td>Purok 1, Mendiola St., Muntinlupa City</td><td style="text-align:center;">1917</td></tr>
+                                <tr><td>Bagong Silang Elementary School</td><td>Samson St., Sucat, Muntinlupa City</td><td style="text-align:center;">2005</td></tr>
+                                <tr><td>Bayanan Elementary School Unit I</td><td>Valeda St., Bayanan, Muntinlupa City</td><td style="text-align:center;">2007</td></tr>
+                                <tr><td>Buli Elementary School</td><td>Espeleta St., Buli, Muntinlupa City</td><td style="text-align:center;">1962</td></tr>
+                                <tr><td>Cupang Elementary School</td><td>Viñalon St., Cupang, Muntinlupa City</td><td style="text-align:center;">1932</td></tr>
+                                <tr><td>Cupang Elementary School Annex</td><td>Sto. Niño St., Cupang, Muntinlupa City</td><td style="text-align:center;">1992</td></tr>
+                                <tr><td>Sucat Elementary School</td><td>Quezon St., Sucat, Muntinlupa City</td><td style="text-align:center;">1912</td></tr>
+                                <tr><td>Sucat Elementary School Zone 3 Annex</td><td>Sitio Pagkakaisa Zone 3, Sucat, Muntinlupa City</td><td style="text-align:center;">1993</td></tr>
+                                <tr><td>Sucat Elementary School Zone 4 Annex</td><td>Sitio Pagkakaisa Zone 4, Sucat, Muntinlupa City</td><td style="text-align:center;">1993</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p style="font-size:0.8rem;color:var(--text-muted);margin-top:12px;font-style:italic;">Source: School Division Office through City Engineering Office, 2022</p>
+                    <ul style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;padding-left:18px;">
+                        <li>No changes from the previous year's submitted data.</li>
+                        <li><strong>Schools offering SPED:</strong> Alabang ES, Soldiers' Hills ES, Muntinlupa ES, and Itaas ES Main.</li>
+                        <li><strong>Integrated Senior High Schools (JHS with SHS):</strong> Muntinlupa National High School and Muntinlupa Business High School.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <!-- SECONDARY SCHOOLS -->
+            <details>
+                <summary><i class="fa-solid fa-chevron-right"></i> Secondary Schools <span style="font-weight:400;color:var(--text-muted);font-size:0.82rem;">(8 schools + 1 integrated)</span></summary>
+                <div class="accordion-content">
+                    <p class="facility-summary">Total: 8 Secondary Schools with 1 Integrated School</p>
+
+                    <div class="district-block">
+                        <div class="district-label">District I</div>
+                        <table class="school-table">
+                            <thead>
+                                <tr><th>School Name</th><th>Location</th><th style="text-align:center;">Year Est.</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Muntinlupa National High School</td><td>NBP Reservation, Poblacion, Muntinlupa City</td><td style="text-align:center;">1945</td></tr>
+                                <tr><td>Muntinlupa National High School – Tunasan Annex</td><td>Laguerta St., Tunasan, Muntinlupa City</td><td style="text-align:center;">2012</td></tr>
+                                <tr><td>Poblacion National High School</td><td>Southville 3, NHA, Poblacion, Muntinlupa City</td><td style="text-align:center;">2009</td></tr>
+                                <tr><td>Muntinlupa Science High School</td><td>Buendia St., Tunasan, Muntinlupa City</td><td style="text-align:center;">1998</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="district-block">
+                        <div class="district-label">District II</div>
+                        <table class="school-table">
+                            <thead>
+                                <tr><th>School Name</th><th>Location</th><th style="text-align:center;">Year Est.</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Pedro E. Diaz High School</td><td>UP Side Subdivision, Alabang, Muntinlupa City</td><td style="text-align:center;">1977 / 1993</td></tr>
+                                <tr><td>Muntinlupa Business High School</td><td>Espeleta St., Buli, Muntinlupa City</td><td style="text-align:center;">1999</td></tr>
+                                <tr><td>Muntinlupa Business High School – Sucat Annex</td><td>Quezon St., Sucat, Muntinlupa City</td><td style="text-align:center;">2010</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p style="font-size:0.8rem;color:var(--text-muted);margin-top:12px;font-style:italic;">Source: School Division Office through City Engineering Office, 2022</p>
+                    <ul style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;padding-left:18px;">
+                        <li>No changes from the previous year's submitted data.</li>
+                        <li><strong>Schools offering SPED:</strong> Alabang ES, Soldiers' Hills ES, Muntinlupa ES, and Itaas ES Main.</li>
+                        <li><strong>Integrated Senior High Schools (JHS with SHS):</strong> Muntinlupa National High School and Muntinlupa Business High School.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <!-- INTEGRATED SCHOOLS -->
+            <details>
+                <summary><i class="fa-solid fa-chevron-right"></i> Integrated Schools <span style="font-weight:400;color:var(--text-muted);font-size:0.82rem;">(1 school)</span></summary>
+                <div class="accordion-content">
+                    <p class="facility-summary">Total: 1 Integrated School</p>
+
+                    <table class="school-table">
+                        <thead>
+                            <tr><th>School Name</th><th>Location</th><th style="text-align:center;">Year Est.</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Lakeview Integrated School</td><td>Marigold St., Lakeview Homes, Putatan, Muntinlupa City</td><td style="text-align:center;">1972</td></tr>
+                        </tbody>
+                    </table>
+
+                    <p style="font-size:0.8rem;color:var(--text-muted);margin-top:12px;font-style:italic;">Source: School Division Office through City Engineering Office, 2022</p>
+                </div>
+            </details>
+
+    </div>
+
+    </div>
+
     </div>
 
     <footer class="dashboard-footer" aria-hidden="true">
@@ -588,28 +1740,119 @@
         const MASTER_TABLE_NAME = "municipal_indicators";
         const SECTOR_ID = "infrastructure";
 
+        // ─── MWSS Water Supply Default Data ──────────────────────────────────
+        const MWSS_STORAGE_KEY = 'muntinlupa_sector_data_water';
+
+        const DEFAULT_MWSS_DATA = {
+            labels: ['2016', '2017', '2018', '2019', '2020', '2021', '2022'],
+            totalHouseholds: [58235, 59612, 61147, 63140, 65186, 66872, 65256],
+            customers: {
+                residential:  [57413, 58004, 60992, 63710, 64963, 65606, 48139],
+                commercial:   [799,   828,   877,   877,   903,   824,   594],
+                industrial:   [83,    90,    68,    542,   702,   702,   702],
+                institutional:[null,  null,  null,  null,  null,  null,  null],
+                total:        [58295, 58922, 61954, 65129, 66568, 67132, 49435]
+            },
+            sales: {
+                residential:  [1057340, 1484777, 1676347, 1748000, 1648908, 1602414, 1606784],
+                commercial:   [121634,  137060,  145762,  149000,  100781,  57120,   105042],
+                industrial:   [28384,   38376,   39534,   43000,   16880,   16588,   16253],
+                institutional:[null,    null,    null,    null,    null,    null,    null],
+                total:        [1207358, 1660213, 1861643, 1940000, 1766569, 1676122, 1728079]
+            },
+            barangay: {
+                labels:          ['Alabang','Ayala Alabang','Bayanan','Buli','Cupang','Poblacion','Putatan','Sucat','Tunasan'],
+                domestic_conn:   [201690, 4754, 1000, 13855, null, 63835, 204493, 43405, 157761],
+                domestic_avg:    [237362, 169267, 34527, 46793, null, 188469, 241589, 148795, 1014790],
+                commercial_conn: [92,   3,   16,  111,  null, 204,  209,  42,   503],
+                commercial_avg:  [5873, 625, 875, 5023, null, 9971, 10892,1774,  6287],
+                industrial_conn: [8,    null, 1,  15,   null, 11,   5,    null,  403],
+                industrial_avg:  [2121, null, 60, 5023, null, 9371, 1714, null,  42000]
+            }
+        };
+
         const BARANGAY_NAMES = ["Alabang", "Ayala Alabang", "Bayanan", "Buli", "Cupang", "Poblacion", "Putatan", "Sucat", "Tunasan"];
+
+        const FALLBACK_BARANGAY_SERIES = {
+            "Alabang": {
+                roadLength: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [12, 13, 14, 15, 16] },
+                waterCoverage: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [73, 75, 77, 79, 82] },
+                housingUnits: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [810, 835, 860, 905, 950] },
+                powerAccess: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [80, 82, 84, 86, 88] }
+            },
+            "Ayala Alabang": {
+                roadLength: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [9, 10, 11, 12, 13] },
+                waterCoverage: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [76, 78, 80, 82, 85] },
+                housingUnits: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [640, 660, 695, 725, 760] },
+                powerAccess: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [82, 84, 86, 87, 90] }
+            },
+            "Bayanan": {
+                roadLength: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [16, 17, 18, 19, 21] },
+                waterCoverage: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [71, 74, 76, 78, 81] },
+                housingUnits: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [930, 960, 990, 1035, 1080] },
+                powerAccess: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [79, 81, 83, 85, 87] }
+            },
+            "Buli": {
+                roadLength: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [11, 12, 13, 14, 15] },
+                waterCoverage: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [69, 71, 74, 77, 80] },
+                housingUnits: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [780, 805, 830, 870, 910] },
+                powerAccess: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [77, 79, 81, 83, 85] }
+            },
+            "Cupang": {
+                roadLength: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [18, 19, 20, 22, 24] },
+                waterCoverage: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [72, 74, 76, 79, 82] },
+                housingUnits: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [860, 890, 920, 965, 1010] },
+                powerAccess: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [81, 82, 84, 86, 88] }
+            },
+            "Poblacion": {
+                roadLength: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [8, 9, 10, 11, 12] },
+                waterCoverage: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [78, 80, 82, 84, 86] },
+                housingUnits: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [720, 748, 775, 810, 845] },
+                powerAccess: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [84, 85, 87, 88, 91] }
+            },
+            "Putatan": {
+                roadLength: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [14, 15, 16, 17, 18] },
+                waterCoverage: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [70, 73, 75, 78, 81] },
+                housingUnits: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [820, 850, 885, 920, 960] },
+                powerAccess: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [78, 80, 82, 84, 86] }
+            },
+            "Sucat": {
+                roadLength: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [13, 14, 15, 16, 17] },
+                waterCoverage: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [68, 70, 73, 76, 79] },
+                housingUnits: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [760, 790, 820, 850, 890] },
+                powerAccess: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [76, 78, 80, 82, 84] }
+            },
+            "Tunasan": {
+                roadLength: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [17, 18, 19, 20, 22] },
+                waterCoverage: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [74, 76, 78, 80, 83] },
+                housingUnits: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [880, 915, 950, 990, 1035] },
+                powerAccess: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [80, 82, 84, 86, 88] }
+            }
+        };
 
         const PIE_COLORS = ["#0ea5e9", "#38bdf8", "#14b8a6", "#22c55e", "#f59e0b", "#8b5cf6", "#ec4899", "#6366f1", "#ef4444"];
         const PIE_HOVER_COLORS = ["#38bdf8", "#67e8f9", "#2dd4bf", "#4ade80", "#fbbf24", "#a78bfa", "#f472b6", "#818cf8", "#f87171"];
 
         let infraData = {
-            roadLength: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [48, 51, 54, 58, 63] },
-            waterCoverage: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [74, 76, 79, 82, 85] },
-            housingUnits: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [8200, 8350, 8500, 8710, 9040] },
-            powerAccess: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [89, 90, 91, 92, 94] },
+            citywide: {
+                roadLength: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [48, 51, 54, 58, 63] },
+                waterCoverage: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [74, 76, 79, 82, 85] },
+                housingUnits: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [8200, 8350, 8500, 8710, 9040] },
+                powerAccess: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [89, 90, 91, 92, 94] },
+            },
+            barangay: {},
             barangayRoad: { labels: BARANGAY_NAMES, history: [78, 70, 84, 63, 81, 88, 74, 72, 77] },
             barangayWater: { labels: BARANGAY_NAMES, history: [72, 76, 71, 66, 75, 82, 69, 68, 73] },
             barangayPower: { labels: BARANGAY_NAMES, history: [85, 82, 88, 80, 84, 90, 83, 79, 86] }
         };
 
         let roadChartInstance = null;
-        let waterChartInstance = null;
+
         let housingChartInstance = null;
         let barangayInfraChartInstance = null;
 
         let roadChartType = 'line';
-        let waterChartType = 'bar';
+
         let housingChartType = 'line';
         let barangayInfraChartType = 'bar';
 
@@ -619,12 +1862,16 @@
             Chart.defaults.font.size = 11;
 
             initSidebar();
-            await Promise.all([initData(), fetchInfrastructureData()]);
             populateYearSelect();
+            loadMWSSData();
             renderStatsBanner();
             renderAllCharts();
             initChartControls();
             initMapInteraction();
+
+            await Promise.allSettled([initData(), fetchInfrastructureData()]);
+            renderStatsBanner();
+            renderAllCharts();
         });
 
         function initSidebar() {
@@ -658,40 +1905,81 @@
 
                 const { data, error } = await supabaseClient
                     .from('data_values')
-                    .select('value, year, indicator_id, barangay_id, barangays(barangay_name)')
+                    .select('value, year, indicator_id, barangay_id, category, subcategory, barangays(barangay_name)')
                     .in('indicator_id', [7, 8, 9, 10, 11])
                     .not('value', 'is', null)
                     .order('year', { ascending: true });
 
                 if (error) throw error;
 
-                if (data && data.length > 0) {
-                    const road = { labels: [], history: [] };
-                    const water = { labels: [], history: [] };
-                    const housing = { labels: [], history: [] };
-                    const power = { labels: [], history: [] };
+                const totalByMetric = {
+                    roadLength: {},
+                    waterCoverage: {},
+                    housingUnits: {},
+                    powerAccess: {}
+                };
 
+                const barangayByMetric = {};
+
+                const addValue = (store, key, year, value) => {
+                    if (!store[key]) store[key] = {};
+                    const current = store[key][year] ?? 0;
+                    store[key][year] = current + Number(value || 0);
+                };
+
+                const addBaranggaySeries = (brgy, metricKey, year, value) => {
+                    if (!barangayByMetric[brgy]) barangayByMetric[brgy] = {};
+                    if (!barangayByMetric[brgy][metricKey]) barangayByMetric[brgy][metricKey] = {};
+                    barangayByMetric[brgy][metricKey][year] = Number(value || 0);
+                };
+
+                const finalizeBarangaySeries = () => {
+                    Object.keys(barangayByMetric).forEach(brgy => {
+                        Object.keys(barangayByMetric[brgy]).forEach(metricKey => {
+                            barangayByMetric[brgy][metricKey] = buildSeriesFromYearMap(barangayByMetric[brgy][metricKey]);
+                        });
+                    });
+                };
+
+                if (data && data.length > 0) {
                     data.forEach(row => {
+                        const brgy = row.barangays?.barangay_name;
                         const year = String(row.year);
+                        const value = Number(row.value);
+
                         if (row.indicator_id === 7) {
-                            road.labels.push(year);
-                            road.history.push(Number(row.value));
+                            addValue(totalByMetric, 'roadLength', year, value);
+                            if (brgy) addBaranggaySeries(brgy, 'roadLength', year, value);
                         } else if (row.indicator_id === 8) {
-                            water.labels.push(year);
-                            water.history.push(Number(row.value));
+                            addValue(totalByMetric, 'waterCoverage', year, value);
+                            if (brgy) addBaranggaySeries(brgy, 'waterCoverage', year, value);
                         } else if (row.indicator_id === 9) {
-                            housing.labels.push(year);
-                            housing.history.push(Number(row.value));
+                            addValue(totalByMetric, 'housingUnits', year, value);
+                            if (brgy) addBaranggaySeries(brgy, 'housingUnits', year, value);
                         } else if (row.indicator_id === 10) {
-                            power.labels.push(year);
-                            power.history.push(Number(row.value));
+                            addValue(totalByMetric, 'powerAccess', year, value);
+                            if (brgy) addBaranggaySeries(brgy, 'powerAccess', year, value);
                         }
                     });
 
-                    if (road.history.length > 0) infraData.roadLength = road;
-                    if (water.history.length > 0) infraData.waterCoverage = water;
-                    if (housing.history.length > 0) infraData.housingUnits = housing;
-                    if (power.history.length > 0) infraData.powerAccess = power;
+                    const citywideSeries = {
+                        roadLength: buildSeriesFromYearMap(totalByMetric.roadLength),
+                        waterCoverage: buildSeriesFromYearMap(totalByMetric.waterCoverage),
+                        housingUnits: buildSeriesFromYearMap(totalByMetric.housingUnits),
+                        powerAccess: buildSeriesFromYearMap(totalByMetric.powerAccess)
+                    };
+
+                    finalizeBarangaySeries();
+                    infraData.citywide = citywideSeries;
+                    infraData.barangay = { ...FALLBACK_BARANGAY_SERIES, ...barangayByMetric };
+                } else {
+                    infraData.citywide = {
+                        roadLength: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [48, 51, 54, 58, 63] },
+                        waterCoverage: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [74, 76, 79, 82, 85] },
+                        housingUnits: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [8200, 8350, 8500, 8710, 9040] },
+                        powerAccess: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [89, 90, 91, 92, 94] }
+                    };
+                    infraData.barangay = FALLBACK_BARANGAY_SERIES;
                 }
 
                 statusTxt.textContent = 'Live Connected: infrastructure indicators synced';
@@ -705,11 +1993,34 @@
             }
         }
 
+        function buildSeriesFromYearMap(yearMap) {
+            const labels = Object.keys(yearMap).sort((a, b) => Number(a) - Number(b));
+            return {
+                labels,
+                history: labels.map(year => yearMap[year])
+            };
+        }
+
+        function getSeriesForCurrentView(metricKey) {
+            if (selectedBarangay && infraData.barangay?.[selectedBarangay]?.[metricKey]) {
+                return infraData.barangay[selectedBarangay][metricKey];
+            }
+            return infraData.citywide?.[metricKey] || { labels: [], history: [] };
+        }
+
+        function getValueForYear(metricKey, year = selectedYear) {
+            const series = getSeriesForCurrentView(metricKey);
+            if (!series || !Array.isArray(series.labels) || !Array.isArray(series.history)) return '--';
+            const labelIndex = series.labels.indexOf(String(year));
+            const value = labelIndex >= 0 ? series.history[labelIndex] : series.history[series.history.length - 1];
+            return value !== null && value !== undefined ? value : '--';
+        }
+
         function renderStatsBanner() {
-            const road = getLatestValue('roadLength');
-            const water = getLatestValue('waterCoverage');
-            const housing = getLatestValue('housingUnits');
-            const power = getLatestValue('powerAccess');
+            const road = getValueForYear('roadLength');
+            const water = getValueForYear('waterCoverage');
+            const housing = getValueForYear('housingUnits');
+            const power = getValueForYear('powerAccess');
 
             document.getElementById('card-road-length').textContent = road !== '--' ? Number(road).toLocaleString() : '--';
             document.getElementById('card-water-coverage').textContent = water !== '--' ? `${water}%` : '--';
@@ -718,7 +2029,7 @@
         }
 
         function getLatestValue(key) {
-            const item = infraData[key];
+            const item = getSeriesForCurrentView(key);
             if (!item || !Array.isArray(item.history) || item.history.length === 0) return '--';
             const value = item.history[item.history.length - 1];
             return value !== null && value !== undefined ? value : '--';
@@ -726,7 +2037,6 @@
 
         function renderAllCharts() {
             renderRoadChart();
-            renderWaterChart();
             renderHousingChart();
             renderBarangayInfraChart();
         }
@@ -759,7 +2069,7 @@
         }
 
         function renderRoadChart() {
-            const item = infraData.roadLength || { labels: [], history: [] };
+            const item = getSeriesForCurrentView('roadLength');
             const labels = item.labels || [];
             const values = item.history || [];
 
@@ -798,7 +2108,7 @@
                     data: {
                         labels,
                         datasets: [{
-                            label: 'Road Network',
+                            label: selectedBarangay ? `${selectedBarangay} Road Network` : 'Road Network',
                             data: values,
                             borderColor: '#0891b2',
                             borderWidth: roadChartType === 'line' ? 3 : 1,
@@ -829,79 +2139,8 @@
             roadChartInstance = new Chart(ctx, config);
         }
 
-        function renderWaterChart() {
-            const item = infraData.waterCoverage || { labels: [], history: [] };
-            const labels = item.labels || [];
-            const values = item.history || [];
-
-            if (waterChartInstance) waterChartInstance.destroy();
-
-            const ctx = document.getElementById('waterChart').getContext('2d');
-            const gradient = makeGradient(ctx);
-
-            let config;
-
-            if (waterChartType === 'pie') {
-                config = {
-                    type: 'pie',
-                    data: {
-                        labels,
-                        datasets: [{
-                            data: values,
-                            backgroundColor: PIE_COLORS,
-                            hoverBackgroundColor: PIE_HOVER_COLORS,
-                            borderColor: '#fff',
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: true, position: 'bottom' },
-                            tooltip: baseTooltip(context => `Water coverage: ${context.raw}%`)
-                        }
-                    }
-                };
-            } else {
-                config = {
-                    type: waterChartType,
-                    data: {
-                        labels,
-                        datasets: [{
-                            label: 'Water Coverage',
-                            data: values,
-                            borderColor: '#0284c7',
-                            borderWidth: waterChartType === 'line' ? 3 : 1,
-                            backgroundColor: gradient,
-                            fill: waterChartType === 'line',
-                            tension: 0.25,
-                            pointBackgroundColor: '#0891b2',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4,
-                            pointHoverRadius: 7,
-                            borderRadius: waterChartType === 'bar' ? 8 : 0
-                        }]
-                    },
-                    options: baseLineOpts({
-                        scales: {
-                            y: { beginAtZero: false, min: 60, max: 100, title: { display: true, text: 'Coverage %' }, grid: { color: 'rgba(3, 3, 3, 0.05)' } },
-                            x: { grid: { display: false } }
-                        },
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: baseTooltip(context => `Water coverage: ${context.raw}%`)
-                        }
-                    })
-                };
-            }
-
-            waterChartInstance = new Chart(ctx, config);
-        }
-
         function renderHousingChart() {
-            const item = infraData.housingUnits || { labels: [], history: [] };
+            const item = getSeriesForCurrentView('housingUnits');
             const labels = item.labels || [];
             const values = item.history || [];
 
@@ -940,7 +2179,7 @@
                     data: {
                         labels,
                         datasets: [{
-                            label: 'Housing Units',
+                            label: selectedBarangay ? `${selectedBarangay} Housing Units` : 'Housing Units',
                             data: values,
                             borderColor: '#0891b2',
                             borderWidth: housingChartType === 'line' ? 3 : 1,
@@ -977,11 +2216,6 @@
                 renderRoadChart();
             });
 
-            document.getElementById('waterChartType').addEventListener('change', e => {
-                waterChartType = e.target.value;
-                renderWaterChart();
-            });
-
             document.getElementById('housingChartType').addEventListener('change', e => {
                 housingChartType = e.target.value;
                 renderHousingChart();
@@ -996,13 +2230,26 @@
 
         function renderBarangayInfraChart() {
             const mode = document.getElementById('barangayAccessMode').value;
-            const labels = BARANGAY_NAMES;
-            const values = infraData[mode === 'road' ? 'barangayRoad' : mode === 'water' ? 'barangayWater' : 'barangayPower']?.history || [];
+            const modeKey = mode === 'road' ? 'roadLength' : mode === 'water' ? 'waterCoverage' : 'powerAccess';
 
             if (barangayInfraChartInstance) barangayInfraChartInstance.destroy();
 
             const ctx = document.getElementById('barangayInfraChart').getContext('2d');
             const gradient = makeGradient(ctx);
+
+            let labels = BARANGAY_NAMES;
+            let values = infraData[mode === 'road' ? 'barangayRoad' : mode === 'water' ? 'barangayWater' : 'barangayPower']?.history || [];
+
+            if (selectedBarangay) {
+                const selectedSeries = infraData.barangay?.[selectedBarangay]?.[modeKey];
+                if (selectedSeries && selectedSeries.history.length > 0) {
+                    labels = [selectedBarangay];
+                    values = [getValueForYear(modeKey, selectedYear)];
+                } else {
+                    labels = [selectedBarangay];
+                    values = [getLatestValue(modeKey)];
+                }
+            }
 
             let config;
 
@@ -1034,7 +2281,7 @@
                     data: {
                         labels,
                         datasets: [{
-                            label: `${mode.charAt(0).toUpperCase() + mode.slice(1)} Access`,
+                            label: selectedBarangay ? `${selectedBarangay} ${mode.charAt(0).toUpperCase() + mode.slice(1)} Access` : `${mode.charAt(0).toUpperCase() + mode.slice(1)} Access`,
                             data: values,
                             borderColor: '#0284c7',
                             borderWidth: 2,
@@ -1130,6 +2377,7 @@
             if (yearSelect) {
                 yearSelect.addEventListener("change", (e) => {
                     selectedYear = e.target.value;
+                    renderInfrastructureDashboard();
                 });
             }
         }
@@ -1150,7 +2398,316 @@
                 const brgySelect = document.getElementById("brgy-select");
                 if (brgySelect) brgySelect.value = name || "";
             }
+
+            renderInfrastructureDashboard();
+        }
+
+        function renderInfrastructureDashboard() {
+            renderStatsBanner();
+            renderAllCharts();
+        }
+
+        // ────────────────────────────────────────────────────────────────
+        //  MWSS WATER SUPPLY CHARTS
+        // ────────────────────────────────────────────────────────────────
+        let mwssData = null;
+        let mwssCustomersChart = null;
+        let mwssSalesChart    = null;
+        let mwssBrgyChart     = null;
+        let mwssHHChart       = null;
+        let mwssCustomersType = 'bar';
+        let mwssSalesType     = 'line';
+        let mwssBrgyType      = 'bar';
+        let mwssHHType        = 'line';
+        let mwssBrgyMetric    = 'domestic_conn';
+
+        function loadMWSSData() {
+            const stored = localStorage.getItem(MWSS_STORAGE_KEY);
+            if (stored) {
+                try { mwssData = JSON.parse(stored); } catch(e) { mwssData = null; }
+            }
+            if (!mwssData) {
+                mwssData = JSON.parse(JSON.stringify(DEFAULT_MWSS_DATA));
+                localStorage.setItem(MWSS_STORAGE_KEY, JSON.stringify(mwssData));
+            }
+            renderMWSSStatCards();
+            renderMWSSCustomersChart();
+            renderMWSSalesChart();
+            renderMWSSBrgyChart();
+            renderMWSSHHChart();
+            initMWSSControls();
+        }
+
+        function renderMWSSStatCards() {
+            const labels = mwssData.labels || [];
+            const lastIdx = labels.length - 1;
+
+            const hh = mwssData.totalHouseholds?.[lastIdx];
+            const hhEl = document.getElementById('card-mwss-households');
+            if (hhEl) hhEl.textContent = hh != null ? Number(hh).toLocaleString() : '--';
+
+            const cust = mwssData.customers?.total?.[lastIdx];
+            const custEl = document.getElementById('card-mwss-customers');
+            if (custEl) custEl.textContent = cust != null ? Number(cust).toLocaleString() : '--';
+
+            const sales = mwssData.sales?.total?.[lastIdx];
+            const salesEl = document.getElementById('card-mwss-sales');
+            if (salesEl) salesEl.textContent = sales != null ? Number(sales).toLocaleString() : '--';
+
+            const brgy = mwssData.barangay?.domestic_conn || [];
+            const totalConn = brgy.reduce((s, v) => s + (v || 0), 0);
+            const connEl = document.getElementById('card-mwss-brgy-conn');
+            if (connEl) connEl.textContent = totalConn ? Number(totalConn).toLocaleString() : '--';
+        }
+
+        function mwssGradient(ctx, color1, color2) {
+            const g = ctx.createLinearGradient(0, 0, 0, 320);
+            g.addColorStop(0, color1);
+            g.addColorStop(1, color2);
+            return g;
+        }
+
+        function mwssTooltip(labelFn) {
+            return {
+                backgroundColor: 'rgba(15,23,42,0.93)',
+                padding: 10,
+                borderWidth: 1,
+                borderColor: 'rgba(255,255,255,0.15)',
+                callbacks: { label: labelFn }
+            };
+        }
+
+        function renderMWSSCustomersChart() {
+            if (mwssCustomersChart) mwssCustomersChart.destroy();
+            const ctx = document.getElementById('mwssCustomersChart').getContext('2d');
+            const d = mwssData;
+            const labels = d.labels || [];
+            const COLORS = {
+                residential:  '#0891b2',
+                commercial:   '#06b6d4',
+                industrial:   '#22d3ee',
+                institutional:'#67e8f9',
+                total:        '#0e7490'
+            };
+            const datasets = ['residential','commercial','industrial','total'].map(key => ({
+                label: key.charAt(0).toUpperCase() + key.slice(1),
+                data: d.customers?.[key] || [],
+                backgroundColor: mwssCustomersType === 'bar'
+                    ? COLORS[key] + 'cc'
+                    : 'transparent',
+                borderColor: COLORS[key],
+                borderWidth: mwssCustomersType === 'line' ? 2.5 : 1,
+                fill: false,
+                tension: 0.3,
+                pointRadius: mwssCustomersType === 'line' ? 4 : 0,
+                pointHoverRadius: 7,
+                borderRadius: mwssCustomersType === 'bar' ? 6 : 0
+            }));
+            mwssCustomersChart = new Chart(ctx, {
+                type: mwssCustomersType,
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    animation: { duration: 250, easing: 'easeOutQuart' },
+                    plugins: {
+                        legend: { display: true, position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+                        tooltip: mwssTooltip(ctx => `${ctx.dataset.label}: ${Number(ctx.raw).toLocaleString()}`)
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'No. of Customers' }, grid: { color: 'rgba(3,3,3,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function renderMWSSalesChart() {
+            if (mwssSalesChart) mwssSalesChart.destroy();
+            const ctx = document.getElementById('mwssSalesChart').getContext('2d');
+            const d = mwssData;
+            const labels = d.labels || [];
+            const COLORS = {
+                residential:  '#0891b2',
+                commercial:   '#0284c7',
+                industrial:   '#14b8a6',
+                total:        '#1e40af'
+            };
+            const datasets = ['residential','commercial','industrial','total'].map(key => ({
+                label: key.charAt(0).toUpperCase() + key.slice(1),
+                data: d.sales?.[key] || [],
+                backgroundColor: mwssSalesType === 'bar'
+                    ? COLORS[key] + 'cc'
+                    : COLORS[key] + '22',
+                borderColor: COLORS[key],
+                borderWidth: mwssSalesType === 'line' ? 2.5 : 1,
+                fill: mwssSalesType === 'line' && key === 'total',
+                tension: 0.3,
+                pointRadius: mwssSalesType === 'line' ? 4 : 0,
+                pointHoverRadius: 7,
+                borderRadius: mwssSalesType === 'bar' ? 6 : 0
+            }));
+            mwssSalesChart = new Chart(ctx, {
+                type: mwssSalesType,
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    animation: { duration: 250, easing: 'easeOutQuart' },
+                    plugins: {
+                        legend: { display: true, position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+                        tooltip: mwssTooltip(ctx => `${ctx.dataset.label}: ${Number(ctx.raw).toLocaleString()} cu.m.`)
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'Volume (cu.m.)' }, grid: { color: 'rgba(3,3,3,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function renderMWSSBrgyChart() {
+            if (mwssBrgyChart) mwssBrgyChart.destroy();
+            const ctx = document.getElementById('mwssBrgyChart').getContext('2d');
+            const bd = mwssData.barangay || {};
+            const labels = bd.labels || [];
+            const values = bd[mwssBrgyMetric] || [];
+
+            const metricLabels = {
+                domestic_conn:   'Domestic — No. of Connections',
+                domestic_avg:    'Domestic — Avg. Consumption (cu.m.)',
+                commercial_conn: 'Commercial — No. of Connections',
+                commercial_avg:  'Commercial — Avg. Consumption (cu.m.)',
+                industrial_conn: 'Industrial — No. of Connections',
+                industrial_avg:  'Industrial — Avg. Consumption (cu.m.)'
+            };
+            const metricLabel = metricLabels[mwssBrgyMetric] || mwssBrgyMetric;
+
+            const BRGY_COLORS = ['#0891b2','#0284c7','#0e7490','#14b8a6','#0369a1','#06b6d4','#1e40af','#38bdf8','#0ea5e9'];
+
+            let config;
+            if (mwssBrgyType === 'pie') {
+                config = {
+                    type: 'pie',
+                    data: {
+                        labels,
+                        datasets: [{ data: values, backgroundColor: BRGY_COLORS, borderColor:'#fff', borderWidth:2 }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: true, position: 'right', labels: { boxWidth:12, font:{size:11} } },
+                            tooltip: mwssTooltip(ctx => `${ctx.label}: ${ctx.raw != null ? Number(ctx.raw).toLocaleString() : 'N/A'}`)
+                        }
+                    }
+                };
+            } else {
+                const gradient = mwssGradient(ctx, '#0891b2', '#67e8f9');
+                config = {
+                    type: mwssBrgyType,
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: metricLabel,
+                            data: values,
+                            backgroundColor: mwssBrgyType === 'bar' ? gradient : 'rgba(8,145,178,0.12)',
+                            borderColor: '#0891b2',
+                            borderWidth: 2.5,
+                            fill: mwssBrgyType === 'line',
+                            tension: 0.3,
+                            pointBackgroundColor: '#0891b2',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 8,
+                            borderRadius: mwssBrgyType === 'bar' ? 8 : 0
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        animation: { duration: 250, easing: 'easeOutQuart' },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: mwssTooltip(ctx => `${ctx.label}: ${ctx.raw != null ? Number(ctx.raw).toLocaleString() : 'N/A'}`)
+                        },
+                        scales: {
+                            y: { beginAtZero: true, title: { display: true, text: metricLabel }, grid: { color: 'rgba(3,3,3,0.05)' } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                };
+            }
+            mwssBrgyChart = new Chart(ctx, config);
+        }
+
+        function renderMWSSHHChart() {
+            if (mwssHHChart) mwssHHChart.destroy();
+            const ctx = document.getElementById('mwssHHChart').getContext('2d');
+            const labels = mwssData.labels || [];
+            const values = mwssData.totalHouseholds || [];
+            const gradient = mwssGradient(ctx, '#0891b2aa', '#67e8f922');
+            mwssHHChart = new Chart(ctx, {
+                type: mwssHHType,
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Total Households',
+                        data: values,
+                        backgroundColor: mwssHHType === 'line' ? gradient : '#0891b2cc',
+                        borderColor: '#0891b2',
+                        borderWidth: 2.5,
+                        fill: mwssHHType === 'line',
+                        tension: 0.3,
+                        pointBackgroundColor: '#0891b2',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 7,
+                        borderRadius: mwssHHType === 'bar' ? 8 : 0
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    animation: { duration: 250, easing: 'easeOutQuart' },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: mwssTooltip(ctx => `Households: ${Number(ctx.raw).toLocaleString()}`)
+                    },
+                    scales: {
+                        y: { beginAtZero: false, title: { display: true, text: 'Total Households' }, grid: { color: 'rgba(3,3,3,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function initMWSSControls() {
+            document.getElementById('mwssCustomersChartType').addEventListener('change', e => {
+                mwssCustomersType = e.target.value;
+                renderMWSSCustomersChart();
+            });
+            document.getElementById('mwssSalesChartType').addEventListener('change', e => {
+                mwssSalesType = e.target.value;
+                renderMWSSalesChart();
+            });
+            document.getElementById('mwssBrgyMetric').addEventListener('change', e => {
+                mwssBrgyMetric = e.target.value;
+                renderMWSSBrgyChart();
+            });
+            document.getElementById('mwssBrgyChartType').addEventListener('change', e => {
+                mwssBrgyType = e.target.value;
+                renderMWSSBrgyChart();
+            });
+            document.getElementById('mwssHHChartType').addEventListener('change', e => {
+                mwssHHType = e.target.value;
+                renderMWSSHHChart();
+            });
         }
     </script>
 </body>
 </html>
+
+
+
