@@ -849,6 +849,8 @@
             const youths = getValue(brgyName, "Registered Youths", "2022");
             const orgs = getValue(brgyName, "Youth Organizations", "2022");
 
+            const seniorsTot = seniorsM + seniorsF;
+            const pwdTot = pwdM + pwdF;
             // Set UI scorecard text
             document.getElementById("spotlight-name").textContent = brgyName;
             document.getElementById("spotlight-seniors-total").textContent = seniorsTot.toLocaleString();
