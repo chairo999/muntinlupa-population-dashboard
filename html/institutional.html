@@ -390,37 +390,6 @@
         const BUDGET_YEARS = ["2019", "2020", "2021", "2022", "2023", "2024", "2025"];
         const REVENUE_YEARS = ["2024", "2025"];
 
-        // Default institutional dataset (budget allocation per sector + revenue sources)
-        const DEFAULT_INSTITUTIONAL_DATA = {
-            "General Public Services Sector": {
-                labels: BUDGET_YEARS,
-                history: [1508351664.08, 1595247588.83, 1388784992.42, 1922311944.50, 3291813621.17, 3981017924.87, 2490195633.90]
-            },
-            "Social Services Sector": {
-                labels: BUDGET_YEARS,
-                history: [3304810231.94, 2941612043.16, 2099515164.29, 2915947338.48, 1221875012.59, 1405204916.51, 5458060418.31]
-            },
-            "Economic Services Sector": {
-                labels: BUDGET_YEARS,
-                history: [1086838103.98, 2071487983.01, 893254214.29, 1129093653.30, 1823617678.24, 1791747272.62, 888851065.54]
-            },
-            "TOTAL APPROPRIATION": {
-                labels: BUDGET_YEARS,
-                history: [4406171686.00, 4939534552.87, 4381554371.00, 5967352936.28, 6337306312.00, 7177970114.00, 8837107117.75]
-            },
-            "Business Tax": { labels: REVENUE_YEARS, history: [2285661191.75, 2405811415.17] },
-            "Real Property Tax": { labels: REVENUE_YEARS, history: [615757403.59, 631015370.47] },
-            "Special Education Tax": { labels: REVENUE_YEARS, history: [487867463.77, 498291829.72] },
-            "Other Taxes": { labels: REVENUE_YEARS, history: [623370424.83, 632497342.37] },
-            "Fines and Penalties": { labels: REVENUE_YEARS, history: [59078232.47, 61150554.99] },
-            "Permits and Licenses": { labels: REVENUE_YEARS, history: [331338497.77, 361918211.71] },
-            "Service Income": { labels: REVENUE_YEARS, history: [162074247.18, 162046706.39] },
-            "Business Income": { labels: REVENUE_YEARS, history: [608244838.32, 1024876287.68] },
-            "National Tax Allotment": { labels: REVENUE_YEARS, history: [1606535244.00, 1905588000.00] },
-            "Other Income": { labels: REVENUE_YEARS, history: [52008998.62, 81521948.47] },
-            "TOTAL REVENUE": { labels: REVENUE_YEARS, history: [6831936542.00, 7764717667.00] }
-        };
-
         // Indicator configuration details for cards (icons, descriptions)
         const INDICATORS_METADATA = {
             "TOTAL APPROPRIATION": { icon: "fa-sack-dollar", desc: "Total annual budget appropriation of the city across all sectors." },
@@ -490,7 +459,25 @@
                 });
             }
         }
+                    const INDICATOR_15_KEY_MAP = {
+                    "General Public Services Sector": "General Public Services Sector",
+                    "Social Services Sector": "Social Services Sector",
+                    "Economic Services Sector": "Economic Services Sector",
+                    "Total Appropriation": "TOTAL APPROPRIATION"
+                };
 
+                const INDICATOR_16_KEY_MAP = {
+                    "Business Tax": "Business Tax",
+                    "Real Property Tax": "Real Property Tax",
+                    "Special Education Tax": "Special Education Tax",
+                    "Other Taxes": "Other Taxes",
+                    "Fines and Penalties": "Fines and Penalties",
+                    "Permits and Licenses": "Permits and Licenses",
+                    "Service Income": "Service Income",
+                    "Business Income": "Business Income",
+                    "National Tax Allotment": "National Tax Allotment",
+                    "Other Income": "Other Income"
+                };
         // Fetch Live Database or Local Storage Fallback
         async function fetchInstitutionalData() {
             const statusTxt = document.getElementById("db-status-txt");
@@ -498,36 +485,68 @@
 
             if (supabaseClient) {
                 try {
-                    const { data, error } = await supabaseClient
-                        .from('institutional')
-                        .select('data')
-                        .eq('id', 1)
-                        .single();
+                    const { data: allRows, error } = await supabaseClient
+                        .from('data_values')
+                        .select('value, year, indicator_id, category')
+                        .in('indicator_id', [15, 16])
+                        .not('value', 'is', null)
+                        .order('year', { ascending: true });
 
-                    if (error) {
-                        if (error.code === 'PGRST116') {
-                            console.log("Institutional table empty in Supabase. Attempting to seed default data.");
-                            await supabaseClient.from('institutional').insert({ id: 1, data: DEFAULT_INSTITUTIONAL_DATA });
-                            institutionalData = DEFAULT_INSTITUTIONAL_DATA;
-                        } else {
-                            throw error;
+                    if (error) throw error;
+
+                    const allData = {};
+                    const yearSet = new Set();
+                    const revenueByYear = {};
+
+                    if (allRows && allRows.length > 0) {
+                        allRows.forEach(r => {
+                            const yr = String(r.year);
+                            yearSet.add(yr);
+
+                            if (r.indicator_id === 15) {
+                                const key = INDICATOR_15_KEY_MAP[r.category] || r.category;
+                                if (!allData[key]) allData[key] = {};
+                                allData[key][yr] = r.value;
+                            } else if (r.indicator_id === 16) {
+                                const key = INDICATOR_16_KEY_MAP[r.category] || r.category;
+                                if (!allData[key]) allData[key] = {};
+                                allData[key][yr] = r.value;
+
+                                if (!revenueByYear[yr]) revenueByYear[yr] = 0;
+                                revenueByYear[yr] += r.value;
+                            }
+                        });
+
+                        if (Object.keys(revenueByYear).length > 0) {
+                            allData["TOTAL REVENUE"] = revenueByYear;
                         }
+
+                        Object.keys(allData).forEach(key => {
+                            const yearMap = allData[key];
+                            const years = Object.keys(yearMap).sort((a, b) => a - b);
+                            allData[key] = {
+                                labels: years,
+                                history: years.map(y => yearMap[y] !== undefined ? yearMap[y] : null)
+                            };
+                        });
+
+                        institutionalData = allData;
                     } else {
-                        institutionalData = data.data || DEFAULT_INSTITUTIONAL_DATA;
+                        institutionalData = DEFAULT_INSTITUTIONAL_DATA;
                     }
 
-                    statusTxt.textContent = "Live Supabase Database Connected";
+                    statusTxt.textContent = "Live Connected: Syncing from data_values table";
                     statusDot.className = "db-dot";
+                    statusDot.style.backgroundColor = "#10b981";
                 } catch (e) {
                     console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
                     loadOfflineFallback();
                 }
             } else {
                 console.warn("Supabase library not loaded. Loading from LocalStorage fallback.");
-                loadOfflineFallback();
+                loadOfflineFallback();  
             }
         }
-
         function loadOfflineFallback() {
             const statusTxt = document.getElementById("db-status-txt");
             const statusDot = document.getElementById("db-dot");
