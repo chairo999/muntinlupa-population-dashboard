@@ -551,36 +551,69 @@
                 });
             }
         }
+        
+        const INDICATOR_KEY_MAP = {
+            12: { "Male": "PWD (Male)", "Female": "PWD (Female)" },
+            13: { "Youth Organizations": "Youth Organizations", "Total Number of Youths": "Registered Youths" },
+            14: { "Male": "Seniors (Male)", "Female": "Seniors (Female)" }
+        };
 
         // Fetch Live Database or Local Storage Fallback
         async function fetchSocialWelfareData() {
             const statusTxt = document.getElementById("db-status-txt");
             const statusDot = document.getElementById("db-dot");
-            
+
             if (supabaseClient) {
                 try {
-                    const { data, error } = await supabaseClient
-                        .from('social_welfare')
-                        .select('data, labels')
-                        .eq('id', 1)
-                        .single();
+                    const { data: allRows, error } = await supabaseClient
+                        .from('data_values')
+                        .select('value, year, indicator_id, category, barangays(barangay_name)')
+                        .in('indicator_id', [12, 13, 14])
+                        .not('value', 'is', null)
+                        .order('year', { ascending: true });
 
-                    if (error) {
-                        if (error.code === 'PGRST116') {
-                            console.log("Social Welfare table empty in Supabase. Seeding default data.");
-                            await supabaseClient.from('social_welfare').insert({ id: 1, data: DEFAULT_SOCWEL_DATA, labels: SOCIAL_WELFARE_LABELS });
-                            appData = DEFAULT_SOCWEL_DATA;
-                            appLabels = SOCIAL_WELFARE_LABELS;
-                        } else {
-                            throw error;
-                        }
+                    if (error) throw error;
+
+                    const allData = {};
+                    const yearSet = new Set();
+
+                    if (allRows && allRows.length > 0) {
+                        allRows.forEach(r => {
+                            const yr = String(r.year);
+                            yearSet.add(yr);
+                            const name = r.barangays?.barangay_name;
+                            if (!name) return;
+
+                            const keyMap = INDICATOR_KEY_MAP[r.indicator_id];
+                            if (!keyMap) return;
+                            const suffix = keyMap[r.category];
+                            if (!suffix) return;
+
+                            const key = `${name} - ${suffix}`;
+                            if (!allData[key]) allData[key] = {};
+                            allData[key][yr] = r.value;
+                        });
+
+                        const years = [...yearSet].sort((a, b) => a - b);
+                        appLabels = years;
+
+                        Object.keys(allData).forEach(key => {
+                            const yearMap = allData[key];
+                            allData[key] = {
+                                labels: years,
+                                history: years.map(y => yearMap[y] !== undefined ? yearMap[y] : null)
+                            };
+                        });
+
+                        appData = allData;
                     } else {
-                        appData = data.data || DEFAULT_SOCWEL_DATA;
-                        appLabels = data.labels || SOCIAL_WELFARE_LABELS;
+                        appData = DEFAULT_SOCWEL_DATA;
+                        appLabels = SOCIAL_WELFARE_LABELS;
                     }
-                    
-                    statusTxt.textContent = "Live Supabase Database Connected";
+
+                    statusTxt.textContent = "Live Connected: Syncing from data_values table";
                     statusDot.className = "db-dot";
+                    statusDot.style.backgroundColor = "#10b981";
                 } catch (e) {
                     console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
                     loadOfflineFallback();
@@ -617,10 +650,11 @@
         }
 
         // Helper to grab value safely for a key and yearIndex
-        function getValue(brgy, metric, yearIdx = 3) {
+        function getValue(brgy, metric, yearLabel = "2024") {
             const key = `${brgy} - ${metric}`;
             const history = appData[key]?.history || [];
-            return history[yearIdx] !== undefined && history[yearIdx] !== null ? history[yearIdx] : 0;
+            const idx = appLabels.indexOf(String(yearLabel));
+            return idx !== -1 && history[idx] !== undefined && history[idx] !== null ? history[idx] : 0;
         }
 
         // Populate Banner cards using aggregated totals
@@ -631,10 +665,10 @@
             let totalOrgs = 0;
 
             BARANGAY_NAMES.forEach(brgy => {
-                totalSeniors += getValue(brgy, "Seniors (Male)", 3) + getValue(brgy, "Seniors (Female)", 3); // 2024 is idx 3
-                totalPWDs += getValue(brgy, "PWD (Male)", 0) + getValue(brgy, "PWD (Female)", 0); // 2021 is idx 0
-                totalYouths += getValue(brgy, "Registered Youths", 1); // 2022 is idx 1
-                totalOrgs += getValue(brgy, "Youth Organizations", 1); // 2022 is idx 1
+                totalSeniors += getValue(brgy, "Seniors (Male)", "2024") + getValue(brgy, "Seniors (Female)", "2024");
+                totalPWDs += getValue(brgy, "PWD (Male)", "2021") + getValue(brgy, "PWD (Female)", "2021");
+                totalYouths += getValue(brgy, "Registered Youths", "2022");
+                totalOrgs += getValue(brgy, "Youth Organizations", "2022");
             });
 
             document.getElementById("card-seniors").textContent = totalSeniors.toLocaleString();
@@ -646,14 +680,14 @@
         // Render Page Charts
         function renderCharts() {
             // Data aggregations for charts
-            const seniorsMale = BARANGAY_NAMES.map(b => getValue(b, "Seniors (Male)", 3));
-            const seniorsFemale = BARANGAY_NAMES.map(b => getValue(b, "Seniors (Female)", 3));
+            const seniorsMale = BARANGAY_NAMES.map(b => getValue(b, "Seniors (Male)", "2024"));
+            const seniorsFemale = BARANGAY_NAMES.map(b => getValue(b, "Seniors (Female)", "2024"));
 
-            const pwdMale = BARANGAY_NAMES.map(b => getValue(b, "PWD (Male)", 0));
-            const pwdFemale = BARANGAY_NAMES.map(b => getValue(b, "PWD (Female)", 0));
+            const pwdMale = BARANGAY_NAMES.map(b => getValue(b, "PWD (Male)", "2021"));
+            const pwdFemale = BARANGAY_NAMES.map(b => getValue(b, "PWD (Female)", "2021"));
 
-            const youthCounts = BARANGAY_NAMES.map(b => getValue(b, "Registered Youths", 1));
-            const youthOrgs = BARANGAY_NAMES.map(b => getValue(b, "Youth Organizations", 1));
+            const youthCounts = BARANGAY_NAMES.map(b => getValue(b, "Registered Youths", "2022"));
+            const youthOrgs = BARANGAY_NAMES.map(b => getValue(b, "Youth Organizations", "2022"));
 
             // Chart 1: Seniors Stacks
             const ctxA = document.getElementById("seniorsChart").getContext("2d");
@@ -806,16 +840,14 @@
             const brgyName = document.getElementById("spotlight-brgy-select").value;
 
             // Grab values
-            const seniorsM = getValue(brgyName, "Seniors (Male)", 3);
-            const seniorsF = getValue(brgyName, "Seniors (Female)", 3);
-            const seniorsTot = seniorsM + seniorsF;
+            const seniorsM = getValue(brgyName, "Seniors (Male)", "2024");
+            const seniorsF = getValue(brgyName, "Seniors (Female)", "2024");
 
-            const pwdM = getValue(brgyName, "PWD (Male)", 0);
-            const pwdF = getValue(brgyName, "PWD (Female)", 0);
-            const pwdTot = pwdM + pwdF;
+            const pwdM = getValue(brgyName, "PWD (Male)", "2021");
+            const pwdF = getValue(brgyName, "PWD (Female)", "2021");
 
-            const youths = getValue(brgyName, "Registered Youths", 1);
-            const orgs = getValue(brgyName, "Youth Organizations", 1);
+            const youths = getValue(brgyName, "Registered Youths", "2022");
+            const orgs = getValue(brgyName, "Youth Organizations", "2022");
 
             // Set UI scorecard text
             document.getElementById("spotlight-name").textContent = brgyName;
