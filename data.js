@@ -1,8 +1,8 @@
 
 const BARANGAY_COLORS = {
-    "Sucat": "#e1271a", "Buli": "#f97316", "Cupang": "#eab308",
-    "Alabang": "#22c55e", "Ayala Alabang": "#06b6d4", "Bayanan": "#3b82f6",
-    "Putatan": "#8b5cf6", "Poblacion": "#d946ef", "Tunasan": "#ec4899"
+    "Sucat": "#fe0501", "Buli": "#de00b8", "Cupang": "#5d00fe",
+    "Alabang": "#2c28fb", "Ayala Alabang": "#01ffff", "Bayanan": "#00700e",
+    "Putatan": "#ffff01", "Poblacion": "#ff7802", "Tunasan": "#ff4001"
 };
 
 let HISTORICAL_LABELS = ["2015", "2020", "2024"];
