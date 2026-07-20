@@ -704,9 +704,8 @@ select option {
     pointer-events: none;
     transform: scale(1);
     transform-origin: center center;
-    transition: opacity 0.15s ease, transform 0.2s ease;
+    transition: opacity 0.25s ease, transform 0.25s ease;
     z-index: 3;
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
     will-change: transform;
 }
 
@@ -743,11 +742,20 @@ select option {
 
 /* Map Polygon Styles */
 .map-polygon {
-    fill: rgba(139, 92, 246, 0.015);
+    fill: rgba(255, 255, 255, 0.01);
     stroke: rgba(255, 255, 255, 0.15);
     stroke-width: 2px;
     stroke-linejoin: round;
     cursor: pointer;
+    transition: transform 0.25s ease, fill 0.25s ease, stroke 0.25s ease, filter 0.25s ease;
+}
+
+.map-polygon.hovered {
+    transform: scale(1.08);
+    fill: rgba(139, 92, 246, 0.35);
+    stroke: rgba(255, 255, 255, 0.9);
+    stroke-width: 2.5px;
+    filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.5));
 }
 
 .map-polygon.selected {

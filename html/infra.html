@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MunTHINK Hub — Infrastructure Sector</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="../styles.css">
+
+    <style>
+        .infra-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-top: 10px;
+        }
+
+        .charts-container-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .charts-container-grid.full-width {
+            grid-template-columns: 1fr;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-container-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.02);
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .chart-card:hover {
+            border-color: rgba(6, 182, 212, 0.28);
+            box-shadow: 0 12px 35px rgba(6, 182, 212, 0.06);
+        }
+
+        .chart-title-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+            padding-bottom: 12px;
+            gap: 16px;
+        }
+
+        .chart-card h5 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-card h5 i {
+            color: #0ea5e9;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 350px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-lg);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        .stat-icon-wrapper.infra-icon-cyan {
+            width: 54px;
+            height: 54px;
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            background: #0891b2;
+            color: white;
+        }
+
+        .db-status-bar {
+            background: #f1f5f9;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-md);
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .db-status-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .db-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-emerald);
+            box-shadow: 0 0 6px var(--accent-emerald);
+        }
+
+        .db-dot.offline {
+            background-color: #f59e0b;
+            box-shadow: 0 0 6px #f59e0b;
+        }
+
+        .chart-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .chart-select,
+        .chart-type-select {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            border-radius: 0.375rem;
+            padding: 5px 10px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .chart-select {
+            background-color: #f1f5f9;
+            color: var(--text-primary);
+            border: 1px solid rgba(15, 23, 42, 0.1);
+        }
+
+        .chart-type-select {
+            background: #0891b2;
+            color: #ffffff;
+            border: none;
+        }
+
+        @media (max-width: 640px) {
+            .chart-title-wrapper {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .chart-controls {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="dashboard-header">
+        <a class="header-logo" href="landing-page.html">
+            <img src="../assets/images/muntinlupa-city-logo.png" alt="MunTHINK Logo" class="header-logo-img">
+            <div class="header-titles">
+                <h1>MunTHINK Hub</h1>
+                <p class="subtitle">Smarter Data for a Smarter Muntinlupa</p>
+            </div>
+        </a>
+        <div class="header-info">
+            <span class="header-sector-text">INFRASTRUCTURE</span>
+            <img src="../assets/images/hamburger.png" alt="sidebar" class="sidebar-sectors" id="hamburger-btn">
+        </div>
+    </header>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <aside class="sector-sidebar" id="sector-sidebar">
+        <div class="sidebar-header">
+            <h2>Dashboard Sectors</h2>
+            <i class="fa-solid fa-xmark" id="close-sidebar-btn"></i>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="landing-page.html" class="nav-item"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="population.html" class="nav-item"><i class="fa-solid fa-users"></i> Population</a>
+            <a href="economic.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Economic</a>
+            <a href="education.html" class="nav-item"><i class="fa-solid fa-graduation-cap"></i> Education</a>
+            <a href="health.html" class="nav-item"><i class="fa-solid fa-notes-medical"></i> Health</a>
+            <a href="protective.html" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Protective</a>
+            <a href="socwel.html" class="nav-item"><i class="fa-solid fa-hand-holding-heart"></i> Social Welfare</a>
+            <a href="environment.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Environment</a>
+            <a href="institutional.html" class="nav-item"><i class="fa-solid fa-building-columns"></i> Institutional</a>
+            <a href="infra.html" class="nav-item"><i class="fa-solid fa-road"></i> Infrastructure</a>
+            <a href="sdg-localization.html" class="nav-item"><i class="fa-solid fa-bullhorn"></i> SDG Localization</a>
+        </nav>
+    </aside>
+
+    <div class="dashboard-container">
+        <div class="db-status-bar">
+            <div class="db-status-left">
+                <div id="db-dot" class="db-dot offline"></div>
+                <span id="db-status-txt">Checking infrastructure dataset...</span>
+            </div>
+        </div>
+
+        <section class="stats-banner">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper infra-icon-cyan">
+                    <i class="fa-solid fa-road"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">City Road Network</span>
+                    <h2 id="card-road-length">--</h2>
+                    <span class="stat-pct" style="color: var(--text-muted)">Kilometers maintained</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper infra-icon-cyan">
+                    <i class="fa-solid fa-faucet-drip"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Water Coverage</span>
+                    <h2 id="card-water-coverage">--</h2>
+                    <span class="stat-pct" style="color: var(--text-muted)">Household service %</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper infra-icon-cyan">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Housing Units</span>
+                    <h2 id="card-housing">--</h2>
+                    <span class="stat-pct" style="color: var(--text-muted)">Approved/constructed</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper infra-icon-cyan">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Power Accessibility</span>
+                    <h2 id="card-power">--</h2>
+                    <span class="stat-pct" style="color: var(--text-muted)">Connected households</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="infra-grid">
+            <div class="charts-container-grid">
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-road"></i> Road Network Growth</h5>
+                        <select id="roadChartType" class="chart-type-select">
+                            <option value="line">Line Graph</option>
+                            <option value="bar">Bar Graph</option>
+                            <option value="pie">Pie Graph</option>
+                        </select>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="roadChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-faucet-drip"></i> Water Coverage Proportion</h5>
+                        <select id="waterChartType" class="chart-type-select">
+                            <option value="bar">Bar Graph</option>
+                            <option value="line">Line Graph</option>
+                            <option value="pie">Pie Graph</option>
+                        </select>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="waterChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-house"></i> Housing Growth Trend</h5>
+                        <select id="housingChartType" class="chart-type-select">
+                            <option value="line">Line Graph</option>
+                            <option value="bar">Bar Graph</option>
+                            <option value="pie">Pie Graph</option>
+                        </select>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="housingChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title-wrapper">
+                        <h5><i class="fa-solid fa-map-pin"></i> Barangay Infrastructure Access</h5>
+                        <div class="chart-controls">
+                            <select id="barangayAccessMode" class="chart-select">
+                                <option value="road">Road Access</option>
+                                <option value="water">Water Access</option>
+                                <option value="power">Power Access</option>
+                            </select>
+                            <select id="barangayInfrastructureChartType" class="chart-type-select">
+                                <option value="bar">Bar Graph</option>
+                                <option value="line">Line Graph</option>
+                                <option value="pie">Pie Graph</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="barangayInfraChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="dashboard-footer" aria-hidden="true">
+        <img src="../assets/images/footer.jpg" alt="" class="footer-image">
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
+        const MASTER_TABLE_NAME = "municipal_indicators";
+        const SECTOR_ID = "infrastructure";
+
+        const BARANGAY_NAMES = ["Alabang", "Ayala Alabang", "Bayanan", "Buli", "Cupang", "Poblacion", "Putatan", "Sucat", "Tunasan"];
+
+        const PIE_COLORS = ["#0ea5e9", "#38bdf8", "#14b8a6", "#22c55e", "#f59e0b", "#8b5cf6", "#ec4899", "#6366f1", "#ef4444"];
+        const PIE_HOVER_COLORS = ["#38bdf8", "#67e8f9", "#2dd4bf", "#4ade80", "#fbbf24", "#a78bfa", "#f472b6", "#818cf8", "#f87171"];
+
+        let infraData = {
+            roadLength: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [48, 51, 54, 58, 63] },
+            waterCoverage: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [74, 76, 79, 82, 85] },
+            housingUnits: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [8200, 8350, 8500, 8710, 9040] },
+            powerAccess: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [89, 90, 91, 92, 94] },
+            barangayRoad: { labels: BARANGAY_NAMES, history: [78, 70, 84, 63, 81, 88, 74, 72, 77] },
+            barangayWater: { labels: BARANGAY_NAMES, history: [72, 76, 71, 66, 75, 82, 69, 68, 73] },
+            barangayPower: { labels: BARANGAY_NAMES, history: [85, 82, 88, 80, 84, 90, 83, 79, 86] }
+        };
+
+        let roadChartInstance = null;
+        let waterChartInstance = null;
+        let housingChartInstance = null;
+        let barangayInfraChartInstance = null;
+
+        let roadChartType = 'line';
+        let waterChartType = 'bar';
+        let housingChartType = 'line';
+        let barangayInfraChartType = 'bar';
+
+        let supabaseClient = null;
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            Chart.defaults.color = '#64748b';
+            Chart.defaults.font.family = 'Montserrat, sans-serif';
+            Chart.defaults.font.size = 11;
+
+            initSidebar();
+            await fetchInfrastructureData();
+            renderStatsBanner();
+            renderAllCharts();
+            initChartControls();
+        });
+
+        function initSidebar() {
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            const sidebar = document.getElementById('sector-sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const closeBtn = document.getElementById('close-sidebar-btn');
+
+            if (hamburgerBtn) hamburgerBtn.addEventListener('click', () => {
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+            });
+
+            if (closeBtn) closeBtn.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+
+            if (overlay) overlay.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+
+        async function fetchInfrastructureData() {
+            const statusTxt = document.getElementById('db-status-txt');
+            const statusDot = document.getElementById('db-dot');
+
+            try {
+                if (!supabaseClient) throw new Error('Supabase client unavailable.');
+
+                const { data, error } = await supabaseClient
+                    .from('data_values')
+                    .select('value, year, indicator_id, barangay_id, barangays(barangay_name)')
+                    .in('indicator_id', [7, 8, 9, 10, 11])
+                    .not('value', 'is', null)
+                    .order('year', { ascending: true });
+
+                if (error) throw error;
+
+                if (data && data.length > 0) {
+                    const road = { labels: [], history: [] };
+                    const water = { labels: [], history: [] };
+                    const housing = { labels: [], history: [] };
+                    const power = { labels: [], history: [] };
+
+                    data.forEach(row => {
+                        const year = String(row.year);
+                        if (row.indicator_id === 7) {
+                            road.labels.push(year);
+                            road.history.push(Number(row.value));
+                        } else if (row.indicator_id === 8) {
+                            water.labels.push(year);
+                            water.history.push(Number(row.value));
+                        } else if (row.indicator_id === 9) {
+                            housing.labels.push(year);
+                            housing.history.push(Number(row.value));
+                        } else if (row.indicator_id === 10) {
+                            power.labels.push(year);
+                            power.history.push(Number(row.value));
+                        }
+                    });
+
+                    if (road.history.length > 0) infraData.roadLength = road;
+                    if (water.history.length > 0) infraData.waterCoverage = water;
+                    if (housing.history.length > 0) infraData.housingUnits = housing;
+                    if (power.history.length > 0) infraData.powerAccess = power;
+                }
+
+                statusTxt.textContent = 'Live Connected: infrastructure indicators synced';
+                statusDot.className = 'db-dot';
+                statusDot.style.backgroundColor = '#10b981';
+            } catch (e) {
+                console.warn('Database connection unavailable, using integrated fallback values.', e);
+                statusTxt.textContent = 'Demo Mode: using packaged infrastructure baseline data';
+                statusDot.className = 'db-dot offline';
+                statusDot.style.backgroundColor = '#f59e0b';
+            }
+        }
+
+        function renderStatsBanner() {
+            const road = getLatestValue('roadLength');
+            const water = getLatestValue('waterCoverage');
+            const housing = getLatestValue('housingUnits');
+            const power = getLatestValue('powerAccess');
+
+            document.getElementById('card-road-length').textContent = road !== '--' ? Number(road).toLocaleString() : '--';
+            document.getElementById('card-water-coverage').textContent = water !== '--' ? `${water}%` : '--';
+            document.getElementById('card-housing').textContent = housing !== '--' ? Number(housing).toLocaleString() : '--';
+            document.getElementById('card-power').textContent = power !== '--' ? `${power}%` : '--';
+        }
+
+        function getLatestValue(key) {
+            const item = infraData[key];
+            if (!item || !Array.isArray(item.history) || item.history.length === 0) return '--';
+            const value = item.history[item.history.length - 1];
+            return value !== null && value !== undefined ? value : '--';
+        }
+
+        function renderAllCharts() {
+            renderRoadChart();
+            renderWaterChart();
+            renderHousingChart();
+            renderBarangayInfraChart();
+        }
+
+        function makeGradient(ctx) {
+            const g = ctx.createLinearGradient(0, 0, 0, 350);
+            g.addColorStop(0, '#0891b2');
+            g.addColorStop(1, '#67e8f9');
+            return g;
+        }
+
+        function baseTooltip(callback) {
+            return Object.assign({
+                backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                padding: 10,
+                borderWidth: 1,
+                borderColor: 'rgba(255, 255, 255, 0.15)'
+            }, callback ? { callbacks: { label: callback } } : {});
+        }
+
+        function baseLineOpts(extra) {
+            return Object.assign({
+                responsive: true,
+                maintainAspectRatio: false,
+                hover: { mode: 'nearest', intersect: true },
+                interaction: { mode: 'nearest', intersect: true },
+                animation: { duration: 200, easing: 'easeOutQuart' },
+                plugins: { legend: { display: false }, tooltip: baseTooltip() }
+            }, extra || {});
+        }
+
+        function renderRoadChart() {
+            const item = infraData.roadLength || { labels: [], history: [] };
+            const labels = item.labels || [];
+            const values = item.history || [];
+
+            if (roadChartInstance) roadChartInstance.destroy();
+
+            const ctx = document.getElementById('roadChart').getContext('2d');
+            const gradient = makeGradient(ctx);
+
+            let config;
+
+            if (roadChartType === 'pie') {
+                config = {
+                    type: 'pie',
+                    data: {
+                        labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: PIE_COLORS,
+                            hoverBackgroundColor: PIE_HOVER_COLORS,
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: true, position: 'bottom' },
+                            tooltip: baseTooltip(context => `Road length: ${context.raw.toLocaleString()} km`)
+                        }
+                    }
+                };
+            } else {
+                config = {
+                    type: roadChartType,
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: 'Road Network',
+                            data: values,
+                            borderColor: '#0891b2',
+                            borderWidth: roadChartType === 'line' ? 3 : 1,
+                            backgroundColor: gradient,
+                            fill: roadChartType === 'line',
+                            tension: 0.25,
+                            pointBackgroundColor: '#0ea5e9',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            borderRadius: roadChartType === 'bar' ? 8 : 0
+                        }]
+                    },
+                    options: baseLineOpts({
+                        scales: {
+                            y: { beginAtZero: false, title: { display: true, text: 'Kilometers' }, grid: { color: 'rgba(3, 3, 3, 0.05)' } },
+                            x: { grid: { display: false } }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: baseTooltip(context => `Road length: ${context.raw.toLocaleString()} km`)
+                        }
+                    })
+                };
+            }
+
+            roadChartInstance = new Chart(ctx, config);
+        }
+
+        function renderWaterChart() {
+            const item = infraData.waterCoverage || { labels: [], history: [] };
+            const labels = item.labels || [];
+            const values = item.history || [];
+
+            if (waterChartInstance) waterChartInstance.destroy();
+
+            const ctx = document.getElementById('waterChart').getContext('2d');
+            const gradient = makeGradient(ctx);
+
+            let config;
+
+            if (waterChartType === 'pie') {
+                config = {
+                    type: 'pie',
+                    data: {
+                        labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: PIE_COLORS,
+                            hoverBackgroundColor: PIE_HOVER_COLORS,
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: true, position: 'bottom' },
+                            tooltip: baseTooltip(context => `Water coverage: ${context.raw}%`)
+                        }
+                    }
+                };
+            } else {
+                config = {
+                    type: waterChartType,
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: 'Water Coverage',
+                            data: values,
+                            borderColor: '#0284c7',
+                            borderWidth: waterChartType === 'line' ? 3 : 1,
+                            backgroundColor: gradient,
+                            fill: waterChartType === 'line',
+                            tension: 0.25,
+                            pointBackgroundColor: '#0891b2',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            borderRadius: waterChartType === 'bar' ? 8 : 0
+                        }]
+                    },
+                    options: baseLineOpts({
+                        scales: {
+                            y: { beginAtZero: false, min: 60, max: 100, title: { display: true, text: 'Coverage %' }, grid: { color: 'rgba(3, 3, 3, 0.05)' } },
+                            x: { grid: { display: false } }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: baseTooltip(context => `Water coverage: ${context.raw}%`)
+                        }
+                    })
+                };
+            }
+
+            waterChartInstance = new Chart(ctx, config);
+        }
+
+        function renderHousingChart() {
+            const item = infraData.housingUnits || { labels: [], history: [] };
+            const labels = item.labels || [];
+            const values = item.history || [];
+
+            if (housingChartInstance) housingChartInstance.destroy();
+
+            const ctx = document.getElementById('housingChart').getContext('2d');
+            const gradient = makeGradient(ctx);
+
+            let config;
+
+            if (housingChartType === 'pie') {
+                config = {
+                    type: 'pie',
+                    data: {
+                        labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: PIE_COLORS,
+                            hoverBackgroundColor: PIE_HOVER_COLORS,
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: true, position: 'bottom' },
+                            tooltip: baseTooltip(context => `Housing units: ${context.raw.toLocaleString()}`)
+                        }
+                    }
+                };
+            } else {
+                config = {
+                    type: housingChartType,
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: 'Housing Units',
+                            data: values,
+                            borderColor: '#0891b2',
+                            borderWidth: housingChartType === 'line' ? 3 : 1,
+                            backgroundColor: gradient,
+                            fill: housingChartType === 'line',
+                            tension: 0.25,
+                            pointBackgroundColor: '#0ea5e9',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            borderRadius: housingChartType === 'bar' ? 8 : 0
+                        }]
+                    },
+                    options: baseLineOpts({
+                        scales: {
+                            y: { beginAtZero: false, title: { display: true, text: 'Housing Units' }, grid: { color: 'rgba(3, 3, 3, 0.05)' } },
+                            x: { grid: { display: false } }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: baseTooltip(context => `Housing units: ${context.raw.toLocaleString()}`)
+                        }
+                    })
+                };
+            }
+
+            housingChartInstance = new Chart(ctx, config);
+        }
+
+        function initChartControls() {
+            document.getElementById('roadChartType').addEventListener('change', e => {
+                roadChartType = e.target.value;
+                renderRoadChart();
+            });
+
+            document.getElementById('waterChartType').addEventListener('change', e => {
+                waterChartType = e.target.value;
+                renderWaterChart();
+            });
+
+            document.getElementById('housingChartType').addEventListener('change', e => {
+                housingChartType = e.target.value;
+                renderHousingChart();
+            });
+
+            document.getElementById('barangayAccessMode').addEventListener('change', renderBarangayInfraChart);
+            document.getElementById('barangayInfrastructureChartType').addEventListener('change', e => {
+                barangayInfraChartType = e.target.value;
+                renderBarangayInfraChart();
+            });
+        }
+
+        function renderBarangayInfraChart() {
+            const mode = document.getElementById('barangayAccessMode').value;
+            const labels = BARANGAY_NAMES;
+            const values = infraData[mode === 'road' ? 'barangayRoad' : mode === 'water' ? 'barangayWater' : 'barangayPower']?.history || [];
+
+            if (barangayInfraChartInstance) barangayInfraChartInstance.destroy();
+
+            const ctx = document.getElementById('barangayInfraChart').getContext('2d');
+            const gradient = makeGradient(ctx);
+
+            let config;
+
+            if (barangayInfraChartType === 'pie') {
+                config = {
+                    type: 'pie',
+                    data: {
+                        labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: PIE_COLORS,
+                            hoverBackgroundColor: PIE_HOVER_COLORS,
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: true, position: 'bottom' },
+                            tooltip: baseTooltip(context => `${mode.charAt(0).toUpperCase() + mode.slice(1)} access: ${context.raw}%`)
+                        }
+                    }
+                };
+            } else {
+                config = {
+                    type: barangayInfraChartType,
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: `${mode.charAt(0).toUpperCase() + mode.slice(1)} Access`,
+                            data: values,
+                            borderColor: '#0284c7',
+                            borderWidth: 2,
+                            backgroundColor: gradient,
+                            fill: barangayInfraChartType === 'line',
+                            tension: 0.25,
+                            pointBackgroundColor: '#0ea5e9',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            borderRadius: barangayInfraChartType === 'bar' ? 8 : 0
+                        }]
+                    },
+                    options: baseLineOpts({
+                        scales: {
+                            y: { beginAtZero: false, min: 60, max: 100, title: { display: true, text: 'Access Score (%)' }, grid: { color: 'rgba(3, 3, 3, 0.05)' } },
+                            x: { grid: { display: false } }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: baseTooltip(context => `${mode.charAt(0).toUpperCase() + mode.slice(1)} access: ${context.raw}%`)
+                        }
+                    })
+                };
+            }
+
+            barangayInfraChartInstance = new Chart(ctx, config);
+        }
+    </script>
+</body>
+</html>
