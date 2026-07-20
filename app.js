@@ -119,10 +119,9 @@ function initEventListeners() {
 
             if (tooltip) {
                 const stats = getBarangayStats(name);
-                const color = BARANGAY_COLORS[name] || "#8b5cf6";
                 document.getElementById("tooltip-title").textContent = name;
                 document.getElementById("tooltip-pop").textContent = (stats.total || 0).toLocaleString();
-                document.getElementById("tooltip-dot").style.backgroundColor = color;
+                document.getElementById("tooltip-dot").style.backgroundColor = TOOLTIP_DOT_COLOR;
                 tooltip.classList.add("visible");
             }
         });

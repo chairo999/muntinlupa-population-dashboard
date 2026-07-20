@@ -874,10 +874,12 @@ select option {
 }
 
 .map-tooltip-dot {
+    --dot-color: var(--tooltip-dot-color, #8b5cf6);
     width: 10px;
     height: 10px;
     border-radius: 2px;
     flex-shrink: 0;
+    background-color: var(--dot-color);
 }
 
 .map-tooltip-row {

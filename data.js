@@ -1,4 +1,6 @@
 
+const TOOLTIP_DOT_COLOR = "#8b5cf6";
+
 const BARANGAY_COLORS = {
     "Sucat": "#fe0501", "Buli": "#de00b8", "Cupang": "#5d00fe",
     "Alabang": "#2c28fb", "Ayala Alabang": "#01ffff", "Bayanan": "#00700e",
