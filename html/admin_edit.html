@@ -963,15 +963,15 @@ async function loadEconomicData() {
         const { data: empData } = await supabaseClient
             .from('economic_employment')
             .select('*')
-            .order('category', { ascending: true });
+            .order('category_1', { ascending: true });
         if (empData) {
-            const categories = [...new Set(empData.map(r => r.category))];
+            const categories = [...new Set(empData.map(r => r.category_1))];
             BARANGAY_NAMES.forEach(b => {
                 idx++;
                 const brgyRows = empData.filter(r => r.barangay_name === b);
                 const history = new Array(categories.length).fill(null);
                 brgyRows.forEach(r => {
-                    const ci = categories.indexOf(r.category);
+                    const ci = categories.indexOf(r.category_1);
                     if (ci !== -1) history[ci] = r.count;
                 });
                 allIndicators.push({
@@ -980,10 +980,10 @@ async function loadEconomicData() {
                     labels: [...categories],
                     history,
                     _table: 'economic_employment',
-                    _labelCol: 'category',
+                    _labelCol: 'category_1',
                     _valueCol: 'count',
                     _entityCol: 'barangay_name',
-                    _conflictCols: 'barangay_name,category',
+                    _conflictCols: 'barangay_name,category_1',
                     _entity: b
                 });
             });
@@ -992,15 +992,15 @@ async function loadEconomicData() {
         const { data: bizData } = await supabaseClient
             .from('economic_registered_business')
             .select('*')
-            .order('category', { ascending: true });
+            .order('category_1', { ascending: true });
         if (bizData) {
-            const categories = [...new Set(bizData.map(r => r.category))];
+            const categories = [...new Set(bizData.map(r => r.category_1))];
             BARANGAY_NAMES.forEach(b => {
                 idx++;
                 const brgyRows = bizData.filter(r => r.barangay_name === b);
                 const history = new Array(categories.length).fill(null);
                 brgyRows.forEach(r => {
-                    const ci = categories.indexOf(r.category);
+                    const ci = categories.indexOf(r.category_1);
                     if (ci !== -1) history[ci] = r.count;
                 });
                 allIndicators.push({
@@ -1009,10 +1009,10 @@ async function loadEconomicData() {
                     labels: [...categories],
                     history,
                     _table: 'economic_registered_business',
-                    _labelCol: 'category',
+                    _labelCol: 'category_1',
                     _valueCol: 'count',
                     _entityCol: 'barangay_name',
-                    _conflictCols: 'barangay_name,category',
+                    _conflictCols: 'barangay_name,category_1',
                     _entity: b
                 });
             });

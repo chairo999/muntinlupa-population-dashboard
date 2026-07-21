@@ -567,7 +567,7 @@
                 try {
                     const { data: allRows, error } = await supabaseClient
                         .from('data_values')
-                        .select('value, year, indicator_id, category, barangays(barangay_name)')
+                        .select('value, year, indicator_id, category_1, barangays(barangay_name)')
                         .in('indicator_id', [12, 13, 14])
                         .not('value', 'is', null)
                         .order('year', { ascending: true });
@@ -586,7 +586,7 @@
 
                             const keyMap = INDICATOR_KEY_MAP[r.indicator_id];
                             if (!keyMap) return;
-                            const suffix = keyMap[r.category];
+                            const suffix = keyMap[r.category_1];
                             if (!suffix) return;
 
                             const key = `${name} - ${suffix}`;

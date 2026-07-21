@@ -475,7 +475,7 @@
                 try {
                     const { data: allRows, error } = await supabaseClient
                         .from('data_values')
-                        .select('value, year, category')
+                        .select('value, year, category_1')
                         .eq('indicator_id', 7)
                         .order('year', { ascending: true });
 
@@ -483,7 +483,7 @@
 
                     const { data: allRows2, error: error2 } = await supabaseClient
                         .from('data_values')
-                        .select('value, year, category')
+                        .select('value, year, category_1')
                         .eq('indicator_id', 8)
                         .order('year', { ascending: true });
 
@@ -512,7 +512,7 @@
                         healthLabels = years;
                         const grouped = {};
                         combinedRows.forEach(r => {
-                            const key = catToKey[r.category] || r.category;
+                            const key = catToKey[r.category_1] || r.category_1;
                             if (!grouped[key]) grouped[key] = {};
                             grouped[key][String(r.year)] = r.value;
                         });

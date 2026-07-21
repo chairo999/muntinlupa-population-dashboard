@@ -434,7 +434,7 @@
         try {
             const { data: allRows, error } = await supabaseClient
                 .from('data_values')
-                .select('value, year, indicator_id, category, subcategory, barangays(barangay_name)')
+                .select('value, year, indicator_id, category_1, category_2, barangays(barangay_name)')
                 .in('indicator_id', [9, 10, 11])
                 .not('value', 'is', null)
                 .order('year', { ascending: true });
@@ -451,7 +451,7 @@
                     yearSet.add(yr);
 
                     if (r.indicator_id === 9) {
-                        const key = INDICATOR_9_KEY_MAP[r.category] || r.category;
+                        const key = INDICATOR_9_KEY_MAP[r.category_1] || r.category_1;
                         if (!allData[key]) allData[key] = {};
                         allData[key][yr] = r.value;
                     } else if (r.indicator_id === 10) {
@@ -461,11 +461,11 @@
                             allData[name][yr] = (allData[name][yr] || 0) + r.value;
                         }
                         } else if (r.indicator_id === 11) {
-                        if (r.category === "Number of Policemen" || r.category === "Number of Non-Uniformed Personnel") {
-                            if (!allData[r.category]) allData[r.category] = {};
-                            allData[r.category][yr] = (allData[r.category][yr] || 0) + r.value;
+                        if (r.category_1 === "Number of Policemen" || r.category_1 === "Number of Non-Uniformed Personnel") {
+                            if (!allData[r.category_1]) allData[r.category_1] = {};
+                            allData[r.category_1][yr] = (allData[r.category_1][yr] || 0) + r.value;
                         } else {
-                            const key = INDICATOR_11_KEY_MAP[r.category] || r.category;
+                            const key = INDICATOR_11_KEY_MAP[r.category_1] || r.category_1;
                             if (!allData[key]) allData[key] = {};
                             allData[key][yr] = r.value;
                         }

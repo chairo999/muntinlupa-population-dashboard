@@ -487,7 +487,7 @@
                 try {
                     const { data: allRows, error } = await supabaseClient
                         .from('data_values')
-                        .select('value, year, indicator_id, category')
+                        .select('value, year, indicator_id, category_1')
                         .in('indicator_id', [15, 16])
                         .not('value', 'is', null)
                         .order('year', { ascending: true });
@@ -504,11 +504,11 @@
                             yearSet.add(yr);
 
                             if (r.indicator_id === 15) {
-                                const key = INDICATOR_15_KEY_MAP[r.category] || r.category;
+                                const key = INDICATOR_15_KEY_MAP[r.category_1] || r.category_1;
                                 if (!allData[key]) allData[key] = {};
                                 allData[key][yr] = r.value;
                             } else if (r.indicator_id === 16) {
-                                const key = INDICATOR_16_KEY_MAP[r.category] || r.category;
+                                const key = INDICATOR_16_KEY_MAP[r.category_1] || r.category_1;
                                 if (!allData[key]) allData[key] = {};
                                 allData[key][yr] = r.value;
 

@@ -405,7 +405,7 @@
 
                 const { data: allRows } = await supabaseClient
                     .from('data_values')
-                    .select('value, year, indicator_id, barangay_id, category, barangays(barangay_name)')
+                    .select('value, year, indicator_id, barangay_id, category_1, barangays(barangay_name)')
                     .in('indicator_id', [2, 3, 4, 5, 6])
                     .not('value', 'is', null)
                     .order('year', { ascending: true });
@@ -428,26 +428,26 @@
                         if (r.indicator_id === 2 && !name) {
                             rankByYear[yr] = r.value;
                         } else if (r.indicator_id === 3 && name) {
-                            const cat = r.category || "Other";
+                            const cat = r.category_1 || "Other";
                             empSumByBrgy[name] = (empSumByBrgy[name] || 0) + r.value;
                             if (!empCatByBrgy[name]) empCatByBrgy[name] = {};
                             empCatByBrgy[name][cat] = r.value;
                         } else if (r.indicator_id === 4 && !name) {
                             hotelByYear[yr] = r.value;
                         } else if (r.indicator_id === 5 && name) {
-                            const cat = r.category || "Other";
+                            const cat = r.category_1 || "Other";
                             bizSumByBrgy[name] = (bizSumByBrgy[name] || 0) + r.value;
                             if (!bizSplitByBrgy[name]) bizSplitByBrgy[name] = { labels: [], history: [] };
                             bizSplitByBrgy[name].labels.push(cat);
                             bizSplitByBrgy[name].history.push(r.value);
-                        } else if (r.indicator_id === 6 && !name && !r.category) {
+                        } else if (r.indicator_id === 6 && !name && !r.category_1) {
                             cityEstByYear[yr] = (cityEstByYear[yr] || 0) + r.value;
-                        } else if (r.indicator_id === 6 && name && !r.category) {
+                        } else if (r.indicator_id === 6 && name && !r.category_1) {
                             if (!brgyEstByBrgy[name]) brgyEstByBrgy[name] = {};
                             brgyEstByBrgy[name][yr] = (brgyEstByBrgy[name][yr] || 0) + r.value;
-                        } else if (r.indicator_id === 6 && name && r.category) {
+                        } else if (r.indicator_id === 6 && name && r.category_1) {
                             if (!brgyEstCatByBrgy[name]) brgyEstCatByBrgy[name] = {};
-                            const key = `${name} - ${r.category} Establishments`;
+                            const key = `${name} - ${r.category_1} Establishments`;
                             if (!brgyEstCatByBrgy[key]) brgyEstCatByBrgy[key] = {};
                             brgyEstCatByBrgy[key][yr] = (brgyEstCatByBrgy[key][yr] || 0) + r.value;
                         }
