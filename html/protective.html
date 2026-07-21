@@ -381,8 +381,8 @@
             initSidebar();
             await fetchProtectiveData();
             renderStatsBanner();
-            renderCharts();
             initChartControls();
+            renderCharts();
         });
 
         // Sidebar navigation toggling
@@ -862,12 +862,8 @@
                 barangayChartInstance.data.datasets[0].data = dataValues;
                 
                 // Color touches of red/gradient
-                barangayChartInstance.data.datasets[0].backgroundColor = BARANGAY_NAMES.map(n => 
-                    n === 'Alabang' ? 'rgba(245, 158, 11, 0.75)' : 'rgba(239, 68, 68, 0.75)'
-                );
-                barangayChartInstance.data.datasets[0].borderColor = BARANGAY_NAMES.map(n => 
-                    n === 'Alabang' ? '#f59e0b' : '#ef4444'
-                );
+                barangayChartInstance.data.datasets[0].backgroundColor = 'rgba(239, 68, 68, 0.75)';
+                barangayChartInstance.data.datasets[0].borderColor = '#ef4444';
             } else {
                 // Historical trend for a single Barangay (Line Chart)
                 const historyData = protectiveData[brgySelVal]?.history || [];
