@@ -145,67 +145,7 @@
 		const STORAGE_KEY = "muntinlupa_sector_data_environment";
 
 		// Default (tentative) environment dataset — editable in admin
-		const DEFAULT_ENV_DATA = {
-			labels: ["1","2","3","4","5","6","7","8","9","10","11"],
-			upstream: {
-				Temperature: [29.1,29.1,29.7,28,26.7,29.6,28,27.5,28.1,30,30],
-				pH: [6.65,6.61,6.29,6.79,7.38,6.72,6.81,6.33,6.51,6.51,5.68],
-				Nitrate: [4030.9,5279.28,8765.39,35583.45,60.7,179.67,0,281.72,8215.52,8215.52,5073.19],
-				Chloride: [291.7,21203.77,76048.25,75788.57,75862.87,75873.7,665.4,32900.5,842.8,8.2,3542.5],
-				Turbidity: [316.43,11.53,27.99,67,61.5,42.36,38.84,10.14,72.9,72.98,204.95],
-				RDO: [0.22,3.68,3.01,0.04,0.05,0.04,0.038,0.03,0.09,0.4,0.07],
-				TDS: [0.63,0.29,0.79,0.65,0.24,0.55,0.57,0.39,0.61,0.61,0.61]
-			},
-			downstream: {
-				Temperature: [28,30.9,26.6,30.5,28,29.9,27.8,29.3,28.9,27.7,27.9],
-				pH: [6.6,7.01,6.94,7.25,6.71,6.61,6.29,6.36,6.79,6.61,6.79],
-				Nitrate: [5635.81,2784.69,3.5,19.22,6702.15,5467.4,17544.79,2951.46,4628.16,5467.4,0],
-				Chloride: [341.2,28882.9,65487.1,28194.7,447.81,46058,75724.6,75872.4,75888.2,4961.6,9497.58],
-				Turbidity: [33.93,58.31,45.3,61.2,27.32,56.59,69.47,17.8,80.11,56.59,987.11],
-				RDO: [1.27,0.52,0.36,0.09,0.03,0.83,0.05,0.05,0.18,0.06,0.08],
-				TDS: [0.56,0.45,0.37,0.6,0.55,0.4,0.49,0.13,0.55,0.4,0.65]
-				},
-				waste: {
-				categories: [
-					'Total Garbage Collected',
-					'Total Recyclables Recovered',
-					'Total Compostable Recovered',
-					'Total Residual Waste'
-				],
-					volume_m3: [500955.00, 149378.98, 19806.13, 1214.09],
-					weight_tons: [76260.38, 22739.96, 3019.19, 184.82],
-					diversion_rate_pct: 34.02
-				},
-			pm10: {
-				months: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-				years: [
-					{ year: 2015, values: [37,24,21,30,25,23,31,33,25,40,21,24] },
-					{ year: 2016, values: [27.2,24,29.07,26.68,30.8,34,27.6,21.02,27.64,25.46,23.88,23.37] },
-					{ year: 2017, values: [23.62,21.69,30.19,48.65,null,null,null,null,null,null,null,null] },
-					{ year: 2018, values: [26,20.25,27.2,33.4,17.2,24,20.4,32.5,21.6,29,23,41] },
-					{ year: 2019, values: [17,20.67,21,18,20.33,19.5,24.2,55.17,24.33,21.17,27.6,26.6] },
-					{ year: 2020, values: [40,25,29,null,null,null,31,25,27,19,15,23] },
-					{ year: 2021, values: [14,17,18,21,14,31,null,17,21,29,22,null] },
-					{ year: 2022, values: [null,16,14,18,23,25,20,22,20,23,16,12] },
-					{ year: 2023, values: [null,null,null,null,null,null,null,null,9,11,8,null] }
-				]
-			}
-			,
-			pm25: {
-				months: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-				years: [
-					{ year: 2015, values: [null,null,null,null,null,null,null,null,null,null,null,null] },
-					{ year: 2016, values: [15.23,13.64,18.1,16.36,26,17.63,null,15.64,20.28,16.94,15.38,17.16] },
-					{ year: 2017, values: [17.2,14.36,18.79,29.15,null,32.28,18.32,27.74,24.86,24.52,18.85,null] },
-					{ year: 2018, values: [17.15,24.33,14.49,15.18,15.28,17.53,15.92,25.65,19.6,24,20,19] },
-					{ year: 2019, values: [11.72,13.09,18.33,15.87,26.86,26.43,28.89,27.26,15.46,16.06,21.77,13.62] },
-					{ year: 2020, values: [12.63,12.16,12.63,12.35,17.75,13.99,16,16,19,14,13,13] },
-					{ year: 2021, values: [11.3,13.12,13.93,16.6,15.71,17.95,24,null,null,null,null,null] },
-					{ year: 2022, values: [null,null,null,null,null,null,null,null,null,null,null,null] },
-					{ year: 2023, values: [null,null,null,null,null,null,null,null,null,null,null,null] }
-				]
-			}
-		};
+		
 
 		let envData = {};
 		let envLabels = [];
@@ -235,20 +175,25 @@
 			const statusTxt = document.getElementById('db-status-txt');
 			const statusDot = document.getElementById('db-dot');
 
+			envData = { upstream: {}, downstream: {}, waste: {}, pm10: { months: [], years: [] }, pm25: { months: [], years: [] } };
+			envLabels = [];
+
 			if (supabaseClient) {
 				try {
-					const { data, error } = await supabaseClient.from('environment').select('data, labels').eq('id', 1).single();
-					if (error) {
-						if (error.code === 'PGRST116') {
-							// seed default
-							await supabaseClient.from('environment').insert({ id: 1, data: DEFAULT_ENV_DATA, labels: DEFAULT_ENV_DATA.labels });
-							envData = DEFAULT_ENV_DATA;
-							envLabels = DEFAULT_ENV_DATA.labels;
-						} else throw error;
-					} else {
-						envData = data.data || DEFAULT_ENV_DATA;
-						envLabels = data.labels || DEFAULT_ENV_DATA.labels;
+					const { data: rows, error } = await supabaseClient
+						.from('data_values')
+						.select('value, indicator_id, category_1, category_2, year')
+						.eq('sector_id', 7);
+
+					if (error) throw error;
+					console.log('All environment rows fetched:', rows);
+
+					if (rows && rows.length > 0) {
+						processWasteRows(rows.filter(r => r.indicator_id === 23));
+						processRiverRows(rows.filter(r => r.indicator_id === 24 || r.indicator_id === 25));
+						processPMRows(rows.filter(r => r.indicator_id === 26 || r.indicator_id === 27));
 					}
+
 					statusTxt.textContent = 'Live Supabase Database Connected';
 					statusDot.className = 'db-dot';
 				} catch (e) {
@@ -258,6 +203,99 @@
 			} else {
 				loadEnvFallback();
 			}
+		}
+
+		function processWasteRows(rows) {
+			if (!rows.length) return;
+
+			const wasteCategories = [
+				'Total Garbage Collected',
+				'Total Recyclables Recovered',
+				'Total Compostable Recovered',
+				'Total Residual Waste'
+			];
+
+			const volumeMap = {};
+			const weightMap = {};
+			let diversionRate = null;
+
+			rows.forEach(row => {
+				const cat1 = (row.category_1 || '').trim();
+				const cat2 = (row.category_2 || '').trim().toLowerCase();
+
+				if (cat1 === 'DIVERSION RATE') {
+					diversionRate = row.value;
+					return;
+				}
+				if (!wasteCategories.includes(cat1)) return;
+
+				if (cat2 === 'volume') volumeMap[cat1] = row.value;
+				else if (cat2 === 'weight') weightMap[cat1] = row.value;
+			});
+
+			const hasData = wasteCategories.some(c => volumeMap[c] !== undefined || weightMap[c] !== undefined);
+			if (!hasData) return;
+
+			envData.waste = {
+				categories: wasteCategories,
+				volume_m3: wasteCategories.map(c => volumeMap[c] ?? null),
+				weight_tons: wasteCategories.map(c => weightMap[c] ?? null),
+				diversion_rate_pct: diversionRate
+			};
+		}
+
+		function processRiverRows(rows) {
+			if (!rows.length) return;
+
+			const params = ['Temperature','pH','Nitrate','Chloride','Turbidity','RDO','TDS'];
+			const rivers = [...new Set(rows.map(r => r.category_1))];
+
+			envLabels = rivers;
+
+			const upstream = {};
+			const downstream = {};
+			params.forEach(p => { upstream[p] = []; downstream[p] = []; });
+
+			rows.forEach(row => {
+				const riverIdx = rivers.indexOf(row.category_1);
+				const param = row.category_2;
+				if (riverIdx === -1 || !params.includes(param)) return;
+
+				if (row.indicator_id === 24) {
+					upstream[param][riverIdx] = row.value;
+				} else if (row.indicator_id === 25) {
+					downstream[param][riverIdx] = row.value;
+				}
+			});
+
+			envData.upstream = upstream;
+			envData.downstream = downstream;
+		}
+
+		function processPMRows(rows) {
+			if (!rows.length) return;
+
+			const monthOrder = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+			const monthShort = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+			[26, 27].forEach(indId => {
+				const indRows = rows.filter(r => r.indicator_id === indId);
+				if (!indRows.length) return;
+
+				const years = [...new Set(indRows.map(r => r.year))].sort((a, b) => a - b);
+				const yearData = years.map(yr => {
+					const yrRows = indRows.filter(r => r.year === yr);
+					const values = monthOrder.map(m => {
+						const match = yrRows.find(r => r.category_1 === m);
+						return match ? match.value : null;
+					});
+					return { year: yr, values };
+				});
+
+				const pmObj = { months: monthShort, years: yearData };
+				if (indId === 26) envData.pm25 = pmObj;
+				else envData.pm10 = pmObj;
+			});
 		}
 
 		function loadEnvFallback() {
