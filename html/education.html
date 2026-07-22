@@ -280,6 +280,7 @@
             <a href="socwel.html" class="nav-item"><i class="fa-solid fa-hand-holding-heart"></i> Social Welfare</a>
             <a href="environment.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Environment</a>
             <a href="institutional.html" class="nav-item"><i class="fa-solid fa-building-columns"></i> Institutional</a>
+            <a href="infra.html" class="nav-item"><i class="fa-solid fa-road"></i> Infrastructure</a>
             <a href="sdg-localization.html" class="nav-item"><i class="fa-solid fa-bullhorn"></i> SDG Localization</a>
         </nav>
     </aside>
@@ -484,9 +485,7 @@
     <script>
         const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
-        const STORAGE_KEY = "muntinlupa_sector_data_education";
 
-        const EDUCATION_LABELS = ["2007", "2010", "2015", "2020", "2024", "2025"];
         const BARANGAY_NAMES = ["Alabang", "Ayala Alabang", "Bayanan", "Buli", "Cupang", "Poblacion", "Putatan", "Sucat", "Tunasan"];
 
         const PIE_COLORS = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548"];
@@ -519,57 +518,14 @@
             }, extra || {});
         }
 
-        // Static default values
-        const DEFAULT_EDU_DATA = {
-            "Literacy Rate": { history: [79.83, 98.74, 98.86, 98.96, 93.10, null] },
-            "Public Schools Count": { history: [null, null, null, null, null, 28] },
-            "Private Schools Count": { history: [null, null, null, null, null, 70] },
-            
-            "Alabang - Day Care": { history: [null, null, null, null, null, 541] },
-            "Ayala Alabang - Day Care": { history: [null, null, null, null, null, 59] },
-            "Bayanan - Day Care": { history: [null, null, null, null, null, 423] },
-            "Buli - Day Care": { history: [null, null, null, null, null, 138] },
-            "Cupang - Day Care": { history: [null, null, null, null, null, 298] },
-            "Poblacion - Day Care": { history: [null, null, null, null, null, 1105] },
-            "Putatan - Day Care": { history: [null, null, null, null, null, 715] },
-            "Sucat - Day Care": { history: [null, null, null, null, null, 406] },
-            "Tunasan - Day Care": { history: [null, null, null, null, null, 587] },
-            
-            "Public Enrollment - Kinder": { history: [null, null, null, null, null, 6822] },
-            "Public Enrollment - Elementary": { history: [null, null, null, null, null, 40442] },
-            "Public Enrollment - Junior High": { history: [null, null, null, null, null, 25490] },
-            "Public Enrollment - Senior High": { history: [null, null, null, null, null, 9171] },
-            
-            "Private Enrollment - Kinder": { history: [null, null, null, null, null, 1334] },
-            "Private Enrollment - Elementary": { history: [null, null, null, null, null, 8284] },
-            "Private Enrollment - Junior High": { history: [null, null, null, null, null, 7742] },
-            "Private Enrollment - Senior High": { history: [null, null, null, null, null, 10259] },
-            
-            "CDM - BS Architecture": { history: [null, null, null, null, null, 372] },
-            "CDM - BS Civil Engineering": { history: [null, null, null, null, null, 987] },
-            "CDM - BS Computer Engineering": { history: [null, null, null, null, null, 509] },
-            "CDM - BS Electronics Engineering": { history: [null, null, null, null, null, 161] },
-            "CDM - BS Electrical Engineering": { history: [null, null, null, null, null, 187] },
-            "CDM - BS Environmental Engineering": { history: [null, null, null, null, null, 31] },
-            "CDM - BS Industrial Engineering": { history: [null, null, null, null, null, 230] },
-            "CDM - BS Mechanical Engineering": { history: [null, null, null, null, null, 344] }
-        };
-
-        const daycareDetailsRaw = {
-            "Alabang": { age2: [31, 37], age3: [80, 88], age4: [269, 272] },
-            "Ayala Alabang": { age2: [14, 13], age3: [12, 20], age4: [25, 34] },
-            "Bayanan": { age2: [44, 41], age3: [80, 99], age4: [227, 196] },
-            "Buli": { age2: [10, 9], age3: [27, 23], age4: [68, 70] },
-            "Cupang": { age2: [22, 22], age3: [57, 66], age4: [151, 147] },
-            "Poblacion": { age2: [258, 256], age3: [321, 325], age4: [541, 564] },
-            "Putatan": { age2: [50, 64], age3: [117, 118], age4: [363, 352] },
-            "Sucat": { age2: [8, 16], age3: [31, 49], age4: [210, 196] },
-            "Tunasan": { age2: [56, 58], age3: [123, 124], age4: [326, 261] }
-        };
-
         let eduData = {};
         let eduLabels = [];
         let supabaseClient = null;
+        let plmunData = {};
+        let tesdaData = {};
+        let daycareDetailed = {};
+        let plmunPrograms = [];
+        let tesdaCourses = [];
 
         let literacyChartInst = null;
         let enrollmentChartInst = null;
@@ -643,84 +599,175 @@
             
             if (supabaseClient) {
                 try {
-                    const { data, error } = await supabaseClient
-                        .from('education')
-                        .select('data, labels')
-                        .eq('id', 1)
-                        .single();
+                    const { data: allRows, error } = await supabaseClient
+                        .from('data_values')
+                        .select('value, year, indicator_id, category_1, category_2, barangay_id, barangays(barangay_name)')
+                        .in('indicator_id', [17, 18, 19, 20, 21, 22])
+                        .not('value', 'is', null)
+                        .order('year', { ascending: true });
 
-                    if (error) {
-                        if (error.code === 'PGRST116') {
-                            await supabaseClient.from('education').insert({ id: 1, data: DEFAULT_EDU_DATA, labels: EDUCATION_LABELS });
-                            eduData = DEFAULT_EDU_DATA;
-                            eduLabels = EDUCATION_LABELS;
-                        } else {
-                            throw error;
-                        }
+                    if (error) throw error;
+
+                    const allData = {};
+                    const yearSet = new Set();
+                    const plmunTmp = {};
+                    const tesdaTmp = {};
+                    const daycareTmp = {};
+
+                    if (allRows && allRows.length > 0) {
+                        allRows.forEach(r => {
+                            const yr = String(r.year);
+                            yearSet.add(yr);
+
+                            if (r.indicator_id === 17) {
+                                const key = "Literacy Rate";
+                                if (!allData[key]) allData[key] = {};
+                                allData[key][yr] = r.value;
+
+                            } else if (r.indicator_id === 18) {
+                                const level = (r.category_1 || "").trim();
+                                const type = (r.category_2 || "").trim().toLowerCase();
+                                if (type === "public") {
+                                    const key = `Public Enrollment - ${level}`;
+                                    if (!allData[key]) allData[key] = {};
+                                    allData[key][yr] = r.value;
+                                } else if (type === "private") {
+                                    const key = `Private Enrollment - ${level}`;
+                                    if (!allData[key]) allData[key] = {};
+                                    allData[key][yr] = r.value;
+                                }
+
+                            } else if (r.indicator_id === 19) {
+                                const program = normalizeCDM(r.category_1);
+                                const key = `CDM - ${program}`;
+                                if (!allData[key]) allData[key] = {};
+                                allData[key][yr] = (allData[key][yr] || 0) + r.value;
+
+                            } else if (r.indicator_id === 20) {
+                                const program = (r.category_1 || "").trim();
+                                const gender = (r.category_2 || "").trim().toLowerCase();
+                                if (!plmunTmp[program]) plmunTmp[program] = { male: {}, female: {} };
+                                if (gender === "male") plmunTmp[program].male[yr] = r.value;
+                                else if (gender === "female") plmunTmp[program].female[yr] = r.value;
+
+                            } else if (r.indicator_id === 21) {
+                                const course = normalizeTesda(r.category_1);
+                                const gender = (r.category_2 || "").trim().toLowerCase();
+                                if (!tesdaTmp[course]) tesdaTmp[course] = { male: {}, female: {} };
+                                if (gender === "male") tesdaTmp[course].male[yr] = r.value;
+                                else if (gender === "female") tesdaTmp[course].female[yr] = r.value;
+
+                            } else if (r.indicator_id === 22) {
+                                const brgy = r.barangays?.barangay_name;
+                                const ageGroup = normalizeAgeGroup(r.category_1);
+                                const gender = (r.category_2 || "").trim().toLowerCase();
+                                if (brgy) {
+                                    if (!daycareTmp[brgy]) daycareTmp[brgy] = {};
+                                    if (!daycareTmp[brgy][ageGroup]) daycareTmp[brgy][ageGroup] = { male: {}, female: {} };
+                                    if (gender === "male") daycareTmp[brgy][ageGroup].male[yr] = r.value;
+                                    else if (gender === "female") daycareTmp[brgy][ageGroup].female[yr] = r.value;
+
+                                    const sumKey = `${brgy} - Day Care`;
+                                    if (!allData[sumKey]) allData[sumKey] = {};
+                                    allData[sumKey][yr] = (allData[sumKey][yr] || 0) + r.value;
+                                }
+                            }
+                        });
+
+                        const years = [...yearSet].sort((a, b) => a - b);
+                        eduLabels = years;
+
+                        Object.keys(allData).forEach(key => {
+                            const yearMap = allData[key];
+                            allData[key] = {
+                                labels: years,
+                                history: years.map(y => yearMap[y] !== undefined ? yearMap[y] : null)
+                            };
+                        });
+
+                        eduData = allData;
+
+                        plmunPrograms = Object.keys(plmunTmp);
+                        tesdaCourses = Object.keys(tesdaTmp);
+                        plmunData = plmunTmp;
+                        tesdaData = tesdaTmp;
+                        daycareDetailed = daycareTmp;
                     } else {
-                        eduData = data.data || DEFAULT_EDU_DATA;
-                        eduLabels = data.labels || EDUCATION_LABELS;
+                        eduData = {};
                     }
-                    
-                    statusTxt.textContent = "Live Supabase Database Connected";
+
+                    statusTxt.textContent = "Live Connected: Syncing from data_values table";
                     statusDot.className = "db-dot";
+                    statusDot.style.backgroundColor = "#10b981";
                 } catch (e) {
-                    loadOfflineFallback();
+                    console.warn("Supabase load failed. Using fallback.", e);
+                    statusTxt.textContent = "Offline Mode";
+                    statusDot.className = "db-dot offline";
                 }
             } else {
-                loadOfflineFallback();
+                statusTxt.textContent = "Offline Mode";
+                statusDot.className = "db-dot offline";
             }
         }
 
-        function loadOfflineFallback() {
-            const statusTxt = document.getElementById("db-status-txt");
-            const statusDot = document.getElementById("db-dot");
-            
-            statusTxt.textContent = "Offline Mode (LocalStorage Fallback)";
-            statusDot.className = "db-dot offline";
-
-            const localData = localStorage.getItem(STORAGE_KEY);
-            if (localData) {
-                try {
-                    const parsed = JSON.parse(localData);
-                    eduData = parsed.data || DEFAULT_EDU_DATA;
-                    eduLabels = parsed.labels || EDUCATION_LABELS;
-                } catch (e) {
-                    eduData = DEFAULT_EDU_DATA;
-                    eduLabels = EDUCATION_LABELS;
-                }
-            } else {
-                eduData = DEFAULT_EDU_DATA;
-                eduLabels = EDUCATION_LABELS;
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: DEFAULT_EDU_DATA, labels: EDUCATION_LABELS }));
+        function normalizeCDM(raw) {
+            if (!raw) return "";
+            const s = raw.replace(/\s+/g, ' ').trim();
+            const map = {
+                "BS Architecture": "BS Architecture",
+                "BS Civil Engineering": "BS Civil Engineering",
+                "BS Computer Engineering": "BS Computer Engineering",
+                "BS Electronics Engineering": "BS Electronics Engineering",
+                "BS Electrical Engineering": "BS Electrical Engineering",
+                "BS Environmental": "BS Environmental Engineering",
+                "BS Industrial Engineering": "BS Industrial Engineering",
+                "BS Mechanical Engineering": "BS Mechanical Engineering"
+            };
+            for (const [prefix, name] of Object.entries(map)) {
+                if (s.startsWith(prefix)) return name;
             }
+            return s;
         }
 
-        function getValue(key, yearIdx = 5) {
+        function normalizeTesda(raw) {
+            if (!raw) return "";
+            return raw.replace(/\s+/g, ' ').trim();
+        }
+
+        function normalizeAgeGroup(raw) {
+            if (!raw) return "";
+            const s = raw.replace(/\s+/g, ' ').trim().toUpperCase();
+            if (s.includes("2-2")) return "Ages 2-2.11";
+            if (s.includes("3-3")) return "Ages 3-3.11";
+            if (s.includes("4-4")) return "Ages 4-4.11";
+            return s;
+        }
+
+        function getLatestValue(key) {
             const history = eduData[key]?.history || [];
-            return history[yearIdx] !== undefined && history[yearIdx] !== null ? history[yearIdx] : 0;
+            for (let i = history.length - 1; i >= 0; i--) {
+                if (history[i] !== null && history[i] !== undefined) return history[i];
+            }
+            return null;
         }
 
         function renderStatsBanner() {
-            const litVal = eduData["Literacy Rate"]?.history[4] || 93.10;
-            document.getElementById("card-literacy").textContent = `${litVal}%`;
-
-            const pubSchools = getValue("Public Schools Count");
-            const privSchools = getValue("Private Schools Count");
-            document.getElementById("card-schools").textContent = (pubSchools + privSchools).toString();
-            document.getElementById("card-schools-split").textContent = `${pubSchools} Public, ${privSchools} Private`;
+            const litVal = getLatestValue("Literacy Rate");
+            document.getElementById("card-literacy").textContent = litVal !== null ? `${litVal}%` : '--';
 
             let totEnroll = 0;
-            const levels = ["Kinder", "Elementary", "Junior High", "Senior High"];
-            levels.forEach(lvl => {
-                totEnroll += getValue(`Public Enrollment - ${lvl}`) + getValue(`Private Enrollment - ${lvl}`);
+            const pubKeys = Object.keys(eduData).filter(k => k.startsWith("Public Enrollment - "));
+            const privKeys = Object.keys(eduData).filter(k => k.startsWith("Private Enrollment - "));
+            [...pubKeys, ...privKeys].forEach(k => {
+                const v = getLatestValue(k);
+                if (v) totEnroll += v;
             });
             document.getElementById("card-enrollment").textContent = totEnroll.toLocaleString();
 
             let cdmTot = 0;
-            const courses = ["BS Architecture", "BS Civil Engineering", "BS Computer Engineering", "BS Electronics Engineering", "BS Electrical Engineering", "BS Environmental Engineering", "BS Industrial Engineering", "BS Mechanical Engineering"];
-            courses.forEach(c => {
-                cdmTot += getValue(`CDM - ${c}`);
+            Object.keys(eduData).filter(k => k.startsWith("CDM - ")).forEach(k => {
+                const v = getLatestValue(k);
+                if (v) cdmTot += v;
             });
             document.getElementById("card-cdm").textContent = cdmTot.toLocaleString();
         }
@@ -736,7 +783,7 @@
 
         function renderLiteracyChart() {
             if (literacyChartInst) { literacyChartInst.destroy(); literacyChartInst = null; }
-            const labels = eduLabels.slice(0, 5);
+            const labels = eduLabels;
             const data = labels.map((l, i) => eduData["Literacy Rate"]?.history[i]);
             const ctx = document.getElementById("literacyChart").getContext("2d");
             const gradient = makeGradient(ctx);
@@ -791,27 +838,27 @@
 
         function renderEnrollmentChart() {
             if (enrollmentChartInst) { enrollmentChartInst.destroy(); enrollmentChartInst = null; }
-            const levels = ["Kinder", "Elementary", "Junior High", "Senior High"];
-            const labels = ['Kindergarten', 'Elementary', 'Junior High', 'Senior High'];
-            const publicData = levels.map(lvl => getValue(`Public Enrollment - ${lvl}`));
-            const privateData = levels.map(lvl => getValue(`Private Enrollment - ${lvl}`));
+            const pubKeys = Object.keys(eduData).filter(k => k.startsWith("Public Enrollment - ")).sort();
+            const levels = pubKeys.map(k => k.replace("Public Enrollment - ", ""));
+            const publicData = levels.map(l => getLatestValue(`Public Enrollment - ${l}`) || 0);
+            const privateData = levels.map(l => getLatestValue(`Private Enrollment - ${l}`) || 0);
             const ctx = document.getElementById("enrollmentChart").getContext("2d");
             const gradient = makeGradient(ctx);
 
             let config;
 
             if (enrollmentChartType === "pie") {
-                const merged = labels.map((l, i) => publicData[i] + privateData[i]);
+                const merged = levels.map((l, i) => publicData[i] + privateData[i]);
                 config = {
                     type: "pie",
-                    data: { labels, datasets: [{ label: 'Total Enrollment', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    data: { labels: levels, datasets: [{ label: 'Total Enrollment', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
                     options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Enrollment: ${ctx.raw.toLocaleString()}`) } }
                 };
             } else {
                 config = {
                     type: enrollmentChartType,
                     data: {
-                        labels,
+                        labels: levels,
                         datasets: [
                             {
                                 label: 'Public School',
@@ -872,9 +919,9 @@
 
         function renderCDMChart() {
             if (cdmChartInst) { cdmChartInst.destroy(); cdmChartInst = null; }
-            const courses = ["BS Architecture", "BS Civil Engineering", "BS Computer Engineering", "BS Electronics Engineering", "BS Electrical Engineering", "BS Environmental Engineering", "BS Industrial Engineering", "BS Mechanical Engineering"];
-            const shortLabels = ['Architecture', 'Civil Eng', 'Computer Eng', 'Electronics Eng', 'Electrical Eng', 'Environmental Eng', 'Industrial Eng', 'Mechanical Eng'];
-            const cdmCounts = courses.map(c => getValue(`CDM - ${c}`));
+            const courses = Object.keys(eduData).filter(k => k.startsWith("CDM - ")).sort();
+            const shortLabels = courses.map(c => c.replace("CDM - ", "").replace("BS ", ""));
+            const cdmCounts = courses.map(c => getLatestValue(c) || 0);
             const ctx = document.getElementById("cdmChart").getContext("2d");
             const gradient = makeGradient(ctx);
 
@@ -929,30 +976,44 @@
 
         function renderPLMUNChart() {
             if (plmunChartInst) { plmunChartInst.destroy(); plmunChartInst = null; }
-            const plmunPrograms = ['AB Com', 'AB PolSci', 'BS Psy', 'BSA', 'BSBA', 'BS Crim', 'ACT', 'BSCS', 'BSIT', 'BEED', 'BSE'];
-            const plmunMale = [395, 301, 265, 48, 877, 1004, 363, 428, 1656, 42, 195];
-            const plmunFemale = [753, 440, 926, 180, 1840, 519, 265, 220, 933, 225, 390];
+            const programs = plmunPrograms.length > 0 ? plmunPrograms : [];
+            const maleData = programs.map(p => {
+                if (plmunData[p]) {
+                    const hist = plmunData[p].male;
+                    const years = Object.keys(hist).sort();
+                    return years.length > 0 ? hist[years[years.length - 1]] : 0;
+                }
+                return 0;
+            });
+            const femaleData = programs.map(p => {
+                if (plmunData[p]) {
+                    const hist = plmunData[p].female;
+                    const years = Object.keys(hist).sort();
+                    return years.length > 0 ? hist[years[years.length - 1]] : 0;
+                }
+                return 0;
+            });
             const ctx = document.getElementById("plmunChart").getContext("2d");
             const gradient = makeGradient(ctx);
 
             let config;
 
             if (plmunChartType === "pie") {
-                const merged = plmunPrograms.map((_, i) => plmunMale[i] + plmunFemale[i]);
+                const merged = programs.map((_, i) => maleData[i] + femaleData[i]);
                 config = {
                     type: "pie",
-                    data: { labels: plmunPrograms, datasets: [{ label: 'Total Enrollment', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    data: { labels: programs, datasets: [{ label: 'Total Enrollment', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
                     options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Total: ${ctx.raw.toLocaleString()}`) } }
                 };
             } else {
                 config = {
                     type: plmunChartType,
                     data: {
-                        labels: plmunPrograms,
+                        labels: programs,
                         datasets: [
                             {
                                 label: 'Male',
-                                data: plmunMale,
+                                data: maleData,
                                 backgroundColor: gradient,
                                 hoverBackgroundColor: "#e1271a52",
                                 hoverBorderColor: "#e1271a52",
@@ -973,7 +1034,7 @@
                             },
                             {
                                 label: 'Female',
-                                data: plmunFemale,
+                                data: femaleData,
                                 backgroundColor: plmunChartType === "line" ? "rgba(239, 68, 68, 0.3)" : "rgba(239, 68, 68, 0.4)",
                                 hoverBackgroundColor: "#e1271a52",
                                 hoverBorderColor: "#e1271a52",
@@ -1009,34 +1070,44 @@
 
         function renderTESDAChart() {
             if (tesdaChartInst) { tesdaChartInst.destroy(); tesdaChartInst = null; }
-            const tesdaCourses = [
-                'Automotive Servicing 1', 'Automotive Servicing 2', 'Barista', 'Basic Computer', 'Bread & Pastry', 'Caregiving', 'English Proficiency',
-                'Computer Systems Servicing', 'Cookery', 'Electrical Installation', 'Electronic Products', 'Food & Beverage Services', 'Housekeeping',
-                'Motorcycle Servicing', 'SMAW Welding', 'Web Development', 'Beauty Care', 'Hairdressing', 'Dressmaking', 'Hilot Wellness', 'Urban Gardening'
-            ];
-            const tesdaMale = [48, 55, 0, 19, 18, 22, 17, 33, 28, 99, 23, 20, 12, 20, 82, 7, 0, 5, 3, 11, 4];
-            const tesdaFemale = [4, 3, 0, 49, 44, 69, 43, 20, 24, 9, 11, 27, 38, 1, 7, 8, 12, 14, 17, 35, 40];
+            const courses = tesdaCourses.length > 0 ? tesdaCourses : [];
+            const maleData = courses.map(c => {
+                if (tesdaData[c]) {
+                    const hist = tesdaData[c].male;
+                    const years = Object.keys(hist).sort();
+                    return years.length > 0 ? hist[years[years.length - 1]] : 0;
+                }
+                return 0;
+            });
+            const femaleData = courses.map(c => {
+                if (tesdaData[c]) {
+                    const hist = tesdaData[c].female;
+                    const years = Object.keys(hist).sort();
+                    return years.length > 0 ? hist[years[years.length - 1]] : 0;
+                }
+                return 0;
+            });
             const ctx = document.getElementById("tesdaChart").getContext("2d");
             const gradient = makeGradient(ctx);
 
             let config;
 
             if (tesdaChartType === "pie") {
-                const merged = tesdaCourses.map((_, i) => tesdaMale[i] + tesdaFemale[i]);
+                const merged = courses.map((_, i) => maleData[i] + femaleData[i]);
                 config = {
                     type: "pie",
-                    data: { labels: tesdaCourses, datasets: [{ label: 'Total Trainees', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    data: { labels: courses, datasets: [{ label: 'Total Trainees', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
                     options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Trainees: ${ctx.raw.toLocaleString()}`) } }
                 };
             } else {
                 config = {
                     type: tesdaChartType,
                     data: {
-                        labels: tesdaCourses,
+                        labels: courses,
                         datasets: [
                             {
                                 label: 'Male Trainees',
-                                data: tesdaMale,
+                                data: maleData,
                                 backgroundColor: gradient,
                                 hoverBackgroundColor: "#e1271a52",
                                 hoverBorderColor: "#e1271a52",
@@ -1057,7 +1128,7 @@
                             },
                             {
                                 label: 'Female Trainees',
-                                data: tesdaFemale,
+                                data: femaleData,
                                 backgroundColor: tesdaChartType === "line" ? "rgba(239, 68, 68, 0.3)" : "rgba(239, 68, 68, 0.4)",
                                 hoverBackgroundColor: "#e1271a52",
                                 hoverBorderColor: "#e1271a52",
@@ -1108,29 +1179,28 @@
 
         function updateDaycareWidget() {
             const brgyName = document.getElementById("daycare-brgy-select").value;
-            const raw = daycareDetailsRaw[brgyName];
-            const dbEditedAge4 = getValue(`${brgyName} - Day Care`);
-            
-            const totalRawAge4 = raw.age4[0] + raw.age4[1];
-            const maleRatio = raw.age4[0] / totalRawAge4;
-            const femaleRatio = raw.age4[1] / totalRawAge4;
+            const brgyData = daycareDetailed[brgyName] || {};
 
-            const dynamicMaleAge4 = Math.round(dbEditedAge4 * maleRatio);
-            const dynamicFemaleAge4 = Math.round(dbEditedAge4 * femaleRatio);
+            const ageGroups = ['Ages 2-2.11', 'Ages 3-3.11', 'Ages 4-4.11'];
+            const getAgeGender = (ageGroup, gender) => {
+                const ages = brgyData[ageGroup];
+                if (!ages) return 0;
+                const years = Object.keys(ages[gender] || {}).sort();
+                return years.length > 0 ? ages[gender][years[years.length - 1]] : 0;
+            };
 
-            const age2Total = raw.age2[0] + raw.age2[1];
-            const age3Total = raw.age3[0] + raw.age3[1];
-            const grandTotal = age2Total + age3Total + dbEditedAge4;
+            const maleData = ageGroups.map(ag => getAgeGender(ag, 'male'));
+            const femaleData = ageGroups.map(ag => getAgeGender(ag, 'female'));
+            const ageTotals = ageGroups.map((_, i) => maleData[i] + femaleData[i]);
+            const grandTotal = ageTotals.reduce((a, b) => a + b, 0);
 
             document.getElementById("daycare-name").textContent = brgyName;
             document.getElementById("daycare-total").textContent = grandTotal.toLocaleString();
-            document.getElementById("daycare-age2").textContent = age2Total.toLocaleString();
-            document.getElementById("daycare-age3").textContent = age3Total.toLocaleString();
-            document.getElementById("daycare-age4").textContent = dbEditedAge4.toLocaleString();
+            document.getElementById("daycare-age2").textContent = ageTotals[0].toLocaleString();
+            document.getElementById("daycare-age3").textContent = ageTotals[1].toLocaleString();
+            document.getElementById("daycare-age4").textContent = ageTotals[2].toLocaleString();
 
-            const labels = ['Ages 2-2.11', 'Ages 3-3.11', 'Ages 4-4.11'];
-            const maleData = [raw.age2[0], raw.age3[0], dynamicMaleAge4];
-            const femaleData = [raw.age2[1], raw.age3[1], dynamicFemaleAge4];
+            const labels = ageGroups;
             const ctx = document.getElementById("daycareChart").getContext("2d");
             const gradient = makeGradient(ctx);
 

@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome for Premium Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesomfor e/6.4.0/css/all.min.css">
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom CSS -->
@@ -273,6 +273,7 @@
             <a href="socwel.html" class="nav-item"><i class="fa-solid fa-hand-holding-heart"></i> Social Welfare</a>
             <a href="environment.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Environment</a>
             <a href="institutional.html" class="nav-item"><i class="fa-solid fa-building-columns"></i> Institutional</a>
+            <a href="infra.html" class="nav-item"><i class="fa-solid fa-road"></i> Infrastructure</a>
             <a href="sdg-localization.html" class="nav-item"><i class="fa-solid fa-bullhorn"></i> SDG Localization</a>
         </nav>
     </aside>
@@ -385,7 +386,6 @@
         // Supabase DB credentials
         const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
-        const STORAGE_KEY = "muntinlupa_sector_data_institutional";
 
         const BUDGET_YEARS = ["2019", "2020", "2021", "2022", "2023", "2024", "2025"];
         const REVENUE_YEARS = ["2024", "2025"];
@@ -487,7 +487,7 @@
                 try {
                     const { data: allRows, error } = await supabaseClient
                         .from('data_values')
-                        .select('value, year, indicator_id, category')
+                        .select('value, year, indicator_id, category_1')
                         .in('indicator_id', [15, 16])
                         .not('value', 'is', null)
                         .order('year', { ascending: true });
@@ -504,11 +504,11 @@
                             yearSet.add(yr);
 
                             if (r.indicator_id === 15) {
-                                const key = INDICATOR_15_KEY_MAP[r.category] || r.category;
+                                const key = INDICATOR_15_KEY_MAP[r.category_1] || r.category_1;
                                 if (!allData[key]) allData[key] = {};
                                 allData[key][yr] = r.value;
                             } else if (r.indicator_id === 16) {
-                                const key = INDICATOR_16_KEY_MAP[r.category] || r.category;
+                                const key = INDICATOR_16_KEY_MAP[r.category_1] || r.category_1;
                                 if (!allData[key]) allData[key] = {};
                                 allData[key][yr] = r.value;
 
@@ -532,7 +532,7 @@
 
                         institutionalData = allData;
                     } else {
-                        institutionalData = DEFAULT_INSTITUTIONAL_DATA;
+                        institutionalData = {};
                     }
 
                     statusTxt.textContent = "Live Connected: Syncing from data_values table";
@@ -540,35 +540,15 @@
                     statusDot.style.backgroundColor = "#10b981";
                 } catch (e) {
                     console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
-                    loadOfflineFallback();
+                    statusTxt.textContent = "Offline Mode";
+                    statusDot.className = "db-dot offline";
                 }
             } else {
                 console.warn("Supabase library not loaded. Loading from LocalStorage fallback.");
-                loadOfflineFallback();  
+                statusTxt.textContent = "Offline Mode";
+                statusDot.className = "db-dot offline";  
             }
         }
-        function loadOfflineFallback() {
-            const statusTxt = document.getElementById("db-status-txt");
-            const statusDot = document.getElementById("db-dot");
-
-            statusTxt.textContent = "Offline Mode (LocalStorage Fallback)";
-            statusDot.className = "db-dot offline";
-
-            const localData = localStorage.getItem(STORAGE_KEY);
-            if (localData) {
-                try {
-                    const parsed = JSON.parse(localData);
-                    institutionalData = parsed.data || DEFAULT_INSTITUTIONAL_DATA;
-                } catch (e) {
-                    console.error("Error parsing localstorage data.", e);
-                    institutionalData = DEFAULT_INSTITUTIONAL_DATA;
-                }
-            } else {
-                institutionalData = DEFAULT_INSTITUTIONAL_DATA;
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: DEFAULT_INSTITUTIONAL_DATA }));
-            }
-        }
-
         // Helper to grab latest non-null value from an indicator object
         function getLatestValue(indicator) {
             if (!indicator || !Array.isArray(indicator.history) || !Array.isArray(indicator.labels)) {

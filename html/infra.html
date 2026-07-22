@@ -1947,7 +1947,7 @@
 
                 const { data, error } = await supabaseClient
                     .from('data_values')
-                    .select('value, year, indicator_id, barangay_id, category, subcategory, barangays(barangay_name)')
+                    .select('value, year, indicator_id, barangay_id, category_1, category_2, barangays(barangay_name)')
                     .in('indicator_id', [7, 8, 9, 10, 11])
                     .not('value', 'is', null)
                     .order('year', { ascending: true });
