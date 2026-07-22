@@ -386,7 +386,6 @@
         // Supabase DB credentials
         const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
-        const STORAGE_KEY = "muntinlupa_sector_data_institutional";
 
         const BUDGET_YEARS = ["2019", "2020", "2021", "2022", "2023", "2024", "2025"];
         const REVENUE_YEARS = ["2024", "2025"];
@@ -533,7 +532,7 @@
 
                         institutionalData = allData;
                     } else {
-                        institutionalData = DEFAULT_INSTITUTIONAL_DATA;
+                        institutionalData = {};
                     }
 
                     statusTxt.textContent = "Live Connected: Syncing from data_values table";
@@ -541,35 +540,15 @@
                     statusDot.style.backgroundColor = "#10b981";
                 } catch (e) {
                     console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
-                    loadOfflineFallback();
+                    statusTxt.textContent = "Offline Mode";
+                    statusDot.className = "db-dot offline";
                 }
             } else {
                 console.warn("Supabase library not loaded. Loading from LocalStorage fallback.");
-                loadOfflineFallback();  
+                statusTxt.textContent = "Offline Mode";
+                statusDot.className = "db-dot offline";  
             }
         }
-        function loadOfflineFallback() {
-            const statusTxt = document.getElementById("db-status-txt");
-            const statusDot = document.getElementById("db-dot");
-
-            statusTxt.textContent = "Offline Mode (LocalStorage Fallback)";
-            statusDot.className = "db-dot offline";
-
-            const localData = localStorage.getItem(STORAGE_KEY);
-            if (localData) {
-                try {
-                    const parsed = JSON.parse(localData);
-                    institutionalData = parsed.data || DEFAULT_INSTITUTIONAL_DATA;
-                } catch (e) {
-                    console.error("Error parsing localstorage data.", e);
-                    institutionalData = DEFAULT_INSTITUTIONAL_DATA;
-                }
-            } else {
-                institutionalData = DEFAULT_INSTITUTIONAL_DATA;
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: DEFAULT_INSTITUTIONAL_DATA }));
-            }
-        }
-
         // Helper to grab latest non-null value from an indicator object
         function getLatestValue(indicator) {
             if (!indicator || !Array.isArray(indicator.history) || !Array.isArray(indicator.labels)) {

@@ -485,9 +485,7 @@
     <script>
         const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
-        const STORAGE_KEY = "muntinlupa_sector_data_education";
 
-        const EDUCATION_LABELS = ["2007", "2010", "2015", "2020", "2024", "2025"];
         const BARANGAY_NAMES = ["Alabang", "Ayala Alabang", "Bayanan", "Buli", "Cupang", "Poblacion", "Putatan", "Sucat", "Tunasan"];
 
         const PIE_COLORS = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548"];
@@ -519,67 +517,6 @@
                 plugins: { legend: { display: false }, tooltip: baseTooltip() }
             }, extra || {});
         }
-
-        // Static default values
-        const DEFAULT_EDU_DATA = {
-            "Literacy Rate": { history: [79.83, 98.74, 98.86, 98.96, 93.10, null] },
-            "Public Schools Count": { history: [null, null, null, null, null, 28] },
-            "Private Schools Count": { history: [null, null, null, null, null, 70] },
-            
-            "Alabang - Day Care": { history: [null, null, null, null, null, 541] },
-            "Ayala Alabang - Day Care": { history: [null, null, null, null, null, 59] },
-            "Bayanan - Day Care": { history: [null, null, null, null, null, 423] },
-            "Buli - Day Care": { history: [null, null, null, null, null, 138] },
-            "Cupang - Day Care": { history: [null, null, null, null, null, 298] },
-            "Poblacion - Day Care": { history: [null, null, null, null, null, 1105] },
-            "Putatan - Day Care": { history: [null, null, null, null, null, 715] },
-            "Sucat - Day Care": { history: [null, null, null, null, null, 406] },
-            "Tunasan - Day Care": { history: [null, null, null, null, null, 587] },
-            
-            "Public Enrollment - Kinder": { history: [null, null, null, null, null, 6822] },
-            "Public Enrollment - Elementary": { history: [null, null, null, null, null, 40442] },
-            "Public Enrollment - Junior High": { history: [null, null, null, null, null, 25490] },
-            "Public Enrollment - Senior High": { history: [null, null, null, null, null, 9171] },
-            
-            "Private Enrollment - Kinder": { history: [null, null, null, null, null, 1334] },
-            "Private Enrollment - Elementary": { history: [null, null, null, null, null, 8284] },
-            "Private Enrollment - Junior High": { history: [null, null, null, null, null, 7742] },
-            "Private Enrollment - Senior High": { history: [null, null, null, null, null, 10259] },
-            
-            "CDM - BS Architecture": { history: [null, null, null, null, null, 372] },
-            "CDM - BS Civil Engineering": { history: [null, null, null, null, null, 987] },
-            "CDM - BS Computer Engineering": { history: [null, null, null, null, null, 509] },
-            "CDM - BS Electronics Engineering": { history: [null, null, null, null, null, 161] },
-            "CDM - BS Electrical Engineering": { history: [null, null, null, null, null, 187] },
-            "CDM - BS Environmental Engineering": { history: [null, null, null, null, null, 31] },
-            "CDM - BS Industrial Engineering": { history: [null, null, null, null, null, 230] },
-            "CDM - BS Mechanical Engineering": { history: [null, null, null, null, null, 344] }
-        };
-
-        const daycareDetailsRaw = {}; // Deprecated: now fetched from data_values
-
-        const DEFAULT_PLMUN_DATA = {
-            'AB Com': { male: 395, female: 753 }, 'AB PolSci': { male: 301, female: 440 },
-            'BS Psy': { male: 265, female: 926 }, 'BSA': { male: 48, female: 180 },
-            'BSBA': { male: 877, female: 1840 }, 'BS Crim': { male: 1004, female: 519 },
-            'ACT': { male: 363, female: 265 }, 'BSCS': { male: 428, female: 220 },
-            'BSIT': { male: 1656, female: 933 }, 'BEED': { male: 42, female: 225 },
-            'BSE': { male: 195, female: 390 }
-        };
-
-        const DEFAULT_TESDA_DATA = {
-            'Automotive Servicing 1': { male: 48, female: 4 }, 'Automotive Servicing 2': { male: 55, female: 3 },
-            'Barista': { male: 0, female: 0 }, 'Basic Computer': { male: 19, female: 49 },
-            'Bread & Pastry': { male: 18, female: 44 }, 'Caregiving': { male: 22, female: 69 },
-            'English Proficiency': { male: 17, female: 43 }, 'Computer Systems Servicing': { male: 33, female: 20 },
-            'Cookery': { male: 28, female: 24 }, 'Electrical Installation': { male: 99, female: 9 },
-            'Electronic Products': { male: 23, female: 11 }, 'Food & Beverage Services': { male: 20, female: 27 },
-            'Housekeeping': { male: 12, female: 38 }, 'Motorcycle Servicing': { male: 20, female: 1 },
-            'SMAW Welding': { male: 82, female: 7 }, 'Web Development': { male: 7, female: 8 },
-            'Beauty Care': { male: 0, female: 12 }, 'Hairdressing': { male: 5, female: 14 },
-            'Dressmaking': { male: 3, female: 17 }, 'Hilot Wellness': { male: 11, female: 35 },
-            'Urban Gardening': { male: 4, female: 40 }
-        };
 
         let eduData = {};
         let eduLabels = [];
@@ -756,8 +693,7 @@
                         tesdaData = tesdaTmp;
                         daycareDetailed = daycareTmp;
                     } else {
-                        eduData = DEFAULT_EDU_DATA;
-                        eduLabels = EDUCATION_LABELS;
+                        eduData = {};
                     }
 
                     statusTxt.textContent = "Live Connected: Syncing from data_values table";
@@ -765,10 +701,12 @@
                     statusDot.style.backgroundColor = "#10b981";
                 } catch (e) {
                     console.warn("Supabase load failed. Using fallback.", e);
-                    loadOfflineFallback();
+                    statusTxt.textContent = "Offline Mode";
+                    statusDot.className = "db-dot offline";
                 }
             } else {
-                loadOfflineFallback();
+                statusTxt.textContent = "Offline Mode";
+                statusDot.className = "db-dot offline";
             }
         }
 
@@ -803,30 +741,6 @@
             if (s.includes("3-3")) return "Ages 3-3.11";
             if (s.includes("4-4")) return "Ages 4-4.11";
             return s;
-        }
-
-        function loadOfflineFallback() {
-            const statusTxt = document.getElementById("db-status-txt");
-            const statusDot = document.getElementById("db-dot");
-            
-            statusTxt.textContent = "Offline Mode (LocalStorage Fallback)";
-            statusDot.className = "db-dot offline";
-
-            const localData = localStorage.getItem(STORAGE_KEY);
-            if (localData) {
-                try {
-                    const parsed = JSON.parse(localData);
-                    eduData = parsed.data || DEFAULT_EDU_DATA;
-                    eduLabels = parsed.labels || EDUCATION_LABELS;
-                } catch (e) {
-                    eduData = DEFAULT_EDU_DATA;
-                    eduLabels = EDUCATION_LABELS;
-                }
-            } else {
-                eduData = DEFAULT_EDU_DATA;
-                eduLabels = EDUCATION_LABELS;
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: DEFAULT_EDU_DATA, labels: EDUCATION_LABELS }));
-            }
         }
 
         function getLatestValue(key) {
@@ -1062,14 +976,14 @@
 
         function renderPLMUNChart() {
             if (plmunChartInst) { plmunChartInst.destroy(); plmunChartInst = null; }
-            const programs = plmunPrograms.length > 0 ? plmunPrograms : Object.keys(DEFAULT_PLMUN_DATA);
+            const programs = plmunPrograms.length > 0 ? plmunPrograms : [];
             const maleData = programs.map(p => {
                 if (plmunData[p]) {
                     const hist = plmunData[p].male;
                     const years = Object.keys(hist).sort();
                     return years.length > 0 ? hist[years[years.length - 1]] : 0;
                 }
-                return DEFAULT_PLMUN_DATA[p]?.male || 0;
+                return 0;
             });
             const femaleData = programs.map(p => {
                 if (plmunData[p]) {
@@ -1077,7 +991,7 @@
                     const years = Object.keys(hist).sort();
                     return years.length > 0 ? hist[years[years.length - 1]] : 0;
                 }
-                return DEFAULT_PLMUN_DATA[p]?.female || 0;
+                return 0;
             });
             const ctx = document.getElementById("plmunChart").getContext("2d");
             const gradient = makeGradient(ctx);
@@ -1156,14 +1070,14 @@
 
         function renderTESDAChart() {
             if (tesdaChartInst) { tesdaChartInst.destroy(); tesdaChartInst = null; }
-            const courses = tesdaCourses.length > 0 ? tesdaCourses : Object.keys(DEFAULT_TESDA_DATA);
+            const courses = tesdaCourses.length > 0 ? tesdaCourses : [];
             const maleData = courses.map(c => {
                 if (tesdaData[c]) {
                     const hist = tesdaData[c].male;
                     const years = Object.keys(hist).sort();
                     return years.length > 0 ? hist[years[years.length - 1]] : 0;
                 }
-                return DEFAULT_TESDA_DATA[c]?.male || 0;
+                return 0;
             });
             const femaleData = courses.map(c => {
                 if (tesdaData[c]) {
@@ -1171,7 +1085,7 @@
                     const years = Object.keys(hist).sort();
                     return years.length > 0 ? hist[years[years.length - 1]] : 0;
                 }
-                return DEFAULT_TESDA_DATA[c]?.female || 0;
+                return 0;
             });
             const ctx = document.getElementById("tesdaChart").getContext("2d");
             const gradient = makeGradient(ctx);

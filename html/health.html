@@ -385,25 +385,7 @@
         // Supabase DB credentials
         const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
-        const STORAGE_KEY = "muntinlupa_sector_data_health";
 
-        // Initial default health indicators dataset
-        const DEFAULT_HEALTH_DATA = {
-            "Crude Birth Rate (CBR)": { history: [12.12, 12.3, null, null, 13.6, 15.04] },
-            "Crude Death Rate (CDR)": { history: [4.71, 5.54, null, null, 3.17, null] },
-            "Infant Mortality Rate": { history: [6.86, 9.21, null, null, 7.85, 7.69] },
-            "Under Five Mortality Rate (UMR)": { history: [9.61, 11.58, null, null, 9.55, null] },
-            "Maternal Mortality Rate (MMR)": { history: [106.8, 133.67, null, null, 52.0, 12.0] },
-            "Child Woman Ratio (CWR)": { history: [null, 1.1, null, null, null, null] },
-            "Percentage of Fully Immunized Children": { history: [null, 74.0, 61.0, 60.29, 54.65, 50.26] },
-            "Prevalence of Underweight (UW) & Severely Underweight (SUW) Children": { history: [null, null, null, null, null, null] },
-            "Infants Exclusively Breastfeed until 6 months": { history: [null, 75.28, 53.48, 59.39, 68.37, null] },
-            "Percentage of Teenage Deliveries": { history: [null, 8.89, null, null, null, null] },
-            "Percentage of Birth by Skilled Attendant": { history: [null, 87.0, 82.0, 86.0, 95.80, 95.28] },
-            "Births by Facility Based": { history: [null, 83.0, 78.28, 85.38, 95.69, 94.36] },
-            "Contraceptive Prevalence Rate": { history: [null, 22.7, 23.74, 27.57, null, null] }
-        };
-        const HEALTH_LABELS = ["2020", "2021", "2022", "2023", "2024", "2025"];
 
         // Indicator configuration details for cards (icons, descriptions, units)
         const INDICATORS_METADATA = {
@@ -526,37 +508,14 @@
                     statusDot.className = "db-dot";
                     statusDot.style.backgroundColor = "#10b981";
                 } catch (e) {
-                    console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
-                    loadOfflineFallback();
+                    console.warn("Supabase load failed.", e);
+                    statusTxt.textContent = "Offline Mode";
+                    statusDot.className = "db-dot offline";
                 }
             } else {
-                console.warn("Supabase library not loaded. Loading from LocalStorage fallback.");
-                loadOfflineFallback();
-            }
-        }
-
-        function loadOfflineFallback() {
-            const statusTxt = document.getElementById("db-status-txt");
-            const statusDot = document.getElementById("db-dot");
-            
-            statusTxt.textContent = "Offline Mode (LocalStorage Fallback)";
-            statusDot.className = "db-dot offline";
-
-            const localData = localStorage.getItem(STORAGE_KEY);
-            if (localData) {
-                try {
-                    const parsed = JSON.parse(localData);
-                    healthData = parsed.data || DEFAULT_HEALTH_DATA;
-                    healthLabels = parsed.labels || HEALTH_LABELS;
-                } catch (e) {
-                    console.error("Error parsing localstorage data.", e);
-                    healthData = DEFAULT_HEALTH_DATA;
-                    healthLabels = HEALTH_LABELS;
-                }
-            } else {
-                healthData = DEFAULT_HEALTH_DATA;
-                healthLabels = HEALTH_LABELS;
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: DEFAULT_HEALTH_DATA, labels: HEALTH_LABELS }));
+                console.warn("Supabase library not loaded.");
+                statusTxt.textContent = "Offline Mode";
+                statusDot.className = "db-dot offline";
             }
         }
 
