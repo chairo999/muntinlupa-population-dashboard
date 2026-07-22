@@ -157,7 +157,7 @@
             padding: 5px 10px;
             font-family: 'Montserrat', sans-serif;
             font-size: 0.8rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             outline: none;
             transition: var(--transition-smooth);
@@ -182,6 +182,10 @@
             cursor: pointer;
             outline: none;
             border: none;
+        }
+
+        .chart-type-select option {
+            font-weight: 700;
         }
 
         /* Daycare details spotlight panel */
@@ -483,6 +487,19 @@
 
     <!-- Page Logic JavaScript -->
     <script>
+        function countUp(element, target, duration, suffix) {
+            if (!element) return;
+            duration = duration || 600;
+            const start = performance.now();
+            function tick(now) {
+                const elapsed = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - elapsed, 3);
+                element.textContent = Math.round(target * eased).toLocaleString() + (suffix || "");
+                if (elapsed < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
         const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
         const STORAGE_KEY = "muntinlupa_sector_data_education";
@@ -839,7 +856,20 @@
 
         function renderStatsBanner() {
             const litVal = getLatestValue("Literacy Rate");
-            document.getElementById("card-literacy").textContent = litVal !== null ? `${litVal}%` : '--';
+            const litEl = document.getElementById("card-literacy");
+            if (litVal !== null) {
+                const duration = 600;
+                const startTime = performance.now();
+                function tickLit(now) {
+                    const elapsed = Math.min((now - startTime) / duration, 1);
+                    const eased = 1 - Math.pow(1 - elapsed, 3);
+                    litEl.textContent = (litVal * eased).toFixed(2) + "%";
+                    if (elapsed < 1) requestAnimationFrame(tickLit);
+                }
+                requestAnimationFrame(tickLit);
+            } else {
+                litEl.textContent = "--";
+            }
 
             let totEnroll = 0;
             const pubKeys = Object.keys(eduData).filter(k => k.startsWith("Public Enrollment - "));
@@ -848,14 +878,20 @@
                 const v = getLatestValue(k);
                 if (v) totEnroll += v;
             });
-            document.getElementById("card-enrollment").textContent = totEnroll.toLocaleString();
+            countUp(document.getElementById("card-enrollment"), totEnroll, 600);
 
             let cdmTot = 0;
             Object.keys(eduData).filter(k => k.startsWith("CDM - ")).forEach(k => {
                 const v = getLatestValue(k);
                 if (v) cdmTot += v;
             });
-            document.getElementById("card-cdm").textContent = cdmTot.toLocaleString();
+            countUp(document.getElementById("card-cdm"), cdmTot, 600);
+
+            const pubSchools = getLatestValue("Public Schools Count") ?? DEFAULT_EDU_DATA["Public Schools Count"].history.find(v => v !== null) ?? 0;
+            const privSchools = getLatestValue("Private Schools Count") ?? DEFAULT_EDU_DATA["Private Schools Count"].history.find(v => v !== null) ?? 0;
+            const totalSchools = pubSchools + privSchools;
+            countUp(document.getElementById("card-schools"), totalSchools, 600);
+            document.getElementById("card-schools-split").textContent = `${pubSchools} Public, ${privSchools} Private`;
         }
 
         function renderAllCharts() {
@@ -904,7 +940,7 @@
                             hoverBorderColor: "#e1271a52",
                             hoverBorderWidth: 4,
                             backgroundColor: gradient,
-                            fill: literacyChartType === "line",
+                            fill: false,
                             tension: 0.15,
                             borderRadius: literacyChartType === "bar" ? 6 : 0
                         }]
@@ -963,7 +999,7 @@
                                 pointHoverBackgroundColor: "#ff2a2a",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
-                                fill: enrollmentChartType === "line",
+                                fill: false,
                                 tension: 0.2,
                                 borderRadius: enrollmentChartType === "bar" ? 6 : 0
                             },
@@ -984,7 +1020,7 @@
                                 pointHoverBackgroundColor: "#ff6666",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
-                                fill: enrollmentChartType === "line",
+                                fill: false,
                                 tension: 0.2,
                                 borderRadius: enrollmentChartType === "bar" ? 6 : 0
                             }
@@ -1041,7 +1077,7 @@
                             pointHoverBackgroundColor: "#ff2a2a",
                             pointHoverBorderColor: "#fff",
                             pointHoverBorderWidth: 3,
-                            fill: cdmChartType === "line",
+                            fill: false,
                             tension: 0.2,
                             borderRadius: cdmChartType === "bar" ? 6 : 0
                         }]
@@ -1100,42 +1136,42 @@
                             {
                                 label: 'Male',
                                 data: maleData,
-                                backgroundColor: gradient,
-                                hoverBackgroundColor: "#e1271a52",
-                                hoverBorderColor: "#e1271a52",
+                                backgroundColor: "#7ea8f7",
+                                hoverBackgroundColor: "#7EA8F77D",
+                                hoverBorderColor: "#7EA8F77D",
                                 hoverBorderWidth: 4,
-                                borderColor: plmunChartType === "line" ? "#d91406" : undefined,
+                                borderColor: plmunChartType === "line" ? "#7ea8f7" : undefined,
                                 borderWidth: plmunChartType === "line" ? 3 : undefined,
-                                pointBackgroundColor: "#e1271a",
+                                pointBackgroundColor: "#7ea8f7",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
                                 pointRadius: 5,
                                 pointHoverRadius: 9,
-                                pointHoverBackgroundColor: "#ff2a2a",
+                                pointHoverBackgroundColor: "#7ea8f7",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
-                                fill: plmunChartType === "line",
+                                fill: false,
                                 tension: 0.2,
                                 borderRadius: plmunChartType === "bar" ? 6 : 0
                             },
                             {
                                 label: 'Female',
                                 data: femaleData,
-                                backgroundColor: plmunChartType === "line" ? "rgba(239, 68, 68, 0.3)" : "rgba(239, 68, 68, 0.4)",
-                                hoverBackgroundColor: "#e1271a52",
-                                hoverBorderColor: "#e1271a52",
+                                backgroundColor: "#ff7ac8",
+                                hoverBackgroundColor: "#FF7AC885",
+                                hoverBorderColor: "#FF7AC885",
                                 hoverBorderWidth: 4,
-                                borderColor: plmunChartType === "line" ? "#ef4444" : undefined,
+                                borderColor: plmunChartType === "line" ? "#ff7ac8" : undefined,
                                 borderWidth: plmunChartType === "line" ? 2 : undefined,
-                                pointBackgroundColor: "#ef4444",
+                                pointBackgroundColor: "#ff7ac8",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
                                 pointRadius: 4,
                                 pointHoverRadius: 8,
-                                pointHoverBackgroundColor: "#ff6666",
+                                pointHoverBackgroundColor: "#ff7ac8",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
-                                fill: plmunChartType === "line",
+                                fill: false,
                                 tension: 0.2,
                                 borderRadius: plmunChartType === "bar" ? 6 : 0
                             }
@@ -1194,42 +1230,42 @@
                             {
                                 label: 'Male Trainees',
                                 data: maleData,
-                                backgroundColor: gradient,
-                                hoverBackgroundColor: "#e1271a52",
-                                hoverBorderColor: "#e1271a52",
+                                backgroundColor: "#7ea8f7",
+                                hoverBackgroundColor: "#7EA8F77D",
+                                hoverBorderColor: "#7EA8F77D",
                                 hoverBorderWidth: 4,
-                                borderColor: tesdaChartType === "line" ? "#d91406" : undefined,
+                                borderColor: tesdaChartType === "line" ? "#7ea8f7" : undefined,
                                 borderWidth: tesdaChartType === "line" ? 3 : undefined,
-                                pointBackgroundColor: "#e1271a",
+                                pointBackgroundColor: "#7ea8f7",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
                                 pointRadius: 5,
                                 pointHoverRadius: 9,
-                                pointHoverBackgroundColor: "#ff2a2a",
+                                pointHoverBackgroundColor: "#7ea8f7",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
-                                fill: tesdaChartType === "line",
+                                fill: false,
                                 tension: 0.2,
                                 borderRadius: tesdaChartType === "bar" ? 6 : 0
                             },
                             {
                                 label: 'Female Trainees',
                                 data: femaleData,
-                                backgroundColor: tesdaChartType === "line" ? "rgba(239, 68, 68, 0.3)" : "rgba(239, 68, 68, 0.4)",
-                                hoverBackgroundColor: "#e1271a52",
-                                hoverBorderColor: "#e1271a52",
+                                backgroundColor: "#ff7ac8",
+                                hoverBackgroundColor: "#FF7AC885",
+                                hoverBorderColor: "#FF7AC885",
                                 hoverBorderWidth: 4,
-                                borderColor: tesdaChartType === "line" ? "#ef4444" : undefined,
+                                borderColor: tesdaChartType === "line" ? "#ff7ac8" : undefined,
                                 borderWidth: tesdaChartType === "line" ? 2 : undefined,
-                                pointBackgroundColor: "#ef4444",
+                                pointBackgroundColor: "#ff7ac8",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
                                 pointRadius: 4,
                                 pointHoverRadius: 8,
-                                pointHoverBackgroundColor: "#ff6666",
+                                pointHoverBackgroundColor: "#ff7ac8",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
-                                fill: tesdaChartType === "line",
+                                fill: false,
                                 tension: 0.2,
                                 borderRadius: tesdaChartType === "bar" ? 6 : 0
                             }
@@ -1310,42 +1346,42 @@
                             {
                                 label: 'Male Students',
                                 data: maleData,
-                                backgroundColor: gradient,
-                                hoverBackgroundColor: "#e1271a52",
-                                hoverBorderColor: "#e1271a52",
+                                backgroundColor: "#7ea8f7",
+                                hoverBackgroundColor: "#7EA8F77D",
+                                hoverBorderColor: "#7EA8F77D",
                                 hoverBorderWidth: 4,
-                                borderColor: daycareChartType === "line" ? "#d91406" : undefined,
+                                borderColor: daycareChartType === "line" ? "#7ea8f7 " : undefined,
                                 borderWidth: daycareChartType === "line" ? 3 : undefined,
-                                pointBackgroundColor: "#e1271a",
+                                pointBackgroundColor: "#7ea8f7 ",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
                                 pointRadius: 5,
                                 pointHoverRadius: 9,
-                                pointHoverBackgroundColor: "#ff2a2a",
+                                pointHoverBackgroundColor: "#7ea8f7 ",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
-                                fill: daycareChartType === "line",
+                                fill: false,
                                 tension: 0.2,
                                 borderRadius: daycareChartType === "bar" ? 6 : 0
                             },
                             {
                                 label: 'Female Students',
                                 data: femaleData,
-                                backgroundColor: daycareChartType === "line" ? "rgba(239, 68, 68, 0.3)" : "rgba(239, 68, 68, 0.4)",
-                                hoverBackgroundColor: "#e1271a52",
-                                hoverBorderColor: "#e1271a52",
+                                backgroundColor: "#ff7ac8",
+                                hoverBackgroundColor: "#FF7AC885",
+                                hoverBorderColor: "#FF7AC885",
                                 hoverBorderWidth: 4,
-                                borderColor: daycareChartType === "line" ? "#ef4444" : undefined,
+                                borderColor: daycareChartType === "line" ? "#ff7ac8 " : undefined,
                                 borderWidth: daycareChartType === "line" ? 2 : undefined,
-                                pointBackgroundColor: "#ef4444",
+                                pointBackgroundColor: "#ff7ac8",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
                                 pointRadius: 4,
                                 pointHoverRadius: 8,
-                                pointHoverBackgroundColor: "#ff6666",
+                                pointHoverBackgroundColor: "#ff7ac8",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
-                                fill: daycareChartType === "line",
+                                fill: false,
                                 tension: 0.2,
                                 borderRadius: daycareChartType === "bar" ? 6 : 0
                             }

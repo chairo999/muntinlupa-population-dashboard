@@ -344,6 +344,19 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
+        function countUp(element, target, duration) {
+            if (!element) return;
+            duration = duration || 600;
+            const start = performance.now();
+            function tick(now) {
+                const elapsed = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - elapsed, 3);
+                element.textContent = Math.round(target * eased).toLocaleString();
+                if (elapsed < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
         const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
         const MASTER_TABLE_NAME = "municipal_indicators";
@@ -541,13 +554,35 @@
 
         function renderStatsBanner() {
             const rank = getLatestValue("Competitiveness Rank");
-            document.getElementById("card-rank").textContent = rank !== "--" ? `#${rank}` : "--";
+            const rankEl = document.getElementById("card-rank");
+            if (rank !== "--") {
+                const target = Number(rank);
+                const duration = 600;
+                const startTime = performance.now();
+                function tick(now) {
+                    const elapsed = Math.min((now - startTime) / duration, 1);
+                    const eased = 1 - Math.pow(1 - elapsed, 3);
+                    rankEl.textContent = "#" + Math.round(target * eased);
+                    if (elapsed < 1) requestAnimationFrame(tick);
+                }
+                requestAnimationFrame(tick);
+            } else {
+                rankEl.textContent = "--";
+            }
 
             const est = getLatestValue("Total Establishments");
-            document.getElementById("card-establishments").textContent = est !== "--" ? Number(est).toLocaleString() : "--";
+            if (est !== "--") {
+                countUp(document.getElementById("card-establishments"), Number(est), 600);
+            } else {
+                document.getElementById("card-establishments").textContent = "--";
+            }
 
             const hotel = getLatestValue("Hotel Arrivals");
-            document.getElementById("card-hotels").textContent = hotel !== "--" ? Number(hotel).toLocaleString() : "--";
+            if (hotel !== "--") {
+                countUp(document.getElementById("card-hotels"), Number(hotel), 600);
+            } else {
+                document.getElementById("card-hotels").textContent = "--";
+            }
 
             let totalEmp = 0;
             let foundEmp = false;
@@ -558,7 +593,11 @@
                     foundEmp = true;
                 }
             });
-            document.getElementById("card-employment").textContent = foundEmp ? totalEmp.toLocaleString() : "--";
+            if (foundEmp) {
+                countUp(document.getElementById("card-employment"), totalEmp, 600);
+            } else {
+                document.getElementById("card-employment").textContent = "--";
+            }
         }
 
         function renderAllCharts() {
@@ -641,7 +680,7 @@
                             hoverBorderColor: "#e1271a52",
                             hoverBorderWidth: 4,
                             backgroundColor: gradient,
-                            fill: rankingChartType === "line",
+                            fill: false,
                             tension: 0.15,
                             borderRadius: rankingChartType === "bar" ? 6 : 0
                         }]
@@ -702,7 +741,7 @@
                             hoverBorderColor: "#e1271a52",
                             hoverBorderWidth: 4,
                             backgroundColor: gradient,
-                            fill: establishmentsChartType === "line",
+                            fill: false,
                             tension: 0.2,
                             borderRadius: establishmentsChartType === "bar" ? 6 : 0
                         }]
@@ -763,7 +802,7 @@
                             hoverBorderColor: "#e1271a52",
                             hoverBorderWidth: 4,
                             backgroundColor: gradient,
-                            fill: hotelChartType === "line",
+                            fill: false,
                             tension: 0.2,
                             borderRadius: hotelChartType === "bar" ? 6 : 0
                         }]
@@ -858,7 +897,7 @@
                         pointHoverBackgroundColor: "#ff2a2a",
                         pointHoverBorderColor: "#fff",
                         pointHoverBorderWidth: 3,
-                        fill: chartType === "line",
+                        fill: false,
                         tension: 0.2,
                         borderRadius: chartType === "bar" ? 6 : 0
                     }];
