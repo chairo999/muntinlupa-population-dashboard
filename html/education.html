@@ -801,11 +801,14 @@
             });
             countUp(document.getElementById("card-cdm"), cdmTot, 600);
 
-            const pubSchools = getLatestValue("Public Schools Count") ?? DEFAULT_EDU_DATA["Public Schools Count"].history.find(v => v !== null) ?? 0;
-            const privSchools = getLatestValue("Private Schools Count") ?? DEFAULT_EDU_DATA["Private Schools Count"].history.find(v => v !== null) ?? 0;
-            const totalSchools = pubSchools + privSchools;
-            countUp(document.getElementById("card-schools"), totalSchools, 600);
-            document.getElementById("card-schools-split").textContent = `${pubSchools} Public, ${privSchools} Private`;
+            const pubSchools = getLatestValue("Public Schools Count");
+            const privSchools = getLatestValue("Private Schools Count");
+            if (pubSchools !== null || privSchools !== null) {
+                const ps = pubSchools || 0;
+                const prs = privSchools || 0;
+                countUp(document.getElementById("card-schools"), ps + prs, 600);
+                document.getElementById("card-schools-split").textContent = `${ps} Public, ${prs} Private`;
+            }
         }
 
         function renderAllCharts() {
