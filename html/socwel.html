@@ -470,36 +470,8 @@
     <script>
         const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
-        const STORAGE_KEY = "muntinlupa_sector_data_social_welfare";
 
         const BARANGAY_NAMES = ["Alabang", "Ayala Alabang", "Bayanan", "Buli", "Cupang", "Poblacion", "Putatan", "Sucat", "Tunasan"];
-        const SOCIAL_WELFARE_LABELS = ["2021", "2022", "2023", "2024", "2025"];
-
-        // Static RAW default data seeded
-        const socWelRaw = {
-            "Alabang": [1131, 1110, 37, 3774, 2602, 3795],
-            "Ayala Alabang": [325, 326, 5, 70, 1394, 2175],
-            "Bayanan": [648, 564, 15, 483, 1677, 2724],
-            "Buli": [149, 154, 9, 749, 482, 727],
-            "Cupang": [673, 643, 15, 1752, 2595, 3852],
-            "Poblacion": [1322, 1356, 50, 2758, 4537, 6519],
-            "Putatan": [1488, 1418, 28, 1045, 4974, 7706],
-            "Sucat": [609, 547, 22, 1618, 1868, 2838],
-            "Tunasan": [879, 811, 19, 1246, 3196, 4784]
-        };
-
-        // Construct standard DEFAULT_HEALTH_DATA equivalent structured map
-        const DEFAULT_SOCWEL_DATA = {};
-        BARANGAY_NAMES.forEach(brgy => {
-            const metrics = ["PWD (Male)", "PWD (Female)", "Youth Organizations", "Registered Youths", "Seniors (Male)", "Seniors (Female)"];
-            metrics.forEach((metric, metricIdx) => {
-                const key = `${brgy} - ${metric}`;
-                const history = [null, null, null, null, null];
-                const yearIndex = (metricIdx < 2) ? 0 : (metricIdx < 4) ? 1 : 3;
-                history[yearIndex] = socWelRaw[brgy][metricIdx];
-                DEFAULT_SOCWEL_DATA[key] = { history };
-            });
-        });
 
         let appData = {};
         let appLabels = [];
@@ -608,45 +580,21 @@
 
                         appData = allData;
                     } else {
-                        appData = DEFAULT_SOCWEL_DATA;
-                        appLabels = SOCIAL_WELFARE_LABELS;
+                        appData = {};
                     }
 
                     statusTxt.textContent = "Live Connected: Syncing from data_values table";
                     statusDot.className = "db-dot";
                     statusDot.style.backgroundColor = "#10b981";
                 } catch (e) {
-                    console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
-                    loadOfflineFallback();
+                    console.warn("Supabase load failed.", e);
+                    statusTxt.textContent = "Offline Mode";
+                    statusDot.className = "db-dot offline";
                 }
             } else {
-                console.warn("Supabase library not loaded. Loading from LocalStorage fallback.");
-                loadOfflineFallback();
-            }
-        }
-
-        function loadOfflineFallback() {
-            const statusTxt = document.getElementById("db-status-txt");
-            const statusDot = document.getElementById("db-dot");
-            
-            statusTxt.textContent = "Offline Mode (LocalStorage Fallback)";
-            statusDot.className = "db-dot offline";
-
-            const localData = localStorage.getItem(STORAGE_KEY);
-            if (localData) {
-                try {
-                    const parsed = JSON.parse(localData);
-                    appData = parsed.data || DEFAULT_SOCWEL_DATA;
-                    appLabels = parsed.labels || SOCIAL_WELFARE_LABELS;
-                } catch (e) {
-                    console.error("Error parsing localstorage data.", e);
-                    appData = DEFAULT_SOCWEL_DATA;
-                    appLabels = SOCIAL_WELFARE_LABELS;
-                }
-            } else {
-                appData = DEFAULT_SOCWEL_DATA;
-                appLabels = SOCIAL_WELFARE_LABELS;
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: DEFAULT_SOCWEL_DATA, labels: SOCIAL_WELFARE_LABELS }));
+                console.warn("Supabase library not loaded.");
+                statusTxt.textContent = "Offline Mode";
+                statusDot.className = "db-dot offline";
             }
         }
 

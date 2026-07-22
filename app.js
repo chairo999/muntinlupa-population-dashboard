@@ -88,6 +88,23 @@ function initEventListeners() {
         return layer;
     })();
 
+    const magnifyLayer = mapWrapper?.querySelector(".map-magnify-layer") || (() => {
+        const layer = document.createElement("div");
+        layer.className = "map-magnify-layer";
+        const img = document.createElement("img");
+        img.className = "magnify-img";
+        img.alt = "";
+        const baseImg = mapWrapper?.querySelector(".base-map-img");
+        if (baseImg) img.src = baseImg.src;
+        layer.appendChild(img);
+        if (mapWrapper && svgOverlay) {
+            mapWrapper.insertBefore(layer, svgOverlay);
+        } else {
+            mapWrapper?.appendChild(layer);
+        }
+        return layer;
+    })();
+
     const tooltipTitle = document.getElementById("tooltip-title");
     const tooltipPop = document.getElementById("tooltip-pop");
     
@@ -117,6 +134,43 @@ function initEventListeners() {
             polygon.style.transformOrigin = `${cx}px ${cy}px`;
             polygon.classList.add("hovered");
 
+            if (magnifyLayer && svgOverlay) {
+                const rawPoints = polygon.getAttribute("points") || "";
+                const coords = rawPoints.trim().split(/\s+/)
+                    .map(p => p.split(","))
+                    .filter(([x, y]) => x !== undefined && y !== undefined)
+                    .map(([x, y]) => ({ x: Number(x), y: Number(y) }));
+
+                const containerRect = mapWrapper.getBoundingClientRect();
+                const ctm = svgOverlay.getScreenCTM();
+
+                const toPct = (svgX, svgY) => {
+                    if (!ctm) return { x: svgX / 750 * 100, y: svgY / 750 * 100 };
+                    const sx = ctm.a * svgX + ctm.c * svgY + ctm.e;
+                    const sy = ctm.b * svgX + ctm.d * svgY + ctm.f;
+                    return {
+                        x: (sx - containerRect.left) / containerRect.width * 100,
+                        y: (sy - containerRect.top) / containerRect.height * 100
+                    };
+                };
+
+                const clipPoints = coords.map(({x, y}) => {
+                    const p = toPct(x, y);
+                    return `${p.x.toFixed(2)}% ${p.y.toFixed(2)}%`;
+                }).join(", ");
+
+                const origin = toPct(cx, cy);
+
+                magnifyLayer.classList.remove("visible");
+                magnifyLayer.style.transform = "scale(1)";
+                void magnifyLayer.offsetWidth;
+
+                magnifyLayer.style.clipPath = `polygon(${clipPoints})`;
+                magnifyLayer.style.transformOrigin = `${origin.x.toFixed(2)}% ${origin.y.toFixed(2)}%`;
+                magnifyLayer.style.transform = "scale(1.08)";
+                magnifyLayer.classList.add("visible");
+            }
+
             if (tooltip) {
                 const stats = getBarangayStats(name);
                 document.getElementById("tooltip-title").textContent = name;
@@ -137,6 +191,10 @@ function initEventListeners() {
 
         polygon.addEventListener("mouseleave", () => {
             polygon.classList.remove("hovered");
+            if (magnifyLayer) {
+                magnifyLayer.classList.remove("visible");
+                magnifyLayer.style.transform = "scale(1)";
+            }
             if (tooltip) {
                 tooltip.classList.remove("visible");
             }

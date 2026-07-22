@@ -333,34 +333,6 @@
         // Supabase DB credentials
         const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
-        const STORAGE_KEY = "muntinlupa_sector_data_protective";
-
-        // Initial default protective dataset from screen-shots
-        const DEFAULT_PROTECTIVE_DATA = {
-            "Total Crime Volume (TCV)": { history: [1773, 1273, 1458, 1276, 1169] },
-            "Index Crime": { history: [245, 181, 176, 129, 84] },
-            "Average Monthly Crime Rate (AMCR)": { history: [27.19, 19.52, 22.36, 20.0, 18.0] },
-            "Crime Solution Efficiency (CSE)": { history: [86.95, 83.67, 85.46, 86.99, 89.05] },
-            "Crime Clearance Solution": { history: [99.44, 99.77, 99.86, 99.84, 99.83] },
-            "Police to Population Ratio (1:X)": { history: [1053, 1142, 708, 739, 703] },
-            "Number of Policemen": { history: [479, 476, 561, 544, 564] },
-            "Non-Uniformed Personnel": { history: [16, 17, 18, 18, 17] },
-            "Police Sub-Stations": { history: [6, 6, 6, 7, 7] },
-            "Patrol Cars": { history: [36, 26, 36, 39, 36] },
-            "Motorcycles": { history: [33, 37, 44, 43, 42] },
-            
-            // Barangay-level reported crimes
-            "Tunasan": { history: [186, 134, 185, 177, 149] },
-            "Poblacion": { history: [333, 261, 287, 249, 203] },
-            "Putatan": { history: [219, 197, 179, 153, 235] },
-            "Bayanan": { history: [148, 130, 129, 105, 92] },
-            "Alabang": { history: [481, 269, 333, 294, 32] },
-            "Ayala Alabang": { history: [46, 43, 44, 30, 142] },
-            "Cupang": { history: [140, 128, 101, 96, 29] },
-            "Buli": { history: [26, 18, 8, 25, 151] },
-            "Sucat": { history: [207, 143, 192, 147, 136] }
-        };
-        const PROTECTIVE_LABELS = ["2020", "2021", "2022", "2023", "2024"];
         const BARANGAY_NAMES = ['Sucat', 'Buli', 'Cupang', 'Alabang', 'Ayala Alabang', 'Bayanan', 'Putatan', 'Poblacion', 'Tunasan'];
 
         let protectiveData = {};
@@ -490,47 +462,24 @@
 
                 protectiveData = allData;
             } else {
-                protectiveData = DEFAULT_PROTECTIVE_DATA;
-                protectiveLabels = PROTECTIVE_LABELS;
+                protectiveData = {};
+                protectiveLabels = [];
             }
 
             statusTxt.textContent = "Live Connected: Syncing from data_values table";
             statusDot.className = "db-dot";
             statusDot.style.backgroundColor = "#10b981";
         } catch (e) {
-            console.warn("Supabase load failed. Loading from LocalStorage fallback.", e);
-            loadOfflineFallback();
+            console.warn("Supabase load failed.", e);
+            statusTxt.textContent = "Offline Mode";
+            statusDot.className = "db-dot offline";
         }
     } else {
-        console.warn("Supabase library not loaded. Loading from LocalStorage fallback.");
-        loadOfflineFallback();
+        console.warn("Supabase library not loaded.");
+        statusTxt.textContent = "Offline Mode";
+        statusDot.className = "db-dot offline";
     }
 }
-
-        function loadOfflineFallback() {
-            const statusTxt = document.getElementById("db-status-txt");
-            const statusDot = document.getElementById("db-dot");
-            
-            statusTxt.textContent = "Offline Mode (LocalStorage Fallback)";
-            statusDot.className = "db-dot offline";
-
-            const localData = localStorage.getItem(STORAGE_KEY);
-            if (localData) {
-                try {
-                    const parsed = JSON.parse(localData);
-                    protectiveData = parsed.data || DEFAULT_PROTECTIVE_DATA;
-                    protectiveLabels = parsed.labels || PROTECTIVE_LABELS;
-                } catch (e) {
-                    console.error("Error parsing localstorage data.", e);
-                    protectiveData = DEFAULT_PROTECTIVE_DATA;
-                    protectiveLabels = PROTECTIVE_LABELS;
-                }
-            } else {
-                protectiveData = DEFAULT_PROTECTIVE_DATA;
-                protectiveLabels = PROTECTIVE_LABELS;
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({ data: DEFAULT_PROTECTIVE_DATA, labels: PROTECTIVE_LABELS }));
-            }
-        }
 
         // Helper to grab latest non-null value from an array
         function getLatestValue(arr) {
