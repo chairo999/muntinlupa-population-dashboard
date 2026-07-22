@@ -1415,6 +1415,10 @@ body {
     color:#202020;
 }
 
+#infrastructure-slide .lp-slide-nav-link {
+    color:#424100;
+}
+
 #sdg-localization-slide .lp-slide-nav-link {
     color:#00224e;
 }
@@ -1540,6 +1544,10 @@ body {
 
 #institutional-slide {
     background-color: #202020;
+}
+
+#infrastructure-slide {
+    background-color: #424100;
 }
 
 #sdg-localization-slide {
