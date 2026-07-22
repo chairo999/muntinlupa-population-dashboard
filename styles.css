@@ -730,6 +730,31 @@ select option {
     opacity: 1;
 }
 
+/* Map Image Magnify Layer (enlarges the image under the hovered polygon) */
+.map-magnify-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(1);
+    transform-origin: center center;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    will-change: transform;
+}
+
+.map-magnify-layer.visible {
+    opacity: 1;
+}
+
+.magnify-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
 /* Interactive SVG Overlay */
 .map-svg-overlay {
     position: absolute;
@@ -738,6 +763,7 @@ select option {
     width: 100%;
     height: 100%;
     pointer-events: auto;
+    z-index: 5;
 }
 
 /* Map Polygon Styles */
