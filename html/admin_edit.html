@@ -862,6 +862,22 @@
       submitBtn.disabled = disabled;
     }
 
+    function populateYearSelectAll() {
+      const allYears = new Set();
+      activeIndicators.forEach(ind => {
+        if (ind.labels) ind.labels.forEach(l => { if (!isNaN(l)) allYears.add(String(l)); });
+      });
+      const sorted = [...allYears].sort((a, b) => Number(a) - Number(b));
+      yearSelect.innerHTML = '<option value="" disabled selected>-- Choose Year --</option>';
+      sorted.forEach(yr => {
+        const o = document.createElement('option');
+        o.value = yr;
+        o.textContent = yr;
+        yearSelect.appendChild(o);
+      });
+      yearSelect.disabled = sorted.length === 0;
+    }
+
     // ─── 10. LOAD SECTOR DATA — unified via data_values ─────────────────
     async function loadSectorData(sectorId) {
       if (sectorId === 'infrastructure') return loadInfrastructureWaterData();
@@ -877,7 +893,6 @@
           .from('data_values')
           .select('data_id, value, year, indicator_id, category_1, category_2, barangay_id, barangays(barangay_name), indicators(indicator_name)')
           .eq('sector_id', dbSectorId)
-          .not('value', 'is', null)
           .order('year', { ascending: true });
 
         if (error) throw error;
@@ -885,7 +900,7 @@
         activeIndicators = buildIndicatorsFromDataValues(data || []);
         populateIndicatorDropdown();
         disableForm(false);
-        yearSelect.disabled = true;
+        populateYearSelectAll();
       } catch (err) {
         console.error(err);
       }
@@ -953,7 +968,7 @@
 
         populateIndicatorDropdown();
         disableForm(false);
-        yearSelect.disabled = true;
+        populateYearSelectAll();
     }
 
     // ─── 12. POPULATE DROPDOWN ──────────────────────────────────────────
@@ -1106,25 +1121,35 @@
     // ─── 16. ADD YEAR — inserts null rows into data_values ──────────────
     addYearBtn.addEventListener('click', async () => {
       const rawYear = newYearInput.value.trim();
-      if (!selectedIndicatorRow || !rawYear || rawYear < 1900) {
-        alert("Select an indicator and provide a valid numerical target year.");
+      if (!rawYear || rawYear < 1900) {
+        alert("Provide a valid numerical target year.");
+        return;
+      }
+      if (!selectedIndicatorRow && currentSectorKey === 'infrastructure') {
+        alert("Select an indicator first for infrastructure data.");
         return;
       }
 
-      if (!Array.isArray(selectedIndicatorRow.labels)) selectedIndicatorRow.labels = [];
-      if (!Array.isArray(selectedIndicatorRow.history)) selectedIndicatorRow.history = [];
-
-      if (selectedIndicatorRow.labels.includes(rawYear)) {
-        alert("This timeline reference tag point already exists.");
+      const allLabels = new Set();
+      activeIndicators.forEach(ind => {
+        if (ind.labels) ind.labels.forEach(l => allLabels.add(String(l)));
+      });
+      if (allLabels.has(String(rawYear))) {
+        alert("This year already exists in the timeline.");
         return;
       }
 
-      let completeTimeline = selectedIndicatorRow.labels.map((l, idx) => ({ label: String(l), value: selectedIndicatorRow.history[idx] }));
-      completeTimeline.push({ label: String(rawYear), value: null });
-      completeTimeline.sort((a, b) => Number(a.label) - Number(b.label));
+      if (selectedIndicatorRow) {
+        if (!Array.isArray(selectedIndicatorRow.labels)) selectedIndicatorRow.labels = [];
+        if (!Array.isArray(selectedIndicatorRow.history)) selectedIndicatorRow.history = [];
 
-      selectedIndicatorRow.labels = completeTimeline.map(t => t.label);
-      selectedIndicatorRow.history = completeTimeline.map(t => t.value);
+        let completeTimeline = selectedIndicatorRow.labels.map((l, idx) => ({ label: String(l), value: selectedIndicatorRow.history[idx] }));
+        completeTimeline.push({ label: String(rawYear), value: null });
+        completeTimeline.sort((a, b) => Number(a.label) - Number(b.label));
+
+        selectedIndicatorRow.labels = completeTimeline.map(t => t.label);
+        selectedIndicatorRow.history = completeTimeline.map(t => t.value);
+      }
 
       disableForm(true);
       try {
@@ -1138,12 +1163,10 @@
             localStorage.setItem(INFRA_WATER_KEY, JSON.stringify(window._infraWaterData));
           }
         } else {
-          // Insert null-valued rows into data_values for all indicators in this sector
           const dbSectorId = getSectorIdForTab(currentSectorKey);
           const rows = [];
 
           if (currentSectorKey === 'edit') {
-            // Population: add year for all barangays using indicator_ids from loaded data
             const popIndicators = [...new Set(activeIndicators.map(ind => ind._indicatorId))];
             popIndicators.forEach(popId => {
               BARANGAY_NAMES.forEach(name => {
@@ -1158,7 +1181,6 @@
               });
             });
           } else {
-            // Other sectors: add year for each indicator row
             activeIndicators.forEach(ind => {
               const rowData = { indicator_id: ind._indicatorId, sector_id: dbSectorId, year: parseInt(rawYear), value: null };
               if (ind._barangayId) rowData.barangay_id = ind._barangayId;
@@ -1166,7 +1188,6 @@
             });
           }
 
-          // Batch insert in chunks of 50
           for (let i = 0; i < rows.length; i += 50) {
             const chunk = rows.slice(i, i + 50);
             const { error } = await supabaseClient.from('data_values').insert(chunk);
@@ -1175,7 +1196,20 @@
         }
 
         newYearInput.value = '';
-        brgySelect.dispatchEvent(new Event('change'));
+        if (selectedIndicatorRow) {
+          brgySelect.dispatchEvent(new Event('change'));
+        } else {
+          activeIndicators.forEach(ind => {
+            if (!Array.isArray(ind.labels)) ind.labels = [];
+            if (!Array.isArray(ind.history)) ind.history = [];
+            let timeline = ind.labels.map((l, i) => ({ label: String(l), value: ind.history[i] }));
+            timeline.push({ label: String(rawYear), value: null });
+            timeline.sort((a, b) => Number(a.label) - Number(b.label));
+            ind.labels = timeline.map(t => t.label);
+            ind.history = timeline.map(t => t.value);
+          });
+          populateYearSelectAll();
+        }
       } catch(err) {
         alert(`Failed to add timeline item: ${err.message}`);
       } finally {
@@ -1185,14 +1219,30 @@
 
     // ─── 17. REMOVE YEAR — deletes from data_values ─────────────────────
     removeYearBtn.addEventListener('click', async () => {
-      const yearIndex = parseInt(yearSelect.value, 10);
-      if (!selectedIndicatorRow || Number.isNaN(yearIndex)) return;
+      const rawVal = yearSelect.value;
+      if (!rawVal) return;
 
-      if (!confirm(`Are you sure you want to drop '${selectedIndicatorRow.labels[yearIndex]}'?`)) return;
+      let labelToRemove;
+      let yearIndex = null;
 
-      const labelToRemove = selectedIndicatorRow.labels[yearIndex];
-      selectedIndicatorRow.labels.splice(yearIndex, 1);
-      selectedIndicatorRow.history.splice(yearIndex, 1);
+      if (selectedIndicatorRow) {
+        yearIndex = parseInt(rawVal, 10);
+        if (Number.isNaN(yearIndex)) return;
+        labelToRemove = selectedIndicatorRow.labels[yearIndex];
+      } else {
+        if (currentSectorKey === 'infrastructure') {
+          alert("Select an indicator first for infrastructure data.");
+          return;
+        }
+        labelToRemove = rawVal;
+      }
+
+      if (!confirm(`Are you sure you want to drop '${labelToRemove}'?`)) return;
+
+      if (selectedIndicatorRow) {
+        selectedIndicatorRow.labels.splice(yearIndex, 1);
+        selectedIndicatorRow.history.splice(yearIndex, 1);
+      }
 
       disableForm(true);
       try {
@@ -1205,19 +1255,36 @@
             if (Array.isArray(target[arrKey])) target[arrKey].splice(path[path.length - 1], 1);
             localStorage.setItem(INFRA_WATER_KEY, JSON.stringify(window._infraWaterData));
           }
+        } else if (selectedIndicatorRow) {
+          const yearNum = parseInt(selectedIndicatorRow.labels[yearIndex], 10);
+          const { error } = await supabaseClient
+            .from('data_values')
+            .delete()
+            .eq('sector_id', getSectorIdForTab(currentSectorKey))
+            .eq('year', yearNum);
+          if (error) throw error;
         } else {
-          // Delete matching row from data_values by data_id
-          const dataIdToRemove = selectedIndicatorRow._dataIds ? selectedIndicatorRow._dataIds[yearIndex] : null;
-          if (dataIdToRemove) {
-            const { error } = await supabaseClient
-              .from('data_values')
-              .delete()
-              .eq('data_id', dataIdToRemove);
-            if (error) throw error;
-          }
+          const yearNum = parseInt(labelToRemove, 10);
+          const { error } = await supabaseClient
+            .from('data_values')
+            .delete()
+            .eq('sector_id', getSectorIdForTab(currentSectorKey))
+            .eq('year', yearNum);
+          if (error) throw error;
         }
 
-        brgySelect.dispatchEvent(new Event('change'));
+        if (selectedIndicatorRow) {
+          brgySelect.dispatchEvent(new Event('change'));
+        } else {
+          activeIndicators.forEach(ind => {
+            const idx = ind.labels ? ind.labels.indexOf(labelToRemove) : -1;
+            if (idx !== -1) {
+              ind.labels.splice(idx, 1);
+              ind.history.splice(idx, 1);
+            }
+          });
+          populateYearSelectAll();
+        }
       } catch(err) {
         alert(`Failed to remove: ${err.message}`);
       } finally {

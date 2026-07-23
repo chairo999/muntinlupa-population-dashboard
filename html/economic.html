@@ -638,7 +638,7 @@
                     },
                     options: baseLineOpts({
                         scales: { y: yScale, x: xScale },
-                        plugins: { legend: { display: false }, tooltip: baseTooltip(ctx => ` Rank: #${ctx.raw}`) }
+                        plugins: { legend: { display: false }, tooltip: baseTooltip(ctx => ` Rank: #${typeof ctx.raw === 'object' ? ctx.raw.y : ctx.raw}`) }
                     })
                 };
             }
