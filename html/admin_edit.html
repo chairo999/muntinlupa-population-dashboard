@@ -10,6 +10,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- FontAwesome for Premium Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
     :root {
@@ -57,7 +59,8 @@
         radial-gradient(at 90% 10%, rgba(239, 68, 68, 0.05) 0px, transparent 50%),
         radial-gradient(at 50% 90%, rgba(8, 145, 178, 0.03) 0px, transparent 50%);
       background-attachment: fixed;
-      padding: 24px;
+      padding: 0;
+      padding-bottom: 30px;
     }
     /* Custom Scrollbars */
     ::-webkit-scrollbar {
@@ -83,17 +86,7 @@
       gap: 24px;
       flex-grow: 1;
     }
-    /* Header */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 18px 28px;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--border-radius-lg);
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03), 0 1px 8px rgba(15, 23, 42, 0.02);
-    }
+    /* Admin Header (unused - replaced by dashboard-header) */
     .header-title-group {
       display: flex;
       align-items: center;
@@ -212,6 +205,17 @@
       display: flex;
       flex-direction: column;
       gap: 24px;
+    }
+    .editor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 1100px) {
+      .editor-grid {
+        grid-template-columns: 1fr;
+      }
     }
     .card {
       background: var(--card-bg);
@@ -449,22 +453,305 @@
     .back-link:hover i {
       transform: translateX(-4px);
     }
+
+    /* Chart Preview Card */
+    .chart-preview-card {
+      display: flex;
+      flex-direction: column;
+    }
+    .chart-title-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+      padding-bottom: 12px;
+    }
+    .chart-title-wrapper h5 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+    }
+    .chart-title-wrapper h5 i {
+      color: #e1271a;
+    }
+    .chart-type-select {
+      background-color: #e1271a;
+      color: #f8fafc;
+      border-radius: 0.375rem;
+      padding: 5px 10px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      cursor: pointer;
+      outline: none;
+      border: none;
+    }
+    .chart-preview-wrapper {
+      position: relative;
+      flex-grow: 1;
+      min-height: 350px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chart-preview-wrapper canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+    .chart-empty-state {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-muted);
+    }
+    .chart-empty-state i {
+      font-size: 3rem;
+      opacity: 0.3;
+    }
+    .chart-empty-state p {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .chart-empty-state.hidden {
+      display: none;
+    }
+
+    /* Header Styling (matching sector pages) */
+    .dashboard-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 24px;
+      background: #003397;
+      color: white;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+    }
+
+    .header-logo-img {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+    }
+
+    .header-titles h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -0.5px;
+      background: none;
+      -webkit-background-clip: unset;
+      -webkit-text-fill-color: white;
+    }
+
+    .header-titles .subtitle {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #ffcf01;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .header-info {
+      padding: 10px 6px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .header-sector-text {
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 25px;
+      letter-spacing: 1px;
+    }
+
+    .sidebar-sectors {
+      width: 30px;
+      object-fit: contain;
+    }
+
+    #hamburger-btn {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+    }
+
+    #hamburger-btn:hover {
+      transform: scale(1.1);
+    }
+
+    /* Sidebar Overlay */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 1999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Sector Sidebar */
+    .sector-sidebar {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 280px;
+      height: 100vh;
+      background: var(--bg-light);
+      box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+      z-index: 2000;
+      transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sector-sidebar.active {
+      right: 0;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px;
+      border-bottom: 1px solid var(--card-border);
+      background: #003397;
+      color: white;
+    }
+
+    .sidebar-header h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    #close-sidebar-btn {
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    #close-sidebar-btn:hover {
+      transform: rotate(90deg);
+    }
+
+    .sidebar-nav {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 0px;
+      overflow-y: auto;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 8px;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 1rem;
+      border-radius: var(--border-radius-md);
+      transition: all 0.2s ease;
+    }
+
+    .nav-item i {
+      font-size: 1.2rem;
+      color: #003397;
+      width: 24px;
+      text-align: center;
+    }
+
+    .nav-item:hover {
+      color: #003397;
+      transform: translateX(5px);
+    }
+
+    /* Footer Styling */
+    .dashboard-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 12px;
+      z-index: 9999;
+      line-height: 0;
+    }
+
+    .footer-image {
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      display: block;
+    }
   </style>
 </head>
 <body>
-  <div class="admin-container">
-    
-    <!-- Top Header -->
-    <header>
-      <div class="header-title-group">
-        <i class="fa-solid fa-screwdriver-wrench header-icon"></i>
-        <div class="header-titles">
-          <h1>MUNTINLUPA CITY ADMIN</h1>
-          <p>DATABASE DATA EDITOR</p>
+    <!-- Header Section (matching sector pages) -->
+    <header class="dashboard-header">
+        <a class="header-logo" href="landing-page.html">
+            <img src="../assets/images/muntinlupa-city-logo.png" alt="MunTHINK Logo" class="header-logo-img">
+            <div class="header-titles">
+                <h1>MunTHINK Hub</h1>
+                <p class="subtitle">Smarter Data for a Smarter Muntinlupa</p>
+            </div>
+        </a>
+        <div class="header-info">
+            <span class="header-sector-text">ADMIN EDIT</span>
+            <img src="../assets/images/hamburger.png" alt="sidebar" class="sidebar-sectors" id="hamburger-btn">
         </div>
-      </div>
-
     </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <aside class="sector-sidebar" id="sector-sidebar">
+        <div class="sidebar-header">
+            <h2>Dashboard Sectors</h2>
+            <i class="fa-solid fa-xmark" id="close-sidebar-btn"></i>
+        </div>
+    
+        <nav class="sidebar-nav">
+            <a href="landing-page.html" class="nav-item"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="population.html" class="nav-item"><i class="fa-solid fa-users"></i> Population</a>
+            <a href="economic.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Economic</a>
+            <a href="education.html" class="nav-item"><i class="fa-solid fa-graduation-cap"></i> Education</a>
+            <a href="health.html" class="nav-item"><i class="fa-solid fa-notes-medical"></i> Health</a>
+            <a href="protective.html" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Protective</a>
+            <a href="socwel.html" class="nav-item"><i class="fa-solid fa-hand-holding-heart"></i> Social Welfare</a>
+            <a href="environment.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Environment</a>
+            <a href="institutional.html" class="nav-item"><i class="fa-solid fa-building-columns"></i> Institutional</a>
+            <a href="infra.html" class="nav-item"><i class="fa-solid fa-road"></i> Infrastructure</a>
+            <a href="sdg-localization.html" class="nav-item"><i class="fa-solid fa-bullhorn"></i> SDG Localization</a>
+        </nav>
+    </aside>
+
+  <div class="admin-container">
     <!-- Main Workspace -->
     <div class="workspace">
       
@@ -534,6 +821,7 @@
       </aside>
       <!-- Content Area -->
       <main class="main-panel">
+        <div class="editor-grid">
         
         <!-- Editor Form Card -->
         <div class="card">
@@ -583,18 +871,37 @@
               <i class="fa-solid fa-floppy-disk"></i> Save changes to Supabase
             </button>
           </form>
-          <!-- Supabase Config Collapsible details -->
-          <details>
-            <summary>Supabase connection details</summary>
-            <div class="details-content">
-              <p>These values are sourced from the system configuration. Edits made through this console are written live to the data_values table in the backend database.</p>
-              <pre id="cfg" class="config-pre"></pre>
+        </div>
+
+        <!-- Chart Preview Card -->
+        <div class="card chart-preview-card">
+          <div class="chart-title-wrapper">
+              <h5><i class="fa-solid fa-chart-line"></i> <span id="chart-indicator-label">Indicator Preview</span></h5>
+              <select id="previewChartType" class="chart-type-select">
+                  <option value="bar">Bar Graph</option>
+                  <option value="line">Line Graph</option>
+                  <option value="pie">Pie Graph</option>
+              </select>
+          </div>
+          <div class="chart-preview-wrapper">
+            <canvas id="previewChart"></canvas>
+            <div id="chart-empty-state" class="chart-empty-state">
+              <i class="fa-solid fa-chart-bar"></i>
+              <p>Choose an indicator and year to preview</p>
             </div>
-          </details>
+          </div>
+        </div>
+
         </div>
       </main>
     </div>
   </div>
+
+  <!-- Footer Section (matching sector pages) -->
+  <footer class="dashboard-footer" aria-hidden="true">
+      <img src="../assets/images/footer.jpg" alt="" class="footer-image">
+  </footer>
+
   <!-- Supabase JS (UMD) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
 
@@ -680,14 +987,11 @@
     const removeYearBtn = document.getElementById('remove-year-btn');
     const valueInput = document.getElementById('value');
     const submitBtn = document.getElementById('submit-btn');
-    const cfgEl = document.getElementById('cfg');
     const valuePreviewBox = document.getElementById('value-preview-box');
     const currentValueDisplay = document.getElementById('current-value-display');
     const sectorTitle = document.getElementById('sector-title');
     const sectorDesc = document.getElementById('sector-desc');
     const tableNameBadge = document.getElementById('table-name-badge');
-
-    cfgEl.textContent = `Data Source: data_values table\nEndpoint URL: ${SUPABASE_URL}`;
 
     // ─── 4. SUPABASE INIT ───────────────────────────────────────────────
     let supabaseClient = null;
@@ -995,14 +1299,20 @@
 
       const labels = selectedIndicatorRow.labels || [];
       const hasNonNumeric = labels.some(l => isNaN(l));
+
+      const indicatorLabels = labels.map(String).sort((a, b) => {
+        const na = Number(a), nb = Number(b);
+        if (!isNaN(na) && !isNaN(nb)) return na - nb;
+        return a.localeCompare(b);
+      });
       
       yearSelect.innerHTML = hasNonNumeric
         ? '<option value="" disabled selected>-- Choose Category --</option>'
         : '<option value="" disabled selected>-- Choose Year --</option>';
         
-      labels.forEach((lbl, idx) => {
+      indicatorLabels.forEach((lbl) => {
         const o = document.createElement('option');
-        o.value = idx;
+        o.value = selectedIndicatorRow.labels.indexOf(lbl);
         o.textContent = lbl;
         yearSelect.appendChild(o);
       });
@@ -1023,6 +1333,8 @@
       if (yearControls) {
         yearControls.style.display = hasNonNumeric ? 'none' : 'flex';
       }
+
+      updatePreviewChart();
     });
 
     // ─── 14. SYNC VALUE PREVIEW ─────────────────────────────────────────
@@ -1030,9 +1342,10 @@
       const yearIndex = parseInt(yearSelect.value, 10);
       if (!selectedIndicatorRow || Number.isNaN(yearIndex)) {
         valuePreviewBox.style.display = 'none';
+        updatePreviewChart();
         return;
       }
-      
+
       const val = (selectedIndicatorRow.history && selectedIndicatorRow.history[yearIndex] !== undefined)
         ? selectedIndicatorRow.history[yearIndex]
         : null;
@@ -1046,8 +1359,113 @@
         valueInput.value = '';
       }
       removeYearBtn.disabled = false;
+      updatePreviewChart();
     }
     yearSelect.addEventListener('change', syncValuePreview);
+
+    // ─── CHART PREVIEW ──────────────────────────────────────────────────
+    let previewChart = null;
+    const previewCanvas = document.getElementById('previewChart');
+    const chartEmptyState = document.getElementById('chart-empty-state');
+    const chartIndicatorLabel = document.getElementById('chart-indicator-label');
+
+    function makePreviewGradient(ctx) {
+      const g = ctx.createLinearGradient(0, 0, 0, 350);
+      g.addColorStop(0, "#e1271a");
+      g.addColorStop(1, "#e1271a89");
+      return g;
+    }
+
+    const PIE_COLORS = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548", "#3b82f6", "#ec4899", "#10b981", "#8b5cf6"];
+    const PIE_HOVER_COLORS = ["#ff2a2a", "#ff6666", "#ffb347", "#4caf50", "#42a5f5", "#ab47bc", "#26c6da", "#ff7043", "#8d6e63", "#60a5fa", "#f472b6", "#34d399", "#a78bfa"];
+    let previewChartType = 'bar';
+
+    function updatePreviewChart() {
+      const selectedYearIndex = parseInt(yearSelect.value, 10);
+
+      if (!selectedIndicatorRow || !selectedIndicatorRow.history || !selectedIndicatorRow.labels) {
+        if (previewChart) { previewChart.destroy(); previewChart = null; }
+        chartEmptyState.classList.remove('hidden');
+        chartIndicatorLabel.textContent = 'Select an indicator to see its historical data';
+        return;
+      }
+
+      const history = selectedIndicatorRow.history;
+      const labels = selectedIndicatorRow.labels.map(l => String(l));
+      const indicatorName = selectedIndicatorRow.name || selectedIndicatorRow.indicator || 'Indicator';
+
+      chartEmptyState.classList.add('hidden');
+      chartIndicatorLabel.textContent = indicatorName;
+
+      if (previewChart) previewChart.destroy();
+
+      const ctx = previewCanvas.getContext('2d');
+      const gradient = makePreviewGradient(ctx);
+      const baseTooltip = (labelFn) => ({
+        backgroundColor: "rgba(15, 23, 42, 0.95)",
+        padding: 10,
+        borderWidth: 1,
+        borderColor: "rgba(255, 255, 255, 0.15)",
+        callbacks: { label: labelFn }
+      });
+      const baseLineOpts = (extra) => ({
+        responsive: true,
+        maintainAspectRatio: false,
+        hover: { mode: 'nearest', intersect: true },
+        interaction: { mode: 'nearest', intersect: true },
+        animation: { duration: 1000, easing: 'easeOutQuart' },
+        ...extra
+      });
+      const yScale = { grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3", callback: v => v.toLocaleString() } };
+      const xScale = { grid: { display: false }, ticks: { color: "#000000b3" } };
+
+      let config;
+
+      if (previewChartType === "pie") {
+        config = {
+          type: "pie",
+          data: { labels, datasets: [{ label: indicatorName, data: history, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+          options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { duration: 1000, easing: 'easeOutQuart' }, plugins: { legend: { display: true, labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ctx.parsed !== null ? ctx.parsed.toLocaleString() : 'No data') } }
+        };
+      } else {
+        const coords = labels.map((l, i) => ({ x: l, y: history[i] }));
+        config = {
+          type: previewChartType,
+          data: {
+            labels,
+            datasets: [{
+              label: indicatorName,
+              data: previewChartType === "line" ? coords : history,
+              borderColor: "#d91406",
+              borderWidth: previewChartType === "line" ? 3 : undefined,
+              pointBackgroundColor: "#e1271a",
+              pointBorderColor: "#f8fafc",
+              pointBorderWidth: 2,
+              pointRadius: 5,
+              pointHoverRadius: 9,
+              pointHoverBackgroundColor: "#ff2a2a",
+              pointHoverBorderColor: "#fff",
+              pointHoverBorderWidth: 3,
+              hoverBackgroundColor: "#e1271a52",
+              hoverBorderColor: "#e1271a52",
+              hoverBorderWidth: 4,
+              backgroundColor: gradient,
+              fill: false,
+              tension: 0.15,
+              borderRadius: previewChartType === "bar" ? 6 : 0
+            }]
+          },
+          options: baseLineOpts({
+            plugins: { legend: { display: false }, tooltip: baseTooltip(ctx => ctx.parsed.y !== null ? ctx.parsed.y.toLocaleString() : 'No data') },
+            scales: { y: yScale, x: xScale }
+          })
+        };
+      }
+
+      previewChart = new Chart(ctx, config);
+    }
+
+    document.getElementById('previewChartType').addEventListener('change', e => { previewChartType = e.target.value; updatePreviewChart(); });
 
     // ─── 15. SAVE HANDLER — writes to data_values ───────────────────────
     document.getElementById('edit-form').addEventListener('submit', async (e) => {
@@ -1062,12 +1480,6 @@
       submitBtn.disabled = true;
 
       try {
-        if (!Array.isArray(selectedIndicatorRow.history)) selectedIndicatorRow.history = [];
-        while (selectedIndicatorRow.history.length <= yearIndex) {
-          selectedIndicatorRow.history.push(null);
-        }
-        selectedIndicatorRow.history[yearIndex] = val;
-
         if (currentSectorKey === 'infrastructure') {
           // Infrastructure: save to LocalStorage (nested structure)
           const path = selectedIndicatorRow._path;
@@ -1078,36 +1490,40 @@
             localStorage.setItem(INFRA_WATER_KEY, JSON.stringify(window._infraWaterData));
           }
         } else {
-          // All other sectors: save to data_values
-          const label = selectedIndicatorRow.labels[yearIndex];
-          const isCategoryBased = selectedIndicatorRow.labels.some(l => isNaN(l));
-          const indicatorId = selectedIndicatorRow._indicatorId;
-          const barangayId = selectedIndicatorRow._barangayId || null;
-          const dbSectorId = getSectorIdForTab(currentSectorKey);
-          const existingDataId = selectedIndicatorRow._dataIds ? selectedIndicatorRow._dataIds[yearIndex] : null;
-
-          if (existingDataId) {
-            // Update existing row by data_id
-            const { error } = await supabaseClient
-              .from('data_values')
-              .update({ value: val })
-              .eq('data_id', existingDataId);
-            if (error) throw error;
-          } else {
-            // Insert new row
-            const rowData = { indicator_id: indicatorId, sector_id: dbSectorId, value: val };
-            if (barangayId) rowData.barangay_id = barangayId;
-            if (isCategoryBased) {
-              rowData.category_1 = label;
-              if (selectedIndicatorRow._category2) rowData.category_2 = selectedIndicatorRow._category2;
-            } else {
-              rowData.year = parseInt(label);
+            // Year exists — update in place
+            if (!Array.isArray(selectedIndicatorRow.history)) selectedIndicatorRow.history = [];
+            while (selectedIndicatorRow.history.length <= yearIndex) {
+              selectedIndicatorRow.history.push(null);
             }
-            const { error } = await supabaseClient
-              .from('data_values')
-              .insert(rowData);
-            if (error) throw error;
-          }
+            selectedIndicatorRow.history[yearIndex] = val;
+
+            const label = selectedIndicatorRow.labels[yearIndex];
+            const isCategoryBased = selectedIndicatorRow.labels.some(l => isNaN(l));
+            const indicatorId = selectedIndicatorRow._indicatorId;
+            const barangayId = selectedIndicatorRow._barangayId || null;
+            const dbSectorId = getSectorIdForTab(currentSectorKey);
+            const existingDataId = selectedIndicatorRow._dataIds ? selectedIndicatorRow._dataIds[yearIndex] : null;
+
+            if (existingDataId) {
+              const { error } = await supabaseClient
+                .from('data_values')
+                .update({ value: val })
+                .eq('data_id', existingDataId);
+              if (error) throw error;
+            } else {
+              const rowData = { indicator_id: indicatorId, sector_id: dbSectorId, value: val };
+              if (barangayId) rowData.barangay_id = barangayId;
+              if (isCategoryBased) {
+                rowData.category_1 = label;
+                if (selectedIndicatorRow._category2) rowData.category_2 = selectedIndicatorRow._category2;
+              } else {
+                rowData.year = parseInt(label);
+              }
+              const { error } = await supabaseClient
+                .from('data_values')
+                .insert(rowData);
+              if (error) throw error;
+            }
         }
 
         currentValueDisplay.textContent = val !== null ? Number(val).toLocaleString() : 'None (Empty)';
@@ -1300,6 +1716,29 @@
       switchSector("edit");
     }
     init();
+
+    // Sidebar Toggle Functionality (matching sector pages)
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const sectorSidebar = document.getElementById('sector-sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+
+    if (hamburgerBtn && sectorSidebar && sidebarOverlay && closeSidebarBtn) {
+      hamburgerBtn.addEventListener('click', () => {
+        sectorSidebar.classList.add('active');
+        sidebarOverlay.classList.add('active');
+      });
+
+      closeSidebarBtn.addEventListener('click', () => {
+        sectorSidebar.classList.remove('active');
+        sidebarOverlay.classList.remove('active');
+      });
+
+      sidebarOverlay.addEventListener('click', () => {
+        sectorSidebar.classList.remove('active');
+        sidebarOverlay.classList.remove('active');
+      });
+    }
 
   </script>
 </body>
