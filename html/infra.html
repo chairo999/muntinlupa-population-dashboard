@@ -132,39 +132,6 @@
             color: white;
         }
 
-        .db-status-bar {
-            background: #f1f5f9;
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius-md);
-            padding: 8px 16px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .db-status-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .db-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--accent-emerald);
-            box-shadow: 0 0 6px var(--accent-emerald);
-        }
-
-        .db-dot.offline {
-            background-color: #f59e0b;
-            box-shadow: 0 0 6px #f59e0b;
-        }
-
         .chart-controls {
             display: flex;
             align-items: center;
@@ -431,12 +398,6 @@
     </aside>
 
     <div class="dashboard-container">
-        <div class="db-status-bar">
-            <div class="db-status-left">
-                <div id="db-dot" class="db-dot offline"></div>
-                <span id="db-status-txt">Checking infrastructure dataset...</span>
-            </div>
-        </div>
 
         <section class="stats-banner">
             <div class="stat-card">
@@ -795,47 +756,6 @@
                     <div class="canvas-container">
                         <canvas id="barangayInfraChart"></canvas>
                     </div>
-                </div>
-            </div>
-
-            <div class="chart-card" style="margin-top: 4px;">
-                <div class="chart-title-wrapper">
-                    <h5><i class="fa-solid fa-database"></i> Data Sources & Tables</h5>
-                </div>
-                <div style="overflow-x:auto;">
-                    <table style="width:100%; border-collapse:collapse; font-size:0.88rem; color:var(--text-primary);">
-                        <thead>
-                            <tr style="background:#f8fafc; text-align:left;">
-                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Table</th>
-                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Purpose</th>
-                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Key fields</th>
-                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Display note</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">data_values</td>
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Primary source for infrastructure indicators</td>
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">indicator_id, year, value, barangay_id</td>
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Used to populate road, water, housing, and power metrics</td>
-                            </tr>
-                            <tr>
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">barangays</td>
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Barangay lookup and naming reference</td>
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">barangay_id, barangay_name</td>
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Maps indicator rows to the correct barangay on the interactive map</td>
-                            </tr>
-                            <tr>
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">municipal_indicators</td>
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Dashboard configuration and indicator metadata</td>
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">indicator_id, sector_id, metric_label</td>
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">Keeps the infrastructure sector grouped and labeled correctly</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div style="margin-top:12px; padding:10px 12px; background:#f8fafc; border-radius:10px; font-size:0.85rem; color:var(--text-secondary);">
-                    Infrastructure indicators kept in scope: <strong>7-11</strong> across the source tables.
                 </div>
             </div>
         </div>
@@ -1939,9 +1859,6 @@
         }
 
         async function fetchInfrastructureData() {
-            const statusTxt = document.getElementById('db-status-txt');
-            const statusDot = document.getElementById('db-dot');
-
             try {
                 if (!supabaseClient) throw new Error('Supabase client unavailable.');
 
@@ -2023,15 +1940,8 @@
                     };
                     infraData.barangay = FALLBACK_BARANGAY_SERIES;
                 }
-
-                statusTxt.textContent = 'Live Connected: infrastructure indicators synced';
-                statusDot.className = 'db-dot';
-                statusDot.style.backgroundColor = '#10b981';
             } catch (e) {
                 console.warn('Database connection unavailable, using integrated fallback values.', e);
-                statusTxt.textContent = 'Demo Mode: using packaged infrastructure baseline data';
-                statusDot.className = 'db-dot offline';
-                statusDot.style.backgroundColor = '#f59e0b';
             }
         }
 

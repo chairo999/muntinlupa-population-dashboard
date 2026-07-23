@@ -23,9 +23,6 @@
 		.chart-title-wrapper { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(15,23,42,0.04); padding-bottom:10px; margin-bottom:10px }
 		.canvas-container { position: relative; width:100%; height:380px }
 		.badge { font-size:0.75rem; color:var(--text-secondary) }
-		.db-status-bar { background: #f1f5f9; border:1px solid var(--card-border); border-radius: var(--border-radius-md); padding:8px 16px; font-size:0.8rem; font-weight:600; color:var(--text-secondary); display:flex; align-items:center; justify-content:space-between; margin-bottom:8px }
-		.db-dot { width:8px; height:8px; border-radius:50%; background-color:var(--accent-emerald); box-shadow:0 0 6px var(--accent-emerald) }
-		.db-dot.offline { background-color:#f59e0b; box-shadow:0 0 6px #f59e0b }
 	</style>
 </head>
 <body>
@@ -68,14 +65,6 @@
 	</aside>
 
 	<div class="dashboard-container">
-
-		<div class="db-status-bar">
-			<div style="display:flex;align-items:center;gap:8px">
-				<div id="db-dot" class="db-dot"></div>
-				<span id="db-status-txt">Connected to live Supabase DB</span>
-			</div>
-			<a href="admin_edit.html" class="admin-link-btn" style="color:#10b981"><i class="fa-solid fa-screwdriver-wrench"></i> Manage Environment Records in Admin</a>
-		</div>
 
 		<!-- Environment Charts -->
 		<section class="env-grid">
@@ -173,9 +162,6 @@
 		}
 
 		async function fetchEnvData() {
-			const statusTxt = document.getElementById('db-status-txt');
-			const statusDot = document.getElementById('db-dot');
-
 			envData = { upstream: {}, downstream: {}, waste: {}, pm10: { months: [], years: [] }, pm25: { months: [], years: [] } };
 			envLabels = [];
 
@@ -193,10 +179,7 @@
 						processWasteRows(rows.filter(r => r.indicator_id === 23));
 						processRiverRows(rows.filter(r => r.indicator_id === 24 || r.indicator_id === 25));
 						processPMRows(rows.filter(r => r.indicator_id === 26 || r.indicator_id === 27));
-					}
-
-					statusTxt.textContent = 'Live Supabase Database Connected';
-					statusDot.className = 'db-dot';
+				}
 				} catch (e) {
 					console.warn('Supabase load failed. Using local fallback.', e);
 					loadEnvFallback();
@@ -300,10 +283,6 @@
 		}
 
 		function loadEnvFallback() {
-			const statusTxt = document.getElementById('db-status-txt');
-			const statusDot = document.getElementById('db-dot');
-			statusTxt.textContent = 'Offline Mode (LocalStorage Fallback)';
-			statusDot.className = 'db-dot offline';
 			const local = localStorage.getItem(STORAGE_KEY);
 			if (local) {
 				try { const parsed = JSON.parse(local); envData = parsed.data || DEFAULT_ENV_DATA; envLabels = parsed.labels || DEFAULT_ENV_DATA.labels; }

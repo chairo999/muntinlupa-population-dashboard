@@ -114,40 +114,6 @@
             color: #ef4444;
         }
 
-        /* Database Status Overlay */
-        .db-status-bar {
-            background: #f1f5f9;
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius-md);
-            padding: 8px 16px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .db-status-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .db-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--accent-emerald);
-            box-shadow: 0 0 6px var(--accent-emerald);
-        }
-
-        .db-dot.offline {
-            background-color: #f59e0b;
-            box-shadow: 0 0 6px #f59e0b;
-        }
-
         /* Interactive controls for charts */
         .chart-controls {
             display: flex;
@@ -301,14 +267,6 @@
     </aside>
 
     <div class="dashboard-container">
-        
-        <!-- Live Connection Status Alert Bar -->
-        <div class="db-status-bar">
-            <div class="db-status-left">
-                <div id="db-dot" class="db-dot"></div>
-                <span id="db-status-txt">Connected to live Supabase DB</span>
-            </div>
-        </div>
 
         <!-- Main Stats Summary Banner -->
         <section class="stats-banner">
@@ -533,9 +491,6 @@
 
         // Fetch Live Database or Local Storage Fallback
         async function fetchSocialWelfareData() {
-            const statusTxt = document.getElementById("db-status-txt");
-            const statusDot = document.getElementById("db-dot");
-
             if (supabaseClient) {
                 try {
                     const { data: allRows, error } = await supabaseClient
@@ -582,19 +537,11 @@
                     } else {
                         appData = {};
                     }
-
-                    statusTxt.textContent = "Live Connected: Syncing from data_values table";
-                    statusDot.className = "db-dot";
-                    statusDot.style.backgroundColor = "#10b981";
                 } catch (e) {
                     console.warn("Supabase load failed.", e);
-                    statusTxt.textContent = "Offline Mode";
-                    statusDot.className = "db-dot offline";
                 }
             } else {
                 console.warn("Supabase library not loaded.");
-                statusTxt.textContent = "Offline Mode";
-                statusDot.className = "db-dot offline";
             }
         }
 

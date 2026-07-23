@@ -99,39 +99,6 @@
             color: white;
         }
 
-        .db-status-bar {
-            background: #f1f5f9;
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius-md);
-            padding: 8px 16px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .db-status-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .db-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--accent-emerald);
-            box-shadow: 0 0 6px var(--accent-emerald);
-        }
-
-        .db-dot.offline {
-            background-color: #ef4444;
-            box-shadow: 0 0 6px #ef4444;
-        }
-
         .chart-controls {
             display: flex;
             align-items: center;
@@ -213,13 +180,6 @@
     </aside>
 
     <div class="dashboard-container">
-
-        <div class="db-status-bar">
-            <div class="db-status-left">
-                <div id="db-dot" class="db-dot offline"></div>
-                <span id="db-status-txt">Connecting to Supabase...</span>
-            </div>
-        </div>
 
         <section class="stats-banner">
             <div class="stat-card">
@@ -408,9 +368,6 @@
         }
 
         async function fetchEconomicData() {
-            const statusTxt = document.getElementById("db-status-txt");
-            const statusDot = document.getElementById("db-dot");
-
             try {
                 if (!supabaseClient) throw new Error("Supabase client failed initialization.");
 
@@ -503,15 +460,9 @@
 
                 economicData = allData;
 
-                statusTxt.textContent = "Live Connected: Syncing from data_values table";
-                statusDot.className = "db-dot";
-                statusDot.style.backgroundColor = "#10b981";
                 console.info('Loaded economic indicator keys:', Object.keys(economicData));
             } catch (e) {
                 console.error("Database connection failure:", e);
-                statusTxt.textContent = "Database Error: Please verify table connection fields.";
-                statusDot.className = "db-dot offline";
-                statusDot.style.backgroundColor = "#ef4444";
             }
         }
 

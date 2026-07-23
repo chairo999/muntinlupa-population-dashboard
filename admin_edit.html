@@ -123,44 +123,6 @@
       color: var(--accent-yellow);
       letter-spacing: 3px;
     }
-    .header-status {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #f1f5f9;
-      padding: 8px 16px;
-      border-radius: 30px;
-      border: 1px solid var(--card-border);
-    }
-    .status-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: var(--text-muted);
-      position: relative;
-    }
-    .status-dot.connecting {
-      background-color: var(--accent-cyan);
-      box-shadow: 0 0 8px var(--accent-cyan);
-      animation: blink 1s infinite alternate;
-    }
-    .status-dot.online {
-      background-color: var(--accent-emerald);
-      box-shadow: 0 0 8px var(--accent-emerald);
-    }
-    .status-dot.error {
-      background-color: var(--accent-red);
-      box-shadow: 0 0 8px var(--accent-red);
-    }
-    @keyframes blink {
-      0% { opacity: 0.4; }
-      100% { opacity: 1; }
-    }
-    .status-text {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      font-weight: 600;
-    }
     /* Main Workspace Grid */
     .workspace {
       display: grid;
@@ -402,38 +364,7 @@
     }
     /* Status Notifications */
     .notification {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 18px;
-      border-radius: var(--border-radius-md);
-      font-size: 0.9rem;
-      margin-top: 20px;
-      font-weight: 500;
-      opacity: 0;
-      transform: translateY(10px);
-      animation: slide-up 0.3s forwards cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    @keyframes slide-up {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    .notification.info {
-      background: rgba(8, 145, 178, 0.08);
-      border: 1px solid rgba(8, 145, 178, 0.15);
-      color: var(--accent-cyan);
-    }
-    .notification.ok {
-      background: rgba(16, 185, 129, 0.08);
-      border: 1px solid rgba(16, 185, 129, 0.18);
-      color: #059669;
-    }
-    .notification.err {
-      background: rgba(239, 68, 68, 0.08);
-      border: 1px solid rgba(239, 68, 68, 0.18);
-      color: var(--accent-red);
+      display: none;
     }
     /* Supabase Details Config Collapsible */
     details {
@@ -532,10 +463,7 @@
           <p>DATABASE DATA EDITOR</p>
         </div>
       </div>
-      <div class="header-status">
-        <div id="status-dot" class="status-dot connecting"></div>
-        <span id="status-text" class="status-text">Connecting to Supabase...</span>
-      </div>
+
     </header>
     <!-- Main Workspace -->
     <div class="workspace">
@@ -610,12 +538,6 @@
             </div>
             <div class="db-badge">
               <i class="fa-solid fa-database"></i> Table: <span id="table-name-badge">demographics</span>
-            </div>
-          </div>
-          <!-- Message Log (Inline status notifications) -->
-          <div id="notification-area">
-            <div id="status" class="notification info">
-              <i class="fa-solid fa-circle-info"></i> Connecting to database and loading resources...
             </div>
           </div>
           <form id="edit-form" style="margin-top: 20px;">
@@ -900,8 +822,6 @@
     let HISTORICAL_LABELS = [...DEFAULT_HISTORICAL_LABELS];
 
     // DOM Elements
-    const statusDotEl = document.getElementById('status-dot');
-    const statusTextEl = document.getElementById('status-text');
     const brgySelect = document.getElementById('brgy');
     const yearSelect = document.getElementById('year');
     const valueInput = document.getElementById('value');
@@ -977,28 +897,8 @@
       submitBtn.disabled = disabled;
     }
 
-    // Set the overall header status banner
-    function updateHeaderStatus(state, message) {
-      statusTextEl.textContent = message;
-      statusDotEl.className = 'status-dot ' + state;
-    }
-
-    // Show inline alert in form
-    function showNotification(type, message, iconClass = 'fa-circle-info') {
-      const parent = document.getElementById('notification-area');
-      parent.innerHTML = `
-        <div id="status" class="notification ${type}">
-          <i class="fa-solid ${iconClass}"></i> ${message}
-        </div>
-      `;
-    }
-
     // Load data from selected Table in Supabase (with LocalStorage fallbacks)
     async function loadSectorData(tableName) {
-      }
-      updateHeaderStatus('connecting', `Connecting table: [${tableName}]...`);
-      showNotification('info', `Retrieving sector data from table '${tableName}'...`, 'fa-spinner fa-spin');
-      
       const sectorConfig = SECTORS[currentSectorKey];
       const fallbackLabels = sectorConfig.defaultLabels || DEFAULT_HISTORICAL_LABELS;
       const fallbackKeys = sectorConfig.defaultKeys || DEFAULT_BARANGAY_LIST;
@@ -1018,7 +918,6 @@
               const parsed = JSON.parse(localStored);
               appData = parsed.data || {};
               HISTORICAL_LABELS = parsed.labels || fallbackLabels;
-              showNotification('info', `Loaded '${tableName}' records from LocalStorage fallback.`, 'fa-circle-exclamation');
             } else {
               // Create fallback skeleton using default data or default keys
               appData = {};
@@ -1030,17 +929,13 @@
                 });
               }
               HISTORICAL_LABELS = fallbackLabels;
-              showNotification('info', `No active records found in table '${tableName}'. Operating with default indicators.`, 'fa-circle-exclamation');
             }
-            updateHeaderStatus('online', `Connected (LocalStorage Fallback Mode)`);
           } else {
             throw error;
           }
         } else {
           appData = data.data || {};
           HISTORICAL_LABELS = (Array.isArray(data.labels) && data.labels.length) ? data.labels : fallbackLabels;
-          showNotification('info', `Ready. Select an item and year to modify this sector.`, 'fa-circle-check');
-          updateHeaderStatus('online', `Live & Connected (Table: ${tableName})`);
         }
 
         // Re-populate choices
@@ -1055,8 +950,6 @@
           const parsed = JSON.parse(localStored);
           appData = parsed.data || {};
           HISTORICAL_LABELS = parsed.labels || fallbackLabels;
-          showNotification('info', `Database offline. Loaded data from LocalStorage fallback.`, 'fa-triangle-exclamation');
-          updateHeaderStatus('error', `Offline (LocalStorage Mode)`);
         } else {
           appData = {};
           if (sectorConfig.defaultData) {
@@ -1067,8 +960,6 @@
             });
           }
           HISTORICAL_LABELS = fallbackLabels;
-          showNotification('err', `Database offline. Loaded default indicators.`, 'fa-triangle-exclamation');
-          updateHeaderStatus('error', `Offline Mode`);
         }
         
         populateBarangays();
@@ -1149,7 +1040,6 @@
       if (!brgy) { alert('Choose a barangay / indicator'); return; }
       if (Number.isNaN(yearIndex)) { alert('Choose a year'); return; }
 
-      showNotification('info', `Saving value...`, 'fa-spinner fa-spin');
       submitBtn.disabled = true;
       
       try {
@@ -1182,17 +1072,10 @@
         // Backup in LocalStorage
         localStorage.setItem(`muntinlupa_sector_data_${currentSectorKey}`, JSON.stringify({ data: appData, labels: HISTORICAL_LABELS }));
 
-        if (savedToSupabase) {
-          showNotification('ok', `Successfully saved changes to Supabase table '${tableName}'.`, 'fa-circle-check');
-        } else {
-          showNotification('ok', `Saved changes locally (LocalStorage Fallback).`, 'fa-circle-exclamation');
-        }
-
         currentValueDisplay.textContent = val !== null ? Number(val).toLocaleString() : 'None (Empty)';
         
       } catch (err) {
         console.error(err);
-        showNotification('err', `Save Failed: ${err.message || err}`, 'fa-circle-xmark');
       } finally {
         submitBtn.disabled = false;
       }

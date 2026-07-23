@@ -123,44 +123,6 @@
       color: var(--accent-yellow);
       letter-spacing: 3px;
     }
-    .header-status {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #f1f5f9;
-      padding: 8px 16px;
-      border-radius: 30px;
-      border: 1px solid var(--card-border);
-    }
-    .status-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: var(--text-muted);
-      position: relative;
-    }
-    .status-dot.connecting {
-      background-color: var(--accent-cyan);
-      box-shadow: 0 0 8px var(--accent-cyan);
-      animation: blink 1s infinite alternate;
-    }
-    .status-dot.online {
-      background-color: var(--accent-emerald);
-      box-shadow: 0 0 8px var(--accent-emerald);
-    }
-    .status-dot.error {
-      background-color: var(--accent-red);
-      box-shadow: 0 0 8px var(--accent-red);
-    }
-    @keyframes blink {
-      0% { opacity: 0.4; }
-      100% { opacity: 1; }
-    }
-    .status-text {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      font-weight: 600;
-    }
     /* Main Workspace Grid */
     .workspace {
       display: grid;
@@ -402,38 +364,7 @@
     }
     /* Status Notifications */
     .notification {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 18px;
-      border-radius: var(--border-radius-md);
-      font-size: 0.9rem;
-      margin-top: 20px;
-      font-weight: 500;
-      opacity: 0;
-      transform: translateY(10px);
-      animation: slide-up 0.3s forwards cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    @keyframes slide-up {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    .notification.info {
-      background: rgba(8, 145, 178, 0.08);
-      border: 1px solid rgba(8, 145, 178, 0.15);
-      color: var(--accent-cyan);
-    }
-    .notification.ok {
-      background: rgba(16, 185, 129, 0.08);
-      border: 1px solid rgba(16, 185, 129, 0.18);
-      color: #059669;
-    }
-    .notification.err {
-      background: rgba(239, 68, 68, 0.08);
-      border: 1px solid rgba(239, 68, 68, 0.18);
-      color: var(--accent-red);
+      display: none;
     }
     /* Supabase Details Config Collapsible */
     details {
@@ -532,10 +463,6 @@
           <p>DATABASE DATA EDITOR</p>
         </div>
       </div>
-      <div class="header-status">
-        <div id="status-dot" class="status-dot connecting"></div>
-        <span id="status-text" class="status-text">Connecting to Supabase...</span>
-      </div>
 
     </header>
     <!-- Main Workspace -->
@@ -617,12 +544,6 @@
             </div>
             <div class="db-badge">
               <i class="fa-solid fa-database"></i> Table: <span id="table-name-badge">data_values</span>
-            </div>
-          </div>
-          <!-- Message Log (Inline status notifications) -->
-          <div id="notification-area">
-            <div id="status" class="notification info">
-              <i class="fa-solid fa-circle-info"></i> Connecting to database and loading resources...
             </div>
           </div>
           <form id="edit-form" style="margin-top: 20px;">
@@ -752,8 +673,6 @@
     let indicatorNameMap = {}; // indicator_id → indicator_name
 
     // ─── 3. DOM ELEMENTS ────────────────────────────────────────────────
-    const statusDotEl = document.getElementById('status-dot');
-    const statusTextEl = document.getElementById('status-text');
     const brgySelect = document.getElementById('brgy');
     const yearSelect = document.getElementById('year');
     const newYearInput = document.getElementById('new-year');
@@ -776,14 +695,10 @@
       if (typeof supabase === 'undefined') throw new Error("Supabase CDN blocked or failed to load.");
       supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     } catch(err) {
-      updateHeaderStatus('error', 'Initialization Error');
-      showNotification('err', err.message, 'fa-triangle-exclamation');
     }
 
     // ─── 5. SCHEMA DISCOVERY ────────────────────────────────────────────
     async function discoverSchema() {
-      updateHeaderStatus('connecting', 'Discovering database schema...');
-      showNotification('info', 'Loading barangay mappings...', 'fa-spinner fa-spin');
       try {
         // Load barangay name → id mapping
         const { data: brgyData, error: brgyErr } = await supabaseClient
@@ -815,11 +730,8 @@
           console.log('Loaded indicators:', indData);
           indData.forEach(i => { indicatorNameMap[i.indicator_id] = i.indicator_name; });
         }
-
-        showNotification('ok', `Schema loaded. ${Object.keys(barangayMap).length} barangays found.`, 'fa-circle-check');
       } catch(err) {
         console.error('Schema discovery failed:', err);
-        showNotification('err', `Schema discovery failed: ${err.message}`, 'fa-triangle-exclamation');
       }
     }
 
@@ -957,13 +869,8 @@
       const dbSectorId = getSectorIdForTab(currentSectorKey);
 
       if (!dbSectorId) {
-        updateHeaderStatus('error', 'Sector Not Found');
-        showNotification('err', `Sector "${SECTORS[currentSectorKey]?.name}" not found in the sectors table. Check your Supabase sectors table.`, 'fa-circle-xmark');
         return;
       }
-
-      updateHeaderStatus('connecting', `Querying data_values (sector_id=${dbSectorId})...`);
-      showNotification('info', `Fetching rows from data_values for sector_id=${dbSectorId}...`, 'fa-spinner fa-spin');
 
       try {
         const { data, error } = await supabaseClient
@@ -977,14 +884,10 @@
 
         activeIndicators = buildIndicatorsFromDataValues(data || []);
         populateIndicatorDropdown();
-        updateHeaderStatus('online', `Live & Connected (Sector: ${sectorId})`);
-        showNotification('ok', `Loaded ${activeIndicators.length} records from data_values.`, 'fa-circle-check');
         disableForm(false);
         yearSelect.disabled = true;
       } catch (err) {
         console.error(err);
-        updateHeaderStatus('error', 'Database Error');
-        showNotification('err', `Failed to pull data: ${err.message}`, 'fa-triangle-exclamation');
       }
     }
 
@@ -1020,9 +923,6 @@
     };
 
     function loadInfrastructureWaterData() {
-        updateHeaderStatus('connecting', 'Reading water supply data from LocalStorage...');
-        showNotification('info', 'Loading MWSS water indicators from browser storage...', 'fa-spinner fa-spin');
-
         let stored = null;
         try { stored = JSON.parse(localStorage.getItem(INFRA_WATER_KEY)); } catch(e) {}
         const d = stored || JSON.parse(JSON.stringify(INFRA_WATER_DEFAULT));
@@ -1052,8 +952,6 @@
         window._infraWaterData = d;
 
         populateIndicatorDropdown();
-        updateHeaderStatus('online', 'LocalStorage Mode — MWSS Water Supply');
-        showNotification('ok', `Loaded ${rows.length} water supply data points.`, 'fa-circle-check');
         disableForm(false);
         yearSelect.disabled = true;
     }
@@ -1146,7 +1044,6 @@
       if (!selectedIndicatorRow) { alert('Please select an item first.'); return; }
       if (Number.isNaN(yearIndex)) { alert('Please select a year target.'); return; }
 
-      showNotification('info', 'Writing changes to data_values...', 'fa-spinner fa-spin');
       submitBtn.disabled = true;
 
       try {
@@ -1198,11 +1095,9 @@
           }
         }
 
-        showNotification('ok', `Successfully updated '${selectedIndicatorRow.indicator_name}'.`, 'fa-circle-check');
         currentValueDisplay.textContent = val !== null ? Number(val).toLocaleString() : 'None (Empty)';
       } catch (err) {
         console.error(err);
-        showNotification('err', `Save operation rejected: ${err.message}`, 'fa-circle-xmark');
       } finally {
         submitBtn.disabled = false;
       }
@@ -1281,7 +1176,6 @@
 
         newYearInput.value = '';
         brgySelect.dispatchEvent(new Event('change'));
-        showNotification('ok', 'Timeline expanded.', 'fa-circle-check');
       } catch(err) {
         alert(`Failed to add timeline item: ${err.message}`);
       } finally {
@@ -1324,7 +1218,6 @@
         }
 
         brgySelect.dispatchEvent(new Event('change'));
-        showNotification('ok', 'Timeline adjusted.', 'fa-circle-check');
       } catch(err) {
         alert(`Failed to remove: ${err.message}`);
       } finally {
@@ -1333,18 +1226,6 @@
     });
 
     // ─── 18. UTILITIES ──────────────────────────────────────────────────
-    function updateHeaderStatus(state, message) {
-      statusTextEl.textContent = message;
-      statusDotEl.className = 'status-dot ' + state;
-    }
-
-    function showNotification(type, message, iconClass) {
-      document.getElementById('notification-area').innerHTML = `
-        <div class="notification ${type}">
-          <i class="fa-solid ${iconClass}"></i> ${message}
-        </div>
-      `;
-    }
 
     // ─── 19. INIT ───────────────────────────────────────────────────────
     async function init() {
