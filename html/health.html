@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MunTHINK Hub — Health Sector</title>
-    <!-- Google Fonts: Outfit -->
+    <!-- Google Fonts: Montserrat -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome for Premium Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js CDN -->
@@ -16,7 +16,6 @@
     <link rel="stylesheet" href="../styles.css">
     
     <style>
-        /* Specific Health Dashboard Layout tweaks to enhance the view */
         .health-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -28,6 +27,10 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 24px;
+        }
+
+        .charts-container-grid.full-width {
+            grid-template-columns: 1fr;
         }
 
         @media (max-width: 1024px) {
@@ -71,7 +74,7 @@
         }
 
         .chart-card h5 i {
-            color: #ef4444; /* Touches of Red */
+            color: #ef4444;
         }
 
         .canvas-container {
@@ -94,9 +97,8 @@
         }
 
         .stat-card:hover {
-            transform: translateY(-3px);
             border-color: rgba(239, 68, 68, 0.2);
-            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.08);
+            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.04);
         }
 
         .stat-icon-wrapper.health-icon-red {
@@ -107,8 +109,54 @@
             align-items: center;
             justify-content: center;
             font-size: 1.4rem;
-            background: rgba(239, 68, 68, 0.08);
-            color: #ef4444;
+            background: #e1271a;
+            color: white;
+        }
+
+        /* Interactive controls for charts */
+        .chart-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chart-select {
+            background-color: #f1f5f9;
+            color: var(--text-primary);
+            border: 1px solid rgba(15, 23, 42, 0.1);
+            border-radius: 0.375rem;
+            padding: 5px 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .chart-select:focus,
+        .chart-select:active,
+        .chart-select:hover {
+            background-color: #f1f5f9 !important;
+            border-color: rgba(15, 23, 42, 0.1);
+            color: var(--text-primary);
+        }
+
+        .chart-type-select {
+            background-color: #e1271a;
+            color: #f8fafc;
+            border-radius: 0.375rem;
+            padding: 5px 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+            border: none;
+        }
+
+        .chart-type-select option {
+            font-weight: 700;
         }
 
         /* Indicator detail card list */
@@ -153,9 +201,8 @@
         }
 
         .ind-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(245, 158, 11, 0.25);
-            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.04);
+            border-color: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.04);
         }
 
         .ind-card-header {
@@ -174,7 +221,7 @@
 
         .ind-card-icon {
             font-size: 1.1rem;
-            color: #f59e0b;
+            color: #e1271a;
         }
 
         .ind-card-value-box {
@@ -299,7 +346,11 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-heart-pulse"></i> Vital Rates & Ratios</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Hover chart points for details</div>
+                        <select id="vitalRatesChartType" class="chart-type-select">
+                            <option value="line">Line Graph</option>
+                            <option value="bar">Bar Graph</option>
+                            <option value="pie">Pie Graph</option>
+                        </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="vitalRatesChart"></canvas>
@@ -310,7 +361,11 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-person-breastfeeding"></i> Family Health & Child Care</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Hover chart points for details</div>
+                        <select id="familyHealthChartType" class="chart-type-select">
+                            <option value="line">Line Graph</option>
+                            <option value="bar">Bar Graph</option>
+                            <option value="pie">Pie Graph</option>
+                        </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="familyHealthChart"></canvas>
@@ -330,23 +385,33 @@
             </div>
         </section>
 
-        <!-- Footer -->
-        <footer class="dashboard-footer" aria-hidden="true" style="margin-top: 40px;">
-            <img src="../assets/images/footer.jpg" alt="" class="footer-image">
-        </footer>
     </div>
+
+    <footer class="dashboard-footer" aria-hidden="true">
+        <img src="../assets/images/footer.jpg" alt="" class="footer-image">
+    </footer>
 
     <!-- Supabase JS CDN (v2) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <!-- Page Logic Javascript -->
     <script>
-        // Supabase DB credentials
+        function countUp(element, target, duration, suffix) {
+            if (!element) return;
+            duration = duration || 600;
+            const start = performance.now();
+            function tick(now) {
+                const elapsed = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - elapsed, 3);
+                element.textContent = Math.round(target * eased).toLocaleString() + (suffix || "");
+                if (elapsed < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
         const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
 
-
-        // Indicator configuration details for cards (icons, descriptions, units)
         const INDICATORS_METADATA = {
             "Crude Birth Rate (CBR)": { icon: "fa-baby", desc: "Annual number of live births per 1,000 population.", unit: "%" },
             "Crude Death Rate (CDR)": { icon: "fa-skull", desc: "Annual number of deaths per 1,000 population.", unit: "%" },
@@ -363,25 +428,64 @@
             "Contraceptive Prevalence Rate": { icon: "fa-pills", desc: "Percentage of women using modern family planning.", unit: "%" }
         };
 
+        const PIE_COLORS = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548", "#3b82f6", "#ec4899", "#10b981", "#8b5cf6"];
+        const PIE_HOVER_COLORS = ["#ff2a2a", "#ff6666", "#ffb347", "#4caf50", "#42a5f5", "#ab47bc", "#26c6da", "#ff7043", "#8d6e63", "#60a5fa", "#f472b6", "#34d399", "#a78bfa"];
+
+        function makeGradient(ctx) {
+            const g = ctx.createLinearGradient(0, 0, 0, 380);
+            g.addColorStop(0, "#e1271a");
+            g.addColorStop(1, "#e1271a89");
+            return g;
+        }
+
+        function baseTooltip(callback) {
+            return Object.assign({
+                backgroundColor: "rgba(15, 23, 42, 0.95)",
+                padding: 10,
+                borderWidth: 1,
+                borderColor: "rgba(255, 255, 255, 0.15)"
+            }, callback ? { callbacks: { label: callback } } : {});
+        }
+
+        function baseLineOpts(extra) {
+            return Object.assign({
+                responsive: true,
+                maintainAspectRatio: false,
+                hover: { mode: 'nearest', intersect: true },
+                interaction: { mode: 'nearest', intersect: true },
+                animation: { duration: 200, easing: 'easeOutQuart' },
+                plugins: { legend: { display: false }, tooltip: baseTooltip() }
+            }, extra || {});
+        }
+
         let healthData = {};
         let healthLabels = [];
         let supabaseClient = null;
 
-        // Initialize Supabase safely
+        let vitalRatesChartInst = null;
+        let familyHealthChartInst = null;
+
+        let vitalRatesChartType = 'line';
+        let familyHealthChartType = 'line';
+
         if (typeof supabase !== 'undefined') {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         }
 
-        // Initialize Page
         document.addEventListener("DOMContentLoaded", async () => {
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.font.family = 'Montserrat, sans-serif';
+            Chart.defaults.font.size = 11;
+            Chart.defaults.font.weight = '700';
+
             initSidebar();
+            initChartTypeControls();
             await fetchHealthData();
             renderStatsBanner();
-            renderCharts();
+            renderAllCharts();
             renderIndicatorCards();
         });
 
-        // Sidebar navigation toggling
         function initSidebar() {
             const hamburgerBtn = document.getElementById("hamburger-btn");
             const sidebar = document.getElementById("sector-sidebar");
@@ -408,7 +512,11 @@
             }
         }
 
-        // Fetch Live Database or Local Storage Fallback
+        function initChartTypeControls() {
+            document.getElementById("vitalRatesChartType").addEventListener("change", e => { vitalRatesChartType = e.target.value; renderVitalRatesChart(); });
+            document.getElementById("familyHealthChartType").addEventListener("change", e => { familyHealthChartType = e.target.value; renderFamilyHealthChart(); });
+        }
+
         async function fetchHealthData() {
             if (supabaseClient) {
                 try {
@@ -467,7 +575,6 @@
             }
         }
 
-        // Helper to grab latest non-null value from an array
         function getLatestValue(arr) {
             if (!Array.isArray(arr)) return { val: '--', year: '--' };
             for (let i = arr.length - 1; i >= 0; i--) {
@@ -478,267 +585,265 @@
             return { val: '--', year: '--' };
         }
 
-        // Populate Stats Banner Cards
         function renderStatsBanner() {
-            // CBR
             const cbrInfo = getLatestValue(healthData["Crude Birth Rate (CBR)"]?.history);
-            document.getElementById("card-cbr").textContent = cbrInfo.val !== '--' ? `${cbrInfo.val}%` : '--';
+            const cbrEl = document.getElementById("card-cbr");
+            if (cbrInfo.val !== '--') {
+                countUp(cbrEl, cbrInfo.val, 600, "%");
+            } else {
+                cbrEl.textContent = '--';
+            }
             document.getElementById("card-cbr-year").textContent = `Census Year: ${cbrInfo.year}`;
 
-            // CDR
             const cdrInfo = getLatestValue(healthData["Crude Death Rate (CDR)"]?.history);
-            document.getElementById("card-cdr").textContent = cdrInfo.val !== '--' ? `${cdrInfo.val}%` : '--';
+            const cdrEl = document.getElementById("card-cdr");
+            if (cdrInfo.val !== '--') {
+                countUp(cdrEl, cdrInfo.val, 600, "%");
+            } else {
+                cdrEl.textContent = '--';
+            }
             document.getElementById("card-cdr-year").textContent = `Census Year: ${cdrInfo.year}`;
 
-            // Immunized Children
             const immInfo = getLatestValue(healthData["Percentage of Fully Immunized Children"]?.history);
-            document.getElementById("card-immunized").textContent = immInfo.val !== '--' ? `${immInfo.val}%` : '--';
+            const immEl = document.getElementById("card-immunized");
+            if (immInfo.val !== '--') {
+                countUp(immEl, immInfo.val, 600, "%");
+            } else {
+                immEl.textContent = '--';
+            }
             document.getElementById("card-immunized-year").textContent = `Census Year: ${immInfo.year}`;
 
-            // Facility births
             const facInfo = getLatestValue(healthData["Births by Facility Based"]?.history);
-            document.getElementById("card-facility").textContent = facInfo.val !== '--' ? `${facInfo.val}%` : '--';
+            const facEl = document.getElementById("card-facility");
+            if (facInfo.val !== '--') {
+                countUp(facEl, facInfo.val, 600, "%");
+            } else {
+                facEl.textContent = '--';
+            }
             document.getElementById("card-facility-year").textContent = `Census Year: ${facInfo.year}`;
         }
 
-        // Draw Interactive Charts
-        function renderCharts() {
-            // Chart A: Vital Rates (CBR, CDR, Infant Mortality, UMR, CWR on left axis, MMR on right axis)
-            const ctxA = document.getElementById("vitalRatesChart").getContext("2d");
-            new Chart(ctxA, {
-                type: 'line',
-                data: {
-                    labels: healthLabels,
-                    datasets: [
-                        {
-                            label: 'Crude Birth Rate (CBR)',
-                            data: healthData["Crude Birth Rate (CBR)"]?.history || [],
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.05)',
-                            borderWidth: 3,
-                            yAxisID: 'y',
-                            spanGaps: true,
-                            tension: 0.15
-                        },
-                        {
-                            label: 'Crude Death Rate (CDR)',
-                            data: healthData["Crude Death Rate (CDR)"]?.history || [],
-                            borderColor: '#ef4444',
-                            backgroundColor: 'rgba(239, 68, 68, 0.05)',
-                            borderWidth: 3,
-                            yAxisID: 'y',
-                            spanGaps: true,
-                            tension: 0.15
-                        },
-                        {
-                            label: 'Infant Mortality Rate',
-                            data: healthData["Infant Mortality Rate"]?.history || [],
-                            borderColor: '#10b981',
-                            backgroundColor: 'transparent',
-                            borderWidth: 2,
-                            yAxisID: 'y',
-                            spanGaps: true,
-                            tension: 0.15
-                        },
-                        {
-                            label: 'Under Five Mortality Rate (UMR)',
-                            data: healthData["Under Five Mortality Rate (UMR)"]?.history || [],
-                            borderColor: '#f59e0b',
-                            backgroundColor: 'transparent',
-                            borderWidth: 2,
-                            yAxisID: 'y',
-                            spanGaps: true,
-                            tension: 0.15
-                        },
-                        {
-                            label: 'Child Woman Ratio (CWR)',
-                            data: healthData["Child Woman Ratio (CWR)"]?.history || [],
-                            borderColor: '#8b5cf6',
-                            backgroundColor: 'transparent',
-                            borderWidth: 2,
-                            yAxisID: 'y',
-                            spanGaps: true,
-                            pointStyle: 'rectRot',
-                            tension: 0.15
-                        },
-                        {
-                            label: 'Maternal Mortality (MMR)',
-                            data: healthData["Maternal Mortality Rate (MMR)"]?.history || [],
-                            borderColor: '#ec4899',
-                            backgroundColor: 'transparent',
-                            borderWidth: 3,
-                            yAxisID: 'y1', // Dual scale Y1
-                            spanGaps: true,
-                            pointStyle: 'triangle',
-                            tension: 0.15
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                boxWidth: 12,
-                                font: { family: 'Outfit', size: 11, weight: '500' },
-                                padding: 14
-                            }
-                        },
-                        tooltip: {
-                            font: { family: 'Outfit' },
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) label += ': ';
-                                    if (context.parsed.y !== null) {
-                                        if (context.dataset.label.includes('Maternal')) {
-                                            label += context.parsed.y + ' per 100k births';
-                                        } else if (context.dataset.label.includes('Ratio')) {
-                                            label += context.parsed.y;
-                                        } else {
-                                            label += context.parsed.y + '%';
-                                        }
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            type: 'linear',
-                            display: true,
-                            position: 'left',
-                            title: {
-                                display: true,
-                                text: 'Rate / Ratio (%)',
-                                font: { family: 'Outfit', weight: 'bold', size: 12 }
-                            },
-                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
-                        },
-                        y1: {
-                            type: 'linear',
-                            display: true,
-                            position: 'right',
-                            title: {
-                                display: true,
-                                text: 'Maternal Deaths per 100k Livebirths',
-                                font: { family: 'Outfit', weight: 'bold', size: 12 }
-                            },
-                            grid: { drawOnChartArea: false } // Avoid clashing gridlines
-                        },
-                        x: {
-                            grid: { display: false }
-                        }
-                    }
-                }
-            });
-
-            // Chart 2: Family Health & Child Care (Immunization, Breastfeeding, Teenage, Skilled, Facility, Contraceptives)
-            const ctxB = document.getElementById("familyHealthChart").getContext("2d");
-            new Chart(ctxB, {
-                type: 'line',
-                data: {
-                    labels: healthLabels,
-                    datasets: [
-                        {
-                            label: 'Fully Immunized Children',
-                            data: healthData["Percentage of Fully Immunized Children"]?.history || [],
-                            borderColor: '#2563eb',
-                            borderWidth: 3,
-                            spanGaps: true,
-                            tension: 0.15
-                        },
-                        {
-                            label: 'Exclusively Breastfed (6 mos)',
-                            data: healthData["Infants Exclusively Breastfeed until 6 months"]?.history || [],
-                            borderColor: '#db2777',
-                            borderWidth: 2,
-                            spanGaps: true,
-                            tension: 0.15
-                        },
-                        {
-                            label: 'Teenage Deliveries',
-                            data: healthData["Percentage of Teenage Deliveries"]?.history || [],
-                            borderColor: '#ea580c',
-                            borderWidth: 2,
-                            spanGaps: true,
-                            tension: 0.15
-                        },
-                        {
-                            label: 'Birth by Skilled Attendant',
-                            data: healthData["Percentage of Birth by Skilled Attendant"]?.history || [],
-                            borderColor: '#16a34a',
-                            borderWidth: 3,
-                            spanGaps: true,
-                            tension: 0.15
-                        },
-                        {
-                            label: 'Births in Facility',
-                            data: healthData["Births by Facility Based"]?.history || [],
-                            borderColor: '#0d9488',
-                            borderWidth: 2,
-                            spanGaps: true,
-                            tension: 0.15
-                        },
-                        {
-                            label: 'Contraceptive Prevalence Rate',
-                            data: healthData["Contraceptive Prevalence Rate"]?.history || [],
-                            borderColor: '#4f46e5',
-                            borderWidth: 2,
-                            spanGaps: true,
-                            tension: 0.15
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                boxWidth: 12,
-                                font: { family: 'Outfit', size: 11, weight: '500' },
-                                padding: 14
-                            }
-                        },
-                        tooltip: {
-                            font: { family: 'Outfit' },
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) label += ': ';
-                                    if (context.parsed.y !== null) {
-                                        label += context.parsed.y + '%';
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            min: 0,
-                            max: 100,
-                            title: {
-                                display: true,
-                                text: 'Percentage (%)',
-                                font: { family: 'Outfit', weight: 'bold', size: 12 }
-                            },
-                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
-                        },
-                        x: {
-                            grid: { display: false }
-                        }
-                    }
-                }
-            });
+        function renderAllCharts() {
+            renderVitalRatesChart();
+            renderFamilyHealthChart();
         }
 
-        // Render detailed cards for each indicator
+        function makeDatasetStyle(borderColor, isLine) {
+            return {
+                borderColor: isLine ? borderColor : undefined,
+                borderWidth: isLine ? 3 : 2,
+                pointBackgroundColor: borderColor,
+                pointBorderColor: "#f8fafc",
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 9,
+                pointHoverBackgroundColor: borderColor,
+                pointHoverBorderColor: "#fff",
+                pointHoverBorderWidth: 3,
+                fill: false,
+                tension: 0.15
+            };
+        }
+
+        function renderVitalRatesChart() {
+            if (vitalRatesChartInst) { vitalRatesChartInst.destroy(); vitalRatesChartInst = null; }
+            const ctx = document.getElementById("vitalRatesChart").getContext("2d");
+            const gradient = makeGradient(ctx);
+
+            const vitalKeys = [
+                { key: "Crude Birth Rate (CBR)", label: "Crude Birth Rate (CBR)", color: "#3b82f6" },
+                { key: "Crude Death Rate (CDR)", label: "Crude Death Rate (CDR)", color: "#ef4444" },
+                { key: "Infant Mortality Rate", label: "Infant Mortality Rate", color: "#10b981" },
+                { key: "Under Five Mortality Rate (UMR)", label: "Under Five Mortality Rate (UMR)", color: "#f59e0b" },
+                { key: "Child Woman Ratio (CWR)", label: "Child Woman Ratio (CWR)", color: "#8b5cf6" }
+            ];
+            const mmrKey = { key: "Maternal Mortality Rate (MMR)", label: "Maternal Mortality (MMR)", color: "#ec4899" };
+
+            let config;
+
+            if (vitalRatesChartType === "pie") {
+                const merged = [...vitalKeys, mmrKey].map(v => {
+                    const h = healthData[v.key]?.history || [];
+                    const latest = getLatestValue(h);
+                    return latest.val !== '--' ? latest.val : 0;
+                });
+                const labels = [...vitalKeys, mmrKey].map(v => v.label);
+                config = {
+                    type: "pie",
+                    data: { labels, datasets: [{ label: 'Vital Rates', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { duration: 200, easing: 'easeOutQuart' }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.label}: ${ctx.raw}`) } }
+                };
+            } else {
+                const isLine = vitalRatesChartType === "line";
+                config = {
+                    type: vitalRatesChartType,
+                    data: {
+                        labels: healthLabels,
+                        datasets: [
+                            ...vitalKeys.map((v, i) => {
+                                const ds = makeDatasetStyle(v.color, isLine);
+                                ds.label = v.label;
+                                ds.data = healthData[v.key]?.history || [];
+                                ds.backgroundColor = i === 0 ? gradient : (isLine ? 'transparent' : `${v.color}66`);
+                                ds.yAxisID = 'y';
+                                ds.spanGaps = true;
+                                ds.pointStyle = v.key === "Child Woman Ratio (CWR)" ? 'rectRot' : 'circle';
+                                ds.borderRadius = isLine ? 0 : 6;
+                                return ds;
+                            }),
+                            (() => {
+                                const ds = makeDatasetStyle(mmrKey.color, isLine);
+                                ds.label = mmrKey.label;
+                                ds.data = healthData[mmrKey.key]?.history || [];
+                                ds.backgroundColor = isLine ? 'transparent' : `${mmrKey.color}66`;
+                                ds.yAxisID = 'y1';
+                                ds.spanGaps = true;
+                                ds.pointStyle = 'triangle';
+                                ds.borderRadius = isLine ? 0 : 6;
+                                return ds;
+                            })()
+                        ]
+                    },
+                    options: baseLineOpts({
+                        plugins: {
+                            legend: { display: true, position: 'bottom', labels: { boxWidth: 12, color: "#000000b3", padding: 14 } },
+                            tooltip: {
+                                backgroundColor: "rgba(15, 23, 42, 0.95)",
+                                padding: 10,
+                                borderWidth: 1,
+                                borderColor: "rgba(255, 255, 255, 0.15)",
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) label += ': ';
+                                        if (context.parsed.y !== null) {
+                                            if (context.dataset.label.includes('Maternal')) {
+                                                label += context.parsed.y + ' per 100k births';
+                                            } else if (context.dataset.label.includes('Ratio')) {
+                                                label += context.parsed.y;
+                                            } else {
+                                                label += context.parsed.y + '%';
+                                            }
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: { display: true, text: 'Rate / Ratio (%)' },
+                                grid: { color: "rgba(3, 3, 3, 0.05)" },
+                                ticks: { color: "#000000b3" }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: { display: true, text: 'Maternal Deaths per 100k Livebirths' },
+                                grid: { drawOnChartArea: false },
+                                ticks: { color: "#000000b3" }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: "#000000b3" }
+                            }
+                        }
+                    })
+                };
+            }
+
+            vitalRatesChartInst = new Chart(ctx, config);
+        }
+
+        function renderFamilyHealthChart() {
+            if (familyHealthChartInst) { familyHealthChartInst.destroy(); familyHealthChartInst = null; }
+            const ctx = document.getElementById("familyHealthChart").getContext("2d");
+            const gradient = makeGradient(ctx);
+
+            const familyKeys = [
+                { key: "Percentage of Fully Immunized Children", label: "Fully Immunized Children", color: "#2563eb" },
+                { key: "Infants Exclusively Breastfeed until 6 months", label: "Exclusively Breastfed (6 mos)", color: "#db2777" },
+                { key: "Percentage of Teenage Deliveries", label: "Teenage Deliveries", color: "#ea580c" },
+                { key: "Percentage of Birth by Skilled Attendant", label: "Birth by Skilled Attendant", color: "#16a34a" },
+                { key: "Births by Facility Based", label: "Births in Facility", color: "#0d9488" },
+                { key: "Contraceptive Prevalence Rate", label: "Contraceptive Prevalence Rate", color: "#4f46e5" }
+            ];
+
+            let config;
+
+            if (familyHealthChartType === "pie") {
+                const merged = familyKeys.map(v => {
+                    const h = healthData[v.key]?.history || [];
+                    const latest = getLatestValue(h);
+                    return latest.val !== '--' ? latest.val : 0;
+                });
+                const labels = familyKeys.map(v => v.label);
+                config = {
+                    type: "pie",
+                    data: { labels, datasets: [{ label: 'Family Health Indicators', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { duration: 200, easing: 'easeOutQuart' }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.label}: ${ctx.raw}%`) } }
+                };
+            } else {
+                const isLine = familyHealthChartType === "line";
+                config = {
+                    type: familyHealthChartType,
+                    data: {
+                        labels: healthLabels,
+                        datasets: familyKeys.map((v, i) => {
+                            const ds = makeDatasetStyle(v.color, isLine);
+                            ds.label = v.label;
+                            ds.data = healthData[v.key]?.history || [];
+                            ds.backgroundColor = i === 0 ? gradient : (isLine ? 'transparent' : `${v.color}66`);
+                            ds.yAxisID = 'y';
+                            ds.spanGaps = true;
+                            ds.borderRadius = isLine ? 0 : 6;
+                            return ds;
+                        })
+                    },
+                    options: baseLineOpts({
+                        plugins: {
+                            legend: { display: true, position: 'bottom', labels: { boxWidth: 12, color: "#000000b3", padding: 14 } },
+                            tooltip: {
+                                backgroundColor: "rgba(15, 23, 42, 0.95)",
+                                padding: 10,
+                                borderWidth: 1,
+                                borderColor: "rgba(255, 255, 255, 0.15)",
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) label += ': ';
+                                        if (context.parsed.y !== null) {
+                                            label += context.parsed.y + '%';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                min: 0,
+                                max: 100,
+                                title: { display: true, text: 'Percentage (%)' },
+                                grid: { color: "rgba(3, 3, 3, 0.05)" },
+                                ticks: { color: "#000000b3" }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: "#000000b3" }
+                            }
+                        }
+                    })
+                };
+            }
+
+            familyHealthChartInst = new Chart(ctx, config);
+        }
+
         function renderIndicatorCards() {
             const container = document.getElementById("indicators-grid-container");
             container.innerHTML = "";
