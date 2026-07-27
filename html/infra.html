@@ -6,9 +6,10 @@
     <title>MunTHINK Hub — Infrastructure Sector</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <link rel="stylesheet" href="../styles.css">
 
     <style>
@@ -130,6 +131,39 @@
             font-size: 1.4rem;
             background: #0891b2;
             color: white;
+        }
+
+        .db-status-bar {
+            background: #f1f5f9;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-md);
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .db-status-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .db-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-emerald);
+            box-shadow: 0 0 6px var(--accent-emerald);
+        }
+
+        .db-dot.offline {
+            background-color: #f59e0b;
+            box-shadow: 0 0 6px #f59e0b;
         }
 
         .chart-controls {
@@ -357,6 +391,44 @@
         .edu-accordion .accordion-content {
             padding: 16px 12px 4px;
         }
+
+        /* Health Facility Tables */
+        .facility-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        .facility-table thead th {
+            background: #fef2f2;
+            color: #dc2626;
+            font-weight: 700;
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 2px solid rgba(239,68,68,0.15);
+        }
+
+        .facility-table tbody td {
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(15,23,42,0.04);
+            color: var(--text-secondary);
+        }
+
+        .facility-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .facility-table tbody tr:hover td {
+            background: #fef2f2;
+        }
+
+        .facility-note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 12px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -398,368 +470,12 @@
     </aside>
 
     <div class="dashboard-container">
-
-        <section class="stats-banner">
-            <div class="stat-card">
-                <div class="stat-icon-wrapper infra-icon-cyan">
-                    <i class="fa-solid fa-road"></i>
-                </div>
-                <div class="stat-data">
-                    <span class="stat-label">City Road Network</span>
-                    <h2 id="card-road-length">--</h2>
-                    <span class="stat-pct" style="color: var(--text-muted)">Kilometers maintained</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon-wrapper infra-icon-cyan">
-                    <i class="fa-solid fa-faucet-drip"></i>
-                </div>
-                <div class="stat-data">
-                    <span class="stat-label">Water Coverage</span>
-                    <h2 id="card-water-coverage">--</h2>
-                    <span class="stat-pct" style="color: var(--text-muted)">Household service %</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon-wrapper infra-icon-cyan">
-                    <i class="fa-solid fa-house"></i>
-                </div>
-                <div class="stat-data">
-                    <span class="stat-label">Housing Units</span>
-                    <h2 id="card-housing">--</h2>
-                    <span class="stat-pct" style="color: var(--text-muted)">Approved/constructed</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon-wrapper infra-icon-cyan">
-                    <i class="fa-solid fa-bolt"></i>
-                </div>
-                <div class="stat-data">
-                    <span class="stat-label">Power Accessibility</span>
-                    <h2 id="card-power">--</h2>
-                    <span class="stat-pct" style="color: var(--text-muted)">Connected households</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- MWSS Water Supply Stat Cards -->
-        <div style="margin: 18px 0 6px; display:flex; align-items:center; gap:10px;">
-            <i class="fa-solid fa-droplet" style="color:#0891b2; font-size:1.1rem;"></i>
-            <span style="font-size:1rem; font-weight:700; color:var(--text-primary);">MWSS Water Supply Indicators</span>
-            <span style="font-size:0.78rem; color:var(--text-muted); font-weight:500;">Source: Maynilad, as of Oct. 2024</span>
-        </div>
-        <section class="stats-banner" style="margin-bottom:0;">
-            <div class="stat-card">
-                <div class="stat-icon-wrapper infra-icon-cyan">
-                    <i class="fa-solid fa-people-roof"></i>
-                </div>
-                <div class="stat-data">
-                    <span class="stat-label">Total Households</span>
-                    <h2 id="card-mwss-households">--</h2>
-                    <span class="stat-pct" style="color: var(--text-muted)">Maynilad service area (2022)</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon-wrapper infra-icon-cyan">
-                    <i class="fa-solid fa-plug-circle-check"></i>
-                </div>
-                <div class="stat-data">
-                    <span class="stat-label">Water Customers</span>
-                    <h2 id="card-mwss-customers">--</h2>
-                    <span class="stat-pct" style="color: var(--text-muted)">Total active connections (2022)</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon-wrapper infra-icon-cyan">
-                    <i class="fa-solid fa-gauge-high"></i>
-                </div>
-                <div class="stat-data">
-                    <span class="stat-label">Annual Water Sales</span>
-                    <h2 id="card-mwss-sales">--</h2>
-                    <span class="stat-pct" style="color: var(--text-muted)">cubic meters (2022)</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon-wrapper infra-icon-cyan">
-                    <i class="fa-solid fa-water"></i>
-                </div>
-                <div class="stat-data">
-                    <span class="stat-label">Barangay Connections</span>
-                    <h2 id="card-mwss-brgy-conn">--</h2>
-                    <span class="stat-pct" style="color: var(--text-muted)">Total across 9 barangays</span>
-                </div>
-            </div>
-        </section>
-
-        <div class="infra-grid">
-
-            <!-- Muntinlupa Interactive Map Panel -->
-            <section class="grid-panel map-panel span-two">
-                <div class="panel-header-map flex-header">  
-                    <h3><i class="fa-solid fa-map"></i> Muntinlupa Interactive Map</h3>
-
-                    <div class="header-controls">
-                        <div class="census-year-row">
-                            <label for="year-select" style="font-size: 14px; color: #000000; font-weight: 500;">Census Year:</label>
-                            <select id="year-select" style="background-color: #0891b2; color: #f8fafc; border-radius: 0.375rem; padding: 5px 10px 5px 10px; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; cursor: pointer; outline: none;">
-                            </select>
-                        </div>
-
-                        <select id="brgy-select" required style="background-color: #0891b2; color: #f8fafc; border-radius: 0.375rem; padding: 5px 10px 5px 10px; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; cursor: pointer; outline: none;">
-                            <option value="" disabled selected>-- Select Barangay --</option>
-                            <option value="Sucat">Sucat</option>
-                            <option value="Buli">Buli</option>
-                            <option value="Cupang">Cupang</option>
-                            <option value="Alabang">Alabang</option>
-                            <option value="Ayala Alabang">Ayala Alabang</option>
-                            <option value="Bayanan">Bayanan</option>
-                            <option value="Putatan">Putatan</option>
-                            <option value="Poblacion">Poblacion</option>
-                            <option value="Tunasan">Tunasan</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="map-viewport">
-                    <div class="map-wrapper">
-                        <!-- Base Muntinlupa Map Image -->
-                        <img src="../assets/images/map-image-original.jpg" alt="City Map of Muntinlupa" class="base-map-img">
-                        
-                        <!-- Interactive SVG overlay matching 750x750 coordinate system -->
-                        <svg viewBox="0 0 750 750" class="map-svg-overlay">
-                            <!-- Sucat (top-right, salmon/pink) -->
-                            <polygon class="map-polygon" data-name="Sucat" points="
-                                555,-172 557,-170 555,-166 551,-160 551,-155 549,-152 548,-148
-                                551,-146 549,-145 546,-145 548,-143 548,-142 545,-141 545,-136 
-                                549,-132 543,-130 539,-120 540,-117 537,-115 537,-108 539,-106 
-                                534,-99 534,-97 533,-94 531,-85 528,-82 530,-81 530,-76 528,-72 
-                                530,-69 528,-58 525,-51 525,-42 524,-39 519,11 522,11 527,-30 
-                                530,-34 531,-31 531,-30 531,-27 531,-24 533,-21 531,-19 528,12 
-                                530,15 542,20 542,21 540,24 537,20 530,27 513,20 506,23 498,24 
-                                495,18 491,12 491,20 483,18 479,20 474,20 468,17 464,20 458,20 
-                                456,21 452,20 443,27 435,33 435,39 432,44 428,41 420,41 419,36 
-                                416,36 414,30 399,18 405,14 413,-12 416,-10 416,-22 414,-24 
-                                428,-45 431,-45 434,-55 455,-72 455,-96 459,-97 459,-105 462,-106 
-                                464,-114 458,-121 464,-133 458,-150 461,-177 465,-178 471,-174 
-                                474,-175 480,-178 489,-178 495,-175 498,-171 503,-172 509,-177 
-                                515,-177 521,-175 527,-174 530,-177 533,-178 536,-175 540,-171 
-                                546,-172 551,-174 554,-172
-                            " />
-
-                            <!-- Buli (tiny strip just below Sucat) -->
-                            <polygon class="map-polygon" data-name="Buli" points="
-                                436,38 436,33 442,30 446,23 452,20 457,21 461,20 466,18 469,17 
-                                475,20 481,20 485,18 488,20 490,20 490,14 493,12 494,17 496,21 
-                                499,24 503,24 508,24 514,21 518,20 529,26 529,29 532,30 530,54 
-                                527,54 526,57 518,56 515,60 502,63 499,63 494,59 491,60 487,69 
-                                482,72 470,66 466,65 460,65 457,57 445,56 443,51 446,47 446,42 
-                                442,39 436,38
-                            " />
-
-                            <!-- Cupang (large blue region, center-upper) -->
-                            <polygon class="map-polygon" data-name="Cupang" points="
-                                514,59 502,63 499,63 493,59 487,68 482,71 469,66 460,65 457,57 
-                                445,54 443,50 446,47 445,42 437,38 433,42 427,41 421,41 415,41 
-                                412,44 406,44 406,48 406,53 404,56 401,56 401,53 398,50 397,53 
-                                395,59 392,60 389,60 386,65 379,71 374,71 371,72 349,54 344,53 
-                                302,71 271,98 265,110 265,119 250,188 275,195 286,179 290,165 
-                                305,185 299,203 331,218 335,227 341,225 343,224 343,219 341,216 
-                                344,215 347,216 350,212 355,212 355,215 356,219 361,221 365,218 
-                                367,216 365,213 368,210 368,209 367,206 371,206 370,201 373,200 
-                                377,194 382,192 386,194 391,192 392,191 397,189 403,183 413,182 
-                                415,233 418,234 421,234 422,233 425,231 433,233 439,228 445,230 
-                                449,230 458,221 457,218 460,201 463,203 463,207 466,207 466,203 
-                                472,197 481,201 490,204 485,215 487,224 493,228 502,228 506,225 
-                                512,218 520,215 520,209 520,206 520,201 515,197 514,189 509,177 
-                                511,167 508,164 511,152 512,120 512,111 512,105 509,98 512,95 
-                                511,90 509,87 508,89 506,86 506,81 509,78 511,75 508,74 511,71 
-                                509,68 514,65 514,59
-                            " />
-
-                            <!-- Alabang (yellow, center-right) -->
-                            <polygon class="map-polygon" data-name="Alabang" points="
-                                511,219 505,225 497,228 488,227 485,219 493,203 484,201 473,194 
-                                466,201 466,207 461,207 461,201 458,209 457,218 458,219 449,230 
-                                443,230 437,228 433,233 427,231 421,234 418,234 415,233 415,182 
-                                403,183 398,189 392,189 389,194 386,194 383,191 370,201 371,206 
-                                367,206 368,210 367,216 361,221 353,216 356,212 349,212 347,216 
-                                343,216 343,225 334,227 340,240 340,374 343,371 349,365 353,363 
-                                358,369 359,363 362,366 361,401 403,401 412,392 418,384 419,377 
-                                422,375 422,371 425,366 431,354 434,354 436,357 439,357 443,351 
-                                451,347 458,342 467,345 475,344 479,344 485,347 490,348 490,344 
-                                487,342 487,339 482,338 484,335 488,333 491,323 500,321 508,323 
-                                515,327 520,332 520,330 523,330 526,329 526,327 527,326 526,323 
-                                520,321 517,321 514,308 512,300 512,287 515,285 518,281 517,276 
-                                514,276 512,266 515,261 515,252 514,249 518,246 518,236 515,236 
-                                511,236 512,234 512,230 514,225 514,222 511,219
-                            " />
-
-                            <!-- Ayala Alabang (large purple, left side) -->
-                            <polygon class="map-polygon" data-name="Ayala Alabang" points="
-                                340,239 331,218 299,204 307,185 289,164 289,173 275,195 250,186 
-                                250,236 158,389 151,455 131,521 134,537 244,537 244,477 247,473 
-                                269,473 271,479 299,479 302,473 308,473 310,477 316,479 329,476 
-                                329,465 340,465 350,450 329,450 329,441 310,441 310,401 361,401 
-                                361,369 359,363 358,369 355,365 349,363 343,372 340,374 340,239
-                            " />
-
-                            <!-- Bayanan (small region, right of Alabang) -->
-                            <polygon class="map-polygon" data-name="Bayanan" points="
-                                520,333 508,321 503,320 493,321 490,324 488,332 482,336 485,339 
-                                487,342 490,342 490,348 485,347 478,344 472,344 464,345 457,344 
-                                454,345 451,347 440,353 436,357 434,353 430,356 425,365 421,375 
-                                419,383 403,401 406,404 410,404 418,396 422,396 427,398 433,396 
-                                437,399 440,398 446,393 451,393 452,398 455,401 461,401 467,398 
-                                470,399 473,401 476,399 496,396 500,398 505,401 505,396 505,392 
-                                502,389 503,386 503,378 506,374 505,363 506,354 511,351 506,350 
-                                506,345 509,342 512,336 520,333
-                            " />
-
-                            <!-- Putatan (green, center-south) -->
-                            <polygon class="map-polygon" points="
-                                503,399 496,395 476,398 472,401 467,398 455,401 452,396 446,393 
-                                443,395 439,398 437,399 433,396 428,398 419,396 415,398 410,402 
-                                406,404 403,399 401,401 310,401 310,441 329,441 329,450 350,450 
-                                340,465 329,465 329,476 323,477 314,479 310,477 307,473 302,473 
-                                299,479 292,479 271,479 269,473 247,473 244,477 244,537 341,536 
-                                344,531 347,527 355,516 362,515 365,510 370,510 371,512 376,515 
-                                379,513 386,516 389,518 391,521 394,524 397,527 401,528 404,527 
-                                406,528 406,531 409,534 409,539 413,539 415,542 416,545 419,546 
-                                424,543 430,540 434,536 436,534 439,534 439,528 443,527 448,528 
-                                454,528 460,528 469,525 479,522 484,521 488,521 493,516 503,515 
-                                521,516 523,513 520,512 518,510 515,510 509,510 509,507 512,503 
-                                509,501 508,500 508,495 506,492 512,489 508,489 505,483 505,479 
-                                508,479 520,476 506,476 503,474 517,470 506,471 503,471 505,468 
-                                503,465 502,462 500,458 500,452 503,450 503,447 500,449 500,441 
-                                505,443 503,438 505,435 503,431 502,426 506,426 506,422 502,422 
-                                502,417 505,411 505,405 503,399
-                            " data-name="Putatan" />
-
-                            <!-- Poblacion (pink/salmon, lower-left) -->
-                            <polygon class="map-polygon" data-name="Poblacion" points="
-                                521,515 494,515 487,521 481,519 473,524 469,527 464,527 460,528 
-                                454,527 449,528 439,527 439,534 437,531 433,539 425,540 419,546 
-                                415,543 415,540 409,539 409,536 406,531 404,527 401,528 395,527 
-                                392,522 389,521 388,516 379,515 373,513 367,510 364,512 358,516 
-                                355,516 353,521 349,524 344,533 341,536 133,537 133,542 137,575 
-                                172,630 167,657 139,740 251,740 254,735 259,729 262,729 265,726 
-                                265,719 268,713 271,705 275,707 283,702 292,702 298,698 304,690 
-                                307,686 308,681 313,678 314,675 313,666 316,659 317,651 323,647 
-                                332,638 334,635 338,635 338,632 341,630 344,627 352,623 358,618 
-                                364,612 370,603 376,602 379,603 383,602 385,599 385,596 386,594 
-                                386,590 392,585 398,587 404,582 403,570 409,570 413,573 418,573 
-                                421,569 427,572 427,566 431,563 434,557 443,560 448,554 452,558 
-                                454,555 457,557 463,554 469,551 475,551 478,552 478,557 484,558 
-                                485,561 487,566 491,566 496,570 503,570 508,572 514,575 520,576 
-                                526,573 529,576 530,579 533,575 536,572 536,567 530,566 526,567 
-                                521,566 518,561 517,552 517,546 517,540 515,536 518,527 517,524 
-                                521,522 523,521 520,519 521,515
-                            " />
-
-                            <!-- Tunasan (yellow/tan, bottom) -->
-                            <polygon class="map-polygon" data-name="Tunasan" points="
-                                532,578 527,578 526,573 521,573 518,576 511,573 502,569 494,569 
-                                490,566 487,566 484,558 478,557 476,551 470,549 463,551 461,555 
-                                458,555 454,555 451,558 448,554 443,560 434,557 431,563 427,564 
-                                428,570 422,569 419,570 416,573 413,572 407,569 403,570 403,582 
-                                398,587 392,585 386,590 385,594 385,599 379,605 374,602 370,602 
-                                361,618 356,618 349,624 346,624 343,630 338,630 338,636 335,635 
-                                322,648 319,651 316,654 316,660 314,665 314,675 310,681 305,684 
-                                305,690 299,698 292,702 280,704 271,707 268,713 268,716 265,720 
-                                265,728 262,728 262,731 259,728 256,734 251,740 137,740 136,818 
-                                118,915 140,924 146,917 155,911 164,906 167,908 170,908 175,905 
-                                172,900 173,896 179,891 187,884 188,881 196,873 199,873 200,869 
-                                203,866 203,860 209,855 218,848 226,845 233,843 238,845 239,833 
-                                245,831 251,824 257,819 257,815 262,815 266,812 271,809 272,804 
-                                278,800 283,803 286,801 286,795 287,788 293,788 299,785 307,777 
-                                308,773 313,768 311,764 310,759 314,756 319,758 323,758 328,756 
-                                332,755 334,759 338,759 343,761 346,756 350,753 355,755 361,752 
-                                365,750 371,753 374,752 376,747 376,743 380,740 386,738 391,735 
-                                397,731 401,726 407,728 413,725 416,722 422,722 425,714 428,710 
-                                431,707 434,702 437,702 442,707 443,711 443,717 446,722 449,723 
-                                449,729 452,731 455,731 455,735 454,741 455,746 457,744 460,749 
-                                461,747 461,743 461,741 464,743 466,740 470,737 475,738 478,741 
-                                479,744 484,744 485,740 488,737 491,732 491,728 496,728 500,728 
-                                505,726 505,723 508,723 509,720 509,717 506,717 509,714 514,713 
-                                514,708 511,711 509,707 515,704 515,699 518,692 517,687 520,683 
-                                518,678 520,674 526,672 529,674 527,677 527,681 529,683 530,678 
-                                530,674 538,665 542,659 545,654 545,650 541,648 542,644 545,641 
-                                550,642 548,644 547,647 550,648 553,645 551,639 556,635 556,630 
-                                553,630 551,627 550,623 547,623 545,627 544,630 541,632 535,630 
-                                530,627 527,623 526,612 524,602 524,594 526,587 526,581 529,581 
-                                532,578
-                            " />
-                        </svg>
-                    </div>
-                    
-                    <!-- Tooltip (floating on top of map-wrapper) -->
-                    <div id="map-tooltip" class="map-tooltip" aria-hidden="true">
-                        <div class="map-tooltip-title">
-                            <span class="map-tooltip-dot" id="tooltip-dot"></span>
-                            <span id="tooltip-title">Barangay</span>
-                        </div>
-                        <div class="map-tooltip-row">
-                            <span class="map-tooltip-label">Population</span>
-                            <span class="map-tooltip-value" id="tooltip-pop">0</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <div class="charts-container-grid">
-                <div class="chart-card">
-                    <div class="chart-title-wrapper">
-                        <h5><i class="fa-solid fa-road"></i> Road Network Growth</h5>
-                        <select id="roadChartType" class="chart-type-select">
-                            <option value="line">Line Graph</option>
-                            <option value="bar">Bar Graph</option>
-                            <option value="pie">Pie Graph</option>
-                        </select>
-                    </div>
-                    <div class="canvas-container">
-                        <canvas id="roadChart"></canvas>
-                    </div>
-                </div>
-
-
-
-                <div class="chart-card">
-                    <div class="chart-title-wrapper">
-                        <h5><i class="fa-solid fa-house"></i> Housing Growth Trend</h5>
-                        <select id="housingChartType" class="chart-type-select">
-                            <option value="line">Line Graph</option>
-                            <option value="bar">Bar Graph</option>
-                            <option value="pie">Pie Graph</option>
-                        </select>
-                    </div>
-                    <div class="canvas-container">
-                        <canvas id="housingChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="chart-card">
-                    <div class="chart-title-wrapper">
-                        <h5><i class="fa-solid fa-map-pin"></i> Barangay Infrastructure Access</h5>
-                        <div class="chart-controls">
-                            <select id="barangayAccessMode" class="chart-select">
-                                <option value="road">Road Access</option>
-                                <option value="water">Water Access</option>
-                                <option value="power">Power Access</option>
-                            </select>
-                            <select id="barangayInfrastructureChartType" class="chart-type-select">
-                                <option value="bar">Bar Graph</option>
-                                <option value="line">Line Graph</option>
-                                <option value="pie">Pie Graph</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="canvas-container">
-                        <canvas id="barangayInfraChart"></canvas>
-                    </div>
-                </div>
+        <div class="db-status-bar">
+            <div class="db-status-left">
+                <div id="db-dot" class="db-dot offline"></div>
+                <span id="db-status-txt">Checking infrastructure dataset...</span>
             </div>
         </div>
-
         <!-- ═══════════════════════════════════════════════════════════════
              MWSS WATER SUPPLY SECTION
         ════════════════════════════════════════════════════════════════ -->
@@ -772,6 +488,12 @@
                     <h3 style="margin:0;font-size:1.15rem;font-weight:800;color:var(--text-primary);">MWSS Water Supply — Maynilad Service Area</h3>
                     <p style="margin:0;font-size:0.8rem;color:var(--text-muted);">Muntinlupa City • Source: Maynilad, as of Oct. 2024 & 2023 data</p>
                 </div>
+            </div>
+
+            <div style="font-size:0.88rem;color:var(--text-secondary);line-height:1.7;margin-bottom:18px;padding:14px 16px;background:#ecfeff;border:1px solid rgba(8,145,178,0.12);border-radius:10px;text-align:justify;">
+                <p style="margin:0 0 10px;">Maynilad (Maynilad Water Services, Inc.) is the water provider assigned to service cities and municipalities from the West Zone of the Greater Metropolitan Manila Area (GMMA) on which the City of Muntinlupa is included. It is an agent and contractor of the Metropolitan Waterworks and Sewerage System (MWSS). It was formed in 1997 after the consortium of Benpres Holdings Corporation (now the Lopez Group of Companies) and Suez Lyonnaise de Eaux won the exclusive right to provide water and wastewater services in the West Zone of GMMA. In January 24, 2007, a consortium led by Metro Pacific Investments Corporation (MPIC) and DMCI Holdings, Inc. (DMCI) took over majority of the company.</p>
+                <p style="margin:0 0 10px;">Angat Dam is the main source of water for Metro Manila, supplying 90% of raw water requirements through the facilities of the MWSS. Laguna de Bay is another source of water for Maynilad, mainly serving Muntinlupa and Cavite.</p>
+                <span style="display:block;margin-top:8px;font-size:0.78rem;color:var(--text-muted);font-style:italic;">Source: Maynilad, 2024.</span>
             </div>
 
             <!-- 3-column MWSS charts grid -->
@@ -916,77 +638,34 @@
                 </div>
             </div>
 
-            <!-- Household Electrification Trend Table -->
+            <!-- Household Electrification Trend Chart -->
             <div class="chart-card" style="margin-bottom:24px;">
                 <div class="chart-title-wrapper">
                     <h5><i class="fa-solid fa-chart-line" style="color:#f59e0b;"></i> Household Electrification Statistics (2012–2023)</h5>
+                    <select id="electrificationChartType" class="chart-type-select">
+                        <option value="bar">Bar Graph</option>
+                        <option value="line">Line Graph</option>
+                    </select>
                 </div>
-                <div style="overflow-x:auto;">
-                    <table style="width:100%; border-collapse:collapse; font-size:0.85rem; color:var(--text-primary);">
-                        <thead>
-                            <tr style="background:#fffbeb; text-align:center;">
-                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">Year</th>
-                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">Total Households</th>
-                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">Estimated Electrified Households</th>
-                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">Household Electrification (%)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2012</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">110,055</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">106,889</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">97.12%</td></tr>
-                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2013</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">111,298</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">108,639</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">97.61%</td></tr>
-                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2014</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">112,556</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">110,292</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">97.99%</td></tr>
-                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2015</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">113,828</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">111,890</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">98.30%</td></tr>
-                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2016</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">124,569</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">122,773</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">98.56%</td></tr>
-                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2017</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">126,895</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">125,352</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">98.78%</td></tr>
-                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2018</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">131,931</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">129,983</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">98.98%</td></tr>
-                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2019</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">133,931</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">132,809</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">99.16%</td></tr>
-                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2020</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">138,331</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">134,605</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">97.31%</td></tr>
-                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2021</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">141,789</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">138,250</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">97.50%</td></tr>
-                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2022</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;" colspan="3"><em>No available data</em></td></tr>
-                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">2023</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">148,952</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">142,970</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:center;">95.98%</td></tr>
-                        </tbody>
-                    </table>
+                <div class="canvas-container" style="height:360px;">
+                    <canvas id="electrificationChart"></canvas>
                 </div>
                 <div style="margin-top:10px; padding:8px 12px; background:#f8fafc; border-radius:8px; font-size:0.8rem; color:var(--text-muted);">
                     Note: 2019 based on 2015 Census; 2020–2023 based on 2020 Census. No data for 2022.
                 </div>
             </div>
 
-            <!-- Barangay-Level Electrification Table -->
+            <!-- Barangay-Level Electrification Chart -->
             <div class="chart-card">
                 <div class="chart-title-wrapper">
                     <h5><i class="fa-solid fa-map-location-dot" style="color:#f59e0b;"></i> Household Electrification per Barangay (2019–2021)</h5>
+                    <select id="brgyElectrificationChartType" class="chart-type-select">
+                        <option value="bar">Bar Graph</option>
+                        <option value="line">Line Graph</option>
+                    </select>
                 </div>
-                <div style="overflow-x:auto;">
-                    <table style="width:100%; border-collapse:collapse; font-size:0.85rem; color:var(--text-primary);">
-                        <thead>
-                            <tr style="background:#fffbeb; text-align:center;">
-                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">Barangay</th>
-                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">Total Households (2015 Census)</th>
-                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">2019</th>
-                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">2020</th>
-                                <th style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:700;">2021</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Tunasan</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">12,944</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">14,164</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">14,408</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">14,736</td></tr>
-                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Poblacion</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">22,754</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">24,411</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">24,591</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">24,920</td></tr>
-                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Putatan</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">21,792</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">23,821</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">24,257</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">24,907</td></tr>
-                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Bayanan</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">9,492</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">10,241</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">10,489</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">10,715</td></tr>
-                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Alabang</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">17,505</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">19,544</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">19,796</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">21,097</td></tr>
-                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Ayala Alabang</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">4,063</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">4,341</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">4,358</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">4,380</td></tr>
-                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Cupang</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">15,476</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">16,739</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">17,013</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">17,315</td></tr>
-                            <tr style="background:#fafafa;"><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Buli</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">2,528</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">2,706</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">2,734</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">2,791</td></tr>
-                            <tr><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); font-weight:600;">Sucat</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">15,732</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">16,842</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">16,959</td><td style="padding:8px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">17,389</td></tr>
-                            <tr style="background:#f0fdf4; font-weight:700;">
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08);">City Total Est. Electrified</td>
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">122,286</td>
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">132,809</td>
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">134,605</td>
-                                <td style="padding:10px 12px; border:1px solid rgba(15,23,42,0.08); text-align:right;">138,250</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="canvas-container" style="height:380px;">
+                    <canvas id="brgyElectrificationChart"></canvas>
                 </div>
                 <div style="margin-top:10px; padding:8px 12px; background:#f8fafc; border-radius:8px; font-size:0.8rem; color:var(--text-muted);">
                     Source: Meralco – Utility Economics, 2022. No recent barangay-level updates available up to 2023.
@@ -1688,8 +1367,1057 @@
 
     </div>
 
+    <!-- ═══════════════════════════════════════════════════════════════
+         HEALTH FACILITIES SECTION
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="facility-section">
+        <div class="facility-header">
+            <div class="facility-header-icon">
+                <i class="fa-solid fa-hospital"></i>
+            </div>
+            <div>
+                <h3>Health Facilities Inventory</h3>
+                <p>Muntinlupa City • Source: City Health Office, 2022</p>
+            </div>
+        </div>
+
+        <div class="facility-summary">
+            Total of <strong>21 Health Centers</strong> across 9 barangays, plus <strong>1 Government-Owned Hospital</strong> serving the city. Facilities include health centers, lying-in/birthing centers, laboratories, and specialized clinics.
+        </div>
+
+        <div class="edu-accordion">
+            <!-- Health Centers & Clinics -->
+            <details>
+                <summary><i class="fa-solid fa-chevron-right"></i> Health Centers & Clinics <span style="font-weight:400;color:var(--text-muted);font-size:0.82rem;">(21 facilities across 9 barangays)</span></summary>
+                <div class="accordion-content">
+
+            <!-- ═══ DISTRICT I ═══ -->
+            <div class="district-block">
+                <div class="district-label">District I</div>
+
+                <!-- TUNASAN -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Tunasan <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(4 facilities)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>1. City Health Center (Main Office)</strong>
+                            <span class="facility-loc">CHO Bldg., Centennial Ave., Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>2. City Water Laboratory (CHO Main Office)</strong>
+                            <span class="facility-loc">4th Floor CHO Bldg., Centennial Ave., Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>3. Tunasan Health Center</strong>
+                            <span class="facility-loc">E. Rodriguez Ave., Tunasan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>4. Victoria Health Center</strong>
+                            <span class="facility-loc">Victoria Homes Subd., Tunasan</span>
+                        </li>
+                    </ul>
+                </details>
+
+                <!-- POBLACION -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Poblacion <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(4 facilities)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>5. Poblacion Health Center</strong>
+                            <span class="facility-loc">Cor. Rizal and Burgos St., Poblacion, Muntinlupa City</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>6. Southville Health Center</strong>
+                            <span class="facility-loc">NHA Project NBP, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>7. Emergency Care Clinic</strong>
+                            <span class="facility-loc">NHA Project NBP, Poblacion</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>8. Poblacion Health Center</strong>
+                            <span class="facility-loc">Poblacion, Muntinlupa City — Est. 12/19/2019</span>
+                        </li>
+                    </ul>
+                </details>
+
+                <!-- PUTATAN -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Putatan <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(7 facilities)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>9. Putatan Health Center (SP I)</strong>
+                            <span class="facility-loc">Putatan Super Health Center Complex, National Road, corner Bliss, Putatan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>10. Lying-In Center</strong>
+                            <span class="facility-loc">Putatan Super Health Center Complex</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>11. 101 Clinic</strong>
+                            <span class="facility-loc">Putatan Super Health Center Complex</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>12. Reproductive Health</strong>
+                            <span class="facility-loc">Putatan Super Health Center Complex</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>13. Main Laboratory</strong>
+                            <span class="facility-loc">Putatan Super Health Center Complex</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>14. Putatan Health Center (SP II)</strong>
+                            <span class="facility-loc">Bruger, Putatan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>15. Lakeview Health Center</strong>
+                            <span class="facility-loc">Lakeview, Putatan — Est. 04/27/2022</span>
+                        </li>
+                    </ul>
+                </details>
+
+                <!-- BAYANAN -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Bayanan <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(2 facilities)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>16. Bayanan Health Center Annex</strong>
+                            <span class="facility-loc">Purok 1, Blk. 2 Dolleton St., Bayanan</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>17. Bayanan Health Center</strong>
+                            <span class="facility-loc">San Guillermo St., Bayanan</span>
+                        </li>
+                    </ul>
+                </details>
+            </div>
+
+            <!-- ═══ DISTRICT II ═══ -->
+            <div class="district-block">
+                <div class="district-label">District II</div>
+
+                <!-- ALABANG -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Alabang <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(1 facility)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>18. Alabang Health Center</strong>
+                            <span class="facility-loc">Liwasan ng mga Bayani, Alabang</span>
+                        </li>
+                    </ul>
+                </details>
+
+                <!-- AYALA ALABANG -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Ayala Alabang <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(1 facility)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>19. Ayala Alabang Health Center</strong>
+                            <span class="facility-loc">Ayala Alabang, Muntinlupa City</span>
+                        </li>
+                    </ul>
+                </details>
+
+                <!-- BULI -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Buli <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(1 facility)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>20. Buli Health Center</strong>
+                            <span class="facility-loc">Beside Barangay Hall, Buli</span>
+                        </li>
+                    </ul>
+                </details>
+
+                <!-- CUPANG -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Cupang <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(3 facilities)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>21. Cupang Health Center</strong>
+                            <span class="facility-loc">Purok 5, Cupang (beside Barangay Hall)</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>22. Sitio Santo Niño Health Center</strong>
+                            <span class="facility-loc">Sitio Sto. Niño, Cupang</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>23. Cupang Health Center</strong>
+                            <span class="facility-loc">Purok 3, Cupang — Est. 10/23/2020</span>
+                        </li>
+                    </ul>
+                </details>
+
+                <!-- SUCAT -->
+                <details style="margin-bottom:8px;">
+                    <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Sucat <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(2 facilities)</span>
+                    </summary>
+                    <ul class="facility-list" style="padding-left:20px;">
+                        <li class="facility-item">
+                            <strong>24. Sucat Health Center</strong>
+                            <span class="facility-loc">Purok 3, Sucat</span>
+                        </li>
+                        <li class="facility-item">
+                            <strong>25. Bagong Silang Health Center</strong>
+                            <span class="facility-loc">Sitio Bagong Silang, Sucat</span>
+                        </li>
+                    </ul>
+                </details>
+            </div>
+
+                </div>
+            </details>
+
+            <!-- Government-Owned Hospital -->
+            <details>
+                <summary><i class="fa-solid fa-chevron-right"></i> Government-Owned Hospital <span style="font-weight:400;color:var(--text-muted);font-size:0.82rem;">(1 hospital)</span></summary>
+                <div class="accordion-content">
+                    <ul class="facility-list" style="padding-left:0;">
+                        <li class="facility-item">
+                            <strong>Ospital ng Muntinlupa</strong>
+                            <span class="facility-loc">Filinvest Corporate City, Civic Dr., Alabang, Muntinlupa, Metro Manila — District II</span>
+                        </li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+
+        <p class="facility-note">
+            <i class="fa-solid fa-circle-info" style="color:#0891b2;"></i>
+            Source: City Health Office through City Engineering Office, 2022. Total Health Centers: 21
+        </p>
     </div>
 
+    <!-- ═══════════════════════════════════════════════════════════════
+         GOVERNMENT FACILITIES SECTION
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="facility-section">
+        <div class="facility-header">
+            <div class="facility-header-icon">
+                <i class="fa-solid fa-building-columns"></i>
+            </div>
+            <div>
+                <h3>Other Government Facilities (2024)</h3>
+                <p>Muntinlupa City • Source: City Engineering Office, 2024</p>
+            </div>
+        </div>
+
+        <div class="facility-summary">
+            Total of <strong>50 Government Facilities</strong> identified across District I and District II. Facilities include city halls, markets, schools, health facilities, housing projects, sports complexes, and satellite offices.
+        </div>
+
+        <div class="edu-accordion">
+            <!-- ═══ DISTRICT I ═══ -->
+            <details>
+                <summary><i class="fa-solid fa-chevron-right"></i> District I <span style="font-weight:400;color:var(--text-muted);font-size:0.82rem;">(32 facilities)</span></summary>
+                <div class="accordion-content">
+
+                    <!-- TUNASAN — PACWOOD -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Tunasan — Pacwood <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(6 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>1. Central Records Storage and Supply Center</strong>
+                                <span class="facility-loc">Pacwood Site, Tunasan — Est. 08/06/2022</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>2. Emergency Quarantine Facility</strong>
+                                <span class="facility-loc">Pacwood Site, Tunasan — Est. 10/13/2020</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>3. Animal Pounding</strong>
+                                <span class="facility-loc">Pacwood Site, Tunasan — Est. 04/07/2018</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>4. City Animal Impounding / Animal Shelter / Pet Crematorium</strong>
+                                <span class="facility-loc">Pacwood Site, Tunasan</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>5. Motorpool Facility and Heavy Equipment Garage</strong>
+                                <span class="facility-loc">Pacwood Site, Tunasan — Est. 12/14/2018</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>6. Fabrication Building</strong>
+                                <span class="facility-loc">Pacwood Site, Tunasan — Est. 02/27/2018</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- TUNASAN — SPORTS COMPLEX -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Tunasan — Sports Complex <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(3 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>7. Muntinlupa Sports Complex</strong>
+                                <span class="facility-loc">Tunasan</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>8. Aquatic Center</strong>
+                                <span class="facility-loc">Tunasan — Est. 03/01/2022</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>9. Track and Field</strong>
+                                <span class="facility-loc">Tunasan — Est. 03/23/2022</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- TUNASAN — LAGUERTA -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Tunasan — Laguerta <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(4 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>10. Dep-Ed Division Office</strong>
+                                <span class="facility-loc">Centennial Ave., Tunasan — Est. 02/23/2021</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>11. Museo ng Muntinlupa</strong>
+                                <span class="facility-loc">Centennial Ave., Tunasan — Est. 03/01/2019</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>12. City Health Office</strong>
+                                <span class="facility-loc">Centennial Ave., Tunasan — Est. 12/19/2018</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>13. Police Station</strong>
+                                <span class="facility-loc">Centennial Ave., Tunasan — Est. 02/25/2017</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- TUNASAN — SUSANA HEIGHTS -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Tunasan — Susana Heights <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(3 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>14. Muntinlupa Hall of Justice</strong>
+                                <span class="facility-loc">Tunasan</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>15. Resiliency Building</strong>
+                                <span class="facility-loc">Tunasan — Est. 12/19/2017</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>16. Fire Station</strong>
+                                <span class="facility-loc">Tunasan — Est. 12/19/2017</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- TUNASAN — GENERAL -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Tunasan <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(2 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>17. Social Development Center – Bahay Pag-asa</strong>
+                                <span class="facility-loc">SSD Compound, Tiosejo Subd., Tunasan — Est. 08/20/2019</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>18. Bahay Kanlungan (Elderly Home Care)</strong>
+                                <span class="facility-loc">Victoria St., Tunasan — Est. 03/01/2023</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- POBLACION -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Poblacion <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(3 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>19. Plaza Central</strong>
+                                <span class="facility-loc">Poblacion — Est. 10/06/2017</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>20. Constructed MCTI-Annex Building</strong>
+                                <span class="facility-loc">Southville, Brgy. Poblacion — Est. 05/24/2017</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>21. Poblacion National High School Building</strong>
+                                <span class="facility-loc">MNHS-Annex, Southville 3, Poblacion — Est. 11/17/2021</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- PUTATAN — CITY HALL COMPOUND -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Putatan — City Hall Compound <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(4 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>22. Muntinlupa City Hall (Main)</strong>
+                                <span class="facility-loc">City Hall, Putatan</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>23. Muntinlupa City Hall (Annex)</strong>
+                                <span class="facility-loc">City Hall, Putatan</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>24. People Center</strong>
+                                <span class="facility-loc">City Hall, Putatan</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>25. Kalingang Munti Action Center</strong>
+                                <span class="facility-loc">City Hall, Putatan</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- PUTATAN — GENERAL -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Putatan <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(8 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>26. Muntinlupa Men's and Women's Center</strong>
+                                <span class="facility-loc">Lakeview, Putatan — Est. 02/28/2018</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>27. MCTI-TESDA</strong>
+                                <span class="facility-loc">MCTI-TESDA, San Guillermo, Putatan</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>28. Muntinlupa Training and Resource Center for Women</strong>
+                                <span class="facility-loc">MCTI-TESDA, San Guillermo, Putatan — Est. 03/27/2019</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>29. Lakeview Senior High School Building</strong>
+                                <span class="facility-loc">Lakeview, Putatan — Est. 10/08/2021</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>30. Employees Housing 23A, 24A, 25A & 26A (Balai Munti)</strong>
+                                <span class="facility-loc">Lakeview, Putatan — Est. 12/20/2021</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>31. City Public Cemetery</strong>
+                                <span class="facility-loc">Soldiers Hills, Putatan</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>32. New BJMP Facility</strong>
+                                <span class="facility-loc">Putatan — Est. 2023</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                </div>
+            </details>
+
+            <!-- ═══ DISTRICT II ═══ -->
+            <details>
+                <summary><i class="fa-solid fa-chevron-right"></i> District II <span style="font-weight:400;color:var(--text-muted);font-size:0.82rem;">(18 facilities)</span></summary>
+                <div class="accordion-content">
+
+                    <!-- BAYANAN -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Bayanan <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(2 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>33. OSCA Center</strong>
+                                <span class="facility-loc">Bayanan Baywalk</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>34. Baseball Quadrangle</strong>
+                                <span class="facility-loc">Bayanan Baywalk — Est. 2016</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- ALABANG -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Alabang <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(13 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>35. Muntinlupa Gateway Center</strong>
+                                <span class="facility-loc">Alabang — Est. 2023</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>36. Alabang Central Market A</strong>
+                                <span class="facility-loc">Alabang — Est. 06/08/2022</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>37. Alabang Central Market B</strong>
+                                <span class="facility-loc">Alabang — Est. 2023</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>38. Police Station</strong>
+                                <span class="facility-loc">Alabang</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>39. Fire Station</strong>
+                                <span class="facility-loc">Alabang</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>40. Extension Building OSMUN</strong>
+                                <span class="facility-loc">Alabang — Est. 06/15/2022</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>41. Ospital ng Muntinlupa</strong>
+                                <span class="facility-loc">Alabang</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>42. Satellite Offices</strong>
+                                <span class="facility-loc">Starmall, Alabang — Est. 08/01/2022 (transferred to Ayala Mall Southpark)</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>43. Satellite Offices</strong>
+                                <span class="facility-loc">Ayala Mall SouthPark, Alabang — Est. 08/29/2018</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>44. Emergency Quarantine Facility</strong>
+                                <span class="facility-loc">Filinvest Tent Parking Area, Filinvest, Alabang — Est. 12/19/2020</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>45. Bio-Molecular Laboratory (formerly Sagip Bldg.)</strong>
+                                <span class="facility-loc">Alabang — Est. 12/19/2020</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- CUPANG -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Cupang <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(1 facility)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>46. 200 Units Housing Project</strong>
+                                <span class="facility-loc">Harmonyville, Purok 3, Cupang — Est. 08/13/2019</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- SUCAT -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Sucat <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(4 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>47. Colegio de Muntinlupa 1</strong>
+                                <span class="facility-loc">Sucat — Est. 07/31/2018</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>48. Colegio de Muntinlupa 2</strong>
+                                <span class="facility-loc">Sucat — Est. 06/14/2022</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>49. Sucat Senior High School Building-A</strong>
+                                <span class="facility-loc">Sucat — Est. 03/18/2022</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>50. Sucat Senior High School Building-B</strong>
+                                <span class="facility-loc">Sucat — Est. 06/14/2022</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                </div>
+            </details>
+        </div>
+
+        <p class="facility-note">
+            <i class="fa-solid fa-circle-info" style="color:#0891b2;"></i>
+            Source: City Engineering Office, 2024. Total Identified Government Facilities: 50
+        </p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         COVERED COURTS SECTION
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="facility-section">
+        <div class="facility-header">
+            <div class="facility-header-icon">
+                <i class="fa-solid fa-warehouse"></i>
+            </div>
+            <div>
+                <h3>Covered Courts & Multi-Purpose Facilities</h3>
+                <p>Muntinlupa City • Source: City Engineering Office, 2024</p>
+            </div>
+        </div>
+
+        <div class="facility-summary">
+            Total of <strong>73 Covered Courts</strong> across Muntinlupa City — District I (Tunasan, Poblacion, Putatan, Bayanan) and District II (Alabang, Ayala-Alabang, Cupang, Buli, Sucat). Facilities include covered courts, gymnasiums, tennis courts, and multi-purpose buildings.
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             DISTRICT I COVERED COURTS
+        ════════════════════════════════════════════════════════════════ -->
+        <div class="edu-accordion">
+            <details>
+                <summary><i class="fa-solid fa-chevron-right"></i> District I <span style="font-weight:400;color:var(--text-muted);font-size:0.82rem;">(52 facilities)</span></summary>
+                <div class="accordion-content">
+
+                    <!-- TUNASAN -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Tunasan <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(20 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>1. Covered Court, Buendia Street</strong>
+                                <span class="facility-loc">Tunasan — 540 sqm — Est. Jan. 12, 2001 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>2. Covered Court, Parkhomes</strong>
+                                <span class="facility-loc">Tunasan — 540 sqm — Est. Feb. 20, 2002 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>3. Covered Court, Villa Carolina 1</strong>
+                                <span class="facility-loc">Tunasan — 540 sqm — Est. May 30, 2002 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>4. Covered Court, Villa Carolina 2</strong>
+                                <span class="facility-loc">Tunasan — 540 sqm — Est. Feb. 3, 2004 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>5. Covered Court, Sto. Niño Village</strong>
+                                <span class="facility-loc">Tunasan — 540 sqm — Est. Feb. 3, 2004 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>6. Covered Court, Camella 3</strong>
+                                <span class="facility-loc">Tunasan — 540 sqm — Est. Feb. 18, 2005 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>7. Covered Court, Planas Compound</strong>
+                                <span class="facility-loc">Tunasan — 540 sqm — Est. Feb. 18, 2005 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>8. Covered Court, Lodora Village</strong>
+                                <span class="facility-loc">Tunasan — 540 sqm — Est. Feb. 18, 2002 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>9. Covered Court, Victoria Homes</strong>
+                                <span class="facility-loc">Tunasan — 540 sqm — Est. 2006 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>10. Covered Court, Sto. Niño Village Phase 4</strong>
+                                <span class="facility-loc">Tunasan — 540 sqm — Est. 2006 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>11. Covered Court, RM Tiosejo Subd.</strong>
+                                <span class="facility-loc">Tunasan — 540 sqm — Est. 2006 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>12. Perimeter Fence & Protective Steel Grills, Muntinlupa Science High School</strong>
+                                <span class="facility-loc">Tunasan — 540 sqm — Est. 2007 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>13. Multi-Purpose Covered Court, Sto. Niño Brgy.</strong>
+                                <span class="facility-loc">Tunasan — 708 sqm — Est. 2016 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>14. JPA Subd. Covered Court</strong>
+                                <span class="facility-loc">Tunasan — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>15. Muntinlupa Sports Complex Covered Court</strong>
+                                <span class="facility-loc">Tunasan — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>16. Covered Court, Ridgeview 2, Victoria Homes</strong>
+                                <span class="facility-loc">Tunasan — 720 sqm — Est. Oct. 7, 2017 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>17. Tennis Court, Sto. Niño Village Ph. 1</strong>
+                                <span class="facility-loc">Tunasan — Est. Oct. 21, 2017 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>18. Covered Court, Centennial Avenue, Laguerta</strong>
+                                <span class="facility-loc">Tunasan — Est. Mar. 1, 2018 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>19. Covered Court, Victoria Elementary School</strong>
+                                <span class="facility-loc">Tunasan — Est. Nov. 28, 2018 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>20. Covered Court, MNHS-Tunasan Annex</strong>
+                                <span class="facility-loc">Tunasan — Est. Feb. 23, 2021 — New</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- POBLACION -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Poblacion <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(11 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>21. Covered Court, Canto</strong>
+                                <span class="facility-loc">Poblacion — 540 sqm — Est. Jan. 12, 2001 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>22. Covered Court, Katarungan Village, NBP Reservation</strong>
+                                <span class="facility-loc">Poblacion — 540 sqm — Est. Feb. 20, 2002 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>23. Covered Court, Camella Homes IV</strong>
+                                <span class="facility-loc">Poblacion — 540 sqm — Est. Aug. 26, 2003 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>24. Covered Court, Pamantasan ng Lungsod ng Muntinlupa</strong>
+                                <span class="facility-loc">Poblacion — 540 sqm — Est. Feb. 3, 2004 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>25. Covered Court, Country Homes</strong>
+                                <span class="facility-loc">Poblacion — 540 sqm — Est. Feb. 3, 2004 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>26. Covered Court, Camella 2D</strong>
+                                <span class="facility-loc">Poblacion — 540 sqm — Est. Feb. 18, 2005 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>27. Covered Court, Katarungan Village Phase 2</strong>
+                                <span class="facility-loc">Poblacion — 540 sqm — Est. 2006 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>28. Itaas Elementary School – Southville 3 Annex</strong>
+                                <span class="facility-loc">Poblacion — Est. Jul. 25, 2018 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>29. Covered Court, Camella IV-B</strong>
+                                <span class="facility-loc">Poblacion — 540 sqm — Est. 2010 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>30. Muntinlupa National High School Gymnasium</strong>
+                                <span class="facility-loc">Poblacion — Est. 2017 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>31. MNHS-Southville 3 Annex (Poblacion National High School)</strong>
+                                <span class="facility-loc">Poblacion — Est. Mar. 23, 2019 — Good</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- PUTATAN -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Putatan <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(18 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>32. Covered Court, Soldiers Hills</strong>
+                                <span class="facility-loc">Putatan — 540 sqm — Est. Feb. 20, 2002 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>33. Covered Court, Mutual Homes Phase 1 & 2</strong>
+                                <span class="facility-loc">Putatan — 540 sqm — Est. Aug. 2, 2003 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>34. Covered Court, Camella 1</strong>
+                                <span class="facility-loc">Putatan — 540 sqm — Est. Aug. 26, 2003 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>35. Covered Court, Putatan Elementary School</strong>
+                                <span class="facility-loc">Putatan — 540 sqm — Est. Aug. 26, 2003 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>36. Covered Court, South Greenheights</strong>
+                                <span class="facility-loc">Putatan — 540 sqm — Est. Aug. 23, 2003 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>37. Covered Court, Mutual Homes Phase 3</strong>
+                                <span class="facility-loc">Putatan — 540 sqm — Est. Feb. 3, 2004 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>38. Covered Court, Summitville Subd.</strong>
+                                <span class="facility-loc">Putatan — 540 sqm — Est. Feb. 20, 2002 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>39. Covered Court, Bliss Housing Site</strong>
+                                <span class="facility-loc">Putatan — 540 sqm — Est. Feb. 18, 2005 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>40. Covered Court, Tophill Subd.</strong>
+                                <span class="facility-loc">Putatan — 540 sqm — Est. Feb. 18, 2005 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>41. Covered Court, Camella 2E</strong>
+                                <span class="facility-loc">Putatan — 540 sqm — Est. 2006 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>42. Covered Court, Camella Homes 2</strong>
+                                <span class="facility-loc">Putatan — 540 sqm — Est. 2006 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>43. Covered Court, Bruger St.</strong>
+                                <span class="facility-loc">Putatan — 270 sqm — Est. Feb. 2007 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>44. Covered Court, Country Homes</strong>
+                                <span class="facility-loc">Putatan — 540 sqm — Est. 2008 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>45. Covered Court with Stage & CR, GK MRH</strong>
+                                <span class="facility-loc">Putatan — 540 sqm — Est. Jun. 8, 2016 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>46. Lakeview 1 Covered Court</strong>
+                                <span class="facility-loc">Putatan — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>47. Lakeview 1 Elementary School Covered Court</strong>
+                                <span class="facility-loc">Putatan — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>48. F. De Mesa Elementary School Covered Court</strong>
+                                <span class="facility-loc">Putatan — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>49. Putatan Barangay Hall Covered Court</strong>
+                                <span class="facility-loc">Putatan — Good</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- BAYANAN -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Bayanan <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(3 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>50. Covered Court, Bautista St.</strong>
+                                <span class="facility-loc">Bayanan — 540 sqm — Est. 2016 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>51. Covered Court, Baywalk</strong>
+                                <span class="facility-loc">Bayanan — 540 sqm — Est. 2006 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>52. Covered Court with Stage & CR, Pleasant Village</strong>
+                                <span class="facility-loc">Bayanan — 540 sqm — Est. 2016 — Good</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                </div>
+            </details>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             DISTRICT II COVERED COURTS
+        ════════════════════════════════════════════════════════════════ -->
+        <div class="edu-accordion" style="margin-top:16px;">
+            <details>
+                <summary><i class="fa-solid fa-chevron-right"></i> District II <span style="font-weight:400;color:var(--text-muted);font-size:0.82rem;">(21 facilities)</span></summary>
+                <div class="accordion-content">
+
+                    <!-- ALABANG -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Alabang <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(6 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>53. Covered Court, Filinvest Housing Site</strong>
+                                <span class="facility-loc">Alabang — 540 sqm — Est. Aug. 26, 2003 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>54. Covered Court, Alabang 400</strong>
+                                <span class="facility-loc">Alabang — 540 sqm — Est. Aug. 26, 2003 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>55. Covered Court, Morning Breeze</strong>
+                                <span class="facility-loc">Alabang — 540 sqm — Est. Feb. 18, 2005 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>56. Covered Court, San Jose Subdivision</strong>
+                                <span class="facility-loc">Alabang — 540 sqm — Est. Feb. 18, 2005 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>57. Covered Court, Rizal Village</strong>
+                                <span class="facility-loc">Alabang — 540 sqm — Est. 2006 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>58. Covered Court, Alabang Elementary School</strong>
+                                <span class="facility-loc">Alabang — Est. Feb. 23, 2022 — New</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- AYALA-ALABANG -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Ayala-Alabang <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(1 facility)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>59. Covered Court, Ayala-Alabang Village</strong>
+                                <span class="facility-loc">Ayala-Alabang — 540 sqm — Est. 2010 — Good</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- CUPANG -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Cupang <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(7 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>60. Covered Court, Intercity Homes</strong>
+                                <span class="facility-loc">Cupang — 540 sqm — Est. Aug. 26, 2003 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>61. Covered Court, Tierra Nueva Subdivision</strong>
+                                <span class="facility-loc">Cupang — 540 sqm — Est. Feb. 3, 2004 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>62. Covered Court, Liberty Homes</strong>
+                                <span class="facility-loc">Cupang — 540 sqm — Est. Feb. 18, 2005 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>63. Cupang Plaza Covered Court</strong>
+                                <span class="facility-loc">Cupang — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>64. Bunyi Compound Covered Court</strong>
+                                <span class="facility-loc">Cupang — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>65. Cupang Covered Court</strong>
+                                <span class="facility-loc">Cupang — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>66. Gymnasium (Covered Court), Cupang Senior High School</strong>
+                                <span class="facility-loc">Cupang — Est. Mar. 9, 2022 — New</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- BULI -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Buli <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(2 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>67. Covered Court, Buli Elementary School</strong>
+                                <span class="facility-loc">Buli — 540 sqm — Est. May 30, 2002 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>68. Buli Covered Court</strong>
+                                <span class="facility-loc">Buli — Good</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                    <!-- SUCAT -->
+                    <details style="margin-bottom:8px;">
+                        <summary class="barangay-label" style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;">
+                            <i class="fa-solid fa-chevron-right" style="color:#0891b2;font-size:0.7rem;transition:transform 0.2s;"></i> Sucat <span style="font-weight:400;color:var(--text-muted);font-size:0.78rem;">(5 facilities)</span>
+                        </summary>
+                        <ul class="facility-list" style="padding-left:20px;">
+                            <li class="facility-item">
+                                <strong>69. Covered Court, Don Juan Bayview Subdivision</strong>
+                                <span class="facility-loc">Sucat — 540 sqm — Est. 2006 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>70. Covered Court, Doña Rosario Bayview</strong>
+                                <span class="facility-loc">Sucat — 540 sqm — Est. 2016 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>71. Covered Court, Barangay Sucat</strong>
+                                <span class="facility-loc">Sucat — 540 sqm — Est. 2016 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>72. Covered Court, Stage with CR, Doña Rosario Heights</strong>
+                                <span class="facility-loc">Sucat — 540 sqm — Est. Dec. 14, 2017 — Good</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>73. Posadas Village Covered Court</strong>
+                                <span class="facility-loc">Sucat — Good</span>
+                            </li>
+                        </ul>
+                    </details>
+
+                </div>
+            </details>
+        </div>
+
+        <p class="facility-note">
+            <i class="fa-solid fa-circle-info" style="color:#0891b2;"></i>
+            Source: City Engineering Office, 2024. Total Covered Courts: 73
+        </p>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             GREEN BUILDINGS
+        ════════════════════════════════════════════════════════════════ -->
+        <div class="facility-section">
+            <div class="facility-header">
+                <div class="facility-header-icon" style="background:#065f46;">
+                    <i class="fa-solid fa-leaf" style="color:#fff;"></i>
+                </div>
+                <div>
+                    <h3>Green Building Facilities</h3>
+                    <p>Muntinlupa City • Source: City Engineering Office, 2024</p>
+                </div>
+            </div>
+
+            <div class="facility-summary">
+                Total of <strong>2 Green Building Facilities</strong> — both within Sucat barangay. Facilities incorporate sustainable features such as rainwater collectors and solar panels, with gender-friendly CR provisions.
+            </div>
+
+            <div class="edu-accordion">
+                <details>
+                    <summary><i class="fa-solid fa-chevron-right"></i> Sucat <span style="font-weight:400;color:var(--text-muted);font-size:0.82rem;">(2 facilities)</span></summary>
+                    <div class="accordion-content">
+                        <ul class="facility-list" style="padding-left:0;">
+                            <li class="facility-item">
+                                <strong>1. Colegio de Muntinlupa Building 1</strong>
+                                <span class="facility-loc">Sucat — 7,422.50 sqm — Rainwater Collector &amp; Solar Panel</span>
+                                <span class="facility-loc">Gender-Friendly CR: 8 HE; 8 SHE; 4 PWD HE; 4 PWD SHE</span>
+                            </li>
+                            <li class="facility-item">
+                                <strong>2. Colegio de Muntinlupa Building 2</strong>
+                                <span class="facility-loc">Sucat — 6,538.20 sqm — Rainwater Collector &amp; Solar Panel</span>
+                                <span class="facility-loc">Gender-Friendly CR: 6 HE; 6 SHE; 6 PWD HE; 6 PWD SHE</span>
+                            </li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+
+            <p class="facility-note">
+                <i class="fa-solid fa-circle-info" style="color:#0891b2;"></i>
+                Source: City Engineering Office, 2024. Total Green Building Facilities: 2
+            </p>
+        </div>
     </div>
 
     <footer class="dashboard-footer" aria-hidden="true">
@@ -1703,7 +2431,8 @@
         const SECTOR_ID = "infrastructure";
 
         // ─── MWSS Water Supply Default Data ──────────────────────────────────
-        const MWSS_STORAGE_KEY = 'muntinlupa_sector_data_water';
+        const MWSS_STORAGE_KEY = 'muntinlupa_sector_data_water_v2';
+        localStorage.removeItem('muntinlupa_sector_data_water');
 
         const DEFAULT_MWSS_DATA = {
             labels: ['2016', '2017', '2018', '2019', '2020', '2021', '2022'],
@@ -1724,12 +2453,12 @@
             },
             barangay: {
                 labels:          ['Alabang','Ayala Alabang','Bayanan','Buli','Cupang','Poblacion','Putatan','Sucat','Tunasan'],
-                domestic_conn:   [201690, 4754, 1000, 13855, null, 63835, 204493, 43405, 157761],
-                domestic_avg:    [237362, 169267, 34527, 46793, null, 188469, 241589, 148795, 1014790],
-                commercial_conn: [92,   3,   16,  111,  null, 204,  209,  42,   503],
-                commercial_avg:  [5873, 625, 875, 5023, null, 9971, 10892,1774,  6287],
-                industrial_conn: [8,    null, 1,  15,   null, 11,   5,    null,  403],
-                industrial_avg:  [2121, null, 60, 5023, null, 9371, 1714, null,  42000]
+                domestic_conn:   [7404, 4714, 6099, 1000, 5781, 10699, 13835, 6121, 9486],
+                domestic_avg:    [253028, 159287, 114140, 24577, 189406, 199019, 278566, 196358, 204415],
+                commercial_conn: [62, 121, 118, 14, 115, 107, 200, 53, 204],
+                commercial_avg:  [21557, 36456, 2759, 976, 8673, 5575, 10882, 8832, 9339],
+                industrial_conn: [7, 8, 7, 5, 15, 6, 13, 11, 31],
+                industrial_avg:  [2648, 806, 336, 884, 2529, 190, 1774, 1970, 4867]
             }
         };
 
@@ -1859,6 +2588,9 @@
         }
 
         async function fetchInfrastructureData() {
+            const statusTxt = document.getElementById('db-status-txt');
+            const statusDot = document.getElementById('db-dot');
+
             try {
                 if (!supabaseClient) throw new Error('Supabase client unavailable.');
 
@@ -1940,8 +2672,15 @@
                     };
                     infraData.barangay = FALLBACK_BARANGAY_SERIES;
                 }
+
+                statusTxt.textContent = 'Live Connected: infrastructure indicators synced';
+                statusDot.className = 'db-dot';
+                statusDot.style.backgroundColor = '#10b981';
             } catch (e) {
                 console.warn('Database connection unavailable, using integrated fallback values.', e);
+                statusTxt.textContent = 'Demo Mode: using packaged infrastructure baseline data';
+                statusDot.className = 'db-dot offline';
+                statusDot.style.backgroundColor = '#f59e0b';
             }
         }
 
@@ -2582,13 +3321,23 @@
                         animation: { duration: 250, easing: 'easeOutQuart' },
                         plugins: {
                             legend: { display: false },
-                            tooltip: mwssTooltip(ctx => `${ctx.label}: ${ctx.raw != null ? Number(ctx.raw).toLocaleString() : 'N/A'}`)
+                            tooltip: mwssTooltip(ctx => `${ctx.label}: ${ctx.raw != null ? Number(ctx.raw).toLocaleString() : 'N/A'}`),
+                            datalabels: {
+                                display: true,
+                                anchor: mwssBrgyType === 'bar' ? 'end' : 'end',
+                                align: mwssBrgyType === 'bar' ? 'top' : 'top',
+                                offset: 4,
+                                color: '#0e7490',
+                                font: { size: 10, weight: '600' },
+                                formatter: val => val != null ? Number(val).toLocaleString() : ''
+                            }
                         },
                         scales: {
                             y: { beginAtZero: true, title: { display: true, text: metricLabel }, grid: { color: 'rgba(3,3,3,0.05)' } },
                             x: { grid: { display: false } }
                         }
-                    }
+                    },
+                    plugins: [ChartDataLabels]
                 };
             }
             mwssBrgyChart = new Chart(ctx, config);
@@ -2657,9 +3406,234 @@
                 renderMWSSHHChart();
             });
         }
+
+        // ────────────────────────────────────────────────────────────────
+        //  ELECTRIFICATION CHARTS
+        // ────────────────────────────────────────────────────────────────
+        let electrificationChart = null;
+        let brgyElectrificationChart = null;
+        let electrificationChartType = 'bar';
+        let brgyElectrificationChartType = 'bar';
+
+        const ELECTRIFICATION_DATA = {
+            labels: ['2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2023'],
+            totalHouseholds: [110055,111298,112556,113828,124569,126895,131931,133931,138331,141789,148952],
+            electrifiedHouseholds: [106889,108639,110292,111890,122773,125352,129983,132809,134605,138250,142970],
+            electrificationRate: [97.12,97.61,97.99,98.30,98.56,98.78,98.98,99.16,97.31,97.50,95.98]
+        };
+
+        const BRGY_ELECTRIFICATION_DATA = {
+            labels: ['Tunasan','Poblacion','Putatan','Bayanan','Alabang','Ayala Alabang','Cupang','Buli','Sucat'],
+            data2019: [14164,24411,23821,10241,19544,4341,16739,2706,16842],
+            data2020: [14408,24591,24257,10489,19796,4358,17013,2734,16959],
+            data2021: [14736,24920,24907,10715,21097,4380,17315,2791,17389]
+        };
+
+        function renderElectrificationChart() {
+            if (electrificationChart) electrificationChart.destroy();
+            const ctx = document.getElementById('electrificationChart').getContext('2d');
+            const d = ELECTRIFICATION_DATA;
+            const gradTotal = ctx.createLinearGradient(0, 0, 0, 360);
+            gradTotal.addColorStop(0, '#f59e0b');
+            gradTotal.addColorStop(1, '#fbbf24');
+            const gradElectrified = ctx.createLinearGradient(0, 0, 0, 360);
+            gradElectrified.addColorStop(0, '#0891b2');
+            gradElectrified.addColorStop(1, '#67e8f9');
+
+            electrificationChart = new Chart(ctx, {
+                type: electrificationChartType,
+                data: {
+                    labels: d.labels,
+                    datasets: [
+                        {
+                            label: 'Total Households',
+                            data: d.totalHouseholds,
+                            backgroundColor: electrificationChartType === 'bar' ? gradTotal : 'rgba(245,158,11,0.12)',
+                            borderColor: '#f59e0b',
+                            borderWidth: electrificationChartType === 'line' ? 2.5 : 1,
+                            fill: electrificationChartType === 'line',
+                            tension: 0.3,
+                            pointBackgroundColor: '#f59e0b',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            borderRadius: electrificationChartType === 'bar' ? 6 : 0
+                        },
+                        {
+                            label: 'Electrified Households',
+                            data: d.electrifiedHouseholds,
+                            backgroundColor: electrificationChartType === 'bar' ? gradElectrified : 'rgba(8,145,178,0.12)',
+                            borderColor: '#0891b2',
+                            borderWidth: electrificationChartType === 'line' ? 2.5 : 1,
+                            fill: electrificationChartType === 'line',
+                            tension: 0.3,
+                            pointBackgroundColor: '#0891b2',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            borderRadius: electrificationChartType === 'bar' ? 6 : 0
+                        },
+                        {
+                            label: 'Electrification Rate (%)',
+                            data: d.electrificationRate,
+                            type: 'line',
+                            yAxisID: 'yRate',
+                            borderColor: '#ef4444',
+                            borderWidth: 2,
+                            borderDash: [6, 3],
+                            pointBackgroundColor: '#ef4444',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            fill: false,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    animation: { duration: 250, easing: 'easeOutQuart' },
+                    plugins: {
+                        legend: { display: true, position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+                        tooltip: {
+                            backgroundColor: 'rgba(15,23,42,0.93)',
+                            padding: 10,
+                            borderWidth: 1,
+                            borderColor: 'rgba(255,255,255,0.15)',
+                            callbacks: {
+                                label: function(ctx) {
+                                    if (ctx.dataset.label.includes('Rate')) return `Electrification Rate: ${ctx.raw}%`;
+                                    return `${ctx.dataset.label}: ${Number(ctx.raw).toLocaleString()}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: { display: true, text: 'Number of Households' },
+                            grid: { color: 'rgba(3,3,3,0.05)' },
+                            ticks: { callback: v => v >= 1000 ? (v/1000).toFixed(0) + 'k' : v }
+                        },
+                        yRate: {
+                            position: 'right',
+                            min: 94,
+                            max: 100,
+                            title: { display: true, text: 'Electrification Rate (%)' },
+                            grid: { display: false },
+                            ticks: { callback: v => v + '%' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function renderBrgyElectrificationChart() {
+            if (brgyElectrificationChart) brgyElectrificationChart.destroy();
+            const ctx = document.getElementById('brgyElectrificationChart').getContext('2d');
+            const d = BRGY_ELECTRIFICATION_DATA;
+            const isBar = brgyElectrificationChartType === 'bar';
+
+            brgyElectrificationChart = new Chart(ctx, {
+                type: brgyElectrificationChartType,
+                data: {
+                    labels: d.labels,
+                    datasets: [
+                        {
+                            label: '2019',
+                            data: d.data2019,
+                            backgroundColor: isBar ? 'rgba(245,158,11,0.85)' : 'rgba(245,158,11,0.12)',
+                            borderColor: '#f59e0b',
+                            borderWidth: isBar ? 1 : 2.5,
+                            fill: !isBar,
+                            tension: 0.3,
+                            pointBackgroundColor: '#f59e0b',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            borderRadius: isBar ? 6 : 0
+                        },
+                        {
+                            label: '2020',
+                            data: d.data2020,
+                            backgroundColor: isBar ? 'rgba(8,145,178,0.85)' : 'rgba(8,145,178,0.12)',
+                            borderColor: '#0891b2',
+                            borderWidth: isBar ? 1 : 2.5,
+                            fill: !isBar,
+                            tension: 0.3,
+                            pointBackgroundColor: '#0891b2',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            borderRadius: isBar ? 6 : 0
+                        },
+                        {
+                            label: '2021',
+                            data: d.data2021,
+                            backgroundColor: isBar ? 'rgba(16,185,129,0.85)' : 'rgba(16,185,129,0.12)',
+                            borderColor: '#10b981',
+                            borderWidth: isBar ? 1 : 2.5,
+                            fill: !isBar,
+                            tension: 0.3,
+                            pointBackgroundColor: '#10b981',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            borderRadius: isBar ? 6 : 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    animation: { duration: 250, easing: 'easeOutQuart' },
+                    plugins: {
+                        legend: { display: true, position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+                        tooltip: {
+                            backgroundColor: 'rgba(15,23,42,0.93)',
+                            padding: 10,
+                            borderWidth: 1,
+                            borderColor: 'rgba(255,255,255,0.15)',
+                            callbacks: {
+                                label: ctx => `${ctx.dataset.label}: ${Number(ctx.raw).toLocaleString()} households`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: { display: true, text: 'Electrified Households' },
+                            grid: { color: 'rgba(3,3,3,0.05)' },
+                            ticks: { callback: v => v >= 1000 ? (v/1000).toFixed(0) + 'k' : v }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderElectrificationChart();
+            renderBrgyElectrificationChart();
+            document.getElementById('electrificationChartType').addEventListener('change', e => {
+                electrificationChartType = e.target.value;
+                renderElectrificationChart();
+            });
+            document.getElementById('brgyElectrificationChartType').addEventListener('change', e => {
+                brgyElectrificationChartType = e.target.value;
+                renderBrgyElectrificationChart();
+            });
+        });
     </script>
 </body>
 </html>
-
-
-
