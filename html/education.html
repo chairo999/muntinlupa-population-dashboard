@@ -108,6 +108,40 @@
             color: white;
         }
 
+        /* Database Status Overlay */
+        .db-status-bar {
+            background: #f1f5f9;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-md);
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .db-status-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .db-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-emerald);
+            box-shadow: 0 0 6px var(--accent-emerald);
+        }
+
+        .db-dot.offline {
+            background-color: #f59e0b;
+            box-shadow: 0 0 6px #f59e0b;
+        }
+
         /* Interactive controls for charts */
         .chart-controls {
             display: flex;
@@ -213,6 +247,208 @@
             font-weight: 700;
             color: var(--text-primary);
         }
+        /* References / Source Badges */
+        .chart-reference {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(15, 23, 42, 0.08);
+            font-size: 0.75rem;
+            color: var(--text-muted, #64748b);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chart-reference i {
+            color: #ef4444;
+            font-size: 0.8rem;
+        }
+
+        /* Performance Indicator Styles */
+        .perf-indicator-section {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: var(--border-radius-lg, 12px);
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.02);
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: var(--transition-smooth);
+        }
+
+        .perf-indicator-section:hover {
+            border-color: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.04);
+        }
+
+        .perf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+            padding-bottom: 16px;
+        }
+
+        .perf-header h4 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-primary, #0f172a);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .perf-header h4 i {
+            color: #ef4444;
+        }
+
+        .perf-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .perf-tab-btn {
+            background: #f1f5f9;
+            color: var(--text-secondary, #475569);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .perf-tab-btn:hover {
+            background: #e2e8f0;
+            color: var(--text-primary);
+        }
+
+        .perf-tab-btn.active {
+            background: #e1271a;
+            color: #ffffff;
+            border-color: #e1271a;
+        }
+
+        .perf-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+        }
+
+        .perf-kpi-card {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 14px;
+            border: 1px solid rgba(15, 23, 42, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transition: var(--transition-smooth);
+        }
+
+        .perf-kpi-card:hover {
+            border-color: rgba(239, 68, 68, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .perf-kpi-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .perf-kpi-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #ef4444;
+        }
+
+        .perf-kpi-sub {
+            font-size: 0.72rem;
+            color: #475569;
+        }
+
+        .perf-table-wrapper {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            max-height: 380px;
+            overflow-y: auto;
+        }
+
+        .perf-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            text-align: left;
+        }
+
+        .perf-table th {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            font-weight: 700;
+            padding: 10px 14px;
+            border-bottom: 2px solid rgba(15, 23, 42, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .perf-table td {
+            padding: 9px 14px;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+            color: #334155;
+        }
+
+        .perf-table tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .perf-table tr.row-overall {
+            background-color: #fffafb;
+            font-weight: 700;
+        }
+
+        .perf-table td.sub-row {
+            padding-left: 28px;
+            font-size: 0.78rem;
+            color: #64748b;
+        }
+
+        .badge-public {
+            background-color: #dbeafe;
+            color: #1e40af;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.68rem;
+            font-weight: 700;
+        }
+
+        .badge-private {
+            background-color: #fce7f3;
+            color: #9d174d;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.68rem;
+            font-weight: 700;
+        }
+
+        .badge-overall {
+            background-color: #fee2e2;
+            color: #991b1b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.68rem;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
@@ -256,6 +492,13 @@
     </aside>
 
     <div class="dashboard-container">
+        <!-- Live Connection Status Alert Bar -->
+        <div class="db-status-bar">
+            <div class="db-status-left">
+                <div id="db-dot" class="db-dot"></div>
+                <span id="db-status-txt">Connected to live Supabase DB</span>
+            </div>
+        </div>
 
         <!-- Main Stats Summary Banner -->
         <section class="stats-banner">
@@ -296,7 +539,7 @@
                 <div class="stat-data">
                     <span class="stat-label">CDM College Enrollment</span>
                     <h2 id="card-cdm">2,821</h2>
-                    <span class="stat-pct" style="color: var(--text-muted)">Engineering & Arch</span>
+                    <span class="stat-pct" id="card-cdm-split" style="color: var(--text-muted)">1,722 Male | 1,099 Female</span>
                 </div>
             </div>
         </section>
@@ -318,6 +561,9 @@
                     <div class="canvas-container">
                         <canvas id="literacyChart"></canvas>
                     </div>
+                    <div class="chart-reference">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> Philippine Statistics Authority (PSA), 2007-2020; 2024 Functional Literacy, Education and Mass Media Survey (FLEMMS)
+                    </div>
                 </div>
 
                 <!-- Chart 2: Public vs Private Enrollment -->
@@ -332,6 +578,9 @@
                     </div>
                     <div class="canvas-container">
                         <canvas id="enrollmentChart"></canvas>
+                    </div>
+                    <div class="chart-reference">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> DepEd Muntinlupa, School Year 2025
                     </div>
                 </div>
 
@@ -351,6 +600,14 @@
                     </div>
                     <div class="canvas-container">
                         <canvas id="cdmChart"></canvas>
+                    </div>
+                    <div class="cdm-gender-summary" style="display: flex; justify-content: space-around; font-size: 0.78rem; font-weight: 700; background: #f8fafc; padding: 8px 12px; border-radius: 6px; margin-top: 4px; border: 1px solid rgba(15, 23, 42, 0.05);">
+                        <span style="color: #475569;"><i class="fa-solid fa-users"></i> Total Enrolled: <strong>2,821</strong></span>
+                        <span style="color: #2563eb;"><i class="fa-solid fa-mars"></i> Male: <strong>1,722</strong> (61.0%)</span>
+                        <span style="color: #db2777;"><i class="fa-solid fa-venus"></i> Female: <strong>1,099</strong> (39.0%)</span>
+                    </div>
+                    <div class="chart-reference">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> Colegio de Muntinlupa (CDM) Registrar, SY 2025
                     </div>
                 </div>
 
@@ -400,8 +657,77 @@
                             <canvas id="daycareChart"></canvas>
                         </div>
                     </div>
+                    <div class="chart-reference">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> Early Childhood Care and Development (ECCD) / CSWDO Muntinlupa, 2025
+                    </div>
                 </div>
 
+            </div>
+
+            <!-- Section: DepEd Basic Education Performance Indicators -->
+            <div class="perf-indicator-section">
+                <div class="perf-header">
+                    <div>
+                        <h4><i class="fa-solid fa-square-poll-vertical"></i> Basic Education Performance Indicators (SY 2024-2025)</h4>
+                        <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px;">Sex-disaggregated & Sector key performance metrics across educational levels</p>
+                    </div>
+                    <div class="perf-tabs" id="perf-tabs">
+                        <button class="perf-tab-btn active" data-tab="kinder">Kindergarten</button>
+                        <button class="perf-tab-btn" data-tab="grade1">Grade 1 & Transition</button>
+                        <button class="perf-tab-btn" data-tab="elem">Elementary (Kinder - G6)</button>
+                        <button class="perf-tab-btn" data-tab="g1_6">Grades 1-6</button>
+                        <button class="perf-tab-btn" data-tab="jhs">Junior High (G7-10)</button>
+                        <button class="perf-tab-btn" data-tab="shs">Senior High (G11-12)</button>
+                        <button class="perf-tab-btn" data-tab="sec_overall">Secondary Overall (G7-12)</button>
+                    </div>
+                </div>
+
+                <!-- KPI Highlight Grid -->
+                <div class="perf-kpi-grid" id="perf-kpi-container">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Table & Chart Grid -->
+                <div class="charts-container-grid full-width" style="grid-template-columns: 1.2fr 1fr; gap: 20px;">
+                    <!-- Data Table -->
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <h5 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary);"><i class="fa-solid fa-table-list" style="color: #ef4444;"></i> Performance Indicators Data Table</h5>
+                        <div class="perf-table-wrapper">
+                            <table class="perf-table">
+                                <thead>
+                                    <tr>
+                                        <th>Performance Indicator</th>
+                                        <th style="text-align: center;">Male</th>
+                                        <th style="text-align: center;">Female</th>
+                                        <th style="text-align: center;">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="perf-table-body">
+                                    <!-- Loaded via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Visual Graph -->
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div class="chart-title-wrapper" style="border-bottom: none; padding-bottom: 0;">
+                            <h5 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary);"><i class="fa-solid fa-chart-column" style="color: #ef4444;"></i> Visual Indicator Comparison</h5>
+                            <select id="perfChartType" class="chart-type-select">
+                                <option value="bar">Bar Graph</option>
+                                <option value="line">Line Graph</option>
+                            </select>
+                        </div>
+                        <div class="canvas-container" style="height: 330px;">
+                            <canvas id="perfChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Reference Footer -->
+                <div class="chart-reference">
+                    <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> Department of Education (DepEd) Muntinlupa, Basic Education Information System (BEIS), School Year 2024-2025
+                </div>
             </div>
 
             <div class="charts-container-grid">
@@ -417,6 +743,9 @@
                     <div class="canvas-container">
                         <canvas id="plmunChart"></canvas>
                     </div>
+                    <div class="chart-reference">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> Pamantasan ng Lungsod ng Muntinlupa (PLMUN), AY 2022-2023
+                    </div>
                 </div>
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
@@ -429,6 +758,9 @@
                     </div>
                     <div class="canvas-container">
                         <canvas id="tesdaChart"></canvas>
+                    </div>
+                    <div class="chart-reference">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> Muntinlupa City Technical Institute (MCTI) / TESDA, 2025
                     </div>
                 </div>
             </div>
@@ -569,6 +901,9 @@
         }
 
         async function fetchEducationData() {
+            const statusTxt = document.getElementById("db-status-txt");
+            const statusDot = document.getElementById("db-dot");
+
             if (supabaseClient) {
                 try {
                     const { data: allRows, error } = await supabaseClient
@@ -667,10 +1002,18 @@
                     } else {
                         eduData = {};
                     }
+
+                    statusTxt.textContent = "Live Connected: Syncing from data_values table";
+                    statusDot.className = "db-dot";
+                    statusDot.style.backgroundColor = "#10b981";
                 } catch (e) {
                     console.warn("Supabase load failed. Using fallback.", e);
+                    statusTxt.textContent = "Offline Mode";
+                    statusDot.className = "db-dot offline";
                 }
             } else {
+                statusTxt.textContent = "Offline Mode";
+                statusDot.className = "db-dot offline";
             }
         }
 
@@ -739,7 +1082,7 @@
                 const v = getLatestValue(k);
                 if (v) totEnroll += v;
             });
-            countUp(document.getElementById("card-enrollment"), totEnroll, 600);
+            document.getElementById("card-enrollment").textContent = totEnroll.toLocaleString();
 
             let cdmTot = 0;
             Object.keys(eduData).filter(k => k.startsWith("CDM - ")).forEach(k => {
@@ -765,6 +1108,7 @@
             renderPLMUNChart();
             renderTESDAChart();
             initDaycareWidget();
+            initPerfIndicatorWidget();
         }
 
         function renderLiteracyChart() {
@@ -905,9 +1249,22 @@
 
         function renderCDMChart() {
             if (cdmChartInst) { cdmChartInst.destroy(); cdmChartInst = null; }
-            const courses = Object.keys(eduData).filter(k => k.startsWith("CDM - ")).sort();
-            const shortLabels = courses.map(c => c.replace("CDM - ", "").replace("BS ", ""));
-            const cdmCounts = courses.map(c => getLatestValue(c) || 0);
+            const cdmPrograms = [
+                { name: "BS Architecture", short: "BS Arch", male: 157, female: 215 },
+                { name: "BS Civil Engineering", short: "BS CE", male: 538, female: 449 },
+                { name: "BS Computer Engineering", short: "BS CpE", male: 372, female: 137 },
+                { name: "BS Electronics Engineering", short: "BS EE", male: 98, female: 63 },
+                { name: "BS Electrical Engineering", short: "BS ECE", male: 154, female: 33 },
+                { name: "BS Environmental & Sanitation Eng.", short: "BS ENE", male: 14, female: 17 },
+                { name: "BS Industrial Engineering", short: "BS IE", male: 115, female: 115 },
+                { name: "BS Mechanical Engineering", short: "BS ME", male: 274, female: 70 }
+            ];
+
+            const shortLabels = cdmPrograms.map(p => p.short);
+            const maleCounts = cdmPrograms.map(p => p.male);
+            const femaleCounts = cdmPrograms.map(p => p.female);
+            const totalCounts = cdmPrograms.map(p => p.male + p.female);
+            
             const ctx = document.getElementById("cdmChart").getContext("2d");
             const gradient = makeGradient(ctx);
 
@@ -916,43 +1273,92 @@
             if (cdmChartType === "pie") {
                 config = {
                     type: "pie",
-                    data: { labels: shortLabels, datasets: [{ label: 'CDM Enrollment', data: cdmCounts, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
-                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Enrollees: ${ctx.raw.toLocaleString()}`) } }
+                    data: {
+                        labels: shortLabels,
+                        datasets: [{
+                            label: 'Total Enrollment',
+                            data: totalCounts,
+                            backgroundColor: PIE_COLORS,
+                            hoverBackgroundColor: PIE_HOVER_COLORS,
+                            hoverBorderColor: "#fff",
+                            hoverBorderWidth: 3,
+                            borderColor: "#fff",
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        hover: { mode: 'nearest', intersect: true },
+                        plugins: {
+                            legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } },
+                            tooltip: baseTooltip(ctx => {
+                                const prog = cdmPrograms[ctx.dataIndex];
+                                return ` Total: ${ctx.raw.toLocaleString()} (Male: ${prog.male}, Female: ${prog.female})`;
+                            })
+                        }
+                    }
                 };
             } else {
                 config = {
                     type: cdmChartType,
                     data: {
                         labels: shortLabels,
-                        datasets: [{
-                            label: 'CDM Enrollment',
-                            data: cdmCounts,
-                            backgroundColor: gradient,
-                            hoverBackgroundColor: "#e1271a52",
-                            hoverBorderColor: "#e1271a52",
-                            hoverBorderWidth: 4,
-                            borderColor: cdmChartType === "line" ? "#d91406" : undefined,
-                            borderWidth: cdmChartType === "line" ? 3 : undefined,
-                            pointBackgroundColor: "#e1271a",
-                            pointBorderColor: "#f8fafc",
-                            pointBorderWidth: 2,
-                            pointRadius: 5,
-                            pointHoverRadius: 9,
-                            pointHoverBackgroundColor: "#ff2a2a",
-                            pointHoverBorderColor: "#fff",
-                            pointHoverBorderWidth: 3,
-                            fill: false,
-                            tension: 0.2,
-                            borderRadius: cdmChartType === "bar" ? 6 : 0
-                        }]
+                        datasets: [
+                            {
+                                label: 'Male',
+                                data: maleCounts,
+                                backgroundColor: "#7ea8f7",
+                                hoverBackgroundColor: "#7EA8F77D",
+                                hoverBorderColor: "#7EA8F77D",
+                                hoverBorderWidth: 4,
+                                borderColor: cdmChartType === "line" ? "#7ea8f7" : undefined,
+                                borderWidth: cdmChartType === "line" ? 3 : undefined,
+                                pointBackgroundColor: "#7ea8f7",
+                                pointBorderColor: "#f8fafc",
+                                pointBorderWidth: 2,
+                                pointRadius: 5,
+                                pointHoverRadius: 9,
+                                pointHoverBackgroundColor: "#7ea8f7",
+                                pointHoverBorderColor: "#fff",
+                                pointHoverBorderWidth: 3,
+                                fill: false,
+                                tension: 0.2,
+                                borderRadius: cdmChartType === "bar" ? 6 : 0
+                            },
+                            {
+                                label: 'Female',
+                                data: femaleCounts,
+                                backgroundColor: "#ff7ac8",
+                                hoverBackgroundColor: "#FF7AC885",
+                                hoverBorderColor: "#FF7AC885",
+                                hoverBorderWidth: 4,
+                                borderColor: cdmChartType === "line" ? "#ff7ac8" : undefined,
+                                borderWidth: cdmChartType === "line" ? 2 : undefined,
+                                pointBackgroundColor: "#ff7ac8",
+                                pointBorderColor: "#f8fafc",
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 8,
+                                pointHoverBackgroundColor: "#ff7ac8",
+                                pointHoverBorderColor: "#fff",
+                                pointHoverBorderWidth: 3,
+                                fill: false,
+                                tension: 0.2,
+                                borderRadius: cdmChartType === "bar" ? 6 : 0
+                            }
+                        ]
                     },
                     options: baseLineOpts({
                         indexAxis: cdmChartType === "bar" ? "y" : "x",
                         scales: {
-                            x: { grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } },
-                            y: { grid: { display: false }, ticks: { color: "#000000b3" } }
+                            x: { stacked: cdmChartType === "bar", grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } },
+                            y: { stacked: cdmChartType === "bar", grid: { display: false }, ticks: { color: "#000000b3" } }
                         },
-                        plugins: { legend: { display: false }, tooltip: baseTooltip(ctx => ` Enrollees: ${ctx.raw.toLocaleString()}`) }
+                        plugins: {
+                            legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } },
+                            tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`)
+                        }
                     })
                 };
             }
