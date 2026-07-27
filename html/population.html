@@ -77,6 +77,24 @@
                     <h2 id="selected-brgy-val">City-Wide</h2>
                 </div>
             </div>
+            <div class="stat-card" id="card-projected-male">
+                <div class="stat-icon-wrapper male-icon">
+                    <i class="fa-solid fa-mars"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Projected Male</span>
+                    <h2 id="projected-male-val">0</h2>
+                </div>
+            </div>
+            <div class="stat-card" id="card-projected-female">
+                <div class="stat-icon-wrapper female-icon">
+                    <i class="fa-solid fa-venus"></i>
+                </div>
+                <div class="stat-data">
+                    <span class="stat-label">Projected Female</span>
+                    <h2 id="projected-female-val">0</h2>
+                </div>
+            </div>
         </section>
 
         <!-- Main Grid Layout -->
@@ -334,6 +352,39 @@
                         </div>
                         <div class="canvas-container trend-container">
                             <canvas id="barangayBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Population Pyramid Panel -->
+            <section class="grid-panel pyramid-panel">
+                <div class="panel-header-pyramid flex-header">
+                    <h3><i class="fa-solid fa-users-rays"></i> Projected Population Pyramid</h3>
+                    <div class="badge" id="pyramid-year-badge">2020-2030</div>
+                </div>
+
+                <div class="charts-wrapper-pyramid">
+                    <div class="chart-card-pyramid span-full">
+                        <div class="chart-title-wrapper">
+                            <h5><i class="fa-solid fa-venus-mars"></i> Age & Sex Distribution</h5>
+                            <!-- Optional Year Selector for Pyramid -->
+                            <select id="pyramid-year-select" class="chart-type-select">
+                                <option value="2020">July 2020</option>
+                                <option value="2021">July 2021</option>
+                                <option value="2022">July 2022</option>
+                                <option value="2023">July 2023</option>
+                                <option value="2024">July 2024</option>
+                                <option value="2025">July 2025</option>
+                                <option value="2026" selected>July 2026</option>
+                                <option value="2027">July 2027</option>
+                                <option value="2028">July 2028</option>
+                                <option value="2029">July 2029</option>
+                                <option value="2030">July 2030</option>
+                            </select>
+                        </div>
+                        <div class="canvas-container" style="height: 810px;">
+                            <canvas id="pyramidChart"></canvas>
                         </div>
                     </div>
                 </div>
