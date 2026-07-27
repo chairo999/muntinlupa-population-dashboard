@@ -108,6 +108,40 @@
             color: white;
         }
 
+        /* Database Status Overlay */
+        .db-status-bar {
+            background: #f1f5f9;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius-md);
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .db-status-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .db-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-emerald);
+            box-shadow: 0 0 6px var(--accent-emerald);
+        }
+
+        .db-dot.offline {
+            background-color: #f59e0b;
+            box-shadow: 0 0 6px #f59e0b;
+        }
+
         /* Interactive controls for charts */
         .chart-controls {
             display: flex;
@@ -123,7 +157,7 @@
             padding: 5px 10px;
             font-family: 'Montserrat', sans-serif;
             font-size: 0.8rem;
-            font-weight: 700;
+            font-weight: 600;
             cursor: pointer;
             outline: none;
             transition: var(--transition-smooth);
@@ -148,10 +182,6 @@
             cursor: pointer;
             outline: none;
             border: none;
-        }
-
-        .chart-type-select option {
-            font-weight: 700;
         }
 
         /* Daycare details spotlight panel */
@@ -256,6 +286,14 @@
     </aside>
 
     <div class="dashboard-container">
+        
+        <!-- Live Connection Status Alert Bar -->
+        <div class="db-status-bar">
+            <div class="db-status-left">
+                <div id="db-dot" class="db-dot"></div>
+                <span id="db-status-txt">Connected to live Supabase DB</span>
+            </div>
+        </div>
 
         <!-- Main Stats Summary Banner -->
         <section class="stats-banner">
@@ -445,19 +483,6 @@
 
     <!-- Page Logic JavaScript -->
     <script>
-        function countUp(element, target, duration, suffix) {
-            if (!element) return;
-            duration = duration || 600;
-            const start = performance.now();
-            function tick(now) {
-                const elapsed = Math.min((now - start) / duration, 1);
-                const eased = 1 - Math.pow(1 - elapsed, 3);
-                element.textContent = Math.round(target * eased).toLocaleString() + (suffix || "");
-                if (elapsed < 1) requestAnimationFrame(tick);
-            }
-            requestAnimationFrame(tick);
-        }
-
         const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
 
@@ -569,6 +594,9 @@
         }
 
         async function fetchEducationData() {
+            const statusTxt = document.getElementById("db-status-txt");
+            const statusDot = document.getElementById("db-dot");
+            
             if (supabaseClient) {
                 try {
                     const { data: allRows, error } = await supabaseClient
@@ -667,10 +695,18 @@
                     } else {
                         eduData = {};
                     }
+
+                    statusTxt.textContent = "Live Connected: Syncing from data_values table";
+                    statusDot.className = "db-dot";
+                    statusDot.style.backgroundColor = "#10b981";
                 } catch (e) {
                     console.warn("Supabase load failed. Using fallback.", e);
+                    statusTxt.textContent = "Offline Mode";
+                    statusDot.className = "db-dot offline";
                 }
             } else {
+                statusTxt.textContent = "Offline Mode";
+                statusDot.className = "db-dot offline";
             }
         }
 
@@ -717,20 +753,7 @@
 
         function renderStatsBanner() {
             const litVal = getLatestValue("Literacy Rate");
-            const litEl = document.getElementById("card-literacy");
-            if (litVal !== null) {
-                const duration = 600;
-                const startTime = performance.now();
-                function tickLit(now) {
-                    const elapsed = Math.min((now - startTime) / duration, 1);
-                    const eased = 1 - Math.pow(1 - elapsed, 3);
-                    litEl.textContent = (litVal * eased).toFixed(2) + "%";
-                    if (elapsed < 1) requestAnimationFrame(tickLit);
-                }
-                requestAnimationFrame(tickLit);
-            } else {
-                litEl.textContent = "--";
-            }
+            document.getElementById("card-literacy").textContent = litVal !== null ? `${litVal}%` : '--';
 
             let totEnroll = 0;
             const pubKeys = Object.keys(eduData).filter(k => k.startsWith("Public Enrollment - "));
@@ -739,23 +762,14 @@
                 const v = getLatestValue(k);
                 if (v) totEnroll += v;
             });
-            countUp(document.getElementById("card-enrollment"), totEnroll, 600);
+            document.getElementById("card-enrollment").textContent = totEnroll.toLocaleString();
 
             let cdmTot = 0;
             Object.keys(eduData).filter(k => k.startsWith("CDM - ")).forEach(k => {
                 const v = getLatestValue(k);
                 if (v) cdmTot += v;
             });
-            countUp(document.getElementById("card-cdm"), cdmTot, 600);
-
-            const pubSchools = getLatestValue("Public Schools Count");
-            const privSchools = getLatestValue("Private Schools Count");
-            if (pubSchools !== null || privSchools !== null) {
-                const ps = pubSchools || 0;
-                const prs = privSchools || 0;
-                countUp(document.getElementById("card-schools"), ps + prs, 600);
-                document.getElementById("card-schools-split").textContent = `${ps} Public, ${prs} Private`;
-            }
+            document.getElementById("card-cdm").textContent = cdmTot.toLocaleString();
         }
 
         function renderAllCharts() {
@@ -804,7 +818,7 @@
                             hoverBorderColor: "#e1271a52",
                             hoverBorderWidth: 4,
                             backgroundColor: gradient,
-                            fill: false,
+                            fill: literacyChartType === "line",
                             tension: 0.15,
                             borderRadius: literacyChartType === "bar" ? 6 : 0
                         }]
@@ -863,7 +877,7 @@
                                 pointHoverBackgroundColor: "#ff2a2a",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
-                                fill: false,
+                                fill: enrollmentChartType === "line",
                                 tension: 0.2,
                                 borderRadius: enrollmentChartType === "bar" ? 6 : 0
                             },
@@ -884,7 +898,7 @@
                                 pointHoverBackgroundColor: "#ff6666",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
-                                fill: false,
+                                fill: enrollmentChartType === "line",
                                 tension: 0.2,
                                 borderRadius: enrollmentChartType === "bar" ? 6 : 0
                             }
@@ -941,7 +955,7 @@
                             pointHoverBackgroundColor: "#ff2a2a",
                             pointHoverBorderColor: "#fff",
                             pointHoverBorderWidth: 3,
-                            fill: false,
+                            fill: cdmChartType === "line",
                             tension: 0.2,
                             borderRadius: cdmChartType === "bar" ? 6 : 0
                         }]
@@ -1000,42 +1014,42 @@
                             {
                                 label: 'Male',
                                 data: maleData,
-                                backgroundColor: "#7ea8f7",
-                                hoverBackgroundColor: "#7EA8F77D",
-                                hoverBorderColor: "#7EA8F77D",
+                                backgroundColor: gradient,
+                                hoverBackgroundColor: "#e1271a52",
+                                hoverBorderColor: "#e1271a52",
                                 hoverBorderWidth: 4,
-                                borderColor: plmunChartType === "line" ? "#7ea8f7" : undefined,
+                                borderColor: plmunChartType === "line" ? "#d91406" : undefined,
                                 borderWidth: plmunChartType === "line" ? 3 : undefined,
-                                pointBackgroundColor: "#7ea8f7",
+                                pointBackgroundColor: "#e1271a",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
                                 pointRadius: 5,
                                 pointHoverRadius: 9,
-                                pointHoverBackgroundColor: "#7ea8f7",
+                                pointHoverBackgroundColor: "#ff2a2a",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
-                                fill: false,
+                                fill: plmunChartType === "line",
                                 tension: 0.2,
                                 borderRadius: plmunChartType === "bar" ? 6 : 0
                             },
                             {
                                 label: 'Female',
                                 data: femaleData,
-                                backgroundColor: "#ff7ac8",
-                                hoverBackgroundColor: "#FF7AC885",
-                                hoverBorderColor: "#FF7AC885",
+                                backgroundColor: plmunChartType === "line" ? "rgba(239, 68, 68, 0.3)" : "rgba(239, 68, 68, 0.4)",
+                                hoverBackgroundColor: "#e1271a52",
+                                hoverBorderColor: "#e1271a52",
                                 hoverBorderWidth: 4,
-                                borderColor: plmunChartType === "line" ? "#ff7ac8" : undefined,
+                                borderColor: plmunChartType === "line" ? "#ef4444" : undefined,
                                 borderWidth: plmunChartType === "line" ? 2 : undefined,
-                                pointBackgroundColor: "#ff7ac8",
+                                pointBackgroundColor: "#ef4444",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
                                 pointRadius: 4,
                                 pointHoverRadius: 8,
-                                pointHoverBackgroundColor: "#ff7ac8",
+                                pointHoverBackgroundColor: "#ff6666",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
-                                fill: false,
+                                fill: plmunChartType === "line",
                                 tension: 0.2,
                                 borderRadius: plmunChartType === "bar" ? 6 : 0
                             }
@@ -1094,42 +1108,42 @@
                             {
                                 label: 'Male Trainees',
                                 data: maleData,
-                                backgroundColor: "#7ea8f7",
-                                hoverBackgroundColor: "#7EA8F77D",
-                                hoverBorderColor: "#7EA8F77D",
+                                backgroundColor: gradient,
+                                hoverBackgroundColor: "#e1271a52",
+                                hoverBorderColor: "#e1271a52",
                                 hoverBorderWidth: 4,
-                                borderColor: tesdaChartType === "line" ? "#7ea8f7" : undefined,
+                                borderColor: tesdaChartType === "line" ? "#d91406" : undefined,
                                 borderWidth: tesdaChartType === "line" ? 3 : undefined,
-                                pointBackgroundColor: "#7ea8f7",
+                                pointBackgroundColor: "#e1271a",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
                                 pointRadius: 5,
                                 pointHoverRadius: 9,
-                                pointHoverBackgroundColor: "#7ea8f7",
+                                pointHoverBackgroundColor: "#ff2a2a",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
-                                fill: false,
+                                fill: tesdaChartType === "line",
                                 tension: 0.2,
                                 borderRadius: tesdaChartType === "bar" ? 6 : 0
                             },
                             {
                                 label: 'Female Trainees',
                                 data: femaleData,
-                                backgroundColor: "#ff7ac8",
-                                hoverBackgroundColor: "#FF7AC885",
-                                hoverBorderColor: "#FF7AC885",
+                                backgroundColor: tesdaChartType === "line" ? "rgba(239, 68, 68, 0.3)" : "rgba(239, 68, 68, 0.4)",
+                                hoverBackgroundColor: "#e1271a52",
+                                hoverBorderColor: "#e1271a52",
                                 hoverBorderWidth: 4,
-                                borderColor: tesdaChartType === "line" ? "#ff7ac8" : undefined,
+                                borderColor: tesdaChartType === "line" ? "#ef4444" : undefined,
                                 borderWidth: tesdaChartType === "line" ? 2 : undefined,
-                                pointBackgroundColor: "#ff7ac8",
+                                pointBackgroundColor: "#ef4444",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
                                 pointRadius: 4,
                                 pointHoverRadius: 8,
-                                pointHoverBackgroundColor: "#ff7ac8",
+                                pointHoverBackgroundColor: "#ff6666",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
-                                fill: false,
+                                fill: tesdaChartType === "line",
                                 tension: 0.2,
                                 borderRadius: tesdaChartType === "bar" ? 6 : 0
                             }
@@ -1210,42 +1224,42 @@
                             {
                                 label: 'Male Students',
                                 data: maleData,
-                                backgroundColor: "#7ea8f7",
-                                hoverBackgroundColor: "#7EA8F77D",
-                                hoverBorderColor: "#7EA8F77D",
+                                backgroundColor: gradient,
+                                hoverBackgroundColor: "#e1271a52",
+                                hoverBorderColor: "#e1271a52",
                                 hoverBorderWidth: 4,
-                                borderColor: daycareChartType === "line" ? "#7ea8f7 " : undefined,
+                                borderColor: daycareChartType === "line" ? "#d91406" : undefined,
                                 borderWidth: daycareChartType === "line" ? 3 : undefined,
-                                pointBackgroundColor: "#7ea8f7 ",
+                                pointBackgroundColor: "#e1271a",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
                                 pointRadius: 5,
                                 pointHoverRadius: 9,
-                                pointHoverBackgroundColor: "#7ea8f7 ",
+                                pointHoverBackgroundColor: "#ff2a2a",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
-                                fill: false,
+                                fill: daycareChartType === "line",
                                 tension: 0.2,
                                 borderRadius: daycareChartType === "bar" ? 6 : 0
                             },
                             {
                                 label: 'Female Students',
                                 data: femaleData,
-                                backgroundColor: "#ff7ac8",
-                                hoverBackgroundColor: "#FF7AC885",
-                                hoverBorderColor: "#FF7AC885",
+                                backgroundColor: daycareChartType === "line" ? "rgba(239, 68, 68, 0.3)" : "rgba(239, 68, 68, 0.4)",
+                                hoverBackgroundColor: "#e1271a52",
+                                hoverBorderColor: "#e1271a52",
                                 hoverBorderWidth: 4,
-                                borderColor: daycareChartType === "line" ? "#ff7ac8 " : undefined,
+                                borderColor: daycareChartType === "line" ? "#ef4444" : undefined,
                                 borderWidth: daycareChartType === "line" ? 2 : undefined,
-                                pointBackgroundColor: "#ff7ac8",
+                                pointBackgroundColor: "#ef4444",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
                                 pointRadius: 4,
                                 pointHoverRadius: 8,
-                                pointHoverBackgroundColor: "#ff7ac8",
+                                pointHoverBackgroundColor: "#ff6666",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
-                                fill: false,
+                                fill: daycareChartType === "line",
                                 tension: 0.2,
                                 borderRadius: daycareChartType === "bar" ? 6 : 0
                             }
