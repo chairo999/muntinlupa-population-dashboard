@@ -1665,8 +1665,8 @@
             const overallRows = rows.filter(r => r.category_type === 'overall');
             const kpis = overallRows.map(r => ({
                 label: r.indicator_name,
-                val: r.total_value,
-                sub: `Male: ${r.male_value} | Female: ${r.female_value}`
+                val: `${r.total_value}%`,
+                sub: `Male: ${r.male_value}% | Female: ${r.female_value}%`
             }));
 
             return {
@@ -1674,9 +1674,9 @@
                 kpis,
                 rows: rows.map(r => ({
                     indicator: r.category_type === 'overall' ? r.indicator_name : r.category_type.charAt(0).toUpperCase() + r.category_type.slice(1),
-                    male: r.male_value,
-                    female: r.female_value,
-                    total: r.total_value,
+                    male: `${r.male_value}%`,
+                    female: `${r.female_value}%`,
+                    total: `${r.total_value}%`,
                     type: r.category_type,
                     indicator_name: r.indicator_name
                 }))
