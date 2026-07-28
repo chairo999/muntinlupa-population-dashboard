@@ -94,12 +94,7 @@
             gap: 20px;
             transition: var(--transition-smooth);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-        }
-
-        .stat-card:hover {
-            border-color: rgba(239, 68, 68, 0.2);
-            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.04);
-        }
+        }       
 
         .stat-icon-wrapper.health-icon-red {
             width: 54px;
@@ -636,7 +631,7 @@
                 pointHoverBorderColor: "#fff",
                 pointHoverBorderWidth: 3,
                 fill: false,
-                tension: 0.15
+                tension: 0.2
             };
         }
 
@@ -679,10 +674,10 @@
                                 const ds = makeDatasetStyle(v.color, isLine);
                                 ds.label = v.label;
                                 ds.data = healthData[v.key]?.history || [];
-                                ds.backgroundColor = i === 0 ? gradient : (isLine ? 'transparent' : `${v.color}66`);
+                                ds.backgroundColor = isLine ? 'transparent' : (i === 0 ? gradient : `${v.color}66`);
                                 ds.yAxisID = 'y';
                                 ds.spanGaps = true;
-                                ds.pointStyle = v.key === "Child Woman Ratio (CWR)" ? 'rectRot' : 'circle';
+                                ds.pointStyle = v.key === "Child Woman Ratio (CWR)" ? 'circle' : 'circle';
                                 ds.borderRadius = isLine ? 0 : 6;
                                 return ds;
                             }),
@@ -693,7 +688,7 @@
                                 ds.backgroundColor = isLine ? 'transparent' : `${mmrKey.color}66`;
                                 ds.yAxisID = 'y1';
                                 ds.spanGaps = true;
-                                ds.pointStyle = 'triangle';
+                                ds.pointStyle = 'circle';
                                 ds.borderRadius = isLine ? 0 : 6;
                                 return ds;
                             })()
@@ -792,7 +787,7 @@
                             const ds = makeDatasetStyle(v.color, isLine);
                             ds.label = v.label;
                             ds.data = healthData[v.key]?.history || [];
-                            ds.backgroundColor = i === 0 ? gradient : (isLine ? 'transparent' : `${v.color}66`);
+                            ds.backgroundColor = isLine ? 'transparent' : (i === 0 ? gradient : `${v.color}66`);
                             ds.yAxisID = 'y';
                             ds.spanGaps = true;
                             ds.borderRadius = isLine ? 0 : 6;
