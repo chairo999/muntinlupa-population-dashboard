@@ -271,6 +271,13 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-chart-line"></i> Crime Trends & Solution Efficiency</h5>
+                        <select id="crime-metric-select" class="chart-select">
+                            <option value="Total Crime Volume (TCV)">Total Crime Volume</option>
+                            <option value="Index Crime">Index Crime</option>
+                            <option value="Average Monthly Crime Rate (AMCR)">Average Monthly Crime Rate</option>
+                            <option value="Crime Solution Efficiency (CSE)">Crime Solution Efficiency</option>
+                            <option value="Crime Clearance Solution">Crime Clearance Solution</option>
+                        </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="crimeStatsChart"></canvas>
@@ -510,74 +517,36 @@
 
         // Draw Interactive Charts
         function renderCharts() {
-            // Chart 1: Crime Trends & solution efficiency (Dual scale)
+            const CRIME_DATASETS = [
+                { key: 'Total Crime Volume (TCV)', label: 'Total Crime Volume (TCV)', color: '#3b82f6', yAxisID: 'y', unit: 'Volume Count' },
+                { key: 'Index Crime', label: 'Index Crime', color: '#8b5cf6', yAxisID: 'y', unit: 'Volume Count' },
+                { key: 'Average Monthly Crime Rate (AMCR)', label: 'Average Monthly Crime Rate (AMCR)', color: '#f59e0b', yAxisID: 'y', unit: 'Rate' },
+                { key: 'Crime Solution Efficiency (CSE)', label: 'Crime Solution Efficiency (CSE)', color: '#ef4444', yAxisID: 'y1', unit: 'Percentage (%)' },
+                { key: 'Crime Clearance Solution', label: 'Crime Clearance Solution', color: '#10b981', yAxisID: 'y1', unit: 'Percentage (%)' }
+            ];
+
             const ctxA = document.getElementById("crimeStatsChart").getContext("2d");
             crimeChartInstance = new Chart(ctxA, {
                 type: 'line',
                 data: {
                     labels: protectiveLabels,
-                    datasets: [
-                        {
-                            label: 'Total Crime Volume (TCV)',
-                            data: protectiveData["Total Crime Volume (TCV)"]?.history || [],
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.05)',
-                            borderWidth: 3,
-                            yAxisID: 'y',
-                            spanGaps: true,
-                            tension: 0.15
-                        },
-                        {
-                            label: 'Index Crime',
-                            data: protectiveData["Index Crime"]?.history || [],
-                            borderColor: '#8b5cf6',
-                            borderWidth: 2.5,
-                            yAxisID: 'y',
-                            spanGaps: true,
-                            tension: 0.15
-                        },
-                        {
-                            label: 'Average Monthly Crime Rate (AMCR)',
-                            data: protectiveData["Average Monthly Crime Rate (AMCR)"]?.history || [],
-                            borderColor: '#f59e0b',
-                            borderWidth: 2,
-                            yAxisID: 'y',
-                            spanGaps: true,
-                            tension: 0.15
-                        },
-                        {
-                            label: 'Crime Solution Efficiency (CSE)',
-                            data: protectiveData["Crime Solution Efficiency (CSE)"]?.history || [],
-                            borderColor: '#ef4444', // Touch of red
-                            borderWidth: 3,
-                            yAxisID: 'y1', // Secondary Y Axis
-                            spanGaps: true,
-                            pointStyle: 'triangle',
-                            tension: 0.15
-                        },
-                        {
-                            label: 'Crime Clearance Solution',
-                            data: protectiveData["Crime Clearance Solution"]?.history || [],
-                            borderColor: '#10b981',
-                            borderWidth: 2,
-                            yAxisID: 'y1', // Secondary Y Axis
-                            spanGaps: true,
-                            tension: 0.15
-                        }
-                    ]
+                    datasets: CRIME_DATASETS.map((ds, i) => ({
+                        label: ds.label,
+                        data: protectiveData[ds.key]?.history || [],
+                        borderColor: ds.color,
+                        backgroundColor: i === 0 ? 'rgba(59, 130, 246, 0.05)' : 'transparent',
+                        borderWidth: 3,
+                        yAxisID: ds.yAxisID,
+                        spanGaps: true,
+                        tension: 0.15,
+                        hidden: i !== 0
+                    }))
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                boxWidth: 12,
-                                font: { family: 'Outfit', size: 10.5, weight: '500' },
-                                padding: 14
-                            }
-                        },
+                        legend: { display: false },
                         tooltip: {
                             font: { family: 'Outfit' },
                             callbacks: {
@@ -610,7 +579,7 @@
                         },
                         y1: {
                             type: 'linear',
-                            display: true,
+                            display: false,
                             position: 'right',
                             min: 50,
                             max: 100,
@@ -626,6 +595,29 @@
                         }
                     }
                 }
+            });
+
+            document.getElementById("crime-metric-select").addEventListener("change", function() {
+                const selectedKey = this.value;
+                const selectedMeta = CRIME_DATASETS.find(ds => ds.key === selectedKey);
+                const isPercentage = selectedMeta.yAxisID === 'y1';
+
+                crimeChartInstance.data.datasets.forEach((ds, i) => {
+                    const dsMeta = CRIME_DATASETS[i];
+                    ds.hidden = dsMeta.key !== selectedKey;
+                    ds.backgroundColor = dsMeta.key === selectedKey
+                        ? (isPercentage ? `rgba(239, 68, 68, 0.05)` : `${dsMeta.color}10`)
+                        : 'transparent';
+                });
+
+                crimeChartInstance.options.scales.y.display = !isPercentage;
+                crimeChartInstance.options.scales.y.title.display = !isPercentage;
+                crimeChartInstance.options.scales.y.title.text = selectedMeta.unit;
+                crimeChartInstance.options.scales.y1.display = isPercentage;
+                crimeChartInstance.options.scales.y1.title.display = isPercentage;
+                crimeChartInstance.options.scales.y1.title.text = selectedMeta.unit;
+
+                crimeChartInstance.update();
             });
 
             // Chart 2: Police Resources (Headcount, Stations, Patrols, Bikes)
