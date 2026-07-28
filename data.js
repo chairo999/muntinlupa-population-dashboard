@@ -129,3 +129,43 @@ function getDataValuesCityWide(year) {
         return matchYear;
     });
 }
+
+const PYRAMID_AGE_GROUPS = ['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80-84', '85+'];
+
+let pyramidData = {};
+
+async function fetchPyramidData() {
+    if (!supabaseClient) return;
+    try {
+        const { data, error } = await supabaseClient
+            .from('data_values')
+            .select('value, year, category_1, category_2')
+            .eq('indicator_id', 28)
+            .not('value', 'is', null)
+            .order('year', { ascending: true });
+        if (error) throw error;
+
+        const years = [...new Set((data || []).map(r => r.year))].sort((a, b) => a - b);
+
+        pyramidData = {};
+        years.forEach(yr => {
+            const yrStr = String(yr);
+            pyramidData[yrStr] = {
+                male: new Array(PYRAMID_AGE_GROUPS.length).fill(0),
+                female: new Array(PYRAMID_AGE_GROUPS.length).fill(0)
+            };
+        });
+
+        (data || []).forEach(row => {
+            const yrStr = String(row.year);
+            const ageIdx = PYRAMID_AGE_GROUPS.indexOf(row.category_1);
+            const gender = (row.category_2 || '').trim().toLowerCase();
+            if (ageIdx >= 0 && pyramidData[yrStr]) {
+                if (gender === 'male') pyramidData[yrStr].male[ageIdx] = row.value;
+                else if (gender === 'female') pyramidData[yrStr].female[ageIdx] = row.value;
+            }
+        });
+    } catch (e) {
+        console.error("Error fetching pyramid data:", e);
+    }
+}

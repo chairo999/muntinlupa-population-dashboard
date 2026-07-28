@@ -33,11 +33,22 @@ function countUp(element, target, duration) {
 
 // Initialize Application
 document.addEventListener("DOMContentLoaded", async () => {
-    await initData();
+    await Promise.all([initData(), fetchPyramidData()]);
     populateYearSelect();
+    populatePyramidYearSelect();
     initClock();
     initEventListeners();
     renderDashboard();
+
+    const pyramidYearSelect = document.getElementById('pyramid-year-select');
+    const initialYear = pyramidYearSelect.value;
+    renderPyramidChart(initialYear);
+    updateProjectedGenderCards(initialYear);
+
+    pyramidYearSelect.addEventListener('change', (event) => {
+        renderPyramidChart(event.target.value);
+        updateProjectedGenderCards(event.target.value);
+    });
 });
 
 
@@ -714,52 +725,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 let pyramidChartInstance = null;
 
-const populationData = {
-    "2020": {
-        male: [25000, 24000, 23000, 22000, 25000, 26000, 25000, 24000, 21000, 18000, 15000, 12000, 9000, 6000, 3000, 2000, 700, 400],
-        female: [23200, 22400, 21500, 21700, 23900, 24300, 22600, 20500, 18400, 15600, 13600, 11300, 9600, 6700, 4300, 2200, 1400, 900]
-    },
-    "2021": {
-        male: [23500, 24100, 22900, 22400, 24300, 26200, 25800, 24200, 21700, 18300, 15300, 11900, 9200, 6100, 3600, 1700, 700, 400],
-        female: [21800, 22600, 21700, 21600, 23400, 24600, 23100, 20900, 18900, 16100, 13800, 11700, 10000, 7200, 4500, 2400, 1400, 1000]
-    },
-    "2022": {
-        male: [21800, 24200, 23000, 22600, 23600, 26200, 26300, 24900, 22100, 18900, 15700, 12300, 9600, 6600, 3900, 1800, 700, 400],
-        female: [20000, 23000, 22000, 22000, 23000, 25000, 24000, 21000, 19000, 17000, 14000, 12000, 10000, 8000, 5000, 3000, 1400, 1000]
-    },
-    "2023": {
-        male: [20100, 24400, 23100, 22900, 22800, 26100, 26600, 25500, 22500, 19500, 16000, 12800, 9900, 7100, 4200, 2100, 700, 400],
-        female: [18800, 23200, 21900, 22000, 22100, 24800, 24200, 21900, 19700, 17200, 14300, 12500, 10600, 8200, 5100, 2900, 1400, 1100]
-    },
-    "2024": {
-        male: [18500, 24400, 23200, 23300, 22200, 25900, 26900, 26200, 22900, 20200, 16400, 13300, 10200, 7600, 4500, 2300, 800, 400],
-        female: [17200, 23300, 22100, 22300, 21500, 24700, 24700, 22400, 20000, 17800, 14600, 12900, 11000, 8700, 5500, 3200, 1500, 1100]
-    },
-    "2025": {
-        male: [17000, 24400, 23300, 23700, 21800, 25500, 27000, 26700, 23400, 20700, 16800, 13700, 10600, 8000, 4800, 2500, 900, 400],
-        female: [15900, 23300, 22200, 22600, 21100, 24400, 25000, 22900, 20500, 18300, 15000, 13300, 11300, 9200, 5900, 3500, 1600, 1100]
-    },
-    "2026": {
-        male: [16900, 22800, 23400, 23900, 21800, 24900, 27200, 27300, 24000, 21200, 17400, 14100, 11000, 8400, 5200, 2800, 1000, 400],
-        female: [15800, 21900, 22400, 22700, 20900, 23900, 25300, 23400, 20900, 18800, 15400, 13600, 11700, 9600, 6300, 3800, 1800, 1200]
-    },
-    "2027": {
-        male: [16800, 21200, 23600, 24000, 22000, 24200, 27200, 27700, 24700, 21700, 18000, 14400, 11500, 8700, 5600, 3000, 1100, 500],
-        female: [15800, 20300, 22700, 22900, 21000, 23200, 25500, 24000, 21400, 19200, 15900, 13900, 12200, 10000, 6800, 4100, 2000, 1200]
-    },
-    "2028": {
-        male: [16800, 19600, 23800, 24200, 22300, 23400, 27100, 28100, 25400, 22100, 18600, 14800, 11900, 9000, 6100, 3200, 1300, 500],
-        female: [15800, 18800, 23000, 23000, 21300, 22500, 25500, 24600, 21900, 19600, 16500, 14100, 12600, 10300, 7300, 4300, 2300, 1300]
-    },
-    "2029": {
-        male: [16700, 18000, 23900, 24300, 22700, 22800, 26900, 28500, 26100, 22500, 19300, 15100, 12400, 9300, 6500, 3500, 1400, 500],
-        female: [15700, 17300, 23200, 23200, 21600, 21900, 25400, 25100, 22400, 20000, 17100, 14400, 13000, 10600, 7800, 4700, 2500, 1300]
-    },
-    "2030": {
-        male: [16600, 16500, 23800, 24400, 23000, 22400, 26500, 28700, 26700, 23100, 19800, 15600, 12800, 9700, 6900, 3700, 1600, 600], 
-        female: [15700, 15900, 23100, 23300, 21800, 21500, 25200, 25400, 22900, 20400, 17600, 14700, 13400, 11000, 8200, 5000, 2700, 1400]
-    }
-};
+
 
 function renderPyramidChart(selectedYear) {
     const canvasElement = document.getElementById('pyramidChart');
@@ -768,7 +734,8 @@ function renderPyramidChart(selectedYear) {
     const ctx = canvasElement.getContext('2d');
     const ageGroups = ['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80-84', '85+'];
     
-    const currentData = populationData[selectedYear];
+    const currentData = pyramidData[selectedYear];
+    if (!currentData) return;
     const maleData = currentData.male.map(val => -val);
     const femaleData = currentData.female.map(val => val);
 
@@ -881,7 +848,7 @@ function renderPyramidChart(selectedYear) {
 }
 
 function updateProjectedGenderCards(year) {
-    var data = populationData[year];
+    var data = pyramidData[year];
     if (!data) return;
     var maleTotal = data.male.reduce(function(a, b) { return a + b; }, 0);
     var femaleTotal = data.female.reduce(function(a, b) { return a + b; }, 0);
@@ -889,16 +856,19 @@ function updateProjectedGenderCards(year) {
     countUp(document.getElementById('projected-female-val'), femaleTotal, 600);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const yearSelect = document.getElementById('pyramid-year-select');
-    const initialYear = yearSelect.value;
-    
-    renderPyramidChart(initialYear);
-    updateProjectedGenderCards(initialYear);
-
-    yearSelect.addEventListener('change', (event) => {
-        const newlySelectedYear = event.target.value;
-        renderPyramidChart(newlySelectedYear);
-        updateProjectedGenderCards(newlySelectedYear);
+function populatePyramidYearSelect() {
+    const sel = document.getElementById('pyramid-year-select');
+    if (!sel) return;
+    sel.innerHTML = "";
+    const years = Object.keys(pyramidData).sort();
+    years.forEach(yr => {
+        const opt = document.createElement("option");
+        opt.value = yr;
+        opt.textContent = "July " + yr;
+        sel.appendChild(opt);
     });
-});
+    if (years.length > 0) {
+        sel.value = years.includes("2026") ? "2026" : years[years.length - 1];
+    }
+}
+
