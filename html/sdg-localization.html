@@ -3,107 +3,1318 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>MunTHINK Hub — SDG Localization</title>
     <style>
+        :root {
+            --primary-blue: #033492;
+            --secondary-blue: #0f5ad4;
+            --dark-navy: #061938;
+            --accent-yellow: #fbce13;
+            --bg-glass: rgba(255, 255, 255, 0.08);
+            --bg-glass-card: rgba(15, 30, 65, 0.65);
+            --border-glass: rgba(255, 255, 255, 0.18);
+            --text-main: #f0f6ff;
+            --text-muted: #b8cce6;
+            --status-ontrack: #2ea043;
+            --status-ontrack-bg: rgba(46, 160, 67, 0.2);
+            --status-accel: #e3b341;
+            --status-accel-bg: rgba(227, 179, 65, 0.2);
+            --status-regress: #f85149;
+            --status-regress-bg: rgba(248, 81, 73, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #033492, #0f5ad4);
-            color: #fff;
+            background: linear-gradient(135deg, #021844 0%, var(--primary-blue) 50%, #0a43a4 100%);
+            color: var(--text-main);
             min-height: 100vh;
-            display: grid;
-            place-items: center;
-            text-align: center;
-            padding: 24px;
+            padding: 32px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1280px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
 
         .card {
-            max-width: 640px;
-            background: rgba(255, 255, 255, 0.14);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: var(--bg-glass-card);
+            border: 1px solid var(--border-glass);
             border-radius: 20px;
             padding: 32px;
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 24px;
         }
 
         h1 {
-            margin: 0 0 12px;
-            font-size: 2rem;
+            margin: 0 0 8px;
+            font-size: 2.3rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(90deg, #ffffff, var(--accent-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        p {
-            margin: 0 0 20px;
-            line-height: 1.6;
-            color: #e8f2ff;
-        }
-
-        a {
-            display: inline-block;
-            background: #fbce13;
-            color: #033492;
-            text-decoration: none;
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--accent-yellow);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
             font-weight: 700;
-            padding: 10px 18px;
-            border-radius: 999px;
-        }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h1>SDG Localization</h1>
-        <p>This sector page is ready for your SDG Localization dashboard content.</p>
-        <a href="landing-page.html">Back to landing page</a>
-    </div>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MunTHINK Hub — SDG Localization</title>
-    <style>
-        body {
             margin: 0;
-            font-family: 'Montserrat', sans-serif;
-            background: #033492;
-            color: white;
-            min-height: 100vh;
-            display: grid;
-            place-items: center;
-            text-align: center;
+        }
+
+        .intro-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
             padding: 24px;
+            margin-bottom: 28px;
         }
-        .card {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 20px;
-            padding: 32px;
-            max-width: 560px;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+
+        .intro-text {
+            margin: 0 0 16px;
+            line-height: 1.75;
+            color: #e2ecfc;
+            font-size: 0.96rem;
+            text-align: justify;
         }
-        a {
-            display: inline-block;
-            margin-top: 18px;
-            padding: 10px 16px;
-            background: #fbce13;
-            color: #033492;
-            text-decoration: none;
-            border-radius: 999px;
+
+        .intro-text:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Pillars Navigation */
+        .pillars-section-title {
+            font-size: 1.1rem;
             font-weight: 700;
+            color: var(--accent-yellow);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-align: center;
+        }
+
+        .pillars-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+
+        .pillar-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 999px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pillar-btn:hover {
+            background: rgba(251, 206, 19, 0.25);
+            border-color: var(--accent-yellow);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .pillar-btn.active {
+            background: var(--accent-yellow);
+            color: #03205b;
+            border-color: var(--accent-yellow);
+            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(251, 206, 19, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .pillar-content-box {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        .pillar-content-box.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stats KPI Bar */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .kpi-title {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .kpi-value-row {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .kpi-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .kpi-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Comparison Chart Container */
+        .comparison-widget {
+            background: rgba(4, 18, 48, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .widget-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .widget-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--accent-yellow);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .metric-select-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .metric-select-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .metric-select {
+            background: #082152;
+            color: #ffffff;
+            border: 1px solid var(--accent-yellow);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            max-width: 320px;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 340px;
+        }
+
+        .target-banner {
+            margin-top: 16px;
+            background: rgba(251, 206, 19, 0.12);
+            border: 1px solid rgba(251, 206, 19, 0.3);
+            border-radius: 10px;
+            padding: 12px 18px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.88rem;
+        }
+
+        .target-banner-label {
+            font-weight: 600;
+            color: #e2ecfc;
+        }
+
+        .target-banner-val {
+            font-weight: 700;
+            color: var(--accent-yellow);
+        }
+
+        /* Controls & Table Styling */
+        .table-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 260px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 10px 16px;
+            color: #ffffff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.88rem;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-yellow);
+            background: rgba(0, 0, 0, 0.45);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-muted);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(3, 16, 43, 0.7);
+        }
+
+        .sdg-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.84rem;
+        }
+
+        .sdg-table th {
+            background: #041940;
+            color: var(--accent-yellow);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 14px 12px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+            white-space: nowrap;
+        }
+
+        .sdg-table th.center, .sdg-table td.center {
+            text-align: center;
+        }
+
+        .sdg-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-main);
+            vertical-align: top;
+            line-height: 1.45;
+        }
+
+        .sdg-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .target-col {
+            min-width: 180px;
+            font-size: 0.8rem;
+            color: #c7dcfa;
+        }
+
+        .indicator-col {
+            min-width: 180px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .sdg-num-col {
+            min-width: 110px;
+            font-weight: 700;
+            color: var(--accent-yellow);
+        }
+
+        .sdg-target-col {
+            min-width: 120px;
+            font-weight: 600;
+            color: #9fe3ff;
+        }
+
+        .trend-val {
+            font-family: monospace;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .source-col {
+            min-width: 120px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.73rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-badge.on-track {
+            background: var(--status-ontrack-bg);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.4);
+        }
+
+        .status-badge.needs-acceleration {
+            background: var(--status-accel-bg);
+            color: #facc15;
+            border: 1px solid rgba(250, 204, 21, 0.4);
+        }
+
+        .status-badge.regressing {
+            background: var(--status-regress-bg);
+            color: #f87171;
+            border: 1px solid rgba(248, 113, 113, 0.4);
+        }
+
+        .placeholder-card {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .placeholder-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .placeholder-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-yellow);
+            margin-bottom: 10px;
+        }
+
+        .placeholder-text {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 20px;
+            line-height: 1.6;
+            font-size: 0.92rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-yellow);
+            color: #03205b;
+            text-decoration: none;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 999px;
+            text-align: center;
+            transition: all 0.2s;
+            box-shadow: 0 4px 14px rgba(251, 206, 19, 0.3);
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(251, 206, 19, 0.5);
+        }
+
+        footer {
+            margin-top: 24px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .footer-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .card { padding: 20px; }
+            h1 { font-size: 1.8rem; }
+            .pillar-btn { font-size: 0.8rem; padding: 10px 16px; }
+            .widget-header { flex-direction: column; align-items: flex-start; }
+            .metric-select { max-width: 100%; width: 100%; }
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>SDG Localization</h1>
-        <p>This page is ready for the SDG Localization dashboard content.</p>
-        <a href="landing-page.html">Back to sectors</a>
+    <div class="container">
+        <div class="card">
+            <div class="header-title">
+                <h1>SDG Localization Dashboard</h1>
+                <p class="subtitle">City Government of Muntinlupa • 7K Agenda Alignment</p>
+            </div>
+
+            <!-- Intro Description Provided by User -->
+            <div class="intro-section">
+                <p class="intro-text">
+                    The City Government of Muntinlupa advances its development priorities through the 7K Agenda, the governing thrust of Mayor Ruffy Biazon. Anchored on seven pillars—Kabuhayan, Kalusugan, Karunungan, Kaunlaran, Kapayapaan at Kaayusan, Kalikasan, and Katarungan—this agenda provides a clear framework for inclusive growth and responsive governance.
+                </p>
+                <p class="intro-text">
+                    Each pillar is strategically aligned with the United Nations Sustainable Development Goals (SDGs), underscoring the importance of localizing global targets into concrete programs that directly benefit communities. By integrating the SDGs into the local government, Muntinlupa ensures that its initiatives are globally relevant while remaining locally grounded, strengthening resilience, equity, and sustainability across all sectors.
+                </p>
+            </div>
+
+            <!-- 7 Pillars Navigation -->
+            <div class="pillars-section-title">Select 7K Agenda Pillar</div>
+            <div class="pillars-nav">
+                <button class="pillar-btn active" onclick="switchPillar('kabuhayan', this)">💼 Kabuhayan (Livelihood)</button>
+                <button class="pillar-btn" onclick="switchPillar('kalusugan', this)">🏥 Kalusugan (Health)</button>
+                <button class="pillar-btn" onclick="switchPillar('karunungan', this)">🎓 Karunungan (Education)</button>
+                <button class="pillar-btn" onclick="switchPillar('kaunlaran', this)">🚀 Kaunlaran (Progress)</button>
+                <button class="pillar-btn" onclick="switchPillar('kapayapaan', this)">🛡️ Kapayapaan at Kaayusan</button>
+                <button class="pillar-btn" onclick="switchPillar('kalikasan', this)">🌿 Kalikasan (Environment)</button>
+                <button class="pillar-btn" onclick="switchPillar('katarungan', this)">⚖️ Katarungan (Justice)</button>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- KABUHAYAN (LIVELIHOOD) PILLAR CONTENT     -->
+            <!-- ========================================== -->
+            <div id="kabuhayan" class="pillar-content-box active">
+                
+                <!-- KPI Overview Bar -->
+                <div class="stats-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-title">Total Localized Indicators</div>
+                        <div class="kpi-value-row">
+                            <div class="kpi-value">23</div>
+                            <div class="kpi-sub">Tracked metrics</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card" style="border-left: 4px solid #2ea043;">
+                        <div class="kpi-title">On Track</div>
+                        <div class="kpi-value-row">
+                            <div class="kpi-value" style="color: #4ade80;">12</div>
+                            <div class="kpi-sub">52.2% of total</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card" style="border-left: 4px solid #e3b341;">
+                        <div class="kpi-title">Needs Acceleration</div>
+                        <div class="kpi-value-row">
+                            <div class="kpi-value" style="color: #facc15;">9</div>
+                            <div class="kpi-sub">39.1% of total</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card" style="border-left: 4px solid #f85149;">
+                        <div class="kpi-title">Regressing</div>
+                        <div class="kpi-value-row">
+                            <div class="kpi-value" style="color: #f87171;">2</div>
+                            <div class="kpi-sub">8.7% of total</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Comparison Widget: 5-Year Data Trend vs Localized Target -->
+                <div class="comparison-widget">
+                    <div class="widget-header">
+                        <h3 class="widget-title">
+                            <span>📊</span> Visual Comparison: Localized SDG Target vs. 5-Year Trend (2021–2025)
+                        </h3>
+                        <div class="metric-select-container">
+                            <label class="metric-select-label" for="metricSelect">Select Indicator:</label>
+                            <select id="metricSelect" class="metric-select" onchange="updateComparisonChart()">
+                                <option value="empRate">Employment Rate (%)</option>
+                                <option value="unempRate">Unemployment Rate (%)</option>
+                                <option value="underempRate">Underemployment Rate (%)</option>
+                                <option value="localGdp">Local GDP (Billion PHP)</option>
+                                <option value="agriBudget">Urban Agriculture Budget (Million PHP)</option>
+                                <option value="coopReg">Cooperative Registrations (Count)</option>
+                                <option value="produceHarvest">Volume of Produce Harvested (kg)</option>
+                                <option value="heritageBudget">Cultural Heritage Allocation (PHP/person)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="chart-wrapper">
+                        <canvas id="kabuhayanComparisonChart"></canvas>
+                    </div>
+
+                    <div id="targetBanner" class="target-banner">
+                        <span class="target-banner-label">Target Benchmark: <span id="bannerTarget" class="target-banner-val">97%</span></span>
+                        <span class="target-banner-label">Latest Data (2025/2024): <span id="bannerLatest" class="target-banner-val">94.80%</span></span>
+                        <span class="target-banner-label">Current Status: <span id="bannerStatus" class="status-badge needs-acceleration">Needs Acceleration</span></span>
+                    </div>
+                </div>
+
+                <!-- Complete Data Table -->
+                <div style="margin-bottom: 16px;">
+                    <h3 style="font-size: 1.2rem; color: var(--accent-yellow); margin-bottom: 8px;">
+                        Complete Kabuhayan Localized SDG Indicators &amp; 5-Year Data Trend Table
+                    </h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
+                        Showing all 23 localized targets and indicators mapped to UN SDGs 1, 2, 8, 9, 10, 11, and 12.
+                    </p>
+                </div>
+
+                <div class="table-controls">
+                    <div class="search-box">
+                        <input type="text" id="tableSearch" class="search-input" placeholder="🔍 Search indicators, SDG #, or targets..." onkeyup="filterTable()">
+                    </div>
+                    <div class="filter-group">
+                        <button class="filter-btn active" onclick="filterStatus('ALL', this)">All (23)</button>
+                        <button class="filter-btn" onclick="filterStatus('On Track', this)">On Track (12)</button>
+                        <button class="filter-btn" onclick="filterStatus('Needs Acceleration', this)">Needs Acceleration (9)</button>
+                        <button class="filter-btn" onclick="filterStatus('Regressing', this)">Regressing (2)</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="sdg-table" id="kabuhayanTable">
+                        <thead>
+                            <tr>
+                                <th>SDG Target (1)</th>
+                                <th>SDG Localized Indicators* (2)</th>
+                                <th>SDG #</th>
+                                <th>SDG Localized Target</th>
+                                <th class="center">2021</th>
+                                <th class="center">2022</th>
+                                <th class="center">2023</th>
+                                <th class="center">2024</th>
+                                <th class="center">2025</th>
+                                <th>Source/s</th>
+                                <th class="center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Row 1 -->
+                            <tr data-status="On Track">
+                                <td class="target-col">Target 1.1 Eradicate extreme poverty for all people everywhere</td>
+                                <td class="indicator-col">Poverty Incidence among Families</td>
+                                <td class="sdg-num-col">SDG 1: No Poverty</td>
+                                <td class="sdg-target-col">1%</td>
+                                <td class="center trend-val">1.50%</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">0.10%</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="source-col">2023 Official Poverty Statistics (PSA)</td>
+                                <td class="center"><span class="status-badge on-track">On Track</span></td>
+                            </tr>
+                            <!-- Row 2 -->
+                            <tr data-status="On Track">
+                                <td class="target-col">Target 1.1 Eradicate extreme poverty for all people everywhere</td>
+                                <td class="indicator-col">Poverty Incidence among Population</td>
+                                <td class="sdg-num-col">SDG 1: No Poverty</td>
+                                <td class="sdg-target-col">2.50%</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">0.10%</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="source-col">2023 Official Poverty Statistics (PSA)</td>
+                                <td class="center"><span class="status-badge on-track">On Track</span></td>
+                            </tr>
+                            <!-- Row 3 -->
+                            <tr data-status="On Track">
+                                <td class="target-col">Target 1.1 Eradicate extreme poverty for all people everywhere</td>
+                                <td class="indicator-col">Local Gini Coefficient</td>
+                                <td class="sdg-num-col">SDG 1: No Poverty</td>
+                                <td class="sdg-target-col">0.0</td>
+                                <td class="center trend-val">0.3036</td>
+                                <td class="center trend-val">0.2782 <small style="color:var(--text-muted);">(prelim)</small></td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="source-col">2023 Official Poverty Statistics (PSA)</td>
+                                <td class="center"><span class="status-badge on-track">On Track</span></td>
+                            </tr>
+                            <!-- Row 4 -->
+                            <tr data-status="On Track">
+                                <td class="target-col">Target 1.2 Reduce poverty in all dimensions according to national definitions</td>
+                                <td class="indicator-col">Magnitude of Poor Families</td>
+                                <td class="sdg-num-col">SDG 1: No Poverty</td>
+                                <td class="sdg-target-col">Reduce at least half</td>
+                                <td class="center trend-val">10,570</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">1,090 <small style="color:var(--text-muted);">(prelim)</small></td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="source-col">PSA Poverty Statistics</td>
+                                <td class="center"><span class="status-badge on-track">On Track</span></td>
+                            </tr>
+                            <!-- Row 5 -->
+                            <tr data-status="On Track">
+                                <td class="target-col">Target 1.2 Reduce poverty in all dimensions according to national definitions</td>
+                                <td class="indicator-col">Magnitude of Poor Population</td>
+                                <td class="sdg-num-col">SDG 1: No Poverty</td>
+                                <td class="sdg-target-col">Reduce at least half</td>
+                                <td class="center trend-val">57,270</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">6,900 <small style="color:var(--text-muted);">(prelim)</small></td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="source-col">PSA Poverty Statistics</td>
+                                <td class="center"><span class="status-badge on-track">On Track</span></td>
+                            </tr>
+                            <!-- Row 6 -->
+                            <tr data-status="Needs Acceleration">
+                                <td class="target-col">Target 8.5 Full &amp; productive employment and decent work for all</td>
+                                <td class="indicator-col">Employment Rate</td>
+                                <td class="sdg-num-col">SDG 8: Decent Work</td>
+                                <td class="sdg-target-col">97%</td>
+                                <td class="center trend-val">90.50%</td>
+                                <td class="center trend-val">94.50%</td>
+                                <td class="center trend-val">96.20%</td>
+                                <td class="center trend-val">95.60%</td>
+                                <td class="center trend-val">94.80%</td>
+                                <td class="source-col">PSA, various data</td>
+                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
+                            </tr>
+                            <!-- Row 7 -->
+                            <tr data-status="Needs Acceleration">
+                                <td class="target-col">Target 8.5 Full &amp; productive employment and decent work for all</td>
+                                <td class="indicator-col">8.5.2 Unemployment rate (by sex, age, PWD)</td>
+                                <td class="sdg-num-col">SDG 8: Decent Work</td>
+                                <td class="sdg-target-col">3%</td>
+                                <td class="center trend-val">9.50%</td>
+                                <td class="center trend-val">5.50%</td>
+                                <td class="center trend-val">3.80%</td>
+                                <td class="center trend-val">4.40%</td>
+                                <td class="center trend-val">5.20%</td>
+                                <td class="source-col">PSA, various data</td>
+                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
+                            </tr>
+                            <!-- Row 8 -->
+                            <tr data-status="Needs Acceleration">
+                                <td class="target-col">Target 8.6 Reduce proportion of youth not in employment, education or training</td>
+                                <td class="indicator-col">8.6.1 Proportion of youth (15-24) not in education, employment or training (NEET)</td>
+                                <td class="sdg-num-col">SDG 8: Decent Work</td>
+                                <td class="sdg-target-col">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">12.10%</td>
+                                <td class="center trend-val">12.00%</td>
+                                <td class="source-col">PSA, regional data</td>
+                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
+                            </tr>
+                            <!-- Row 9 -->
+                            <tr data-status="Needs Acceleration">
+                                <td class="target-col">Target 8.1 Sustain per capita economic growth</td>
+                                <td class="indicator-col">Local GDP</td>
+                                <td class="sdg-num-col">SDG 8: Decent Work</td>
+                                <td class="sdg-target-col">Sustained growth</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">254.16B</td>
+                                <td class="center trend-val">264.71B</td>
+                                <td class="center trend-val">273.11B</td>
+                                <td class="center trend-val">-</td>
+                                <td class="source-col">PSA</td>
+                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
+                            </tr>
+                            <!-- Row 10 -->
+                            <tr data-status="On Track">
+                                <td class="target-col">Target 8.1 Sustain per capita economic growth</td>
+                                <td class="indicator-col">Annual growth rate of GDP per capita</td>
+                                <td class="sdg-num-col">SDG 8: Decent Work</td>
+                                <td class="sdg-target-col">Sustained growth</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">473,786</td>
+                                <td class="center trend-val">494,566</td>
+                                <td class="center trend-val">-</td>
+                                <td class="source-col">PSA</td>
+                                <td class="center"><span class="status-badge on-track">On Track</span></td>
+                            </tr>
+                            <!-- Row 11 -->
+                            <tr data-status="On Track">
+                                <td class="target-col">Target 9.2 Promote inclusive and sustainable industrialization</td>
+                                <td class="indicator-col">9.2.1 Manufacturing value added as % of GDP &amp; per capita</td>
+                                <td class="sdg-num-col">SDG 9: Industry &amp; Infra</td>
+                                <td class="sdg-target-col">Sustained growth</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">25.9% GDP / 132.9 cap</td>
+                                <td class="center trend-val">24.8% GDP / 137.8 cap</td>
+                                <td class="center trend-val">22.9% GDP / 135.0 cap</td>
+                                <td class="center trend-val">-</td>
+                                <td class="source-col">PSA (pop 534,445)</td>
+                                <td class="center"><span class="status-badge on-track">On Track</span></td>
+                            </tr>
+                            <!-- Row 12 -->
+                            <tr data-status="Regressing">
+                                <td class="target-col">Target 8.3 Promote productive activities, job creation, entrepreneurship &amp; MSMEs</td>
+                                <td class="indicator-col">Underemployment Rate</td>
+                                <td class="sdg-num-col">SDG 8: Decent Work</td>
+                                <td class="sdg-target-col">Max 10%</td>
+                                <td class="center trend-val">8.6%</td>
+                                <td class="center trend-val">6.7%</td>
+                                <td class="center trend-val">9.09%</td>
+                                <td class="center trend-val">12.9%</td>
+                                <td class="center trend-val">10.9%</td>
+                                <td class="source-col">PSA, various data</td>
+                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
+                            </tr>
+                            <!-- Row 13 -->
+                            <tr data-status="Needs Acceleration">
+                                <td class="target-col">Target 8.9 Promote sustainable tourism that creates jobs</td>
+                                <td class="indicator-col">Tourism-Oriented &amp; Related Business Registrations</td>
+                                <td class="sdg-num-col">SDG 8: Decent Work</td>
+                                <td class="sdg-target-col">4,125 baseline</td>
+                                <td class="center trend-val">3,849</td>
+                                <td class="center trend-val">4,994</td>
+                                <td class="center trend-val">4,877</td>
+                                <td class="center trend-val">4,744</td>
+                                <td class="center trend-val">-</td>
+                                <td class="source-col">Tourism &amp; Culture Dept</td>
+                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
+                            </tr>
+                            <!-- Row 14 -->
+                            <tr data-status="On Track">
+                                <td class="target-col">Target 8.10 Expand access to banking, insurance and financial services</td>
+                                <td class="indicator-col">Cooperative Registration</td>
+                                <td class="sdg-num-col">SDG 8: Decent Work</td>
+                                <td class="sdg-target-col">10% increase</td>
+                                <td class="center trend-val">82</td>
+                                <td class="center trend-val">140</td>
+                                <td class="center trend-val">118</td>
+                                <td class="center trend-val">143</td>
+                                <td class="center trend-val">152</td>
+                                <td class="source-col">City Cooperative Office</td>
+                                <td class="center"><span class="status-badge on-track">On Track</span></td>
+                            </tr>
+                            <!-- Row 15 -->
+                            <tr data-status="Needs Acceleration">
+                                <td class="target-col">Target 2.3 Double agricultural productivity and incomes of small producers</td>
+                                <td class="indicator-col">Volume of Produce Harvested</td>
+                                <td class="sdg-num-col">SDG 2: Zero Hunger</td>
+                                <td class="sdg-target-col">Double baseline (7,893 kg)</td>
+                                <td class="center trend-val">5,093 kg</td>
+                                <td class="center trend-val">5,528 kg</td>
+                                <td class="center trend-val">3,371 kg</td>
+                                <td class="center trend-val">6,001 kg</td>
+                                <td class="center trend-val">-</td>
+                                <td class="source-col">DA-ESO</td>
+                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
+                            </tr>
+                            <!-- Row 16 -->
+                            <tr data-status="On Track">
+                                <td class="target-col">Target 2.a Increase investment in agricultural productive capacity</td>
+                                <td class="indicator-col">Budget Allocation for Urban Agriculture Program</td>
+                                <td class="sdg-num-col">SDG 2: Zero Hunger</td>
+                                <td class="sdg-target-col">Increasing annually</td>
+                                <td class="center trend-val">₱16.23M</td>
+                                <td class="center trend-val">₱18.50M</td>
+                                <td class="center trend-val">₱18.51M</td>
+                                <td class="center trend-val">₱23.51M</td>
+                                <td class="center trend-val">₱26.48M</td>
+                                <td class="source-col">DA-ESO</td>
+                                <td class="center"><span class="status-badge on-track">On Track</span></td>
+                            </tr>
+                            <!-- Row 17 -->
+                            <tr data-status="On Track">
+                                <td class="target-col">Target 2.c Ensure proper functioning of food commodity markets</td>
+                                <td class="indicator-col">% of public markets covered by real-time price monitoring system</td>
+                                <td class="sdg-num-col">SDG 2: Zero Hunger</td>
+                                <td class="sdg-target-col">All public markets</td>
+                                <td class="center trend-val">1</td>
+                                <td class="center trend-val">1</td>
+                                <td class="center trend-val">1</td>
+                                <td class="center trend-val">1</td>
+                                <td class="center trend-val">All</td>
+                                <td class="source-col">City Public Market</td>
+                                <td class="center"><span class="status-badge on-track">On Track</span></td>
+                            </tr>
+                            <!-- Row 18 -->
+                            <tr data-status="Needs Acceleration">
+                                <td class="target-col">Target 8.10 Strengthen domestic financial institutions access</td>
+                                <td class="indicator-col">Active Local Gov't Initiative Loan Borrowers (Annual Released)</td>
+                                <td class="sdg-num-col">SDG 8: Decent Work</td>
+                                <td class="sdg-target-col">Increasing annually</td>
+                                <td class="center trend-val">413</td>
+                                <td class="center trend-val">328</td>
+                                <td class="center trend-val">580</td>
+                                <td class="center trend-val">572</td>
+                                <td class="center trend-val">394</td>
+                                <td class="source-col">MEFD</td>
+                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
+                            </tr>
+                            <!-- Row 19 -->
+                            <tr data-status="Needs Acceleration">
+                                <td class="target-col">Target 9.3 Increase access of small-scale enterprises to credit</td>
+                                <td class="indicator-col">9.3.2 Small-scale industries with a loan or line of credit</td>
+                                <td class="sdg-num-col">SDG 9: Industry &amp; Infra</td>
+                                <td class="sdg-target-col">Expanding coverage</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="source-col">MEFD</td>
+                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
+                            </tr>
+                            <!-- Row 20 -->
+                            <tr data-status="On Track">
+                                <td class="target-col">Target 10.2 Empower and promote social, economic and political inclusion</td>
+                                <td class="indicator-col">10.2.1 Proportion living below 50% median income (by sex, age, PWD)</td>
+                                <td class="sdg-num-col">SDG 10: Reduced Inequalities</td>
+                                <td class="sdg-target-col">Reduction target</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="source-col">PSA / Local Data</td>
+                                <td class="center"><span class="status-badge on-track">On Track</span></td>
+                            </tr>
+                            <!-- Row 21 -->
+                            <tr data-status="On Track">
+                                <td class="target-col">Target 10.1 Progressively achieve income growth of bottom 40%</td>
+                                <td class="indicator-col">10.1.1 Growth rates of household expenditure/income per capita (bottom 40%)</td>
+                                <td class="sdg-num-col">SDG 10: Reduced Inequalities</td>
+                                <td class="sdg-target-col">Above national avg</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="source-col">PSA</td>
+                                <td class="center"><span class="status-badge on-track">On Track</span></td>
+                            </tr>
+                            <!-- Row 22 -->
+                            <tr data-status="On Track">
+                                <td class="target-col">Target 11.4 Protect and safeguard world cultural &amp; natural heritage</td>
+                                <td class="indicator-col">11.4.1 Total per capita allocation on cultural &amp; natural heritage preservation</td>
+                                <td class="sdg-num-col">SDG 11: Sustainable Cities</td>
+                                <td class="sdg-target-col">Increasing annually</td>
+                                <td class="center trend-val">₱0.64</td>
+                                <td class="center trend-val">₱0.64</td>
+                                <td class="center trend-val">₱0.64</td>
+                                <td class="center trend-val">₱0.92</td>
+                                <td class="center trend-val">₱1.84</td>
+                                <td class="source-col">City Engineering Office</td>
+                                <td class="center"><span class="status-badge on-track">On Track</span></td>
+                            </tr>
+                            <!-- Row 23 -->
+                            <tr data-status="Regressing">
+                                <td class="target-col">Target 12.b Monitor sustainable development impacts for sustainable tourism</td>
+                                <td class="indicator-col">12.b.1 Standard accounting tools implementation for tourism sustainability</td>
+                                <td class="sdg-num-col">SDG 12: Responsible Consumption</td>
+                                <td class="sdg-target-col">Full implementation</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="center trend-val">-</td>
+                                <td class="source-col">Tourism Dept</td>
+                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <!-- ========================================== -->
+            <!-- OTHER 6 PILLAR PLACEHOLDERS                -->
+            <!-- ========================================== -->
+            <div id="kalusugan" class="pillar-content-box">
+                <div class="placeholder-card">
+                    <div class="placeholder-icon">🏥</div>
+                    <div class="placeholder-title">Kalusugan (Health) Pillar</div>
+                    <p class="placeholder-text">
+                        Aligned with <strong>SDG 3 (Good Health and Well-being)</strong>. Ensures universal access to healthcare, maternal care, child nutrition, and upgrades to local health centers.
+                    </p>
+                    <div class="status-badge on-track" style="font-size: 0.85rem; padding: 6px 16px;">
+                        Data Collection in Progress • Rollout Scheduled Next
+                    </div>
+                </div>
+            </div>
+
+            <div id="karunungan" class="pillar-content-box">
+                <div class="placeholder-card">
+                    <div class="placeholder-icon">🎓</div>
+                    <div class="placeholder-title">Karunungan (Education) Pillar</div>
+                    <p class="placeholder-text">
+                        Aligned with <strong>SDG 4 (Quality Education)</strong>. Enhances elementary, secondary, and tertiary completion rates, early childhood education, and expands student scholarship grants.
+                    </p>
+                    <div class="status-badge on-track" style="font-size: 0.85rem; padding: 6px 16px;">
+                        Data Collection in Progress • Rollout Scheduled Next
+                    </div>
+                </div>
+            </div>
+
+            <div id="kaunlaran" class="pillar-content-box">
+                <div class="placeholder-card">
+                    <div class="placeholder-icon">🚀</div>
+                    <div class="placeholder-title">Kaunlaran (Progress) Pillar</div>
+                    <p class="placeholder-text">
+                        Aligned with <strong>SDG 8 &amp; SDG 9 (Industry, Innovation and Infrastructure)</strong>. Drives digital transformation, local infrastructure, and ease of doing business across Muntinlupa.
+                    </p>
+                    <div class="status-badge on-track" style="font-size: 0.85rem; padding: 6px 16px;">
+                        Data Collection in Progress • Rollout Scheduled Next
+                    </div>
+                </div>
+            </div>
+
+            <div id="kapayapaan" class="pillar-content-box">
+                <div class="placeholder-card">
+                    <div class="placeholder-icon">🛡️</div>
+                    <div class="placeholder-title">Kapayapaan at Kaayusan (Peace &amp; Order) Pillar</div>
+                    <p class="placeholder-text">
+                        Aligned with <strong>SDG 16 (Peace, Justice and Strong Institutions)</strong>. Strengthens community security, crime prevention, and disaster risk reduction capabilities.
+                    </p>
+                    <div class="status-badge on-track" style="font-size: 0.85rem; padding: 6px 16px;">
+                        Data Collection in Progress • Rollout Scheduled Next
+                    </div>
+                </div>
+            </div>
+
+            <div id="kalikasan" class="pillar-content-box">
+                <div class="placeholder-card">
+                    <div class="placeholder-icon">🌿</div>
+                    <div class="placeholder-title">Kalikasan (Environment) Pillar</div>
+                    <p class="placeholder-text">
+                        Aligned with <strong>SDG 13 (Climate Action) &amp; SDG 15 (Life on Land)</strong>. Promotes waste management, urban green spaces, and sustainable protection of Laguna de Bay resources.
+                    </p>
+                    <div class="status-badge on-track" style="font-size: 0.85rem; padding: 6px 16px;">
+                        Data Collection in Progress • Rollout Scheduled Next
+                    </div>
+                </div>
+            </div>
+
+            <div id="katarungan" class="pillar-content-box">
+                <div class="placeholder-card">
+                    <div class="placeholder-icon">⚖️</div>
+                    <div class="placeholder-title">Katarungan (Justice) Pillar</div>
+                    <p class="placeholder-text">
+                        Aligned with <strong>SDG 10 (Reduced Inequalities) &amp; SDG 16</strong>. Guarantees equal rights, social protection for vulnerable groups, and accessible legal assistance.
+                    </p>
+                    <div class="status-badge on-track" style="font-size: 0.85rem; padding: 6px 16px;">
+                        Data Collection in Progress • Rollout Scheduled Next
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 36px;">
+                <a href="landing-page.html" class="back-link">
+                    <span>←</span> Return to Main Dashboard
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <img src="../assets/images/footer.jpg" alt="MunTHINK Hub Footer" class="footer-image" onerror="this.style.display='none'">
+        </footer>
     </div>
 
-    <footer class="dashboard-footer" aria-hidden="true">
-        <img src="../assets/images/footer.jpg" alt="" class="footer-image">
-    </footer>
+    <!-- JavaScript for Pillar Switching, Search Filtering & Chart.js -->
+    <script>
+        // Switch active pillar
+        function switchPillar(pillarId, btnEl) {
+            document.querySelectorAll('.pillar-content-box').forEach(box => {
+                box.classList.remove('active');
+            });
+            document.querySelectorAll('.pillar-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(pillarId).classList.add('active');
+            btnEl.classList.add('active');
+        }
+
+        // Table Search Filter
+        function filterTable() {
+            const input = document.getElementById('tableSearch').value.toUpperCase();
+            const table = document.getElementById('kabuhayanTable');
+            const trs = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < trs.length; i++) {
+                const text = trs[i].textContent || trs[i].innerText;
+                if (text.toUpperCase().indexOf(input) > -1) {
+                    trs[i].style.display = "";
+                } else {
+                    trs[i].style.display = "none";
+                }
+            }
+        }
+
+        // Filter Table by Status
+        function filterStatus(status, btnEl) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btnEl.classList.add('active');
+
+            const table = document.getElementById('kabuhayanTable');
+            const trs = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < trs.length; i++) {
+                const rowStatus = trs[i].getAttribute('data-status');
+                if (status === 'ALL' || rowStatus === status) {
+                    trs[i].style.display = "";
+                } else {
+                    trs[i].style.display = "none";
+                }
+            }
+        }
+
+        // Metrics Data Store for Chart Visual Comparison
+        const metricsData = {
+            empRate: {
+                label: 'Employment Rate (%)',
+                years: ['2021', '2022', '2023', '2024', '2025'],
+                trend: [90.50, 94.50, 96.20, 95.60, 94.80],
+                target: [97, 97, 97, 97, 97],
+                targetText: '97% Target',
+                latestText: '94.80% (2025)',
+                status: 'Needs Acceleration',
+                statusClass: 'needs-acceleration',
+                unit: '%'
+            },
+            unempRate: {
+                label: 'Unemployment Rate (%)',
+                years: ['2021', '2022', '2023', '2024', '2025'],
+                trend: [9.50, 5.50, 3.80, 4.40, 5.20],
+                target: [3.0, 3.0, 3.0, 3.0, 3.0],
+                targetText: '3.0% Max Target',
+                latestText: '5.20% (2025)',
+                status: 'Needs Acceleration',
+                statusClass: 'needs-acceleration',
+                unit: '%'
+            },
+            underempRate: {
+                label: 'Underemployment Rate (%)',
+                years: ['2021', '2022', '2023', '2024', '2025'],
+                trend: [8.60, 6.70, 9.09, 12.90, 10.90],
+                target: [10.0, 10.0, 10.0, 10.0, 10.0],
+                targetText: '10.0% Max Target',
+                latestText: '10.90% (2025)',
+                status: 'Regressing',
+                statusClass: 'regressing',
+                unit: '%'
+            },
+            localGdp: {
+                label: 'Local GDP (Billion PHP)',
+                years: ['2022', '2023', '2024'],
+                trend: [254.16, 264.71, 273.11],
+                target: [250.0, 260.0, 270.0],
+                targetText: 'Sustained Annual Growth Target',
+                latestText: '₱273.11 Billion (2024)',
+                status: 'Needs Acceleration',
+                statusClass: 'needs-acceleration',
+                unit: 'B PHP'
+            },
+            agriBudget: {
+                label: 'Urban Agriculture Budget (Million PHP)',
+                years: ['2021', '2022', '2023', '2024', '2025'],
+                trend: [16.233, 18.50, 18.506, 23.507, 26.48],
+                target: [16.0, 18.0, 18.5, 23.0, 26.0],
+                targetText: 'Annual Increase Target',
+                latestText: '₱26.48 Million (2025)',
+                status: 'On Track',
+                statusClass: 'on-track',
+                unit: 'M PHP'
+            },
+            coopReg: {
+                label: 'Cooperative Registration (Count)',
+                years: ['2021', '2022', '2023', '2024', '2025'],
+                trend: [82, 140, 118, 143, 152],
+                target: [82, 90, 99, 109, 120],
+                targetText: '10% Annual Growth Target',
+                latestText: '152 Cooperatives (2025)',
+                status: 'On Track',
+                statusClass: 'on-track',
+                unit: 'Count'
+            },
+            produceHarvest: {
+                label: 'Volume of Produce Harvested (kg)',
+                years: ['2021', '2022', '2023', '2024'],
+                trend: [5093, 5528, 3371, 6001],
+                target: [7893, 7893, 7893, 7893],
+                targetText: '7,893 kg Target',
+                latestText: '6,001 kg (2024)',
+                status: 'Needs Acceleration',
+                statusClass: 'needs-acceleration',
+                unit: 'kg'
+            },
+            heritageBudget: {
+                label: 'Cultural Heritage Allocation (PHP / Person)',
+                years: ['2021', '2022', '2023', '2024', '2025'],
+                trend: [0.64, 0.64, 0.64, 0.92, 1.84],
+                target: [0.60, 0.60, 0.60, 0.80, 1.50],
+                targetText: 'Annual Increase Target',
+                latestText: '₱1.84 / person (2025)',
+                status: 'On Track',
+                statusClass: 'on-track',
+                unit: 'PHP'
+            }
+        };
+
+        let comparisonChart = null;
+
+        function updateComparisonChart() {
+            const selectedKey = document.getElementById('metricSelect').value;
+            const item = metricsData[selectedKey];
+
+            // Update Target Banner
+            document.getElementById('bannerTarget').textContent = item.targetText;
+            document.getElementById('bannerLatest').textContent = item.latestText;
+            
+            const badge = document.getElementById('bannerStatus');
+            badge.textContent = item.status;
+            badge.className = 'status-badge ' + item.statusClass;
+
+            const ctx = document.getElementById('kabuhayanComparisonChart').getContext('2d');
+
+            if (comparisonChart) {
+                comparisonChart.destroy();
+            }
+
+            comparisonChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: item.years,
+                    datasets: [
+                        {
+                            label: 'SDG Localized Target Target Line',
+                            data: item.target,
+                            borderColor: '#fbce13',
+                            backgroundColor: '#fbce13',
+                            borderWidth: 2,
+                            borderDash: [6, 6],
+                            pointRadius: 4,
+                            fill: false,
+                            tension: 0.1
+                        },
+                        {
+                            label: '5-Year Data Trend (' + item.label + ')',
+                            data: item.trend,
+                            borderColor: '#38bdf8',
+                            backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                            borderWidth: 3,
+                            pointRadius: 6,
+                            pointBackgroundColor: '#ffffff',
+                            fill: true,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#ffffff',
+                                font: { family: 'Montserrat', weight: 600, size: 12 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + ' ' + item.unit;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#b8cce6', font: { family: 'Montserrat' } },
+                            grid: { color: 'rgba(255, 255, 255, 0.08)' }
+                        },
+                        y: {
+                            ticks: { color: '#b8cce6', font: { family: 'Montserrat' } },
+                            grid: { color: 'rgba(255, 255, 255, 0.08)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize Chart on Page Load
+        window.addEventListener('DOMContentLoaded', () => {
+            updateComparisonChart();
+        });
+    </script>
 </body>
 </html>

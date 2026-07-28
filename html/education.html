@@ -794,6 +794,7 @@
         let daycareDetailed = {};
         let plmunPrograms = [];
         let tesdaCourses = [];
+        let perfIndicatorRows = [];
 
         let literacyChartInst = null;
         let enrollmentChartInst = null;
@@ -961,9 +962,27 @@
                         eduData = {};
                     }
                 } catch (e) {
-                    console.warn("Supabase load failed. Using fallback.", e);
+                    console.warn("Supabase load failed.", e);
                 }
-            } else {
+            }
+
+            try {
+                const { data: perfRows, error: perfErr } = await supabaseClient
+                    .from('edu_performance_indicators')
+                    .select('*')
+                    .order('id');
+
+                if (!perfErr && perfRows) {
+                    const typeOrder = { overall: 0, public: 1, private: 2 };
+                    perfRows.sort((a, b) => {
+                        if (a.edu_level !== b.edu_level) return 0;
+                        if (a.indicator_name !== b.indicator_name) return a.indicator_name.localeCompare(b.indicator_name);
+                        return (typeOrder[a.category_type] ?? 3) - (typeOrder[b.category_type] ?? 3);
+                    });
+                    perfIndicatorRows = perfRows;
+                }
+            } catch (e) {
+                console.warn("Performance indicators load failed.", e);
             }
         }
 
@@ -1620,213 +1639,49 @@
             daycareChartInst = new Chart(ctx, config);
         }
 
-        /* DepEd Basic Education Performance Indicators Data & Interactive Logic */
-        const PERF_INDICATOR_DATA = {
-            kinder: {
-                title: "Kindergarten Performance Indicators (SY 2024-2025)",
-                kpis: [
-                    { label: "Apparent Intake Rate (AIR)", val: "77.94%", sub: "Male: 77.57% | Female: 78.32%" },
-                    { label: "Net Intake Rate (NIR)", val: "70.95%", sub: "Male: 69.50% | Female: 72.48%" },
-                    { label: "Gross Enrolment Rate (GER)", val: "78.93%", sub: "Male: 78.85% | Female: 79.01%" },
-                    { label: "Net Enrolment Rate (NER)", val: "71.09%", sub: "Male: 69.76% | Female: 72.50%" }
-                ],
-                rows: [
-                    { indicator: "Apparent Intake Rate (AIR)", male: "77.57%", female: "78.32%", total: "77.94%", type: "overall" },
-                    { indicator: "Public", male: "63.21%", female: "63.18%", total: "63.19%", type: "public" },
-                    { indicator: "Private", male: "14.36%", female: "15.14%", total: "14.74%", type: "private" },
-                    
-                    { indicator: "Net Intake Rate (NIR)", male: "69.50%", female: "72.48%", total: "70.95%", type: "overall" },
-                    { indicator: "Public", male: "56.74%", female: "58.54%", total: "57.61%", type: "public" },
-                    { indicator: "Private", male: "12.76%", female: "13.94%", total: "13.34%", type: "private" },
-                    
-                    { indicator: "Gross Enrolment Rate (GER)", male: "78.85%", female: "79.01%", total: "78.93%", type: "overall" },
-                    { indicator: "Public", male: "64.36%", female: "63.81%", total: "64.09%", type: "public" },
-                    { indicator: "Private", male: "14.49%", female: "15.21%", total: "14.84%", type: "private" },
-                    
-                    { indicator: "Net Enrolment Rate (NER)", male: "69.76%", female: "72.50%", total: "71.09%", type: "overall" },
-                    { indicator: "Public", male: "56.99%", female: "58.56%", total: "57.75%", type: "public" },
-                    { indicator: "Private", male: "12.76%", female: "13.94%", total: "13.34%", type: "private" }
-                ]
-            },
-            grade1: {
-                title: "Grade 1 & Transition Indicators (SY 2024-2025)",
-                kpis: [
-                    { label: "Apparent Intake Rate (G1 AIR)", val: "87.25%", sub: "Male: 86.68% | Female: 87.87%" },
-                    { label: "Net Intake Rate (G1 NIR)", val: "69.29%", sub: "Male: 66.70% | Female: 72.12%" },
-                    { label: "Transition Rate (Kinder to G1)", val: "99.10%", sub: "Male: 98.62% | Female: 99.62%" },
-                    { label: "Transition Rate (Grade 3 to 4)", val: "99.03%", sub: "Male: 98.59% | Female: 99.48%" }
-                ],
-                rows: [
-                    { indicator: "Apparent Intake Rate (AIR - Grade 1)", male: "86.68%", female: "87.87%", total: "87.25%", type: "overall" },
-                    { indicator: "Public", male: "71.75%", female: "72.38%", total: "72.05%", type: "public" },
-                    { indicator: "Private", male: "14.93%", female: "15.49%", total: "15.19%", type: "private" },
-
-                    { indicator: "Net Intake Rate (NIR - Grade 1)", male: "66.70%", female: "72.12%", total: "69.29%", type: "overall" },
-                    { indicator: "Public", male: "54.19%", female: "58.64%", total: "56.32%", type: "public" },
-                    { indicator: "Private", male: "12.51%", female: "13.48%", total: "12.98%", type: "private" },
-
-                    { indicator: "Transition Rate (Kinder - Grade 1)", male: "98.62%", female: "99.62%", total: "99.10%", type: "overall" },
-                    { indicator: "Public", male: "98.50%", female: "98.38%", total: "98.44%", type: "public" },
-                    { indicator: "Private", male: "99.19%", female: "105.88%", total: "102.35%", type: "private" },
-
-                    { indicator: "Transition Rate (Grade 3-4)", male: "98.59%", female: "99.48%", total: "99.03%", type: "overall" },
-                    { indicator: "Public", male: "97.66%", female: "99.20%", total: "98.40%", type: "public" },
-                    { indicator: "Private", male: "103.52%", female: "100.85%", total: "102.17%", type: "private" }
-                ]
-            },
-            elem: {
-                title: "Elementary Level (Kinder to Grade 6) Indicators (SY 2024-2025)",
-                kpis: [
-                    { label: "Gross Enrolment Rate (GER)", val: "91.85%", sub: "Public: 76.78% | Private: 15.08%" },
-                    { label: "Net Enrolment Rate (NER)", val: "84.44%", sub: "Public: 69.89% | Private: 14.55%" },
-                    { label: "Cohort Survival Rate (CSR)", val: "97.97%", sub: "Male: 96.93% | Female: 97.53%" },
-                    { label: "Completion Rate (CR)", val: "97.51%", sub: "Male: 96.56% | Female: 96.98%" },
-                    { label: "Graduation Rate (GR)", val: "98.99%", sub: "Male: 98.83% | Female: 99.17%" },
-                    { label: "School Leaver Rate (SLR)", val: "0.36%", sub: "Male: 0.49% | Female: 0.43%" }
-                ],
-                rows: [
-                    { indicator: "Gross Enrolment Rate (GER)", male: "94.02%", female: "89.55%", total: "91.85%", type: "overall" },
-                    { indicator: "Public", male: "79.00%", female: "74.42%", total: "76.78%", type: "public" },
-                    { indicator: "Private", male: "15.02%", female: "15.13%", total: "15.08%", type: "private" },
-
-                    { indicator: "Net Enrolment Rate (NER)", male: "84.15%", female: "84.75%", total: "84.44%", type: "overall" },
-                    { indicator: "Public", male: "69.68%", female: "70.12%", total: "69.89%", type: "public" },
-                    { indicator: "Private", male: "14.47%", female: "14.63%", total: "14.55%", type: "private" },
-
-                    { indicator: "Transition Rate (TR)", male: "97.51%", female: "101.33%", total: "99.30%", type: "overall" },
-                    { indicator: "Public", male: "96.97%", female: "100.97%", total: "98.85%", type: "public" },
-                    { indicator: "Private", male: "100.29%", female: "103.11%", total: "101.63%", type: "private" },
-
-                    { indicator: "Cohort Survival Rate (CSR)", male: "96.93%", female: "97.53%", total: "97.97%", type: "overall" },
-                    { indicator: "Completion Rate (CR)", male: "96.56%", female: "96.98%", total: "97.51%", type: "overall" },
-                    { indicator: "Repetition Rate (RR)", male: "1.13%", female: "0.63%", total: "0.89%", type: "overall" },
-                    { indicator: "Graduation Rate (GR)", male: "98.83%", female: "99.17%", total: "98.99%", type: "overall" },
-                    { indicator: "Promotion Rate (PR)", male: "98.38%", female: "98.94%", total: "98.75%", type: "overall" },
-                    { indicator: "School Leaver Rate (SLR)", male: "0.49%", female: "0.43%", total: "0.36%", type: "overall" }
-                ]
-            },
-            g1_6: {
-                title: "Elementary Level (Grades 1-6) Performance Indicators (SY 2024-2025)",
-                kpis: [
-                    { label: "Gross Enrolment Rate (GER)", val: "91.39%", sub: "Public: 76.28% | Private: 15.11%" },
-                    { label: "Net Enrolment Rate (NER)", val: "84.13%", sub: "Public: 69.69% | Private: 14.43%" },
-                    { label: "Retention Rate (RR)", val: "99.39%", sub: "Public: 99.00% | Private: 101.41%" },
-                    { label: "Cohort Survival Rate (CSR)", val: "97.97%", sub: "Male: 96.93% | Female: 97.53%" },
-                    { label: "Graduation Rate (GR)", val: "98.99%", sub: "Male: 98.83% | Female: 99.17%" },
-                    { label: "School Leaver Rate (SLR)", val: "0.42%", sub: "Male: 0.66% | Female: 0.51%" }
-                ],
-                rows: [
-                    { indicator: "Gross Enrolment Rate (GER)", male: "91.91%", female: "90.84%", total: "91.39%", type: "overall" },
-                    { indicator: "Public", male: "76.80%", female: "75.72%", total: "76.28%", type: "public" },
-                    { indicator: "Private", male: "15.11%", female: "15.12%", total: "15.11%", type: "private" },
-
-                    { indicator: "Net Enrolment Rate (NER)", male: "83.73%", female: "84.55%", total: "84.13%", type: "overall" },
-                    { indicator: "Public", male: "69.29%", female: "70.13%", total: "69.69%", type: "public" },
-                    { indicator: "Private", male: "14.44%", female: "14.43%", total: "14.43%", type: "private" },
-
-                    { indicator: "Retention Rate (RR)", male: "99.18%", female: "99.62%", total: "99.39%", type: "overall" },
-                    { indicator: "Public", male: "98.71%", female: "99.32%", total: "99.00%", type: "public" },
-                    { indicator: "Private", male: "101.67%", female: "101.14%", total: "101.41%", type: "private" },
-
-                    { indicator: "Cohort Survival Rate (CSR)", male: "96.93%", female: "97.53%", total: "97.97%", type: "overall" },
-                    { indicator: "Completion Rate (CR)", male: "96.56%", female: "96.98%", total: "97.51%", type: "overall" },
-                    { indicator: "Repetition Rate (RR)", male: "1.08%", female: "0.60%", total: "0.85%", type: "overall" },
-                    { indicator: "Graduation Rate (GR)", male: "98.83%", female: "99.17%", total: "98.99%", type: "overall" },
-                    { indicator: "Promotion Rate (PR)", male: "98.25%", female: "98.89%", total: "98.73%", type: "overall" },
-                    { indicator: "School Leaver Rate (SLR)", male: "0.66%", female: "0.51%", total: "0.42%", type: "overall" }
-                ]
-            },
-            jhs: {
-                title: "Junior High School (Grades 7-10) Indicators (SY 2024-2025)",
-                kpis: [
-                    { label: "Gross Enrolment Rate (GER)", val: "92.93%", sub: "Public: 71.43% | Private: 21.49%" },
-                    { label: "Net Enrolment Rate (NER)", val: "85.89%", sub: "Public: 65.70% | Private: 20.19%" },
-                    { label: "Transition Rate (Grade 6-7)", val: "100.41%", sub: "Public: 93.69% | Private: 134.10%" },
-                    { label: "Cohort Survival Rate (CSR)", val: "92.43%", sub: "Male: 90.57% | Female: 94.35%" },
-                    { label: "Graduation Rate (GR)", val: "99.07%", sub: "Male: 98.84% | Female: 99.29%" },
-                    { label: "School Leaver Rate (SLR)", val: "1.91%", sub: "Male: 3.35% | Female: 1.42%" }
-                ],
-                rows: [
-                    { indicator: "Gross Enrolment Rate (GER)", male: "90.16%", female: "95.91%", total: "92.93%", type: "overall" },
-                    { indicator: "Public", male: "69.32%", female: "73.71%", total: "71.43%", type: "public" },
-                    { indicator: "Private", male: "20.84%", female: "22.20%", total: "21.49%", type: "private" },
-
-                    { indicator: "Net Enrolment Rate (NER)", male: "81.84%", female: "90.24%", total: "85.89%", type: "overall" },
-                    { indicator: "Public", male: "62.39%", female: "69.25%", total: "65.70%", type: "public" },
-                    { indicator: "Private", male: "19.45%", female: "20.99%", total: "20.19%", type: "private" },
-
-                    { indicator: "Retention Rate (RR)", male: "96.76%", female: "98.12%", total: "97.44%", type: "overall" },
-                    { indicator: "Public", male: "95.61%", female: "97.68%", total: "96.64%", type: "public" },
-                    { indicator: "Private", male: "100.70%", female: "99.54%", total: "100.11%", type: "private" },
-
-                    { indicator: "Transition Rate (TR - Grade 6-7)", male: "99.52%", female: "101.38%", total: "100.41%", type: "overall" },
-                    { indicator: "Public", male: "92.30%", female: "95.19%", total: "93.69%", type: "public" },
-                    { indicator: "Private", male: "135.51%", female: "132.56%", total: "134.10%", type: "private" },
-
-                    { indicator: "Cohort Survival Rate (CSR)", male: "90.57%", female: "94.35%", total: "92.43%", type: "overall" },
-                    { indicator: "Completion Rate (CR)", male: "90.57%", female: "94.35%", total: "92.43%", type: "overall" },
-                    { indicator: "Repetition Rate (RR)", male: "1.71%", female: "0.98%", total: "1.35%", type: "overall" },
-                    { indicator: "Graduation Rate (GR)", male: "98.84%", female: "99.29%", total: "99.07%", type: "overall" },
-                    { indicator: "Promotion Rate (PR)", male: "94.94%", female: "97.60%", total: "96.74%", type: "overall" },
-                    { indicator: "School Leaver Rate (SLR)", male: "3.35%", female: "1.42%", total: "1.91%", type: "overall" }
-                ]
-            },
-            shs: {
-                title: "Senior High School (Grades 11-12) Indicators (SY 2024-2025)",
-                kpis: [
-                    { label: "Gross Enrolment Rate (GER)", val: "109.74%", sub: "Public: 53.60% | Private: 56.15%" },
-                    { label: "Net Enrolment Rate (NER)", val: "84.84%", sub: "Public: 38.85% | Private: 45.99%" },
-                    { label: "Transition Rate (Grade 10-11)", val: "118.37%", sub: "Public: 76.13% | Private: 266.65%" }
-                ],
-                rows: [
-                    { indicator: "Gross Enrolment Rate (GER)", male: "108.57%", female: "110.96%", total: "109.74%", type: "overall" },
-                    { indicator: "Public", male: "54.87%", female: "52.27%", total: "53.60%", type: "public" },
-                    { indicator: "Private", male: "53.70%", female: "58.69%", total: "56.15%", type: "private" },
-
-                    { indicator: "Net Enrolment Rate (NER)", male: "80.83%", female: "89.01%", total: "84.84%", type: "overall" },
-                    { indicator: "Public", male: "37.97%", female: "39.78%", total: "38.85%", type: "public" },
-                    { indicator: "Private", male: "42.86%", female: "49.23%", total: "45.99%", type: "private" },
-
-                    { indicator: "Transition Rate (TR Grade 10-11)", male: "118.56%", female: "118.18%", total: "118.37%", type: "overall" },
-                    { indicator: "Public", male: "80.17%", female: "72.20%", total: "76.13%", type: "public" },
-                    { indicator: "Private", male: "244.74%", female: "291.00%", total: "266.65%", type: "private" }
-                ]
-            },
-            sec_overall: {
-                title: "Secondary Education Overall (Grades 7-12) Indicators (SY 2024-2025)",
-                kpis: [
-                    { label: "Gross Enrolment Rate (GER)", val: "102.00%", sub: "Public: 69.05% | Private: 32.95%" },
-                    { label: "Net Enrolment Rate (NER)", val: "91.64%", sub: "Public: 61.40% | Private: 30.24%" },
-                    { label: "Cohort Survival Rate (CSR)", val: "86.30%", sub: "Male: 84.05% | Female: 88.65%" },
-                    { label: "Completion Rate (CR)", val: "84.21%", sub: "Male: 81.15% | Female: 87.48%" },
-                    { label: "Graduation Rate (GR)", val: "97.58%", sub: "Male: 96.55% | Female: 98.68%" },
-                    { label: "School Leaver Rate (SLR)", val: "2.78%", sub: "Male: 3.37% | Female: 2.18%" }
-                ],
-                rows: [
-                    { indicator: "Gross Enrolment Rate (GER)", male: "101.13%", female: "102.93%", total: "102.00%", type: "overall" },
-                    { indicator: "Public", male: "69.55%", female: "68.53%", total: "69.05%", type: "public" },
-                    { indicator: "Private", male: "31.58%", female: "34.41%", total: "32.95%", type: "private" },
-
-                    { indicator: "Net Enrolment Rate (NER)", male: "88.11%", female: "95.38%", total: "91.64%", type: "overall" },
-                    { indicator: "Public", male: "59.58%", female: "63.33%", total: "61.40%", type: "public" },
-                    { indicator: "Private", male: "28.53%", female: "32.05%", total: "30.24%", type: "private" },
-
-                    { indicator: "Retention Rate (RR)", male: "100.15%", female: "101.18%", total: "100.66%", type: "overall" },
-                    { indicator: "Public", male: "91.62%", female: "91.10%", total: "91.37%", type: "public" },
-                    { indicator: "Private", male: "120.78%", female: "124.91%", total: "122.86%", type: "private" },
-
-                    { indicator: "Cohort Survival Rate (CSR)", male: "84.05%", female: "88.65%", total: "86.30%", type: "overall" },
-                    { indicator: "Completion Rate (CR)", male: "81.15%", female: "87.48%", total: "84.21%", type: "overall" },
-                    { indicator: "Graduation Rate (GR)", male: "96.55%", female: "98.68%", total: "97.58%", type: "overall" },
-                    { indicator: "Promotion Rate (PR)", male: "95.58%", female: "97.20%", total: "96.38%", type: "overall" },
-                    { indicator: "School Leaver Rate (SLR)", male: "3.37%", female: "2.18%", total: "2.78%", type: "overall" }
-                ]
-            }
+        /* DepEd Basic Education Performance Indicators — built from DB */
+        const PERF_TAB_TITLES = {
+            kinder:      "Kindergarten Performance Indicators (SY 2024-2025)",
+            grade1:      "Grade 1 & Transition Indicators (SY 2024-2025)",
+            elem:        "Elementary Level (Kinder to Grade 6) Indicators (SY 2024-2025)",
+            g1_6:        "Elementary Level (Grades 1-6) Performance Indicators (SY 2024-2025)",
+            jhs:         "Junior High School (Grades 7-10) Indicators (SY 2024-2025)",
+            shs:         "Senior High School (Grades 11-12) Indicators (SY 2024-2025)",
+            sec_overall: "Secondary Education Overall (Grades 7-12) Indicators (SY 2024-2025)"
         };
 
         let currentPerfTab = 'kinder';
         let perfChartInst = null;
         let perfChartType = 'bar';
+
+        function getPerfDataForTab(eduLevel) {
+            const rows = perfIndicatorRows.filter(r => r.edu_level === eduLevel);
+            const typeOrder = { overall: 0, public: 1, private: 2 };
+            rows.sort((a, b) => {
+                if (a.indicator_name !== b.indicator_name) return a.indicator_name.localeCompare(b.indicator_name);
+                return (typeOrder[a.category_type] ?? 3) - (typeOrder[b.category_type] ?? 3);
+            });
+
+            const overallRows = rows.filter(r => r.category_type === 'overall');
+            const kpis = overallRows.map(r => ({
+                label: r.indicator_name,
+                val: `${r.total_value}%`,
+                sub: `Male: ${r.male_value}% | Female: ${r.female_value}%`
+            }));
+
+            return {
+                title: PERF_TAB_TITLES[eduLevel] || eduLevel,
+                kpis,
+                rows: rows.map(r => ({
+                    indicator: r.category_type === 'overall' ? r.indicator_name : r.category_type.charAt(0).toUpperCase() + r.category_type.slice(1),
+                    male: `${r.male_value}%`,
+                    female: `${r.female_value}%`,
+                    total: `${r.total_value}%`,
+                    type: r.category_type,
+                    indicator_name: r.indicator_name
+                }))
+            };
+        }
 
         function initPerfIndicatorWidget() {
             const tabs = document.querySelectorAll("#perf-tabs .perf-tab-btn");
@@ -1851,10 +1706,9 @@
         }
 
         function renderPerfIndicatorView() {
-            const data = PERF_INDICATOR_DATA[currentPerfTab];
-            if (!data) return;
+            const data = getPerfDataForTab(currentPerfTab);
+            if (!data || data.rows.length === 0) return;
 
-            // Render KPI cards
             const kpiContainer = document.getElementById("perf-kpi-container");
             if (kpiContainer) {
                 kpiContainer.innerHTML = data.kpis.map(kpi => `
@@ -1866,22 +1720,19 @@
                 `).join("");
             }
 
-            // Render Table Body
             const tbody = document.getElementById("perf-table-body");
             if (tbody) {
                 tbody.innerHTML = data.rows.map(row => {
                     const isOverall = row.type === 'overall';
-                    const isPublic = row.type === 'public';
-                    const isPrivate = row.type === 'private';
                     let badge = '';
-                    if (isPublic) badge = '<span class="badge-public">Public</span>';
-                    else if (isPrivate) badge = '<span class="badge-private">Private</span>';
+                    if (row.type === 'public') badge = '<span class="badge-public">Public</span>';
+                    else if (row.type === 'private') badge = '<span class="badge-private">Private</span>';
                     else if (isOverall) badge = '<span class="badge-overall">Overall</span>';
 
                     return `
                         <tr class="${isOverall ? 'row-overall' : ''}">
                             <td class="${!isOverall ? 'sub-row' : ''}">
-                                ${badge} <strong>${row.indicator}</strong>
+                                ${badge} <strong>${row.indicator_name}</strong>
                             </td>
                             <td style="text-align: center;">${row.male}</td>
                             <td style="text-align: center;">${row.female}</td>
@@ -1896,12 +1747,11 @@
 
         function renderPerfChart() {
             if (perfChartInst) { perfChartInst.destroy(); perfChartInst = null; }
-            const data = PERF_INDICATOR_DATA[currentPerfTab];
-            if (!data) return;
+            const data = getPerfDataForTab(currentPerfTab);
+            if (!data || data.rows.length === 0) return;
 
-            // Filter overall rows for plotting
             const overallRows = data.rows.filter(r => r.type === 'overall');
-            const labels = overallRows.map(r => r.indicator.replace(/\s*\(.*\)/, ''));
+            const labels = overallRows.map(r => r.indicator_name.replace(/\s*\(.*\)/, ''));
             const parseVal = v => parseFloat(v.replace('%', '')) || 0;
             const maleVals = overallRows.map(r => parseVal(r.male));
             const femaleVals = overallRows.map(r => parseVal(r.female));
