@@ -419,7 +419,7 @@
         };
 
         const PIE_COLORS = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548", "#3b82f6", "#ec4899", "#10b981", "#8b5cf6"];
-        const PIE_HOVER_COLORS = ["#ff2a2a", "#ff6666", "#ffb347", "#4caf50", "#42a5f5", "#ab47bc", "#26c6da", "#ff7043", "#8d6e63", "#60a5fa", "#f472b6", "#34d399", "#a78bfa"];
+        const PIE_HOVER_COLORS = PIE_COLORS.map(c => c + "99");
 
         function makeGradient(ctx) {
             const g = ctx.createLinearGradient(0, 0, 0, 380);
@@ -638,7 +638,6 @@
         function renderVitalRatesChart() {
             if (vitalRatesChartInst) { vitalRatesChartInst.destroy(); vitalRatesChartInst = null; }
             const ctx = document.getElementById("vitalRatesChart").getContext("2d");
-            const gradient = makeGradient(ctx);
 
             const vitalKeys = [
                 { key: "Crude Birth Rate (CBR)", label: "Crude Birth Rate (CBR)", color: "#3b82f6" },
@@ -658,9 +657,10 @@
                     return latest.val !== '--' ? latest.val : 0;
                 });
                 const labels = [...vitalKeys, mmrKey].map(v => v.label);
+                const vitalPieColors = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"];
                 config = {
                     type: "pie",
-                    data: { labels, datasets: [{ label: 'Vital Rates', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    data: { labels, datasets: [{ label: 'Vital Rates', data: merged, backgroundColor: vitalPieColors, hoverBackgroundColor: vitalPieColors.map(c => c + "99"), hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
                     options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { duration: 200, easing: 'easeOutQuart' }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.label}: ${ctx.raw}`) } }
                 };
             } else {
@@ -674,7 +674,8 @@
                                 const ds = makeDatasetStyle(v.color, isLine);
                                 ds.label = v.label;
                                 ds.data = healthData[v.key]?.history || [];
-                                ds.backgroundColor = isLine ? 'transparent' : (i === 0 ? gradient : `${v.color}66`);
+                                ds.backgroundColor = v.color;
+                                ds.hoverBackgroundColor = v.color + '99';
                                 ds.yAxisID = 'y';
                                 ds.spanGaps = true;
                                 ds.pointStyle = v.key === "Child Woman Ratio (CWR)" ? 'circle' : 'circle';
@@ -685,7 +686,8 @@
                                 const ds = makeDatasetStyle(mmrKey.color, isLine);
                                 ds.label = mmrKey.label;
                                 ds.data = healthData[mmrKey.key]?.history || [];
-                                ds.backgroundColor = isLine ? 'transparent' : `${mmrKey.color}66`;
+                                ds.backgroundColor = mmrKey.color;
+                                ds.hoverBackgroundColor = mmrKey.color + '99';
                                 ds.yAxisID = 'y1';
                                 ds.spanGaps = true;
                                 ds.pointStyle = 'circle';
@@ -696,7 +698,19 @@
                     },
                     options: baseLineOpts({
                         plugins: {
-                            legend: { display: true, position: 'bottom', labels: { boxWidth: 12, color: "#000000b3", padding: 14 } },
+                            legend: {
+                                display: true, position: 'bottom', labels: { boxWidth: 12, color: "#000000b3", padding: 14 },
+                                onClick: function(e, legendItem, legend) {
+                                    const index = legendItem.datasetIndex;
+                                    const chart = legend.chart;
+                                    const meta = chart.getDatasetMeta(index);
+                                    meta.hidden = meta.hidden === null ? !chart.data.datasets[index].hidden : null;
+                                    const mmrIndex = chart.data.datasets.length - 1;
+                                    const mmrHidden = chart.getDatasetMeta(mmrIndex).hidden;
+                                    chart.options.scales.y1.display = !mmrHidden;
+                                    chart.update();
+                                }
+                            },
                             tooltip: {
                                 backgroundColor: "rgba(15, 23, 42, 0.95)",
                                 padding: 10,
@@ -733,7 +747,7 @@
                                 type: 'linear',
                                 display: true,
                                 position: 'right',
-                                title: { display: true, text: 'Maternal Deaths per 100k Livebirths' },
+                                title: { display: true, text: 'Maternal Mortality (MMR)' },
                                 grid: { drawOnChartArea: false },
                                 ticks: { color: "#000000b3" }
                             },
@@ -752,7 +766,6 @@
         function renderFamilyHealthChart() {
             if (familyHealthChartInst) { familyHealthChartInst.destroy(); familyHealthChartInst = null; }
             const ctx = document.getElementById("familyHealthChart").getContext("2d");
-            const gradient = makeGradient(ctx);
 
             const familyKeys = [
                 { key: "Percentage of Fully Immunized Children", label: "Fully Immunized Children", color: "#2563eb" },
@@ -772,9 +785,10 @@
                     return latest.val !== '--' ? latest.val : 0;
                 });
                 const labels = familyKeys.map(v => v.label);
+                const familyPieColors = ["#2563eb", "#db2777", "#ea580c", "#16a34a", "#0d9488", "#4f46e5"];
                 config = {
                     type: "pie",
-                    data: { labels, datasets: [{ label: 'Family Health Indicators', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    data: { labels, datasets: [{ label: 'Family Health Indicators', data: merged, backgroundColor: familyPieColors, hoverBackgroundColor: familyPieColors.map(c => c + "99"), hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
                     options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { duration: 200, easing: 'easeOutQuart' }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.label}: ${ctx.raw}%`) } }
                 };
             } else {
@@ -787,7 +801,8 @@
                             const ds = makeDatasetStyle(v.color, isLine);
                             ds.label = v.label;
                             ds.data = healthData[v.key]?.history || [];
-                            ds.backgroundColor = isLine ? 'transparent' : (i === 0 ? gradient : `${v.color}66`);
+                            ds.backgroundColor = v.color;
+                            ds.hoverBackgroundColor = v.color + '99';
                             ds.yAxisID = 'y';
                             ds.spanGaps = true;
                             ds.borderRadius = isLine ? 0 : 6;
