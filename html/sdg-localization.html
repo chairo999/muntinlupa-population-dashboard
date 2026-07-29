@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>MunTHINK Hub — SDG Localization</title>
     <link rel="icon" type="image/png" href="../assets/images/muntinlupa-city-logo.png">
+    <link rel="stylesheet" href="../styles.css">
     <style>
         :root {
             --primary-blue: #003893;
@@ -42,18 +44,26 @@
             background-color: var(--light-bg);
             color: var(--text-dark);
             min-height: 100vh;
-            padding: 32px 16px;
             display: flex;
             flex-direction: column;
-            align-items: center;
         }
 
         .container {
             max-width: 1280px;
             width: 100%;
+            margin: 32px auto;
             display: flex;
             flex-direction: column;
             gap: 24px;
+            flex: 1;
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 36px;
+            box-shadow: 0 10px 30px rgba(0, 56, 147, 0.06);
         }
 
         .main-card {
@@ -187,6 +197,111 @@
 
         .sdg-btn-img:hover {
             transform: scale(1.1);
+        }
+
+        /* 17 SDG GALLERY SECTION */
+        .sdg-gallery-section-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin: 32px 0 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-align: center;
+        }
+
+        .sdg-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 24px;
+            padding: 40px;
+            background: #f8fafc;
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            margin-bottom: 8px;
+        }
+
+        .sdg-gallery-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sdg-gallery-item img {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+            object-fit: cover;
+        }
+
+        .sdg-gallery-item img:hover {
+            transform: scale(1.12);
+        }
+
+
+        .sdg-progress-bar-container {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .sdg-progress-bar {
+            flex: 1;
+            height: 18px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            min-width: 0;
+            transition: width 0.6s ease;
+        }
+
+        .sdg-progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.6s ease;
+            width: 0%;
+            display: flex;
+            align-items: stretch;
+            gap: 2px;
+            padding: 0 1px;
+        }
+
+        .sdg-progress-segment {
+            flex: 1;
+            min-width: 2px;
+            background: #003893;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .sdg-progress-segment:hover {
+            opacity: 0.7;
+        }
+
+        tr.highlighted-row {
+            animation: rowHighlight 3s ease-out;
+        }
+
+        @keyframes rowHighlight {
+            0% { outline: 3px solid #fbce13; outline-offset: -1px; background-color: #fef9c3; }
+            100% { outline: 3px solid transparent; outline-offset: -1px; background-color: transparent; }
+        }
+
+        .sdg-progress-count {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            white-space: nowrap;
+            min-width: 30px;
+            text-align: right;
         }
 
         /* INLINE TABLE SDG IMAGE BADGE */
@@ -565,19 +680,6 @@
             transform: translateY(-2px);
         }
 
-        footer {
-            margin-top: 24px;
-            text-align: center;
-            width: 100%;
-        }
-
-        .footer-image {
-            max-width: 100%;
-            height: auto;
-            border-radius: 12px;
-            border: 1px solid var(--border-light);
-        }
-
         @media (max-width: 768px) {
             .main-card { padding: 20px; }
             h1 { font-size: 1.8rem; }
@@ -586,22 +688,44 @@
     </style>
 </head>
 <body>
+    <header class="dashboard-header">
+        <a class="header-logo" href="landing-page.html">
+            <img src="../assets/images/muntinlupa-city-logo.png" alt="MunTHINK Logo" class="header-logo-img">
+            <div class="header-titles">
+                <h1>MunTHINK Hub</h1>
+                <p class="subtitle">Smarter Data for a Smarter Muntinlupa</p>
+            </div>
+        </a>
+        <div class="header-info">
+            <span class="header-sector-text">SDG LOCALIZATION</span>
+            <img src="../assets/images/hamburger.png" alt="sidebar" class="sidebar-sectors" id="hamburger-btn">
+        </div>
+    </header>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <aside class="sector-sidebar" id="sector-sidebar">
+        <div class="sidebar-header">
+            <h2>Dashboard Sectors</h2>
+            <i class="fa-solid fa-xmark" id="close-sidebar-btn"></i>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="landing-page.html" class="nav-item"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="population.html" class="nav-item"><i class="fa-solid fa-users"></i> Population</a>
+            <a href="economic.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Economic</a>
+            <a href="education.html" class="nav-item"><i class="fa-solid fa-graduation-cap"></i> Education</a>
+            <a href="health.html" class="nav-item"><i class="fa-solid fa-notes-medical"></i> Health</a>
+            <a href="protective.html" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Protective</a>
+            <a href="socwel.html" class="nav-item"><i class="fa-solid fa-hand-holding-heart"></i> Social Welfare</a>
+            <a href="environment.html" class="nav-item"><i class="fa-solid fa-leaf"></i> Environment</a>
+            <a href="institutional.html" class="nav-item"><i class="fa-solid fa-building-columns"></i> Institutional</a>
+            <a href="infra.html" class="nav-item"><i class="fa-solid fa-road"></i> Infrastructure</a>
+            <a href="sdg-localization.html" class="nav-item"><i class="fa-solid fa-bullhorn"></i> SDG Localization</a>
+        </nav>
+    </aside>
+
     <div class="container">
         <div class="main-card">
-            <div class="header-title">
-                <h1>SDG Localization Dashboard</h1>
-                <p class="subtitle">City Government of Muntinlupa • 7K Agenda Alignment</p>
-            </div>
-
-            <!-- Intro Section -->
-            <div class="intro-section">
-                <p class="intro-text">
-                    The City Government of Muntinlupa advances its development priorities through the 7K Agenda, the governing thrust of Mayor Ruffy Biazon. Anchored on seven pillars—Kabuhayan, Kalusugan, Karunungan, Kaunlaran, Kapayapaan at Kaayusan, Kalikasan, and Katarungan—this agenda provides a clear framework for inclusive growth and responsive governance.
-                </p>
-                <p class="intro-text">
-                    Each pillar is strategically aligned with the United Nations Sustainable Development Goals (SDGs), underscoring the importance of localizing global targets into concrete programs that directly benefit communities. By integrating the SDGs into the local government, Muntinlupa ensures that its initiatives are globally relevant while remaining locally grounded, strengthening resilience, equity, and sustainability across all sectors.
-                </p>
-            </div>
 
             <!-- 7K PILLARS GRAPHIC BUTTONS GRID WITH ORIGINAL SDG IMAGE TILES -->
             <div class="pillars-section-title">Select 7K Agenda Pillar</div>
@@ -613,12 +737,12 @@
                         <div class="pillar-header-sub">Ibahagi ang trabaho at negosyo</div>
                     </div>
                     <div class="sdg-badges-row">
-                        <img src="../assets/images/sdg-1.png" alt="SDG 1 No Poverty" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-2.png" alt="SDG 2 Zero Hunger" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-8.png" alt="SDG 8 Decent Work" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-10.png" alt="SDG 10 Reduced Inequalities" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-11.png" alt="SDG 11 Sustainable Cities" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-12.png" alt="SDG 12 Responsible Consumption" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-01.jpg" alt="SDG 1 No Poverty" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-02.jpg" alt="SDG 2 Zero Hunger" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg" alt="SDG 8 Decent Work" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-10.jpg" alt="SDG 10 Reduced Inequalities" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-11.jpg" alt="SDG 11 Sustainable Cities" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-12.jpg" alt="SDG 12 Responsible Consumption" class="sdg-btn-img">
                     </div>
                 </button>
 
@@ -629,9 +753,9 @@
                         <div class="pillar-header-sub">Palakasin ang serbisyong pangkalusugan</div>
                     </div>
                     <div class="sdg-badges-row">
-                        <img src="../assets/images/sdg-2.png" alt="SDG 2 Zero Hunger" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-3.png" alt="SDG 3 Good Health" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-6.png" alt="SDG 6 Clean Water" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-02.jpg" alt="SDG 2 Zero Hunger" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3 Good Health" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-06.jpg" alt="SDG 6 Clean Water" class="sdg-btn-img">
                     </div>
                 </button>
 
@@ -642,7 +766,7 @@
                         <div class="pillar-header-sub">Patatagin ang edukasyon</div>
                     </div>
                     <div class="sdg-badges-row">
-                        <img src="../assets/images/sdg-4.png" alt="SDG 4 Quality Education" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" alt="SDG 4 Quality Education" class="sdg-btn-img">
                     </div>
                 </button>
 
@@ -653,10 +777,10 @@
                         <div class="pillar-header-sub">Makabagong sistema para sa negosyo, puhunan, at serbisyo</div>
                     </div>
                     <div class="sdg-badges-row">
-                        <img src="../assets/images/sdg-9.png" alt="SDG 9 Industry" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-11.png" alt="SDG 11 Sustainable Cities" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-16.png" alt="SDG 16 Peace & Justice" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-17.png" alt="SDG 17 Partnerships" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-09.jpg" alt="SDG 9 Industry" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-11.jpg" alt="SDG 11 Sustainable Cities" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-16.jpg" alt="SDG 16 Peace & Justice" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-17.jpg" alt="SDG 17 Partnerships" class="sdg-btn-img">
                     </div>
                 </button>
 
@@ -667,15 +791,15 @@
                         <div class="pillar-header-sub">Pangangalaga ng likas na yaman at proteksyon ng kapaligiran</div>
                     </div>
                     <div class="sdg-badges-row">
-                        <img src="../assets/images/sdg-1.png" alt="SDG 1 No Poverty" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-6.png" alt="SDG 6 Clean Water" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-7.png" alt="SDG 7 Clean Energy" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-9.png" alt="SDG 9 Industry" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-11.png" alt="SDG 11 Sustainable Cities" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-12.png" alt="SDG 12 Responsible Consumption" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-13.png" alt="SDG 13 Climate Action" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-14.png" alt="SDG 14 Life Below Water" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-15.png" alt="SDG 15 Life on Land" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-01.jpg" alt="SDG 1 No Poverty" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-06.jpg" alt="SDG 6 Clean Water" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-07.jpg" alt="SDG 7 Clean Energy" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-09.jpg" alt="SDG 9 Industry" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-11.jpg" alt="SDG 11 Sustainable Cities" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-12.jpg" alt="SDG 12 Responsible Consumption" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-13.jpg" alt="SDG 13 Climate Action" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-14.jpg" alt="SDG 14 Life Below Water" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-15.jpg" alt="SDG 15 Life on Land" class="sdg-btn-img">
                     </div>
                 </button>
 
@@ -686,11 +810,11 @@
                         <div class="pillar-header-sub">Pantay-pantay at patas na serbisyo para sa lahat</div>
                     </div>
                     <div class="sdg-badges-row">
-                        <img src="../assets/images/sdg-5.png" alt="SDG 5 Gender Equality" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-8.png" alt="SDG 8 Decent Work" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-10.png" alt="SDG 10 Reduced Inequalities" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-11.png" alt="SDG 11 Sustainable Cities" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-16.png" alt="SDG 16 Peace & Justice" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-05.jpg" alt="SDG 5 Gender Equality" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg" alt="SDG 8 Decent Work" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-10.jpg" alt="SDG 10 Reduced Inequalities" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-11.jpg" alt="SDG 11 Sustainable Cities" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-16.jpg" alt="SDG 16 Peace & Justice" class="sdg-btn-img">
                     </div>
                 </button>
 
@@ -701,14 +825,180 @@
                         <div class="pillar-header-sub">Seguridad at kaligtasan ng mga mamamayan</div>
                     </div>
                     <div class="sdg-badges-row">
-                        <img src="../assets/images/sdg-1.png" alt="SDG 1 No Poverty" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-3.png" alt="SDG 3 Good Health" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-11.png" alt="SDG 11 Sustainable Cities" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-13.png" alt="SDG 13 Climate Action" class="sdg-btn-img">
-                        <img src="../assets/images/sdg-16.png" alt="SDG 16 Peace & Justice" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-01.jpg" alt="SDG 1 No Poverty" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3 Good Health" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-11.jpg" alt="SDG 11 Sustainable Cities" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-13.jpg" alt="SDG 13 Climate Action" class="sdg-btn-img">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-16.jpg" alt="SDG 16 Peace & Justice" class="sdg-btn-img">
                     </div>
                 </button>
             </div>
+
+        </div>
+
+        <div class="main-card">
+
+            <!-- 17 SDG LOGOS GALLERY IN CHRONOLOGICAL ORDER -->
+            <div class="sdg-gallery-section-title">Sustainable Development Goals (SDGs)</div>
+            <div class="sdg-gallery-grid">
+                <div class="sdg-gallery-item" data-sdg="1">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-01.jpg" alt="SDG 1 No Poverty">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+                <div class="sdg-gallery-item" data-sdg="2">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-02.jpg" alt="SDG 2 Zero Hunger">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+                <div class="sdg-gallery-item" data-sdg="3">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3 Good Health and Well-being">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+                <div class="sdg-gallery-item" data-sdg="4">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" alt="SDG 4 Quality Education">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+                <div class="sdg-gallery-item" data-sdg="5">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-05.jpg" alt="SDG 5 Gender Equality">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+                <div class="sdg-gallery-item" data-sdg="6">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-06.jpg" alt="SDG 6 Clean Water and Sanitation">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+                <div class="sdg-gallery-item" data-sdg="7">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-07.jpg" alt="SDG 7 Affordable and Clean Energy">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+                <div class="sdg-gallery-item" data-sdg="8">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg" alt="SDG 8 Decent Work and Economic Growth">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+                <div class="sdg-gallery-item" data-sdg="9">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-09.jpg" alt="SDG 9 Industry, Innovation and Infrastructure">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+                <div class="sdg-gallery-item" data-sdg="10">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-10.jpg" alt="SDG 10 Reduced Inequalities">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+                <div class="sdg-gallery-item" data-sdg="11">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-11.jpg" alt="SDG 11 Sustainable Cities and Communities">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+                <div class="sdg-gallery-item" data-sdg="12">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-12.jpg" alt="SDG 12 Responsible Consumption and Production">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+                <div class="sdg-gallery-item" data-sdg="13">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-13.jpg" alt="SDG 13 Climate Action">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+                <div class="sdg-gallery-item" data-sdg="14">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-14.jpg" alt="SDG 14 Life Below Water">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+                <div class="sdg-gallery-item" data-sdg="15">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-15.jpg" alt="SDG 15 Life on Land">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+                <div class="sdg-gallery-item" data-sdg="16">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-16.jpg" alt="SDG 16 Peace, Justice and Strong Institutions">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+                <div class="sdg-gallery-item" data-sdg="17">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-17.jpg" alt="SDG 17 Partnerships for the Goals">
+                    <div class="sdg-progress-bar-container">
+                        <div class="sdg-progress-bar">
+                            <div class="sdg-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="sdg-progress-count">0</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="main-card">
 
             <!-- ========================================== -->
             <!-- KABUHAYAN (LIVELIHOOD) PILLAR CONTENT     -->
@@ -817,7 +1107,7 @@
                                 <td class="indicator-col">Poverty Incidence among Families</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-1.png" alt="SDG 1" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-01.jpg" alt="SDG 1" class="table-sdg-img">
                                         <span>SDG 1</span>
                                     </div>
                                 </td>
@@ -835,7 +1125,7 @@
                                 <td class="indicator-col">Poverty Incidence among Population</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-1.png" alt="SDG 1" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-01.jpg" alt="SDG 1" class="table-sdg-img">
                                         <span>SDG 1</span>
                                     </div>
                                 </td>
@@ -853,7 +1143,7 @@
                                 <td class="indicator-col">Local Gini Coefficient</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-1.png" alt="SDG 1" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-01.jpg" alt="SDG 1" class="table-sdg-img">
                                         <span>SDG 1</span>
                                     </div>
                                 </td>
@@ -871,7 +1161,7 @@
                                 <td class="indicator-col">Magnitude of Poor Families</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-1.png" alt="SDG 1" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-01.jpg" alt="SDG 1" class="table-sdg-img">
                                         <span>SDG 1</span>
                                     </div>
                                 </td>
@@ -889,7 +1179,7 @@
                                 <td class="indicator-col">Magnitude of Poor Population</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-1.png" alt="SDG 1" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-01.jpg" alt="SDG 1" class="table-sdg-img">
                                         <span>SDG 1</span>
                                     </div>
                                 </td>
@@ -907,7 +1197,7 @@
                                 <td class="indicator-col">Employment Rate</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg" alt="SDG 8" class="table-sdg-img">
                                         <span>SDG 8</span>
                                     </div>
                                 </td>
@@ -925,7 +1215,7 @@
                                 <td class="indicator-col">8.5.2 Unemployment rate (by sex, age, PWD)</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg" alt="SDG 8" class="table-sdg-img">
                                         <span>SDG 8</span>
                                     </div>
                                 </td>
@@ -943,7 +1233,7 @@
                                 <td class="indicator-col">8.6.1 Proportion of youth (15-24) not in education, employment or training (NEET)</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg" alt="SDG 8" class="table-sdg-img">
                                         <span>SDG 8</span>
                                     </div>
                                 </td>
@@ -961,7 +1251,7 @@
                                 <td class="indicator-col">Local GDP</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg" alt="SDG 8" class="table-sdg-img">
                                         <span>SDG 8</span>
                                     </div>
                                 </td>
@@ -979,7 +1269,7 @@
                                 <td class="indicator-col">Annual growth rate of GDP per capita</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg" alt="SDG 8" class="table-sdg-img">
                                         <span>SDG 8</span>
                                     </div>
                                 </td>
@@ -997,7 +1287,7 @@
                                 <td class="indicator-col">9.2.1 Manufacturing value added as % of GDP &amp; per capita</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-9.png" alt="SDG 9" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-09.jpg" alt="SDG 9" class="table-sdg-img">
                                         <span>SDG 9</span>
                                     </div>
                                 </td>
@@ -1015,7 +1305,7 @@
                                 <td class="indicator-col">Underemployment Rate</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg" alt="SDG 8" class="table-sdg-img">
                                         <span>SDG 8</span>
                                     </div>
                                 </td>
@@ -1033,7 +1323,7 @@
                                 <td class="indicator-col">Tourism-Oriented &amp; Related Business Registrations</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg" alt="SDG 8" class="table-sdg-img">
                                         <span>SDG 8</span>
                                     </div>
                                 </td>
@@ -1051,7 +1341,7 @@
                                 <td class="indicator-col">Cooperative Registration</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg" alt="SDG 8" class="table-sdg-img">
                                         <span>SDG 8</span>
                                     </div>
                                 </td>
@@ -1069,7 +1359,7 @@
                                 <td class="indicator-col">Volume of Produce Harvested</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-2.png" alt="SDG 2" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-02.jpg" alt="SDG 2" class="table-sdg-img">
                                         <span>SDG 2</span>
                                     </div>
                                 </td>
@@ -1087,7 +1377,7 @@
                                 <td class="indicator-col">Budget Allocation for Urban Agriculture Program</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-2.png" alt="SDG 2" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-02.jpg" alt="SDG 2" class="table-sdg-img">
                                         <span>SDG 2</span>
                                     </div>
                                 </td>
@@ -1105,7 +1395,7 @@
                                 <td class="indicator-col">% of public markets covered by real-time price monitoring system</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-2.png" alt="SDG 2" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-02.jpg" alt="SDG 2" class="table-sdg-img">
                                         <span>SDG 2</span>
                                     </div>
                                 </td>
@@ -1123,7 +1413,7 @@
                                 <td class="indicator-col">Active Local Gov't Initiative Loan Borrowers (Annual Released)</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg" alt="SDG 8" class="table-sdg-img">
                                         <span>SDG 8</span>
                                     </div>
                                 </td>
@@ -1141,7 +1431,7 @@
                                 <td class="indicator-col">9.3.2 Small-scale industries with a loan or line of credit</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-9.png" alt="SDG 9" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-09.jpg" alt="SDG 9" class="table-sdg-img">
                                         <span>SDG 9</span>
                                     </div>
                                 </td>
@@ -1159,7 +1449,7 @@
                                 <td class="indicator-col">10.2.1 Proportion living below 50% median income (by sex, age, PWD)</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-10.png" alt="SDG 10" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-10.jpg" alt="SDG 10" class="table-sdg-img">
                                         <span>SDG 10</span>
                                     </div>
                                 </td>
@@ -1177,7 +1467,7 @@
                                 <td class="indicator-col">10.1.1 Growth rates of household expenditure/income per capita (bottom 40%)</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-10.png" alt="SDG 10" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-10.jpg" alt="SDG 10" class="table-sdg-img">
                                         <span>SDG 10</span>
                                     </div>
                                 </td>
@@ -1195,7 +1485,7 @@
                                 <td class="indicator-col">11.4.1 Total per capita allocation on cultural &amp; natural heritage preservation</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-11.png" alt="SDG 11" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-11.jpg" alt="SDG 11" class="table-sdg-img">
                                         <span>SDG 11</span>
                                     </div>
                                 </td>
@@ -1213,7 +1503,7 @@
                                 <td class="indicator-col">12.b.1 Standard accounting tools implementation for tourism sustainability</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-12.png" alt="SDG 12" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-12.jpg" alt="SDG 12" class="table-sdg-img">
                                         <span>SDG 12</span>
                                     </div>
                                 </td>
@@ -1341,7 +1631,7 @@
                                 <td class="indicator-col">Proportion of infants 0–5 months exclusively breastfed</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-2.png" alt="SDG 2" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-02.jpg" alt="SDG 2" class="table-sdg-img">
                                         <span>SDG 2</span>
                                     </div>
                                 </td>
@@ -1359,7 +1649,7 @@
                                 <td class="indicator-col">Teenage Pregnancy Cases</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1377,7 +1667,7 @@
                                 <td class="indicator-col">Contraceptive Prevalence Rate</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1395,7 +1685,7 @@
                                 <td class="indicator-col">Child Immunization Coverage Rate</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1413,7 +1703,7 @@
                                 <td class="indicator-col">Infant Mortality Rate (IMR)</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1431,7 +1721,7 @@
                                 <td class="indicator-col">Infant Mortality Cases</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1449,7 +1739,7 @@
                                 <td class="indicator-col">Underfive Mortality Rate</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1467,7 +1757,7 @@
                                 <td class="indicator-col">Under Five Mortality Cases</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1485,7 +1775,7 @@
                                 <td class="indicator-col">Maternal Mortality Rate</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1503,7 +1793,7 @@
                                 <td class="indicator-col">STI / HIV / AIDS Cases</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1521,7 +1811,7 @@
                                 <td class="indicator-col">Animal Bites</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1539,7 +1829,7 @@
                                 <td class="indicator-col">Tuberculosis Cases</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1557,7 +1847,7 @@
                                 <td class="indicator-col">Dengue Cases</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1575,7 +1865,7 @@
                                 <td class="indicator-col">Underweight and Severely Underweight (%)</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-2.png" alt="SDG 2" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-02.jpg" alt="SDG 2" class="table-sdg-img">
                                         <span>SDG 2</span>
                                     </div>
                                 </td>
@@ -1593,7 +1883,7 @@
                                 <td class="indicator-col">Stunted and Severely Stunted (%)</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-2.png" alt="SDG 2" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-02.jpg" alt="SDG 2" class="table-sdg-img">
                                         <span>SDG 2</span>
                                     </div>
                                 </td>
@@ -1611,7 +1901,7 @@
                                 <td class="indicator-col">Wasted and Severely Wasted (%)</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-2.png" alt="SDG 2" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-02.jpg" alt="SDG 2" class="table-sdg-img">
                                         <span>SDG 2</span>
                                     </div>
                                 </td>
@@ -1629,7 +1919,7 @@
                                 <td class="indicator-col">Overweight and Obese (%)</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-2.png" alt="SDG 2" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-02.jpg" alt="SDG 2" class="table-sdg-img">
                                         <span>SDG 2</span>
                                     </div>
                                 </td>
@@ -1647,7 +1937,7 @@
                                 <td class="indicator-col">6.1.1 Population using safely managed drinking water services</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-6.png" alt="SDG 6" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-06.jpg" alt="SDG 6" class="table-sdg-img">
                                         <span>SDG 6</span>
                                     </div>
                                 </td>
@@ -1665,7 +1955,7 @@
                                 <td class="indicator-col">6.2.1 Population using safely managed sanitation &amp; handwashing</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-6.png" alt="SDG 6" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-06.jpg" alt="SDG 6" class="table-sdg-img">
                                         <span>SDG 6</span>
                                     </div>
                                 </td>
@@ -1683,7 +1973,7 @@
                                 <td class="indicator-col">3.4.1 Mortality rate from CVD, cancer, diabetes &amp; respiratory disease</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1701,7 +1991,7 @@
                                 <td class="indicator-col">3.4.2 Suicide mortality rate</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1719,7 +2009,7 @@
                                 <td class="indicator-col">3.a.1 Tobacco use prevalence (aged 15+)</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1737,7 +2027,7 @@
                                 <td class="indicator-col">3.b.1 Target population covered by essential national vaccines</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1755,7 +2045,7 @@
                                 <td class="indicator-col">3.c.1 Health worker density and distribution</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1773,7 +2063,7 @@
                                 <td class="indicator-col">3.d.1 IHR capacity &amp; health emergency preparedness</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3" class="table-sdg-img">
                                         <span>SDG 3</span>
                                     </div>
                                 </td>
@@ -1895,7 +2185,7 @@
                                 <td class="indicator-col">Participation rate of youth &amp; adults in formal/non-formal education</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" alt="SDG 4" class="table-sdg-img">
                                         <span>SDG 4</span>
                                     </div>
                                 </td>
@@ -1913,7 +2203,7 @@
                                 <td class="indicator-col">4.1.2. Completion Rate (Kinder to Grade 6)</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" alt="SDG 4" class="table-sdg-img">
                                         <span>SDG 4</span>
                                     </div>
                                 </td>
@@ -1931,7 +2221,7 @@
                                 <td class="indicator-col">4.1.2. Completion Rate (Grade 1 to Grade 6)</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" alt="SDG 4" class="table-sdg-img">
                                         <span>SDG 4</span>
                                     </div>
                                 </td>
@@ -1949,7 +2239,7 @@
                                 <td class="indicator-col">4.1.2 Completion Rate (Grade 7 to 10)</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" alt="SDG 4" class="table-sdg-img">
                                         <span>SDG 4</span>
                                     </div>
                                 </td>
@@ -1967,7 +2257,7 @@
                                 <td class="indicator-col">4.1.2. Completion Rate (Grade 7 to 12)</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" alt="SDG 4" class="table-sdg-img">
                                         <span>SDG 4</span>
                                     </div>
                                 </td>
@@ -1985,7 +2275,7 @@
                                 <td class="indicator-col">4.2.2 Participation rate in organized learning (1 year before entry age)</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" alt="SDG 4" class="table-sdg-img">
                                         <span>SDG 4</span>
                                     </div>
                                 </td>
@@ -2003,7 +2293,7 @@
                                 <td class="indicator-col">Proportion of Scholarships Granted to Marginalized Sector</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" alt="SDG 4" class="table-sdg-img">
                                         <span>SDG 4</span>
                                     </div>
                                 </td>
@@ -2021,7 +2311,7 @@
                                 <td class="indicator-col">4.6.1 Youth/adult literacy rate</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" alt="SDG 4" class="table-sdg-img">
                                         <span>SDG 4</span>
                                     </div>
                                 </td>
@@ -2039,7 +2329,7 @@
                                 <td class="indicator-col">Extent of mainstreaming ESD &amp; global citizenship in curricula &amp; policies</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" alt="SDG 4" class="table-sdg-img">
                                         <span>SDG 4</span>
                                     </div>
                                 </td>
@@ -2057,7 +2347,7 @@
                                 <td class="indicator-col">Volume of official development assistance flows for scholarships</td>
                                 <td class="sdg-num-col">
                                     <div class="table-sdg-container">
-                                        <img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img">
+                                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" alt="SDG 4" class="table-sdg-img">
                                         <span>SDG 4</span>
                                     </div>
                                 </td>
@@ -2140,14 +2430,39 @@
                 </a>
             </div>
         </div>
-
-        <footer>
-            <img src="../assets/images/footer.jpg" alt="MunTHINK Hub Footer" class="footer-image" onerror="this.style.display='none'">
-        </footer>
     </div>
 
-    <!-- JavaScript for Pillar Switching, Search Filtering & Chart.js Visual Comparison -->
+    <footer class="dashboard-footer" aria-hidden="true">
+        <img src="../assets/images/footer.jpg" alt="" class="footer-image">
+    </footer>
+
     <script>
+        // Sidebar toggle
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            const sidebar = document.getElementById('sector-sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const closeBtn = document.getElementById('close-sidebar-btn');
+
+            if (hamburgerBtn) {
+                hamburgerBtn.addEventListener('click', () => {
+                    sidebar.classList.add('active');
+                    overlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+                closeBtn.addEventListener('click', () => {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+                overlay.addEventListener('click', () => {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
+        });
+
         // Switch active pillar
         function switchPillar(pillarId, btnEl) {
             document.querySelectorAll('.pillar-content-box').forEach(box => {
@@ -2641,9 +2956,78 @@
             });
         }
 
-        // Initialize default Kabuhayan Chart on load
+        // Count SDG occurrences across all table rows and update progress bars
+        function updateSdgProgressBars() {
+            const sdgRows = {};
+            for (let i = 1; i <= 17; i++) sdgRows[i] = [];
+
+            document.querySelectorAll('.pillar-content-box tbody tr[data-status]').forEach(tr => {
+                const img = tr.querySelector('.table-sdg-img');
+                if (!img) return;
+                const match = img.src.match(/E_SDG_Icons-(\d+)\.jpg/i);
+                if (!match) return;
+                const n = parseInt(match[1]);
+                if (n < 1 || n > 17) return;
+
+                const pillarBox = tr.closest('.pillar-content-box');
+                const pillarId = pillarBox ? pillarBox.id : '';
+
+                sdgRows[n].push({
+                    status: tr.dataset.status,
+                    pillarId: pillarId,
+                    el: tr
+                });
+            });
+
+            document.querySelectorAll('.sdg-gallery-item').forEach(item => {
+                const sdgNum = parseInt(item.dataset.sdg);
+                const rows = sdgRows[sdgNum] || [];
+                const count = rows.length;
+
+                const fill = item.querySelector('.sdg-progress-fill');
+                const countEl = item.querySelector('.sdg-progress-count');
+                if (fill) {
+                    fill.style.width = '100%';
+                    fill.innerHTML = '';
+                    rows.forEach(row => {
+                        const seg = document.createElement('div');
+                        seg.className = 'sdg-progress-segment';
+
+                        if (row.status === 'On Track') {
+                            seg.style.backgroundColor = '#15803d';
+                        } else if (row.status === 'Needs Acceleration') {
+                            seg.style.backgroundColor = '#d97706';
+                        } else {
+                            seg.style.backgroundColor = '#b91c1c';
+                        }
+
+                        seg.title = row.status;
+                        seg.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const btn = Array.from(document.querySelectorAll('.pillar-card-btn')).find(
+                                b => b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + row.pillarId + "'")
+                            );
+                            if (btn) switchPillar(row.pillarId, btn);
+
+                            setTimeout(() => {
+                                document.querySelectorAll('.highlighted-row').forEach(r => r.classList.remove('highlighted-row'));
+                                row.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                row.el.classList.add('highlighted-row');
+                                setTimeout(() => row.el.classList.remove('highlighted-row'), 3000);
+                            }, 150);
+                        });
+
+                        fill.appendChild(seg);
+                    });
+                }
+                if (countEl) countEl.textContent = count;
+            });
+        }
+
+        // Initialize on load
         window.addEventListener('DOMContentLoaded', () => {
             updateKabuhayanChart();
+            updateSdgProgressBars();
         });
     </script>
 </body>
