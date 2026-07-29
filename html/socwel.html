@@ -97,12 +97,6 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
         }
 
-        .stat-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(239, 68, 68, 0.2);
-            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.08);
-        }
-
         .stat-icon-wrapper.socwel-icon-red {
             width: 54px;
             height: 54px;
@@ -111,8 +105,8 @@
             align-items: center;
             justify-content: center;
             font-size: 1.4rem;
-            background: rgba(239, 68, 68, 0.08);
-            color: #ef4444;
+            background: #e1271a;
+            color: white;
         }
 
         /* Database Status Overlay */
@@ -162,16 +156,37 @@
             border: 1px solid rgba(15, 23, 42, 0.1);
             border-radius: 0.375rem;
             padding: 5px 10px;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             font-size: 0.8rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             outline: none;
             transition: var(--transition-smooth);
         }
 
-        .chart-select:focus {
-            border-color: #ef4444;
+        .chart-select:focus,
+        .chart-select:active,
+        .chart-select:hover {
+            background-color: #f1f5f9 !important;
+            border-color: rgba(15, 23, 42, 0.1);
+            color: var(--text-primary);
+        }
+
+        .chart-type-select {
+            background-color: #e1271a;
+            color: #f8fafc;
+            border-radius: 0.375rem;
+            padding: 5px 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+            border: none;
+        }
+
+        .chart-type-select option {
+            font-weight: 700;
         }
 
         /* Barangay Focus Spotlight Panel */
@@ -365,7 +380,11 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-person-cane"></i> Registered Senior Citizens by Barangay</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Hover bars for gender split</div>
+                        <select id="seniorsChartType" class="chart-type-select">
+                            <option value="bar">Bar Graph</option>
+                            <option value="line">Line Graph</option>
+                            <option value="pie">Pie Graph</option>
+                        </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="seniorsChart"></canvas>
@@ -376,7 +395,11 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-wheelchair"></i> Registered PWDs by Barangay</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Hover bars for gender split</div>
+                        <select id="pwdChartType" class="chart-type-select">
+                            <option value="bar">Bar Graph</option>
+                            <option value="line">Line Graph</option>
+                            <option value="pie">Pie Graph</option>
+                        </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="pwdChart"></canvas>
@@ -390,7 +413,7 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-user-group"></i> Registered Youths & Youth Organizations</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Youths (Bar) vs Organizations (Line)</div>
+                        <div class="badge" style="font-size:0.75rem; color:white">Total Number of Youths vs Youth Organizations</div>
                     </div>
                     <div class="canvas-container" style="height: 380px;">
                         <canvas id="youthChart"></canvas>
@@ -469,10 +492,53 @@
 
     <!-- Page Logic JavaScript -->
     <script>
+        function countUp(element, target, duration, suffix) {
+            if (!element) return;
+            duration = duration || 600;
+            const start = performance.now();
+            function tick(now) {
+                const elapsed = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - elapsed, 3);
+                element.textContent = Math.round(target * eased).toLocaleString() + (suffix || "");
+                if (elapsed < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
         const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
 
         const BARANGAY_NAMES = ["Alabang", "Ayala Alabang", "Bayanan", "Buli", "Cupang", "Poblacion", "Putatan", "Sucat", "Tunasan"];
+
+        const PIE_COLORS = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548"];
+        const PIE_HOVER_COLORS = ["#ff2a2a", "#ff6666", "#ffb347", "#4caf50", "#42a5f5", "#ab47bc", "#26c6da", "#ff7043", "#8d6e63"];
+
+        function makeGradient(ctx, color) {
+            const g = ctx.createLinearGradient(0, 0, 0, 350);
+            g.addColorStop(0, color || "#e1271a");
+            g.addColorStop(1, (color || "#e1271a") + "89");
+            return g;
+        }
+
+        function baseTooltip(callback) {
+            return Object.assign({
+                backgroundColor: "rgba(15, 23, 42, 0.95)",
+                padding: 10,
+                borderWidth: 1,
+                borderColor: "rgba(255, 255, 255, 0.15)"
+            }, callback ? { callbacks: { label: callback } } : {});
+        }
+
+        function baseLineOpts(extra) {
+            return Object.assign({
+                responsive: true,
+                maintainAspectRatio: false,
+                hover: { mode: 'nearest', intersect: true },
+                interaction: { mode: 'nearest', intersect: true },
+                animation: { duration: 200, easing: 'easeOutQuart' },
+                plugins: { legend: { display: false }, tooltip: baseTooltip() }
+            }, extra || {});
+        }
 
         let appData = {};
         let appLabels = [];
@@ -485,6 +551,10 @@
         let donutSeniorsInst = null;
         let donutPWDsInst = null;
 
+        // Chart type state
+        let seniorsChartType = 'bar';
+        let pwdChartType = 'bar';
+
         // Initialize Supabase safely
         if (typeof supabase !== 'undefined') {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -492,9 +562,15 @@
 
         // Initialize Page
         document.addEventListener("DOMContentLoaded", async () => {
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.font.family = 'Montserrat, sans-serif';
+            Chart.defaults.font.size = 11;
+            Chart.defaults.font.weight = '700';
+
             initSidebar();
             await fetchSocialWelfareData();
             renderStatsBanner();
+            initChartTypeControls();
             renderCharts();
             initSpotlight();
         });
@@ -531,6 +607,11 @@
             13: { "Youth Organizations": "Youth Organizations", "Total Number of Youths": "Registered Youths" },
             14: { "Male": "Seniors (Male)", "Female": "Seniors (Female)" }
         };
+
+        function initChartTypeControls() {
+            document.getElementById("seniorsChartType").addEventListener("change", e => { seniorsChartType = e.target.value; renderSeniorsChart(); });
+            document.getElementById("pwdChartType").addEventListener("change", e => { pwdChartType = e.target.value; renderPWDChart(); });
+        }
 
         // Fetch Live Database or Local Storage Fallback
         async function fetchSocialWelfareData() {
@@ -621,148 +702,284 @@
                 totalOrgs += getValue(brgy, "Youth Organizations", "2022");
             });
 
-            document.getElementById("card-seniors").textContent = totalSeniors.toLocaleString();
-            document.getElementById("card-pwds").textContent = totalPWDs.toLocaleString();
-            document.getElementById("card-youths").textContent = totalYouths.toLocaleString();
-            document.getElementById("card-orgs").textContent = totalOrgs.toLocaleString();
+            countUp(document.getElementById("card-seniors"), totalSeniors, 600);
+            countUp(document.getElementById("card-pwds"), totalPWDs, 600);
+            countUp(document.getElementById("card-youths"), totalYouths, 600);
+            countUp(document.getElementById("card-orgs"), totalOrgs, 600);
         }
 
         // Render Page Charts
         function renderCharts() {
-            // Data aggregations for charts
+            renderSeniorsChart();
+            renderPWDChart();
+            renderYouthChart();
+        }
+
+        function renderSeniorsChart() {
+            if (seniorsChartInst) { seniorsChartInst.destroy(); seniorsChartInst = null; }
             const seniorsMale = BARANGAY_NAMES.map(b => getValue(b, "Seniors (Male)", "2024"));
             const seniorsFemale = BARANGAY_NAMES.map(b => getValue(b, "Seniors (Female)", "2024"));
+            const ctx = document.getElementById("seniorsChart").getContext("2d");
 
+            let config;
+
+            if (seniorsChartType === "pie") {
+                const totals = BARANGAY_NAMES.map((_, i) => seniorsMale[i] + seniorsFemale[i]);
+                config = {
+                    type: "pie",
+                    data: { labels: BARANGAY_NAMES, datasets: [{ label: 'Total Senior Citizens', data: totals, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { duration: 200, easing: 'easeOutQuart' }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.label}: ${ctx.raw.toLocaleString()}`) } }
+                };
+            } else {
+                const isLine = seniorsChartType === "line";
+                config = {
+                    type: seniorsChartType,
+                    data: {
+                        labels: BARANGAY_NAMES,
+                        datasets: [
+                            {
+                                label: 'Male Seniors',
+                                data: seniorsMale,
+                                backgroundColor: "#7ea8f7",
+                                hoverBackgroundColor: "#7EA8F77D",
+                                hoverBorderColor: "#7EA8F77D",
+                                hoverBorderWidth: 4,
+                                borderColor: isLine ? "#7ea8f7" : undefined,
+                                borderWidth: isLine ? 3 : undefined,
+                                pointBackgroundColor: "#7ea8f7",
+                                pointBorderColor: "#f8fafc",
+                                pointBorderWidth: 2,
+                                pointRadius: 5,
+                                pointHoverRadius: 9,
+                                pointHoverBackgroundColor: "#7ea8f7",
+                                pointHoverBorderColor: "#fff",
+                                pointHoverBorderWidth: 3,
+                                fill: false,
+                                tension: 0.2,
+                                borderRadius: isLine ? 0 : 6,
+                                pointStyle: 'circle'
+                            },
+                            {
+                                label: 'Female Seniors',
+                                data: seniorsFemale,
+                                backgroundColor: "#ff7ac8",
+                                hoverBackgroundColor: "#FF7AC885",
+                                hoverBorderColor: "#FF7AC885",
+                                hoverBorderWidth: 4,
+                                borderColor: isLine ? "#ff7ac8" : undefined,
+                                borderWidth: isLine ? 2 : undefined,
+                                pointBackgroundColor: "#ff7ac8",
+                                pointBorderColor: "#f8fafc",
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 8,
+                                pointHoverBackgroundColor: "#ff7ac8",
+                                pointHoverBorderColor: "#fff",
+                                pointHoverBorderWidth: 3,
+                                fill: false,
+                                tension: 0.2,
+                                borderRadius: isLine ? 0 : 6,
+                                pointStyle: 'circle'
+                            }
+                        ]
+                    },
+                    options: baseLineOpts({
+                        scales: {
+                            x: { stacked: !isLine, grid: { display: false }, ticks: { color: "#000000b3" } },
+                            y: { stacked: !isLine, beginAtZero: true, title: { display: true, text: 'Registered Seniors' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } }
+                        },
+                        plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`) }
+                    })
+                };
+            }
+
+            seniorsChartInst = new Chart(ctx, config);
+        }
+
+        function renderPWDChart() {
+            if (pwdChartInst) { pwdChartInst.destroy(); pwdChartInst = null; }
             const pwdMale = BARANGAY_NAMES.map(b => getValue(b, "PWD (Male)", "2021"));
             const pwdFemale = BARANGAY_NAMES.map(b => getValue(b, "PWD (Female)", "2021"));
+            const ctx = document.getElementById("pwdChart").getContext("2d");
 
+            let config;
+
+            if (pwdChartType === "pie") {
+                const totals = BARANGAY_NAMES.map((_, i) => pwdMale[i] + pwdFemale[i]);
+                config = {
+                    type: "pie",
+                    data: { labels: BARANGAY_NAMES, datasets: [{ label: 'Total Registered PWDs', data: totals, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { duration: 200, easing: 'easeOutQuart' }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.label}: ${ctx.raw.toLocaleString()}`) } }
+                };
+            } else {
+                const isLine = pwdChartType === "line";
+                config = {
+                    type: pwdChartType,
+                    data: {
+                        labels: BARANGAY_NAMES,
+                        datasets: [
+                            {
+                                label: 'Male PWDs',
+                                data: pwdMale,
+                                backgroundColor: "#7ea8f7",
+                                hoverBackgroundColor: "#7EA8F77D",
+                                hoverBorderColor: "#7EA8F77D",
+                                hoverBorderWidth: 4,
+                                borderColor: isLine ? "#7ea8f7" : undefined,
+                                borderWidth: isLine ? 3 : undefined,
+                                pointBackgroundColor: "#7ea8f7",
+                                pointBorderColor: "#f8fafc",
+                                pointBorderWidth: 2,
+                                pointRadius: 5,
+                                pointHoverRadius: 9,
+                                pointHoverBackgroundColor: "#7ea8f7",
+                                pointHoverBorderColor: "#fff",
+                                pointHoverBorderWidth: 3,
+                                fill: false,
+                                tension: 0.2,
+                                borderRadius: isLine ? 0 : 6,
+                                pointStyle: 'circle'
+                            },
+                            {
+                                label: 'Female PWDs',
+                                data: pwdFemale,
+                                backgroundColor: "#ff7ac8",
+                                hoverBackgroundColor: "#FF7AC885",
+                                hoverBorderColor: "#FF7AC885",
+                                hoverBorderWidth: 4,
+                                borderColor: isLine ? "#ff7ac8" : undefined,
+                                borderWidth: isLine ? 2 : undefined,
+                                pointBackgroundColor: "#ff7ac8",
+                                pointBorderColor: "#f8fafc",
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 8,
+                                pointHoverBackgroundColor: "#ff7ac8",
+                                pointHoverBorderColor: "#fff",
+                                pointHoverBorderWidth: 3,
+                                fill: false,
+                                tension: 0.2,
+                                borderRadius: isLine ? 0 : 6,
+                                pointStyle: 'circle'
+                            }
+                        ]
+                    },
+                    options: baseLineOpts({
+                        scales: {
+                            x: { stacked: !isLine, grid: { display: false }, ticks: { color: "#000000b3" } },
+                            y: { stacked: !isLine, beginAtZero: true, title: { display: true, text: 'Registered PWDs' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } }
+                        },
+                        plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`) }
+                    })
+                };
+            }
+
+            pwdChartInst = new Chart(ctx, config);
+        }
+
+        function renderYouthChart() {
             const youthCounts = BARANGAY_NAMES.map(b => getValue(b, "Registered Youths", "2022"));
             const youthOrgs = BARANGAY_NAMES.map(b => getValue(b, "Youth Organizations", "2022"));
 
-            // Chart 1: Seniors Stacks
-            const ctxA = document.getElementById("seniorsChart").getContext("2d");
-            seniorsChartInst = new Chart(ctxA, {
-                type: 'bar',
-                data: {
-                    labels: BARANGAY_NAMES,
-                    datasets: [
-                        {
-                            label: 'Male Seniors',
-                            data: seniorsMale,
-                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                            borderColor: '#3b82f6',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Female Seniors',
-                            data: seniorsFemale,
-                            backgroundColor: 'rgba(236, 72, 153, 0.8)',
-                            borderColor: '#ec4899',
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { stacked: true, grid: { display: false } },
-                        y: { stacked: true, grid: { color: 'rgba(15, 23, 42, 0.04)' } }
-                    },
-                    plugins: {
-                        legend: { position: 'bottom', labels: { font: { family: 'Outfit', weight: '500' } } }
-                    }
-                }
-            });
-
-            // Chart 2: PWD Stacks
-            const ctxB = document.getElementById("pwdChart").getContext("2d");
-            pwdChartInst = new Chart(ctxB, {
-                type: 'bar',
-                data: {
-                    labels: BARANGAY_NAMES,
-                    datasets: [
-                        {
-                            label: 'Male PWDs',
-                            data: pwdMale,
-                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                            borderColor: '#3b82f6',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Female PWDs',
-                            data: pwdFemale,
-                            backgroundColor: 'rgba(236, 72, 153, 0.8)',
-                            borderColor: '#ec4899',
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { stacked: true, grid: { display: false } },
-                        y: { stacked: true, grid: { color: 'rgba(15, 23, 42, 0.04)' } }
-                    },
-                    plugins: {
-                        legend: { position: 'bottom', labels: { font: { family: 'Outfit', weight: '500' } } }
-                    }
-                }
-            });
-
-            // Chart 3: Youth dual scale
             const ctxC = document.getElementById("youthChart").getContext("2d");
+            if (youthChartInst) { youthChartInst.destroy(); youthChartInst = null; }
+
+            const barColor = '#ef4444';
+            const lineColor = '#ffcf01';
+
             youthChartInst = new Chart(ctxC, {
                 type: 'bar',
                 data: {
                     labels: BARANGAY_NAMES,
                     datasets: [
                         {
-                            label: 'Registered Youths',
+                            label: 'Total Number of Youths',
                             data: youthCounts,
-                            backgroundColor: 'rgba(239, 68, 68, 0.75)', // Touch of Red
-                            borderColor: '#ef4444',
-                            borderWidth: 1,
-                            borderRadius: 4,
-                            yAxisID: 'y'
+                            backgroundColor: makeGradient(ctxC, barColor),
+                            hoverBackgroundColor: barColor + '99',
+                            hoverBorderColor: barColor + '99',
+                            hoverBorderWidth: 4,
+                            borderWidth: 2,
+                            borderRadius: 6,
+                            yAxisID: 'y',
+                            order: 1
                         },
                         {
                             label: 'Youth Organizations',
                             data: youthOrgs,
-                            borderColor: '#f59e0b',
-                            backgroundColor: 'transparent',
-                            borderWidth: 3,
                             type: 'line',
+                            borderColor: lineColor,
+                            borderWidth: 3,
+                            backgroundColor: 'transparent',
+                            pointBackgroundColor: lineColor,
+                            pointBorderColor: "#f8fafc",
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 9,
+                            pointHoverBackgroundColor: lineColor,
+                            pointHoverBorderColor: "#fff",
+                            pointHoverBorderWidth: 3,
+                            fill: false,
+                            tension: 0.2,
                             yAxisID: 'y1',
-                            tension: 0.15
+                            pointStyle: 'circle',
+                            order: 2
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    hover: { mode: 'nearest', intersect: true },
+                    interaction: { mode: 'nearest', intersect: true },
+                    animation: { duration: 200, easing: 'easeOutQuart' },
                     scales: {
                         y: {
                             type: 'linear',
                             display: true,
                             position: 'left',
-                            title: { display: true, text: 'Youths Count', font: { family: 'Outfit', weight: 'bold' } },
-                            grid: { color: 'rgba(15, 23, 42, 0.04)' }
+                            title: { display: true, text: 'Number of Youths Count' },
+                            grid: { color: "rgba(3, 3, 3, 0.05)" },
+                            ticks: { color: "#000000b3" }
                         },
                         y1: {
                             type: 'linear',
                             display: true,
                             position: 'right',
-                            title: { display: true, text: 'Organizations Count', font: { family: 'Outfit', weight: 'bold' } },
-                            grid: { drawOnChartArea: false }
+                            title: { display: true, text: 'Youth Organizations Count' },
+                            grid: { color: "rgba(3, 3, 3, 0.05)" },
+                            ticks: { color: "#000000b3" }
                         },
                         x: {
-                            grid: { display: false }
+                            grid: { display: false },
+                            ticks: { color: "#000000b3" }
                         }
                     },
                     plugins: {
-                        legend: { position: 'bottom', labels: { font: { family: 'Outfit', weight: '500' } } }
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 12, color: "#000000b3", padding: 14 },
+                            onClick: function(e, legendItem, legend) {
+                                const index = legendItem.datasetIndex;
+                                const ci = legend.chart;
+                                const meta = ci.getDatasetMeta(index);
+                                meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
+
+                                const yScale = ci.scales.y;
+                                const y1Scale = ci.scales.y1;
+                                if (yScale) {
+                                    const meta0 = ci.getDatasetMeta(0);
+                                    yScale.options.display = meta0.hidden ? false : true;
+                                }
+                                if (y1Scale) {
+                                    const meta1 = ci.getDatasetMeta(1);
+                                    y1Scale.options.display = meta1.hidden ? false : true;
+                                }
+
+                                ci.update();
+                            }
+                        },
+                        tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`)
                     }
                 }
             });
@@ -826,7 +1043,7 @@
                     labels: ['Male', 'Female'],
                     datasets: [{
                         data: [male, female],
-                        backgroundColor: ['#3b82f6', '#ec4899'],
+                        backgroundColor: ['#7ea8f7', '#ff7ac8'],
                         borderWidth: 2,
                         hoverOffset: 4
                     }]
@@ -855,7 +1072,7 @@
                     labels: ['Male', 'Female'],
                     datasets: [{
                         data: [male, female],
-                        backgroundColor: ['#3b82f6', '#ec4899'],
+                        backgroundColor: ['#7ea8f7', '#ff7ac8'],
                         borderWidth: 2,
                         hoverOffset: 4
                     }]
