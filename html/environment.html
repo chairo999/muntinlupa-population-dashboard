@@ -24,6 +24,39 @@
 		.chart-title-wrapper { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(15,23,42,0.04); padding-bottom:10px; margin-bottom:10px }
 		.canvas-container { position: relative; width:100%; height:380px }
 		.badge { font-size:0.75rem; color:var(--text-secondary) }
+		.chart-select {
+			background-color: #f1f5f9;
+			color: var(--text-primary);
+			border: 1px solid rgba(15, 23, 42, 0.1);
+			border-radius: 0.375rem;
+			padding: 5px 10px;
+			font-family: 'Montserrat', sans-serif;
+			font-size: 0.8rem;
+			font-weight: 700;
+			cursor: pointer;
+			outline: none;
+			transition: var(--transition-smooth);
+		}
+		.chart-select:focus,
+		.chart-select:active,
+		.chart-select:hover {
+			background-color: #f1f5f9 !important;
+			border-color: rgba(15, 23, 42, 0.1);
+			color: var(--text-primary);
+		}
+		.chart-type-select {
+			background-color: #e1271a;
+			color: #f8fafc;
+			border-radius: 0.375rem;
+			padding: 5px 10px;
+			font-family: 'Montserrat', sans-serif;
+			font-size: 0.8rem;
+			font-weight: 700;
+			cursor: pointer;
+			outline: none;
+			border: none;
+		}
+		.chart-type-select option { font-weight: 700; }
 		.db-status-bar { background: #f1f5f9; border:1px solid var(--card-border); border-radius: var(--border-radius-md); padding:8px 16px; font-size:0.8rem; font-weight:600; color:var(--text-secondary); display:flex; align-items:center; justify-content:space-between; margin-bottom:8px }
 		.db-dot { width:8px; height:8px; border-radius:50%; background-color:var(--accent-emerald); box-shadow:0 0 6px var(--accent-emerald) }
 		.db-dot.offline { background-color:#f59e0b; box-shadow:0 0 6px #f59e0b }
@@ -75,7 +108,6 @@
 				<div id="db-dot" class="db-dot"></div>
 				<span id="db-status-txt">Connected to live Supabase DB</span>
 			</div>
-			<a href="admin_edit.html" class="admin-link-btn" style="color:#10b981"><i class="fa-solid fa-screwdriver-wrench"></i> Manage Environment Records in Admin</a>
 		</div>
 
 		<!-- Environment Charts -->
@@ -84,7 +116,22 @@
 				<div class="chart-card">
 					<div class="chart-title-wrapper">
 						<h5><i class="fa-solid fa-water"></i> River Upstream Sampling</h5>
-						<div class="badge">Hover data points for values • Editable in Admin</div>
+						<div style="display:flex; gap:8px">
+							<select id="upstream-metric-select" class="chart-select">
+								<option value="Chloride">Chloride (mg/L)</option>
+								<option value="Nitrate">Nitrate (mg/L)</option>
+								<option value="Temperature">Temperature (°C)</option>
+								<option value="pH">pH</option>
+								<option value="Turbidity">Turbidity (NTU)</option>
+								<option value="RDO">RDO (mg/L)</option>
+								<option value="TDS">TDS (g/L)</option>
+							</select>
+							<select id="upstreamChartType" class="chart-type-select">
+								<option value="bar">Bar Graph</option>
+								<option value="line">Line Graph</option>
+								<option value="pie">Pie Graph</option>
+							</select>
+						</div>
 					</div>
 					<div class="canvas-container">
 						<canvas id="riverUpstreamChart"></canvas>
@@ -94,7 +141,22 @@
 				<div class="chart-card">
 					<div class="chart-title-wrapper">
 						<h5><i class="fa-solid fa-water"></i> River Downstream Sampling</h5>
-						<div class="badge">Hover data points for values • Editable in Admin</div>
+						<div style="display:flex; gap:8px">
+							<select id="downstream-metric-select" class="chart-select">
+								<option value="Chloride">Chloride (mg/L)</option>
+								<option value="Nitrate">Nitrate (mg/L)</option>
+								<option value="Temperature">Temperature (°C)</option>
+								<option value="pH">pH</option>
+								<option value="Turbidity">Turbidity (NTU)</option>
+								<option value="RDO">RDO (mg/L)</option>
+								<option value="TDS">TDS (g/L)</option>
+							</select>
+							<select id="downstreamChartType" class="chart-type-select">
+								<option value="bar">Bar Graph</option>
+								<option value="line">Line Graph</option>
+								<option value="pie">Pie Graph</option>
+							</select>
+						</div>
 					</div>
 					<div class="canvas-container">
 						<canvas id="riverDownstreamChart"></canvas>
@@ -104,32 +166,44 @@
 				<div class="chart-card" style="margin-top:12px">
 					<div class="chart-title-wrapper">
 						<h5><i class="fa-solid fa-recycle"></i> Measure of Collected Waste Materials — 2023</h5>
-						<div class="badge">Hover slices/bars for values • Editable in Admin</div>
+						<select id="wasteChartType" class="chart-type-select">
+							<option value="bar">Bar Graph</option>
+							<option value="line">Line Graph</option>
+							<option value="pie">Pie Graph</option>
+						</select>
 					</div>
 					<div class="canvas-container">
 						<canvas id="wasteMaterialsChart"></canvas>
 					</div>
 					<div style="margin-top:10px; font-weight:600; color:var(--text-secondary)">Diversion Rate: <span id="diversion-rate">--</span></div>
 				</div>
+				<!-- PM2.5 Monthly & Annual Mean (2015-2023) -->
+				<div class="chart-card">
+					<div class="chart-title-wrapper">
+						<h5><i class="fa-solid fa-smog"></i> PM2.5 Monthly & Annual Mean (2015-2023)</h5>
+						<select id="pm25ChartType" class="chart-type-select">
+							<option value="line">Line Graph</option>
+							<option value="bar">Bar Graph</option>
+							<option value="pie">Pie Graph</option>
+						</select>
+					</div>
+					<div class="canvas-container">
+						<canvas id="pm25Chart"></canvas>
+					</div>
+				</div>
 			</div>
 			<!-- PM10 Monthly & Annual Mean (2015-2023) -->
 			<div class="chart-card" style="margin-top:12px">
 				<div class="chart-title-wrapper">
 					<h5><i class="fa-solid fa-wind"></i> PM10 Monthly & Annual Mean (2015-2023)</h5>
-					<div class="badge">Hover points for monthly values — tentative transcription</div>
+					<select id="pm10ChartType" class="chart-type-select">
+						<option value="line">Line Graph</option>
+						<option value="bar">Bar Graph</option>
+						<option value="pie">Pie Graph</option>
+					</select>
 				</div>
 				<div class="canvas-container">
 					<canvas id="pm10Chart"></canvas>
-				</div>
-			</div>
-			<!-- PM2.5 Monthly & Annual Mean (2015-2023) -->
-			<div class="chart-card" style="margin-top:12px">
-				<div class="chart-title-wrapper">
-					<h5><i class="fa-solid fa-smog"></i> PM2.5 Monthly & Annual Mean (2015-2023)</h5>
-					<div class="badge">Hover points for monthly values — tentative transcription</div>
-				</div>
-				<div class="canvas-container">
-					<canvas id="pm25Chart"></canvas>
 				</div>
 			</div>
 		</section>
@@ -152,15 +226,38 @@
 		let envData = {};
 		let envLabels = [];
 		let supabaseClient = null;
+		let upstreamChartInst = null;
+		let downstreamChartInst = null;
+		let wasteChartInst = null;
+		let pm25ChartInst = null;
+		let pm10ChartInst = null;
+		let upstreamChartType = 'bar';
+		let downstreamChartType = 'bar';
+		let wasteChartType = 'bar';
+		let pm25ChartType = 'line';
+		let pm10ChartType = 'line';
+		const PIE_COLORS = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548"];
+		const PIE_HOVER_COLORS = ["#ff2a2a", "#ff6666", "#ffb347", "#4caf50", "#42a5f5", "#ab47bc", "#26c6da", "#ff7043", "#8d6e63"];
 
 		if (typeof supabase !== 'undefined') {
 			supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 		}
 
 		document.addEventListener('DOMContentLoaded', async () => {
+			Chart.defaults.color = '#94a3b8';
+			Chart.defaults.font.family = 'Montserrat, sans-serif';
+			Chart.defaults.font.size = 11;
+			Chart.defaults.font.weight = '700';
 			initSidebar();
 			await fetchEnvData();
 			renderEnvCharts();
+			document.getElementById("upstream-metric-select").addEventListener("change", () => renderRiverChart('up', 'upstream-metric-select', 'upstreamChartType', 'riverUpstreamChart', envData.upstream));
+			document.getElementById("downstream-metric-select").addEventListener("change", () => renderRiverChart('down', 'downstream-metric-select', 'downstreamChartType', 'riverDownstreamChart', envData.downstream));
+			document.getElementById("upstreamChartType").addEventListener("change", e => { upstreamChartType = e.target.value; renderRiverChart('up', 'upstream-metric-select', 'upstreamChartType', 'riverUpstreamChart', envData.upstream); });
+			document.getElementById("downstreamChartType").addEventListener("change", e => { downstreamChartType = e.target.value; renderRiverChart('down', 'downstream-metric-select', 'downstreamChartType', 'riverDownstreamChart', envData.downstream); });
+			document.getElementById("wasteChartType").addEventListener("change", e => { wasteChartType = e.target.value; renderWasteChart(); });
+			document.getElementById("pm25ChartType").addEventListener("change", e => { pm25ChartType = e.target.value; renderPM25Chart(); });
+			document.getElementById("pm10ChartType").addEventListener("change", e => { pm10ChartType = e.target.value; renderPM10Chart(); });
 		});
 
 		function initSidebar() {
@@ -252,7 +349,7 @@
 			const params = ['Temperature','pH','Nitrate','Chloride','Turbidity','RDO','TDS'];
 			const rivers = [...new Set(rows.map(r => r.category_1))];
 
-			envLabels = rivers;
+			envLabels = rivers.map(l => l.replace(/\b(creek|river)\b/gi, '').trim());
 
 			const upstream = {};
 			const downstream = {};
@@ -314,166 +411,343 @@
 			}
 		}
 
-		function renderEnvCharts() {
-			// Upstream chart
-			const upCtx = document.getElementById('riverUpstreamChart').getContext('2d');
-			const upDatasets = [
-				{ label: 'Chloride (mg/L)', data: envData.upstream.Chloride, backgroundColor: 'rgba(250,204,21,0.95)', yAxisID: 'y_chl' },
-				{ label: 'Nitrate (mg/L)', data: envData.upstream.Nitrate, backgroundColor: 'rgba(99,102,241,0.9)', yAxisID: 'y_nit' },
-				{ label: 'Temperature (°C)', data: envData.upstream.Temperature, type: 'line', borderColor: '#06b6d4', backgroundColor: 'transparent', yAxisID: 'y_temp', tension:0.2, pointRadius:4 },
-				{ label: 'pH', data: envData.upstream.pH, type: 'line', borderColor: '#f97316', backgroundColor: 'transparent', yAxisID: 'y_ph', tension:0.2, pointRadius:4 },
-				{ label: 'Turbidity (NTU)', data: envData.upstream.Turbidity, type: 'line', borderColor: '#7c3aed', backgroundColor: 'transparent', yAxisID: 'y_turb', tension:0.2, pointRadius:3 },
-				{ label: 'RDO (mg/L)', data: envData.upstream.RDO, type: 'line', borderColor: '#10b981', backgroundColor: 'transparent', yAxisID: 'y_rdo', tension:0.2, pointRadius:3 },
-				{ label: 'TDS (g/L)', data: envData.upstream.TDS, type: 'line', borderColor: '#64748b', backgroundColor: 'transparent', yAxisID: 'y_tds', tension:0.2, pointRadius:3 }
-			];
-			upDatasets.forEach((d,i)=> d.hidden = i !== 0);
-			new Chart(upCtx, {
-				type: 'bar',
-				data: {
-					labels: envLabels,
-					datasets: upDatasets
-				},
-				options: {
-					responsive:true, maintainAspectRatio:false,
-					plugins: {
-						legend: { position:'bottom' },
-						tooltip: { callbacks: {
-							label: function(ctx){ const lab = ctx.dataset.label || ''; let v = ctx.parsed.y; if (v===null) return lab+': N/A'; return lab+': '+v; }
-						}}
-					},
-					scales: {
-						x: { grid:{ display:false } },
-						y_chl: { type:'linear', display:true, position:'left', title: { display:true, text:'Chloride (mg/L)' } },
-						y_nit: { type:'linear', display:false, position:'left', title: { display:true, text:'Nitrate (mg/L)' } },
-						y_temp: { display:true, position:'right', title:{ display:true, text:'Temperature (°C)' }, grid:{ drawOnChartArea:false } },
-						y_ph: { display:false, position:'right', grid:{ drawOnChartArea:false } },
-						y_turb: { display:false, position:'right', grid:{ drawOnChartArea:false } },
-						y_rdo: { display:false, position:'right', grid:{ drawOnChartArea:false } },
-						y_tds: { display:false, position:'right', grid:{ drawOnChartArea:false } }
-					}
-				}
-			});
+		function baseTooltip(callback) {
+			return Object.assign({
+				backgroundColor: "rgba(15, 23, 42, 0.95)",
+				padding: 10,
+				borderWidth: 1,
+				borderColor: "rgba(255, 255, 255, 0.15)"
+			}, callback ? { callbacks: { label: callback } } : {});
+		}
 
-			// Downstream chart (similar configuration)
-			const downCtx = document.getElementById('riverDownstreamChart').getContext('2d');
-			const downDatasets = [
-				{ label: 'Chloride (mg/L)', data: envData.downstream.Chloride, backgroundColor: 'rgba(250,204,21,0.95)', yAxisID: 'y_chl' },
-				{ label: 'Nitrate (mg/L)', data: envData.downstream.Nitrate, backgroundColor: 'rgba(99,102,241,0.9)', yAxisID: 'y_nit' },
-				{ label: 'Temperature (°C)', data: envData.downstream.Temperature, type: 'line', borderColor: '#06b6d4', backgroundColor: 'transparent', yAxisID: 'y_temp', tension:0.2, pointRadius:4 },
-				{ label: 'pH', data: envData.downstream.pH, type: 'line', borderColor: '#f97316', backgroundColor: 'transparent', yAxisID: 'y_ph', tension:0.2, pointRadius:4 },
-				{ label: 'Turbidity (NTU)', data: envData.downstream.Turbidity, type: 'line', borderColor: '#7c3aed', backgroundColor: 'transparent', yAxisID: 'y_turb', tension:0.2, pointRadius:3 },
-				{ label: 'RDO (mg/L)', data: envData.downstream.RDO, type: 'line', borderColor: '#10b981', backgroundColor: 'transparent', yAxisID: 'y_rdo', tension:0.2, pointRadius:3 },
-				{ label: 'TDS (g/L)', data: envData.downstream.TDS, type: 'line', borderColor: '#64748b', backgroundColor: 'transparent', yAxisID: 'y_tds', tension:0.2, pointRadius:3 }
-			];
-			downDatasets.forEach((d,i)=> d.hidden = i !== 0);
-			new Chart(downCtx, {
-				type: 'bar',
-				data: {
-					labels: envLabels,
-					datasets: downDatasets
-				},
-				options: {
-					responsive:true, maintainAspectRatio:false,
-					plugins: {
-						legend: { position:'bottom' },
-						tooltip: { callbacks: { label: function(ctx){ const lab = ctx.dataset.label || ''; let v = ctx.parsed.y; if (v===null) return lab+': N/A'; return lab+': '+v; } } }
-					},
-					scales: {
-						x: { grid:{ display:false } },
-						y_chl: { type:'linear', display:true, position:'left', title: { display:true, text:'Chloride (mg/L)' } },
-						y_nit: { type:'linear', display:false, position:'left', title: { display:true, text:'Nitrate (mg/L)' } },
-						y_temp: { display:true, position:'right', title:{ display:true, text:'Temperature (°C)' }, grid:{ drawOnChartArea:false } },
-						y_ph: { display:false, position:'right', grid:{ drawOnChartArea:false } },
-						y_turb: { display:false, position:'right', grid:{ drawOnChartArea:false } },
-						y_rdo: { display:false, position:'right', grid:{ drawOnChartArea:false } },
-						y_tds: { display:false, position:'right', grid:{ drawOnChartArea:false } }
-					}
-				}
-			});
+		function makeGradient(ctx, color) {
+			const g = ctx.createLinearGradient(0, 0, 0, 380);
+			g.addColorStop(0, color || "#e1271a");
+			g.addColorStop(1, (color || "#e1271a") + "89");
+			return g;
+		}
 
-				// Waste Materials chart (Table 1)
-				try {
-					const waste = envData.waste || DEFAULT_ENV_DATA.waste;
-					const wasteCtx = document.getElementById('wasteMaterialsChart').getContext('2d');
-					const wasteDatasets = [
-						{ label: 'Volume (m³)', data: waste.volume_m3, backgroundColor: 'rgba(59,130,246,0.85)' },
-						{ label: 'Weight (tons)', data: waste.weight_tons, backgroundColor: 'rgba(16,185,129,0.9)' }
-					];
-					wasteDatasets.forEach((d,i)=> d.hidden = i !== 0);
-					new Chart(wasteCtx, {
-						type: 'bar',
-						data: {
-							labels: waste.categories,
-							datasets: wasteDatasets
+		function baseLineOpts(extra) {
+			return Object.assign({
+				responsive: true,
+				maintainAspectRatio: false,
+				hover: { mode: 'nearest', intersect: true },
+				interaction: { mode: 'nearest', intersect: true },
+				animation: { duration: 200, easing: 'easeOutQuart' },
+				plugins: { legend: { display: false }, tooltip: baseTooltip() }
+			}, extra || {});
+		}
+
+		function makeDatasetStyle(borderColor, isLine) {
+			return {
+				borderColor: isLine ? borderColor : undefined,
+				borderWidth: isLine ? 3 : 2,
+				pointBackgroundColor: borderColor,
+				pointBorderColor: "#f8fafc",
+				pointBorderWidth: 2,
+				pointRadius: 5,
+				pointHoverRadius: 9,
+				pointHoverBackgroundColor: borderColor,
+				pointHoverBorderColor: "#fff",
+				pointHoverBorderWidth: 3,
+				fill: false,
+				tension: 0.2,
+				pointStyle: 'circle'
+			};
+		}
+
+		const RIVER_METRICS = [
+			{ key: 'Chloride', label: 'Chloride (mg/L)', color: 'rgba(250,204,21,0.95)', borderColor: '#facc15', axisId: 'y_chl', axisLabel: 'Chloride (mg/L)', isBar: true },
+			{ key: 'Nitrate', label: 'Nitrate (mg/L)', color: 'rgba(99,102,241,0.9)', borderColor: '#6366f1', axisId: 'y_nit', axisLabel: 'Nitrate (mg/L)', isBar: true },
+			{ key: 'Temperature', label: 'Temperature (°C)', color: 'transparent', borderColor: '#06b6d4', axisId: 'y_temp', axisLabel: 'Temperature (°C)', isBar: false },
+			{ key: 'pH', label: 'pH', color: 'transparent', borderColor: '#f97316', axisId: 'y_ph', axisLabel: 'pH', isBar: false },
+			{ key: 'Turbidity', label: 'Turbidity (NTU)', color: 'transparent', borderColor: '#7c3aed', axisId: 'y_turb', axisLabel: 'Turbidity (NTU)', isBar: false },
+			{ key: 'RDO', label: 'RDO (mg/L)', color: 'transparent', borderColor: '#10b981', axisId: 'y_rdo', axisLabel: 'RDO (mg/L)', isBar: false },
+			{ key: 'TDS', label: 'TDS (g/L)', color: 'transparent', borderColor: '#64748b', axisId: 'y_tds', axisLabel: 'TDS (g/L)', isBar: false }
+		];
+
+		function renderRiverChart(side, selectId, chartTypeId, canvasId, dataSource) {
+			const metricKey = document.getElementById(selectId).value;
+			const meta = RIVER_METRICS.find(m => m.key === metricKey);
+			if (!meta) return;
+			const chartType = side === 'up' ? upstreamChartType : downstreamChartType;
+
+			const ctx = document.getElementById(canvasId).getContext('2d');
+			const inst = side === 'up' ? upstreamChartInst : downstreamChartInst;
+			if (inst) { inst.destroy(); if (side === 'up') upstreamChartInst = null; else downstreamChartInst = null; }
+
+			let config;
+
+			if (chartType === "pie") {
+				const pieData = RIVER_METRICS.map(m => {
+					const vals = dataSource[m.key] || [];
+					const latest = vals[vals.length - 1];
+					return latest != null ? latest : 0;
+				});
+				config = {
+					type: "pie",
+					data: {
+						labels: RIVER_METRICS.map(m => m.label),
+						datasets: [{ label: 'River Sampling', data: pieData, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }]
+					},
+					options: {
+						responsive: true, maintainAspectRatio: false,
+						hover: { mode: 'nearest', intersect: true },
+						animation: { duration: 200, easing: 'easeOutQuart' },
+						plugins: {
+							legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } },
+							tooltip: baseTooltip(context => ` ${context.label}: ${context.raw}`)
+						}
+					}
+				};
+			} else {
+				const isLine = chartType === "line";
+				const scales = {};
+				RIVER_METRICS.forEach(m => {
+					scales[m.axisId] = { type: 'linear', display: m.key === metricKey, position: 'left', title: { display: m.key === metricKey, text: m.axisLabel }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } };
+				});
+				scales.x = { grid: { display: false }, ticks: { color: "#000000b3" } };
+
+				const data = dataSource[metricKey] || [];
+				const ds = [{
+					label: meta.label,
+					data,
+					backgroundColor: isLine ? meta.borderColor : (meta.color === 'transparent' ? meta.borderColor + '99' : meta.color),
+					hoverBackgroundColor: meta.borderColor + '99',
+					hoverBorderColor: meta.borderColor + '99',
+					hoverBorderWidth: 4,
+					borderColor: isLine ? meta.borderColor : undefined,
+					borderWidth: isLine ? 3 : 2,
+					borderRadius: isLine ? 0 : 6,
+					pointBackgroundColor: meta.borderColor,
+					pointBorderColor: "#f8fafc",
+					pointBorderWidth: 2,
+					pointRadius: 5,
+					pointHoverRadius: 9,
+					pointHoverBackgroundColor: meta.borderColor,
+					pointHoverBorderColor: "#fff",
+					pointHoverBorderWidth: 3,
+					fill: false,
+					tension: 0.2,
+					yAxisID: meta.axisId,
+					pointStyle: 'circle'
+				}];
+
+				config = {
+					type: chartType,
+					data: { labels: envLabels, datasets: ds },
+					options: {
+						responsive: true, maintainAspectRatio: false,
+						hover: { mode: 'nearest', intersect: true },
+						interaction: { mode: 'nearest', intersect: true },
+						animation: { duration: 200, easing: 'easeOutQuart' },
+						plugins: {
+							legend: { display: false },
+							tooltip: { callbacks: { label: ctx => { const lab = ctx.dataset.label || ''; let v = ctx.parsed.y; if (v === null) return lab + ': N/A'; return lab + ': ' + v; } } }
 						},
-						options: {
-							responsive:true, maintainAspectRatio:false,
-							plugins: {
-								legend: { position: 'bottom' },
-								tooltip: { callbacks: { label: function(ctx){ const lab = ctx.dataset.label||''; const v = ctx.parsed.y; if (v==null) return lab+': N/A'; return lab+': '+v.toLocaleString(); } } }
-							},
-							scales: { x: { grid:{ display:false } }, y: { beginAtZero:true, title: { display:true, text:'Value' } } }
-						}
-					});
-					// show diversion rate if available
-					const drEl = document.getElementById('diversion-rate');
-					if (drEl && waste.diversion_rate_pct !== undefined) drEl.textContent = waste.diversion_rate_pct + '%';
-				} catch(e) { console.warn('Waste chart render failed', e); }
+						scales
+					}
+				};
+			}
 
-				// PM10 monthly chart (2015-2023) - tentative transcription
-				try {
-					const pm10 = envData.pm10 || DEFAULT_ENV_DATA.pm10;
-					const pm10Ctx = document.getElementById('pm10Chart').getContext('2d');
-					const colors = ['#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6','#ec4899','#06b6d4','#7c3aed','#a3e635'];
-					const datasets = pm10.years.map((y, idx) => ({
-						label: String(y.year),
-						data: y.values,
-						borderColor: colors[idx % colors.length],
-						backgroundColor: 'transparent',
-						tension: 0.15,
-						spanGaps: true,
-						pointRadius: 3
-					}));
-					datasets.forEach((d,i)=> d.hidden = i !== 0);
-					new Chart(pm10Ctx, {
-						type: 'line',
-						data: { labels: pm10.months, datasets },
-						options: {
-							responsive:true, maintainAspectRatio:false,
-							plugins: {
-								legend: { position:'bottom' },
-								tooltip: { callbacks: { label: function(ctx){ const lab = ctx.dataset.label||''; const v = ctx.parsed.y; return lab+': '+(v==null?'N/A':v); } } }
-							},
-							scales: { y: { beginAtZero:true, title:{ display:true, text:'PM10 (µg/Ncm)' } } }
-						}
-					});
-				} catch(e){ console.warn('PM10 chart render failed', e); }
+			const newChart = new Chart(ctx, config);
+			if (side === 'up') upstreamChartInst = newChart;
+			else downstreamChartInst = newChart;
+		}
 
-				// PM2.5 monthly chart (2015-2023) - tentative transcription
-				try {
-					const pm25 = envData.pm25 || DEFAULT_ENV_DATA.pm25;
-					const pm25Ctx = document.getElementById('pm25Chart').getContext('2d');
-					const colors = ['#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6','#ec4899','#06b6d4','#7c3aed','#a3e635'];
-					const datasets25 = pm25.years.map((y, idx) => ({
-						label: String(y.year),
-						data: y.values,
-						borderColor: colors[idx % colors.length],
-						backgroundColor: 'transparent',
-						tension: 0.15,
-						spanGaps: true,
-						pointRadius: 3
-					}));
-					datasets25.forEach((d,i)=> d.hidden = i !== 0);
-					new Chart(pm25Ctx, {
-						type: 'line',
-						data: { labels: pm25.months, datasets: datasets25 },
-						options: {
-							responsive:true, maintainAspectRatio:false,
-							plugins: { legend: { position:'bottom' }, tooltip: { callbacks: { label: function(ctx){ const lab = ctx.dataset.label||''; const v = ctx.parsed.y; return lab+': '+(v==null?'N/A':v); } } } },
-							scales: { y: { beginAtZero:true, title:{ display:true, text:'PM2.5 (µg/Ncm)' } } }
+		function renderWasteChart() {
+			if (wasteChartInst) { wasteChartInst.destroy(); wasteChartInst = null; }
+			const waste = envData.waste || DEFAULT_ENV_DATA.waste;
+			const ctx = document.getElementById('wasteMaterialsChart').getContext('2d');
+
+			const WASTE_DATASETS = [
+				{ key: 'volume_m3', label: 'Volume (m³)', color: '#3b82f6' },
+				{ key: 'weight_tons', label: 'Weight (tons)', color: '#10b981' }
+			];
+
+			let config;
+
+			if (wasteChartType === "pie") {
+				const pieData = WASTE_DATASETS.map(ds => {
+					const vals = waste[ds.key] || [];
+					const total = vals.reduce((s, v) => s + (v || 0), 0);
+					return total;
+				});
+				config = {
+					type: "pie",
+					data: {
+						labels: WASTE_DATASETS.map(ds => ds.label),
+						datasets: [{ label: 'Waste Materials', data: pieData, backgroundColor: ['#3b82f6', '#10b981'], hoverBackgroundColor: ['#3b82f699', '#10b98199'], hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }]
+					},
+					options: {
+						responsive: true, maintainAspectRatio: false,
+						hover: { mode: 'nearest', intersect: true },
+						animation: { duration: 200, easing: 'easeOutQuart' },
+						plugins: {
+							legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } },
+							tooltip: baseTooltip(context => ` ${context.label}: ${context.raw.toLocaleString()}`)
 						}
-					});
-				} catch(e){ console.warn('PM2.5 chart render failed', e); }
+					}
+				};
+			} else {
+				const isLine = wasteChartType === "line";
+				config = {
+					type: wasteChartType,
+					data: {
+						labels: waste.categories,
+						datasets: WASTE_DATASETS.map(ds => {
+							const style = makeDatasetStyle(ds.color, isLine);
+							style.label = ds.label;
+							style.data = waste[ds.key] || [];
+							style.backgroundColor = isLine ? ds.color : makeGradient(ctx, ds.color);
+							style.hoverBackgroundColor = ds.color + '99';
+							style.borderRadius = isLine ? 0 : 6;
+							style.yAxisID = 'y';
+							style.spanGaps = true;
+							return style;
+						})
+					},
+					options: baseLineOpts({
+						scales: {
+							y: { beginAtZero: true, title: { display: true, text: 'Value' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } },
+							x: { grid: { display: false }, ticks: { color: "#000000b3" } }
+						},
+						plugins: {
+							legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } },
+							tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`)
+						}
+					})
+				};
+			}
+
+			wasteChartInst = new Chart(ctx, config);
+
+			const drEl = document.getElementById('diversion-rate');
+			if (drEl && waste.diversion_rate_pct !== undefined) drEl.textContent = waste.diversion_rate_pct + '%';
+		}
+
+		function renderPM25Chart() {
+			if (pm25ChartInst) { pm25ChartInst.destroy(); pm25ChartInst = null; }
+			const pm25 = envData.pm25 || DEFAULT_ENV_DATA.pm25;
+			const ctx = document.getElementById('pm25Chart').getContext('2d');
+			const colors = ['#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6','#ec4899','#06b6d4','#7c3aed','#a3e635'];
+
+			let config;
+
+			if (pm25ChartType === "pie") {
+				const pieData = pm25.years.map(y => {
+					const vals = y.values.filter(v => v != null);
+					return vals.length ? vals.reduce((s, v) => s + v, 0) / vals.length : 0;
+				});
+				config = {
+					type: "pie",
+					data: {
+						labels: pm25.years.map(y => String(y.year)),
+						datasets: [{ label: 'PM2.5 Mean (µg/Ncm)', data: pieData, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }]
+					},
+					options: {
+						responsive: true, maintainAspectRatio: false,
+						hover: { mode: 'nearest', intersect: true },
+						animation: { duration: 200, easing: 'easeOutQuart' },
+						plugins: {
+							legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } },
+							tooltip: baseTooltip(context => ` ${context.label}: ${context.raw.toFixed(2)}`)
+						}
+					}
+				};
+			} else {
+				const isLine = pm25ChartType === "line";
+				const datasets = pm25.years.map((y, idx) => {
+					const style = makeDatasetStyle(colors[idx % colors.length], isLine);
+					style.label = String(y.year);
+					style.data = y.values;
+					style.backgroundColor = isLine ? 'transparent' : makeGradient(ctx, colors[idx % colors.length]);
+					style.hoverBackgroundColor = colors[idx % colors.length] + '99';
+					style.borderRadius = isLine ? 0 : 6;
+					style.spanGaps = true;
+					return style;
+				});
+
+				config = {
+					type: pm25ChartType,
+					data: { labels: pm25.months, datasets },
+					options: baseLineOpts({
+						scales: {
+							y: { beginAtZero: true, title: { display: true, text: 'PM2.5 (µg/Ncm)' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } },
+							x: { grid: { display: false }, ticks: { color: "#000000b3" } }
+						},
+						plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw != null ? ctx.raw.toFixed(2) : 'N/A'}`) }
+					})
+				};
+			}
+
+			pm25ChartInst = new Chart(ctx, config);
+		}
+
+		function renderPM10Chart() {
+			if (pm10ChartInst) { pm10ChartInst.destroy(); pm10ChartInst = null; }
+			const pm10 = envData.pm10 || DEFAULT_ENV_DATA.pm10;
+			const ctx = document.getElementById('pm10Chart').getContext('2d');
+			const colors = ['#3b82f6','#ef4444','#10b981','#f59e0b','#8b5cf6','#ec4899','#06b6d4','#7c3aed','#a3e635'];
+
+			let config;
+
+			if (pm10ChartType === "pie") {
+				const pieData = pm10.years.map(y => {
+					const vals = y.values.filter(v => v != null);
+					return vals.length ? vals.reduce((s, v) => s + v, 0) / vals.length : 0;
+				});
+				config = {
+					type: "pie",
+					data: {
+						labels: pm10.years.map(y => String(y.year)),
+						datasets: [{ label: 'PM10 Mean (µg/Ncm)', data: pieData, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }]
+					},
+					options: {
+						responsive: true, maintainAspectRatio: false,
+						hover: { mode: 'nearest', intersect: true },
+						animation: { duration: 200, easing: 'easeOutQuart' },
+						plugins: {
+							legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } },
+							tooltip: baseTooltip(context => ` ${context.label}: ${context.raw.toFixed(2)}`)
+						}
+					}
+				};
+			} else {
+				const isLine = pm10ChartType === "line";
+				const datasets = pm10.years.map((y, idx) => {
+					const style = makeDatasetStyle(colors[idx % colors.length], isLine);
+					style.label = String(y.year);
+					style.data = y.values;
+					style.backgroundColor = isLine ? 'transparent' : makeGradient(ctx, colors[idx % colors.length]);
+					style.hoverBackgroundColor = colors[idx % colors.length] + '99';
+					style.borderRadius = isLine ? 0 : 6;
+					style.spanGaps = true;
+					return style;
+				});
+
+				config = {
+					type: pm10ChartType,
+					data: { labels: pm10.months, datasets },
+					options: baseLineOpts({
+						scales: {
+							y: { beginAtZero: true, title: { display: true, text: 'PM10 (µg/Ncm)' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } },
+							x: { grid: { display: false }, ticks: { color: "#000000b3" } }
+						},
+						plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw != null ? ctx.raw.toFixed(2) : 'N/A'}`) }
+					})
+				};
+			}
+
+			pm10ChartInst = new Chart(ctx, config);
+		}
+
+		function renderEnvCharts() {
+			renderRiverChart('up', 'upstream-metric-select', 'upstreamChartType', 'riverUpstreamChart', envData.upstream);
+			renderRiverChart('down', 'downstream-metric-select', 'downstreamChartType', 'riverDownstreamChart', envData.downstream);
+			renderWasteChart();
+			renderPM25Chart();
+			renderPM10Chart();
 		}
 	</script>
 </body>
