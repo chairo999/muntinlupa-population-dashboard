@@ -770,7 +770,7 @@
                 maintainAspectRatio: false,
                 hover: { mode: 'nearest', intersect: true },
                 interaction: { mode: 'nearest', intersect: true },
-                animation: { duration: 200, easing: 'easeOutQuart' },
+                animation: { duration: 1000, easing: 'easeOutQuart' },
                 plugins: { legend: { display: false }, tooltip: baseTooltip() }
             }, extra || {});
         }
@@ -1081,7 +1081,7 @@
                 config = {
                     type: "pie",
                     data: { labels, datasets: [{ label: 'Functional Literacy Rate (%)', data, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
-                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.raw}%`) } }
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { animateRotate: true, animateScale: true, duration: 1000 }, plugins: { legend: { display: true, labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.raw}%`) } }
                 };
             } else {
                 config = {
@@ -1120,7 +1120,13 @@
                 };
             }
 
+            const literacyRealData = config.data.datasets.map(d => d.data);
+            config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             literacyChartInst = new Chart(ctx, config);
+            setTimeout(function() {
+                literacyRealData.forEach((data, i) => { literacyChartInst.data.datasets[i].data = data; });
+                literacyChartInst.update();
+            }, 50);
         }
 
         function renderEnrollmentChart() {
@@ -1139,7 +1145,7 @@
                 config = {
                     type: "pie",
                     data: { labels: levels, datasets: [{ label: 'Total Enrollment', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
-                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Enrollment: ${ctx.raw.toLocaleString()}`) } }
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { animateRotate: true, animateScale: true, duration: 1000 }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Enrollment: ${ctx.raw.toLocaleString()}`) } }
                 };
             } else {
                 config = {
@@ -1201,7 +1207,13 @@
                 };
             }
 
+            const enrollmentRealData = config.data.datasets.map(d => d.data);
+            config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             enrollmentChartInst = new Chart(ctx, config);
+            setTimeout(function() {
+                enrollmentRealData.forEach((data, i) => { enrollmentChartInst.data.datasets[i].data = data; });
+                enrollmentChartInst.update();
+            }, 50);
         }
 
         function renderCDMChart() {
@@ -1247,6 +1259,7 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         hover: { mode: 'nearest', intersect: true },
+                        animation: { animateRotate: true, animateScale: true, duration: 1000 },
                         plugins: {
                             legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } },
                             tooltip: baseTooltip(ctx => {
@@ -1320,7 +1333,13 @@
                 };
             }
 
+            const cdmRealData = config.data.datasets.map(d => d.data);
+            config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             cdmChartInst = new Chart(ctx, config);
+            setTimeout(function() {
+                cdmRealData.forEach((data, i) => { cdmChartInst.data.datasets[i].data = data; });
+                cdmChartInst.update();
+            }, 50);
         }
 
         function renderPLMUNChart() {
@@ -1352,7 +1371,7 @@
                 config = {
                     type: "pie",
                     data: { labels: programs, datasets: [{ label: 'Total Enrollment', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
-                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Total: ${ctx.raw.toLocaleString()}`) } }
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { animateRotate: true, animateScale: true, duration: 1000 }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Total: ${ctx.raw.toLocaleString()}`) } }
                 };
             } else {
                 config = {
@@ -1414,7 +1433,13 @@
                 };
             }
 
+            const plmunRealData = config.data.datasets.map(d => d.data);
+            config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             plmunChartInst = new Chart(ctx, config);
+            setTimeout(function() {
+                plmunRealData.forEach((data, i) => { plmunChartInst.data.datasets[i].data = data; });
+                plmunChartInst.update();
+            }, 50);
         }
 
         function renderTESDAChart() {
@@ -1446,7 +1471,7 @@
                 config = {
                     type: "pie",
                     data: { labels: courses, datasets: [{ label: 'Total Trainees', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
-                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Trainees: ${ctx.raw.toLocaleString()}`) } }
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { animateRotate: true, animateScale: true, duration: 1000 }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Trainees: ${ctx.raw.toLocaleString()}`) } }
                 };
             } else {
                 config = {
@@ -1509,7 +1534,13 @@
                 };
             }
 
+            const tesdaRealData = config.data.datasets.map(d => d.data);
+            config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             tesdaChartInst = new Chart(ctx, config);
+            setTimeout(function() {
+                tesdaRealData.forEach((data, i) => { tesdaChartInst.data.datasets[i].data = data; });
+                tesdaChartInst.update();
+            }, 50);
         }
 
         function initDaycareWidget() {
@@ -1562,7 +1593,7 @@
                 config = {
                     type: "pie",
                     data: { labels, datasets: [{ label: 'Total Enrollment', data: merged, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
-                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Total: ${ctx.raw.toLocaleString()}`) } }
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { animateRotate: true, animateScale: true, duration: 1000 }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Total: ${ctx.raw.toLocaleString()}`) } }
                 };
             } else {
                 config = {
@@ -1624,7 +1655,13 @@
                 };
             }
 
+            const daycareRealData = config.data.datasets.map(d => d.data);
+            config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             daycareChartInst = new Chart(ctx, config);
+            setTimeout(function() {
+                daycareRealData.forEach((data, i) => { daycareChartInst.data.datasets[i].data = data; });
+                daycareChartInst.update();
+            }, 50);
         }
 
         /* DepEd Basic Education Performance Indicators — built from DB */
@@ -1833,7 +1870,13 @@
                 })
             };
 
+            const perfRealData = config.data.datasets.map(d => d.data);
+            config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             perfChartInst = new Chart(ctx, config);
+            setTimeout(function() {
+                perfRealData.forEach((data, i) => { perfChartInst.data.datasets[i].data = data; });
+                perfChartInst.update();
+            }, 50);
         }
     </script>
 </body>
