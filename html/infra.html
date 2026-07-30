@@ -548,6 +548,61 @@
         .text-cyan { color: #0891b2; }
         .text-amber { color: #d97706; }
         .text-emerald { color: #059669; }
+
+        .facility-breakdown-box {
+            margin-top: 14px;
+            padding: 14px 16px;
+            background: #ecfeff;
+            border: 1px solid rgba(8, 145, 178, 0.2);
+            border-radius: var(--border-radius-md);
+            max-height: 290px;
+            overflow-y: auto;
+        }
+
+        .breakdown-header {
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: #0891b2;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(8, 145, 178, 0.15);
+            padding-bottom: 6px;
+        }
+
+        .facility-sub-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 10px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .breakdown-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 8px 0;
+        }
+
+        .breakdown-list li {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            padding: 3px 0 3px 14px;
+            position: relative;
+            line-height: 1.45;
+        }
+
+        .breakdown-list li::before {
+            content: '•';
+            position: absolute;
+            left: 4px;
+            color: #0891b2;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -904,6 +959,9 @@
                                 <strong class="infra-stat-val text-emerald" id="fac-roads">184.5 km</strong>
                             </div>
                         </div>
+
+                        <!-- All Available Facilities per Barangay Container -->
+                        <div id="brgy-facilities-details"></div>
                     </div>
                 </div>
             </section>
@@ -3444,10 +3502,38 @@
                 powerElectrified: "17,389 HHs",
                 powerTotalHH: "17,890 HHs",
                 powerRate: "97.2%",
-                facDaycare: "11 Centers",
-                facSchools: "3 Public Schools (Sucat Elem, Miramar)",
-                facHealth: "1 City Health Center (Sucat HC)",
-                facRoads: "22.4 km"
+                facDaycare: "10 Centers",
+                facSchools: "5 Schools (Bagong Silang ES, Sucat ES, MBHS Annex, CDM)",
+                facHealth: "2 Health Centers (Sucat HC, Bagong Silang HC)",
+                facRoads: "22.4 km",
+                daycareList: [
+                    "Emilio Aguinaldo Daycare Center (Upper Sucat)",
+                    "Sucat Daycare Center (Purok 6)",
+                    "Apolinario Mabini Daycare Center (Purok 6 Creekside)",
+                    "A. Bonifacio Child Dev Center (Bagong Silang ES)",
+                    "Antonio Luna Child Dev Center",
+                    "E. Jacinto Child Dev Center (Purok 4)",
+                    "G. Del Pilar Child Dev Center (Purok 6)",
+                    "G. Lopez-Jaena Child Dev Center (Zone 2, Sitio Pagkakaisa)",
+                    "R. Solimon Child Dev Center (Zone 2, Sitio Pagkakaisa)",
+                    "Bagong Silang Daycare Center"
+                ],
+                schoolsList: [
+                    "Bagong Silang Elementary School (Samson St.)",
+                    "Sucat Elementary School Main (Quezon St.)",
+                    "Sucat Elementary School Zone 3 Annex (Sitio Pagkakaisa)",
+                    "Sucat Elementary School Zone 4 Annex (Sitio Pagkakaisa)",
+                    "Muntinlupa Business High School – Sucat Annex (Quezon St.)",
+                    "Colegio de Muntinlupa (CDM Tertiary Campus - Mayor J. Posadas Ave.)"
+                ],
+                healthList: [
+                    "Sucat Health Center (Purok 3)",
+                    "Bagong Silang Health Center (Sitio Bagong Silang)"
+                ],
+                govList: [
+                    "Sitio Pagkakaisa Zone 4 Community Center",
+                    "Mayor J. Posadas Ave Infrastructure Hub"
+                ]
             },
             "Buli": {
                 waterDomConn: "1,845 connections",
@@ -3458,9 +3544,25 @@
                 powerTotalHH: "2,836 HHs",
                 powerRate: "98.4%",
                 facDaycare: "3 Centers",
-                facSchools: "1 Public School (Buli Elem)",
+                facSchools: "2 Public Schools (Buli ES, MBHS Main)",
                 facHealth: "1 City Health Center (Buli HC)",
-                facRoads: "5.8 km"
+                facRoads: "5.8 km",
+                daycareList: [
+                    "Molave Daycare Center (Ecco Asia St.)",
+                    "Mahogany Child Development Center",
+                    "Narra Child Development Center (Blk 5 Lot 2 Onsite)"
+                ],
+                schoolsList: [
+                    "Buli Elementary School (Espeleta St.)",
+                    "Muntinlupa Business High School Main (Espeleta St.)"
+                ],
+                healthList: [
+                    "Buli Health Center (Beside Barangay Hall)"
+                ],
+                govList: [
+                    "Buli Barangay Hall & Acacia Center",
+                    "Buli Multi-purpose Civic Facility"
+                ]
             },
             "Cupang": {
                 waterDomConn: "12,680 connections",
@@ -3470,10 +3572,31 @@
                 powerElectrified: "17,315 HHs",
                 powerTotalHH: "17,887 HHs",
                 powerRate: "96.8%",
-                facDaycare: "12 Centers",
-                facSchools: "4 Public Schools (Cupang Elem & High)",
-                facHealth: "2 Health Centers & Birthing Clinic",
-                facRoads: "24.1 km"
+                facDaycare: "6 Centers",
+                facSchools: "2 Public Schools (Cupang ES & Cupang ES Annex)",
+                facHealth: "3 Health Centers (Cupang HC Purok 5, Sitio Sto. Niño HC, Cupang HC Purok 3)",
+                facRoads: "24.1 km",
+                daycareList: [
+                    "Neptune Daycare Center (West Kabulusan)",
+                    "Jupiter Daycare Center (Sitio Sto. Niño, West Service Rd)",
+                    "Saturn Daycare Center (Sitio Tuklas, East Service Rd)",
+                    "Mars Daycare Center (Bunyi Compound, East Service Rd)",
+                    "Venus Child Dev Center (Mullet Compound, Purok 5)",
+                    "Crismina Daycare Center (Crismina Compound)"
+                ],
+                schoolsList: [
+                    "Cupang Elementary School (Viñalon St.)",
+                    "Cupang Elementary School Annex (Sto. Niño St.)"
+                ],
+                healthList: [
+                    "Cupang Health Center (Purok 5, beside Barangay Hall)",
+                    "Sitio Santo Niño Health Center",
+                    "Cupang Health Center (Purok 3)"
+                ],
+                govList: [
+                    "Cupang Barangay Hall & Civic Complex",
+                    "East & West Service Road Infrastructure Outposts"
+                ]
             },
             "Alabang": {
                 waterDomConn: "14,890 connections",
@@ -3483,10 +3606,37 @@
                 powerElectrified: "21,097 HHs",
                 powerTotalHH: "21,571 HHs",
                 powerRate: "97.8%",
-                facDaycare: "14 Centers",
-                facSchools: "5 Public & Private Schools (Alabang Elem, PEDHS)",
-                facHealth: "1 Health Center & OsMun nearby",
-                facRoads: "31.2 km"
+                facDaycare: "11 Centers",
+                facSchools: "2 Schools (Alabang ES, Pedro E. Diaz High School)",
+                facHealth: "2 Major Health Facilities (Alabang HC, Ospital ng Muntinlupa)",
+                facRoads: "31.2 km",
+                daycareList: [
+                    "7C Daycare Center (Bayabas - 7C Ilaya)",
+                    "7B Daycare Center (Langka - Bagong Umaga)",
+                    "7A Daycare Center (Caimito - 7A Ilaya)",
+                    "Morning Breeze Daycare Center (Atis - Ilaya)",
+                    "Wawa Daycare Center",
+                    "Starfish Daycare Center (UP Side Subd)",
+                    "Lobster Daycare Center (San Jose Bagong Pag-asa)",
+                    "Sitio Masagana Daycare Center (ATC)",
+                    "Haven for Women Daycare Center",
+                    "Jellyfish Child Dev Center",
+                    "Blue Whale Child Dev Center"
+                ],
+                schoolsList: [
+                    "Alabang Elementary School (Mendiola St. - SPED)",
+                    "Pedro E. Diaz High School (UP Side Subd.)"
+                ],
+                healthList: [
+                    "Alabang Health Center (Liwasan ng mga Bayani)",
+                    "Ospital ng Muntinlupa (OsMun Main Government Hospital - Filinvest Civic Dr.)"
+                ],
+                govList: [
+                    "Muntinlupa Gateway Center (Est. 2023)",
+                    "Alabang Central Market Buildings A, B, & C",
+                    "Viñalon Multipurpose & Satellite Offices",
+                    "Alabang Police & Fire Sub-Stations"
+                ]
             },
             "Ayala Alabang": {
                 waterDomConn: "4,120 connections",
@@ -3497,9 +3647,26 @@
                 powerTotalHH: "4,389 HHs",
                 powerRate: "99.8%",
                 facDaycare: "2 Centers",
-                facSchools: "3 Major Institutions (DLSZ, Woodrose, MIT)",
-                facHealth: "1 Health Center & Asian Hospital nearby",
-                facRoads: "28.6 km"
+                facSchools: "3 Major Institutions (De La Salle Zobel, Woodrose, MIT)",
+                facHealth: "2 Health Facilities (Ayala Alabang HC, Asian Hospital)",
+                facRoads: "28.6 km",
+                daycareList: [
+                    "Ayala Daycare Center",
+                    "Basila St. Child Dev Center"
+                ],
+                schoolsList: [
+                    "De La Salle Santiago Zobel School (DLSZ)",
+                    "School of the Holy Spirit / Woodrose School",
+                    "MIT Educational Campus"
+                ],
+                healthList: [
+                    "Ayala Alabang Health Center",
+                    "Asian Hospital & Medical Center (Private Tertiary Hospital)"
+                ],
+                govList: [
+                    "Ayala Alabang Barangay Hall & Community Center",
+                    "AAV Health & Public Safety Office"
+                ]
             },
             "Bayanan": {
                 waterDomConn: "7,850 connections",
@@ -3509,10 +3676,37 @@
                 powerElectrified: "10,715 HHs",
                 powerTotalHH: "11,103 HHs",
                 powerRate: "96.5%",
-                facDaycare: "7 Centers",
-                facSchools: "2 Public Schools (Bayanan Main & Unit 1)",
-                facHealth: "1 City Health Center (Bayanan HC)",
-                facRoads: "14.3 km"
+                facDaycare: "12 Centers",
+                facSchools: "3 Schools (Bayanan ES Main, Bayanan ES Unit 1, ALS Center)",
+                facHealth: "2 Health Centers (Bayanan HC, Bayanan HC Annex)",
+                facRoads: "14.3 km",
+                daycareList: [
+                    "Topaz Daycare Center (Purok 5, Plaza)",
+                    "Emerald Daycare Center (Bagong Paraiso)",
+                    "Diamond Daycare Center (Bayanan Bulilit A - Baywalk)",
+                    "Pearl Daycare Center (Bayanan Bulilit B - Baywalk)",
+                    "Jade Daycare Center (Purok 1, Blk 5)",
+                    "Amethyst Daycare Center (Purok 1, Blk 5)",
+                    "Sapphire Child Dev Center (Blk 8)",
+                    "Block 10 Child Dev Center",
+                    "Block 5 Daycare Center",
+                    "Block 8 Daycare Center",
+                    "Bayanan Baywalk Daycare Center",
+                    "Khekinah Child Development Center"
+                ],
+                schoolsList: [
+                    "Bayanan Elementary School Main (Nat'l Road)",
+                    "Bayanan Elementary School Unit I (Valeda St.)",
+                    "Alternative Learning System (ALS) Center"
+                ],
+                healthList: [
+                    "Bayanan Health Center (San Guillermo St.)",
+                    "Bayanan Health Center Annex (Purok 1, Blk 2 Dolleton St.)"
+                ],
+                govList: [
+                    "OSCA Center (Senior Citizens Office - Baywalk)",
+                    "Bayanan Baseball Quadrangle & Sports Grounds"
+                ]
             },
             "Putatan": {
                 waterDomConn: "18,420 connections",
@@ -3522,10 +3716,49 @@
                 powerElectrified: "24,907 HHs",
                 powerTotalHH: "25,703 HHs",
                 powerRate: "96.9%",
-                facDaycare: "18 Centers",
-                facSchools: "6 Public Schools (Putatan, Lakeview, High)",
-                facHealth: "City Hall, Medical Center & OsMun Main",
-                facRoads: "34.8 km"
+                facDaycare: "10 Centers",
+                facSchools: "5 Schools (Putatan ES, Soldiers Hills ES, F. de Mesa ES, Lakeview Integrated, MCTI-TESDA)",
+                facHealth: "7 Health Facilities (Putatan Super HC SP I & II, Lying-In, 101 Clinic, Reproductive Health, Main Lab, Lakeview HC)",
+                facRoads: "34.8 km",
+                daycareList: [
+                    "Hundred Islands Daycare (F. De Mesa ES)",
+                    "Mayon Daycare Center (Soldiers Hills)",
+                    "Boracay Daycare Center (Bruger Subd)",
+                    "Chocolate Hills Daycare Center (Hillsview Homes)",
+                    "Bliss Daycare Center (Bliss Compound)",
+                    "Camsur Child Dev Center (Soldiers Hills)",
+                    "Puerto Princesa Child Dev Center (Lakeview)",
+                    "Dakak Child Dev Center (Pasong Makipot)",
+                    "Taal Child Dev Center (San Juan Compound)",
+                    "Multiland Child Dev Center (Multiland Subd)"
+                ],
+                schoolsList: [
+                    "Putatan Elementary School (San Guillermo St.)",
+                    "Soldiers' Hills Elementary School (Blk 26 - SPED)",
+                    "F. de Mesa Elementary School (Freedom Hills)",
+                    "Lakeview Integrated School (Marigold St.)",
+                    "Muntinlupa City Technical Institute (MCTI - San Guillermo Campus)"
+                ],
+                healthList: [
+                    "Putatan Super Health Center Complex (SP I - Nat'l Rd cor. Bliss)",
+                    "Putatan Lying-In Center",
+                    "101 Health & Specialized Clinic",
+                    "Reproductive Health Center",
+                    "City Main Health Laboratory",
+                    "Putatan Health Center (SP II - Bruger)",
+                    "Lakeview Health Center"
+                ],
+                govList: [
+                    "Muntinlupa City Hall Main Building",
+                    "Muntinlupa City Hall Annex Building",
+                    "People Center Building",
+                    "Kalingang Munti Action Center",
+                    "Muntinlupa Men's & Women's Center",
+                    "MCTI-TESDA Training & Resource Center",
+                    "Balai Munti Employees Housing Complex (23A-26A)",
+                    "City Public Cemetery (Soldiers Hills)",
+                    "New BJMP Facility (Putatan)"
+                ]
             },
             "Poblacion": {
                 waterDomConn: "19,150 connections",
@@ -3535,10 +3768,51 @@
                 powerElectrified: "24,920 HHs",
                 powerTotalHH: "25,585 HHs",
                 powerRate: "97.4%",
-                facDaycare: "15 Centers",
-                facSchools: "5 Schools (Poblacion Elem, MNHS, PLMun)",
-                facHealth: "2 Health Centers & NBP Hospital",
-                facRoads: "32.5 km"
+                facDaycare: "24 Centers",
+                facSchools: "7 Schools (Muntinlupa ES, Itaas ES, Poblacion ES, MNHS Main, Poblacion NHS, PLMun, MCTI Annex)",
+                facHealth: "4 Health Facilities (Poblacion HC Main & 2019 Bldg, Southville HC, Emergency Care Clinic)",
+                facRoads: "32.5 km",
+                daycareList: [
+                    "Espeleta Pantalan Daycare (Espeleta St.)",
+                    "Zinnia Daycare Center (Canto - beside Brgy Hall)",
+                    "Gardenia Daycare Center (Pasong Makipot)",
+                    "Dahlia Daycare Center (Tensuan Site)",
+                    "Marigold & Daisy Daycare Center (NBP Area)",
+                    "Rosemary Daycare Center (Sitio San Antonio)",
+                    "Sampaguita Daycare Center (Camp Sampaguita)",
+                    "Orchid Daycare Center (Type C NBP)",
+                    "Tulip 1 & 2 Daycare Centers (Southville 3)",
+                    "Camia 1 & 2 Daycare Centers (Southville 3)",
+                    "Sunflower 1 & 2 Daycare Centers (Southville 3)",
+                    "Carnation 1 Daycare Center (Southville 3)",
+                    "Gumamela Daycare Center (Phase 4 Southville 3)",
+                    "Calla Lily 1 Daycare Center (Southville 3)",
+                    "Hyacinth 1 & 2 Daycare Centers (Southville 3)",
+                    "Jasmine 1 & 2 Daycare Centers (Southville 3)",
+                    "Veronica Child Dev Center",
+                    "Burma Daycare Center (NBP Residential)",
+                    "Katihan Daycare Center (Tensuan Site)"
+                ],
+                schoolsList: [
+                    "Muntinlupa Elementary School (Katihan St. - Est. 1914, SPED)",
+                    "Itaas Elementary School (NBP Reservation - Est. 1943, SPED)",
+                    "Poblacion Elementary School (Southville 3 - Est. 2009)",
+                    "Muntinlupa National High School Main (NBP - Est. 1945)",
+                    "Poblacion National High School (Southville 3 - Est. 2009)",
+                    "Pamantasan ng Lungsod ng Muntinlupa (PLMun Local University Campus)",
+                    "MCTI Southville Vocational Campus Annex"
+                ],
+                healthList: [
+                    "Poblacion Health Center (Rizal & Burgos St.)",
+                    "Poblacion Health Center Annex (Est. 2019)",
+                    "Southville Health Center (NHA Project NBP)",
+                    "Emergency Care Clinic (NBP Compound)"
+                ],
+                govList: [
+                    "Plaza Central Cultural & Civic Complex",
+                    "Constructed MCTI-Annex Building (Southville)",
+                    "Poblacion Barangay Hall & Satellite Offices"
+                ]
             },
             "Tunasan": {
                 waterDomConn: "11,210 connections",
@@ -3548,10 +3822,49 @@
                 powerElectrified: "14,736 HHs",
                 powerTotalHH: "15,382 HHs",
                 powerRate: "95.8%",
-                facDaycare: "12 Centers",
-                facSchools: "4 Public Schools (Tunasan, Victoria Homes)",
-                facHealth: "1 Health Center & Super Health Center",
-                facRoads: "23.7 km"
+                facDaycare: "16 Centers",
+                facSchools: "4 Schools (Tunasan ES, Victoria Homes ES, Muntinlupa Science HS, MNHS Tunasan Annex)",
+                facHealth: "4 Health Facilities (CHO Main, City Water Lab, Tunasan HC, Victoria HC)",
+                facRoads: "23.7 km",
+                daycareList: [
+                    "Carlos Quirino Daycare (Sikat Ville HOA)",
+                    "F. Amorsolo Daycare (Buendia St.)",
+                    "V. Mansala Child Dev Center",
+                    "Lucio San Pedro Daycare (St. Peter St.)",
+                    "V. S. Almario Daycare (Parkhomes Subd)",
+                    "J. Joya Child Dev Center",
+                    "C. Romolo Child Dev Center",
+                    "V. Hernandez Child Dev Center",
+                    "H. Ocampo Child Dev Center",
+                    "J. Nakpil Child Dev Center",
+                    "N. Joaquin Child Dev Center",
+                    "L. Celerio Child Dev Center (Villa Carolina 1)",
+                    "J. Fuentes Child Dev Center (Victoria Homes)",
+                    "JPA Subdivision Daycare",
+                    "Bulilit Daycare Center (Laguerta)",
+                    "Multi-purpose Bldg Daycare (Sto. Niño Village)"
+                ],
+                schoolsList: [
+                    "Tunasan Elementary School (Buendia St. - Est. 1945)",
+                    "Victoria Homes Elementary School (Victoria Homes - Est. 2000)",
+                    "Muntinlupa Science High School (Buendia St. - Est. 1998)",
+                    "Muntinlupa National High School – Tunasan Annex (Laguerta St.)"
+                ],
+                healthList: [
+                    "City Health Office Main Office (Centennial Ave.)",
+                    "City Water Laboratory (4th Flr CHO Bldg)",
+                    "Tunasan Health Center (E. Rodriguez Ave.)",
+                    "Victoria Health Center (Victoria Homes Subd)"
+                ],
+                govList: [
+                    "Pacwood Civic Hub: Storage, Quarantine, Animal Shelter, Motorpool, Fabrication",
+                    "Muntinlupa Sports Complex, Aquatic Center & Track and Field",
+                    "Dep-Ed Division Office Main Headquarters",
+                    "Museo ng Muntinlupa (Centennial Ave.)",
+                    "Muntinlupa Hall of Justice (Susana Heights)",
+                    "Resiliency Building & City Fire Station Headquarters",
+                    "Bahay Pag-asa Social Dev Center & Bahay Kanlungan Elderly Care"
+                ]
             }
         };
 
@@ -3608,6 +3921,54 @@
             if (facSchoolsEl) facSchoolsEl.textContent = data.facSchools;
             if (facHealthEl) facHealthEl.textContent = data.facHealth;
             if (facRoadsEl) facRoadsEl.textContent = data.facRoads;
+
+            // Render Detailed Facilities Listing
+            const detailsContainer = document.getElementById("brgy-facilities-details");
+            if (detailsContainer) {
+                if (isCity) {
+                    detailsContainer.innerHTML = `
+                        <div class="facility-breakdown-box">
+                            <div class="breakdown-header"><i class="fa-solid fa-city"></i> Key City-Wide Facilities</div>
+                            <ul class="breakdown-list">
+                                <li><strong>Higher Education:</strong> PLMun (Poblacion), Colegio de Muntinlupa (Sucat), MCTI Campuses (Putatan & Poblacion)</li>
+                                <li><strong>Hospitals:</strong> Ospital ng Muntinlupa (Alabang - Govt), Asian Hospital (Ayala Alabang - Private)</li>
+                                <li><strong>Government Hubs:</strong> City Hall Complex (Putatan), Hall of Justice (Tunasan), CHO Main (Tunasan)</li>
+                                <li><strong>Sports & Culture:</strong> Muntinlupa Sports Complex & Aquatic Center (Tunasan), Museo ng Muntinlupa</li>
+                            </ul>
+                        </div>
+                    `;
+                } else {
+                    let html = `<div class="facility-breakdown-box">`;
+                    html += `<div class="breakdown-header"><i class="fa-solid fa-location-dot"></i> All Available Facilities in ${name}</div>`;
+                    
+                    if (data.schoolsList && data.schoolsList.length) {
+                        html += `<div class="facility-sub-title"><i class="fa-solid fa-graduation-cap"></i> Schools & Colleges (${data.schoolsList.length})</div><ul class="breakdown-list">`;
+                        data.schoolsList.forEach(item => html += `<li>${item}</li>`);
+                        html += `</ul>`;
+                    }
+
+                    if (data.healthList && data.healthList.length) {
+                        html += `<div class="facility-sub-title"><i class="fa-solid fa-hospital"></i> Health Facilities (${data.healthList.length})</div><ul class="breakdown-list">`;
+                        data.healthList.forEach(item => html += `<li>${item}</li>`);
+                        html += `</ul>`;
+                    }
+
+                    if (data.daycareList && data.daycareList.length) {
+                        html += `<div class="facility-sub-title"><i class="fa-solid fa-child"></i> Day Care Centers (${data.daycareList.length})</div><ul class="breakdown-list">`;
+                        data.daycareList.forEach(item => html += `<li>${item}</li>`);
+                        html += `</ul>`;
+                    }
+
+                    if (data.govList && data.govList.length) {
+                        html += `<div class="facility-sub-title"><i class="fa-solid fa-building-columns"></i> Public & Government Infrastructure (${data.govList.length})</div><ul class="breakdown-list">`;
+                        data.govList.forEach(item => html += `<li>${item}</li>`);
+                        html += `</ul>`;
+                    }
+
+                    html += `</div>`;
+                    detailsContainer.innerHTML = html;
+                }
+            }
         }
 
         function initMapInteraction() {
@@ -3764,8 +4125,8 @@
         }
 
         function renderInfrastructureDashboard() {
-            renderStatsBanner();
-            renderAllCharts();
+            if (typeof renderStatsBanner === 'function') renderStatsBanner();
+            if (typeof renderAllCharts === 'function') renderAllCharts();
         }
 
         // ────────────────────────────────────────────────────────────────
@@ -4293,16 +4654,25 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            renderElectrificationChart();
-            renderBrgyElectrificationChart();
-            document.getElementById('electrificationChartType').addEventListener('change', e => {
-                electrificationChartType = e.target.value;
-                renderElectrificationChart();
-            });
-            document.getElementById('brgyElectrificationChartType').addEventListener('change', e => {
-                brgyElectrificationChartType = e.target.value;
-                renderBrgyElectrificationChart();
-            });
+            initMapInteraction();
+            if (typeof loadMWSSData === 'function') loadMWSSData();
+            if (typeof renderElectrificationChart === 'function') renderElectrificationChart();
+            if (typeof renderBrgyElectrificationChart === 'function') renderBrgyElectrificationChart();
+
+            const elecSel = document.getElementById('electrificationChartType');
+            if (elecSel) {
+                elecSel.addEventListener('change', e => {
+                    electrificationChartType = e.target.value;
+                    renderElectrificationChart();
+                });
+            }
+            const brgyElecSel = document.getElementById('brgyElectrificationChartType');
+            if (brgyElecSel) {
+                brgyElecSel.addEventListener('change', e => {
+                    brgyElectrificationChartType = e.target.value;
+                    renderBrgyElectrificationChart();
+                });
+            }
         });
     </script>
 </body>
