@@ -589,24 +589,22 @@
         .sdg-progress-wrap {
             width: 100%;
             max-width: 240px;
-            height: 6px;
+            height: 8px;
             display: flex;
-            gap: 0;
-            border-radius: 3px;
+            gap: 2px;
+            border-radius: 4px;
             margin-top: 8px;
             overflow: hidden;
             background: #e2e8f0;
+            padding: 0;
         }
 
         .sdg-progress-fill {
             height: 100%;
-            transition: width 0.8s ease;
-            border-radius: 0;
+            flex: 1;
+            transition: flex 0.8s ease, background 0.3s ease;
+            border-radius: 2px;
         }
-
-        .sdg-progress-fill:first-child { border-radius: 3px 0 0 3px; }
-        .sdg-progress-fill:last-child { border-radius: 0 3px 3px 0; }
-        .sdg-progress-fill:only-child { border-radius: 3px; }
 
         @media (max-width: 768px) {
             .main-card { padding: 20px; }
@@ -2560,7 +2558,6 @@
                 const { onTrack, needsAccel, regressing } = counts[g];
                 const total = onTrack + needsAccel + regressing;
                 if (total === 0) continue;
-                const pct = 100 / total;
 
                 const rows = document.querySelectorAll(`.sdg-table tbody tr[data-status] .sdg-num-col`);
                 for (const cell of rows) {
@@ -2570,7 +2567,6 @@
                     const status = row.getAttribute('data-status');
                     const div = document.createElement('div');
                     div.className = 'sdg-progress-fill';
-                    div.style.width = pct + '%';
                     div.style.background = STATUS_COLORS[status] || '#e2e8f0';
                     wrap.appendChild(div);
                 }
