@@ -641,10 +641,10 @@
             const ctx = document.getElementById("vitalRatesChart").getContext("2d");
 
             const vitalKeys = [
-                { key: "Crude Birth Rate (CBR)", label: "Crude Birth Rate (CBR)", color: "#3b82f6" },
-                { key: "Crude Death Rate (CDR)", label: "Crude Death Rate (CDR)", color: "#ef4444" },
-                { key: "Infant Mortality Rate", label: "Infant Mortality Rate", color: "#10b981" },
-                { key: "Under Five Mortality Rate (UMR)", label: "Under Five Mortality Rate (UMR)", color: "#f59e0b" },
+                { key: "Crude Birth Rate (CBR)", label: "Crude Birth Rate (CBR)", color: "#003397" },
+                { key: "Crude Death Rate (CDR)", label: "Crude Death Rate (CDR)", color: "#e1271a" },
+                { key: "Infant Mortality Rate", label: "Infant Mortality Rate", color: "#16a34a" },
+                { key: "Under Five Mortality Rate (UMR)", label: "Under Five Mortality Rate (UMR)", color: "#ffcf01" },
                 { key: "Child Woman Ratio (CWR)", label: "Child Woman Ratio (CWR)", color: "#8b5cf6" }
             ];
             const mmrKey = { key: "Maternal Mortality Rate (MMR)", label: "Maternal Mortality (MMR)", color: "#ec4899" };
@@ -658,7 +658,7 @@
                     return latest.val !== '--' ? latest.val : 0;
                 });
                 const labels = [...vitalKeys, mmrKey].map(v => v.label);
-                const vitalPieColors = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"];
+                const vitalPieColors = ["#003397", "#e1271a", "#16a34a", "#ffcf01", "#8b5cf6", "#ec4899"];
                 config = {
                     type: "pie",
                     data: { labels, datasets: [{ label: 'Vital Rates', data: merged, backgroundColor: vitalPieColors, hoverBackgroundColor: vitalPieColors.map(c => c + "99"), hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
@@ -769,9 +769,9 @@
             const ctx = document.getElementById("familyHealthChart").getContext("2d");
 
             const familyKeys = [
-                { key: "Percentage of Fully Immunized Children", label: "Fully Immunized Children", color: "#2563eb" },
-                { key: "Infants Exclusively Breastfeed until 6 months", label: "Exclusively Breastfed (6 mos)", color: "#db2777" },
-                { key: "Percentage of Teenage Deliveries", label: "Teenage Deliveries", color: "#ea580c" },
+                { key: "Percentage of Fully Immunized Children", label: "Fully Immunized Children", color: "#003397" },
+                { key: "Infants Exclusively Breastfeed until 6 months", label: "Exclusively Breastfed (6 mos)", color: "#e1271a" },
+                { key: "Percentage of Teenage Deliveries", label: "Teenage Deliveries", color: "#ffcf01" },
                 { key: "Percentage of Birth by Skilled Attendant", label: "Birth by Skilled Attendant", color: "#16a34a" },
                 { key: "Births by Facility Based", label: "Births in Facility", color: "#0d9488" },
                 { key: "Contraceptive Prevalence Rate", label: "Contraceptive Prevalence Rate", color: "#4f46e5" }
@@ -786,7 +786,7 @@
                     return latest.val !== '--' ? latest.val : 0;
                 });
                 const labels = familyKeys.map(v => v.label);
-                const familyPieColors = ["#2563eb", "#db2777", "#ea580c", "#16a34a", "#0d9488", "#4f46e5"];
+                const familyPieColors = ["#003397", "#e1271a", "#ffcf01", "#16a34a", "#0d9488", "#4f46e5"];
                 config = {
                     type: "pie",
                     data: { labels, datasets: [{ label: 'Family Health Indicators', data: merged, backgroundColor: familyPieColors, hoverBackgroundColor: familyPieColors.map(c => c + "99"), hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
