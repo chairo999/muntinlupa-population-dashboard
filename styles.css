@@ -1220,7 +1220,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: url('assets/images/ecological_profile.png');
+    background-image: var(--bg-image, url('assets/images/ecological_profile.png'));
     background-size: cover;
     background-position: center;
     opacity: 0.4;
