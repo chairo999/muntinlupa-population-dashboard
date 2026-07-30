@@ -326,7 +326,7 @@
         const BARANGAY_NAMES = ["Alabang", "Ayala Alabang", "Bayanan", "Buli", "Cupang", "Poblacion", "Putatan", "Sucat", "Tunasan"];
 
         const PIE_COLORS = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548"];
-        const PIE_HOVER_COLORS = ["#ff2a2a", "#ff6666", "#ffb347", "#4caf50", "#42a5f5", "#ab47bc", "#26c6da", "#ff7043", "#8d6e63"];
+        const PIE_HOVER_COLORS = PIE_COLORS.map(c => c + "99");
 
         let economicData = {};
         let supabaseClient = null;
@@ -559,13 +559,6 @@
             updateBarangayEconChart();
         }
 
-        function makeGradient(ctx) {
-            const g = ctx.createLinearGradient(0, 0, 0, 350);
-            g.addColorStop(0, "#e1271a");
-            g.addColorStop(1, "#e1271a89");
-            return g;
-        }
-
         function baseTooltip(callback) {
             return Object.assign({
                 backgroundColor: "rgba(15, 23, 42, 0.95)",
@@ -581,7 +574,7 @@
                 maintainAspectRatio: false,
                 hover: { mode: 'nearest', intersect: true },
                 interaction: { mode: 'nearest', intersect: true },
-                animation: { duration: 200, easing: 'easeOutQuart' },
+                animation: { duration: 1000, easing: 'easeOutQuart' },
                 plugins: { legend: { display: false }, tooltip: baseTooltip() }
             }, extra || {});
         }
@@ -592,10 +585,12 @@
                 return (val !== null && val !== undefined) ? { x: String(rankObj.labels[i]), y: val } : null;
             }).filter(item => item !== null);
             const rankYears = [...new Set(rankCoordinates.map(c => c.x))].sort((a, b) => Number(a) - Number(b));
+            const vals = rankYears.map(y => { const c = rankCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
+            const zeroData = new Array(rankYears.length).fill(0);
+            const realData = rankingChartType === "line" ? rankCoordinates : vals;
 
             if (rankingChartInstance) { rankingChartInstance.destroy(); rankingChartInstance = null; }
             const ctx = document.getElementById("rankingChart").getContext("2d");
-            const gradient = makeGradient(ctx);
 
             const yScale = { reverse: true, min: 1, max: 15, ticks: { stepSize: 2, color: "#000000b3" }, title: { display: true, text: 'Rank Rating Position' }, grid: { color: "rgba(3, 3, 3, 0.05)" } };
             const xScale = { grid: { display: false }, ticks: { color: "#000000b3" } };
@@ -603,21 +598,19 @@
             let config;
 
             if (rankingChartType === "pie") {
-                const vals = rankYears.map(y => { const c = rankCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
                 config = {
                     type: "pie",
-                    data: { labels: rankYears, datasets: [{ label: 'Competitiveness Rank', data: vals, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
-                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Rank: #${ctx.raw}`) } }
+                    data: { labels: rankYears, datasets: [{ label: 'Competitiveness Rank', data: zeroData, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { animateRotate: true, animateScale: true, duration: 1000 }, plugins: { legend: { display: true, labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Rank: #${ctx.raw}`) } }
                 };
             } else {
-                const vals = rankYears.map(y => { const c = rankCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
                 config = {
                     type: rankingChartType,
                     data: {
                         labels: rankYears,
                         datasets: [{
                             label: 'Competitiveness Rank',
-                            data: rankingChartType === "line" ? rankCoordinates : vals,
+                            data: zeroData,
                             borderColor: "#d91406",
                             borderWidth: rankingChartType === "line" ? 3 : undefined,
                             pointBackgroundColor: "#e1271a",
@@ -631,7 +624,7 @@
                             hoverBackgroundColor: "#e1271a52",
                             hoverBorderColor: "#e1271a52",
                             hoverBorderWidth: 4,
-                            backgroundColor: gradient,
+                            backgroundColor: '#e1271a',
                             fill: false,
                             tension: 0.15,
                             borderRadius: rankingChartType === "bar" ? 6 : 0
@@ -645,6 +638,10 @@
             }
 
             rankingChartInstance = new Chart(ctx, config);
+            setTimeout(function() {
+                rankingChartInstance.data.datasets[0].data = realData;
+                rankingChartInstance.update();
+            }, 50);
         }
 
         function renderEstablishmentsChart() {
@@ -653,10 +650,12 @@
                 return (val !== null && val !== undefined) ? { x: String(estObj.labels[i]), y: val } : null;
             }).filter(item => item !== null);
             const estYears = [...new Set(estCoordinates.map(c => c.x))].sort((a, b) => Number(a) - Number(b));
+            const vals = estYears.map(y => { const c = estCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
+            const zeroData = new Array(estYears.length).fill(0);
+            const realData = establishmentsChartType === "line" ? estCoordinates : vals;
 
             if (establishmentsChartInstance) { establishmentsChartInstance.destroy(); establishmentsChartInstance = null; }
             const ctx = document.getElementById("establishmentsChart").getContext("2d");
-            const gradient = makeGradient(ctx);
 
             const yScale = { beginAtZero: true, title: { display: true, text: 'Total Active Businesses' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } };
             const xScale = { grid: { display: false }, ticks: { color: "#000000b3" } };
@@ -664,21 +663,19 @@
             let config;
 
             if (establishmentsChartType === "pie") {
-                const vals = estYears.map(y => { const c = estCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
                 config = {
                     type: "pie",
-                    data: { labels: estYears, datasets: [{ label: 'Total Establishments', data: vals, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
-                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Establishments: ${ctx.raw.toLocaleString()}`) } }
+                    data: { labels: estYears, datasets: [{ label: 'Total Establishments', data: zeroData, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { animateRotate: true, animateScale: true, duration: 1000 }, plugins: { legend: { display: true, labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Establishments: ${ctx.raw.toLocaleString()}`) } }
                 };
             } else {
-                const vals = estYears.map(y => { const c = estCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
                 config = {
                     type: establishmentsChartType,
                     data: {
                         labels: estYears,
                         datasets: [{
                             label: 'Total Establishments',
-                            data: establishmentsChartType === "line" ? estCoordinates : vals,
+                            data: zeroData,
                             borderColor: establishmentsChartType === "line" ? "#d91406" : undefined,
                             borderWidth: establishmentsChartType === "line" ? 3 : undefined,
                             pointBackgroundColor: "#e1271a",
@@ -692,7 +689,7 @@
                             hoverBackgroundColor: "#e1271a52",
                             hoverBorderColor: "#e1271a52",
                             hoverBorderWidth: 4,
-                            backgroundColor: gradient,
+                            backgroundColor: '#e1271a',
                             fill: false,
                             tension: 0.2,
                             borderRadius: establishmentsChartType === "bar" ? 6 : 0
@@ -706,6 +703,10 @@
             }
 
             establishmentsChartInstance = new Chart(ctx, config);
+            setTimeout(function() {
+                establishmentsChartInstance.data.datasets[0].data = realData;
+                establishmentsChartInstance.update();
+            }, 50);
         }
 
         function renderHotelArrivalsChart() {
@@ -714,10 +715,12 @@
                 return (val !== null && val !== undefined) ? { x: String(hotelObj.labels[i]), y: val } : null;
             }).filter(item => item !== null);
             const hotelYears = [...new Set(hotelCoordinates.map(c => c.x))].sort((a, b) => Number(a) - Number(b));
+            const vals = hotelYears.map(y => { const c = hotelCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
+            const zeroData = new Array(hotelYears.length).fill(0);
+            const realData = hotelChartType === "line" ? hotelCoordinates : vals;
 
             if (hotelArrivalsChartInstance) { hotelArrivalsChartInstance.destroy(); hotelArrivalsChartInstance = null; }
             const ctx = document.getElementById("hotelArrivalsChart").getContext("2d");
-            const gradient = makeGradient(ctx);
 
             const yScale = { beginAtZero: true, title: { display: true, text: 'Annual Hotel Arrivals' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } };
             const xScale = { grid: { display: false }, ticks: { color: "#000000b3" } };
@@ -725,21 +728,19 @@
             let config;
 
             if (hotelChartType === "pie") {
-                const vals = hotelYears.map(y => { const c = hotelCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
                 config = {
                     type: "pie",
-                    data: { labels: hotelYears, datasets: [{ label: 'Hotel Arrivals', data: vals, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
-                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Arrivals: ${ctx.raw.toLocaleString()}`) } }
+                    data: { labels: hotelYears, datasets: [{ label: 'Hotel Arrivals', data: zeroData, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { animateRotate: true, animateScale: true, duration: 1000 }, plugins: { legend: { display: true, labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Arrivals: ${ctx.raw.toLocaleString()}`) } }
                 };
             } else {
-                const vals = hotelYears.map(y => { const c = hotelCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
                 config = {
                     type: hotelChartType,
                     data: {
                         labels: hotelYears,
                         datasets: [{
                             label: 'Hotel Arrivals',
-                            data: hotelChartType === "line" ? hotelCoordinates : vals,
+                            data: zeroData,
                             borderColor: hotelChartType === "line" ? "#d91406" : undefined,
                             borderWidth: hotelChartType === "line" ? 3 : undefined,
                             pointBackgroundColor: "#e1271a",
@@ -753,7 +754,7 @@
                             hoverBackgroundColor: "#e1271a52",
                             hoverBorderColor: "#e1271a52",
                             hoverBorderWidth: 4,
-                            backgroundColor: gradient,
+                            backgroundColor: '#e1271a',
                             fill: false,
                             tension: 0.2,
                             borderRadius: hotelChartType === "bar" ? 6 : 0
@@ -767,11 +768,16 @@
             }
 
             hotelArrivalsChartInstance = new Chart(ctx, config);
+            setTimeout(function() {
+                hotelArrivalsChartInstance.data.datasets[0].data = realData;
+                hotelArrivalsChartInstance.update();
+            }, 50);
         }
 
         function initChartControls() {
             const toggle = document.getElementById("barangay-view-mode");
             const selectBrgy = document.getElementById("barangay-select");
+            const chartTypeSelect = document.getElementById("barangayChartType");
 
             selectBrgy.innerHTML = "";
             BARANGAY_NAMES.forEach(b => {
@@ -782,6 +788,18 @@
 
             toggle.addEventListener("change", () => {
                 selectBrgy.style.display = (toggle.value === "category-split") ? "inline-block" : "none";
+                const lineOption = chartTypeSelect.querySelector('option[value="line"]');
+                if (toggle.value === "category-split") {
+                    if (lineOption) lineOption.remove();
+                    if (barangayEconChartType === "line") {
+                        barangayEconChartType = "bar";
+                        chartTypeSelect.value = "bar";
+                    }
+                } else if (!lineOption) {
+                    const opt = document.createElement("option");
+                    opt.value = "line"; opt.textContent = "Line Graph";
+                    chartTypeSelect.insertBefore(opt, chartTypeSelect.querySelector('option[value="pie"]'));
+                }
                 updateBarangayEconChart();
             });
 
@@ -808,7 +826,7 @@
                 maintainAspectRatio: false,
                 hover: { mode: 'nearest', intersect: true },
                 interaction: { mode: 'nearest', intersect: true },
-                animation: { duration: 200, easing: 'easeOutQuart' },
+                animation: { duration: 1000, easing: 'easeOutQuart' },
                 scales: {
                     y: { beginAtZero: true, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } },
                     x: { grid: { display: false }, ticks: { color: "#000000b3" }, stacked: false }
@@ -835,7 +853,7 @@
                     datasets = [{
                         label: 'Registered Businesses',
                         data: counts,
-                        backgroundColor: makeGradient(document.getElementById("barangayEconChart").getContext("2d")),
+                        backgroundColor: '#e1271a',
                         hoverBackgroundColor: "#e1271a52",
                         hoverBorderColor: "#e1271a52",
                         hoverBorderWidth: 4,
@@ -921,10 +939,10 @@
                     };
                 } else {
                     datasets = [
-                        { label: 'Micro Employment', data: microArr, backgroundColor: '#d97706', hoverBackgroundColor: '#d97706', borderWidth: 1, borderRadius: chartType === "bar" ? 4 : 0, barThickness: chartType === "bar" ? 24 : undefined, maxBarThickness: chartType === "bar" ? 40 : undefined },
-                        { label: 'Small Employment', data: smallArr, backgroundColor: '#eab308', hoverBackgroundColor: '#eab308', borderWidth: 1, borderRadius: chartType === "bar" ? 4 : 0, barThickness: chartType === "bar" ? 24 : undefined, maxBarThickness: chartType === "bar" ? 40 : undefined },
-                        { label: 'Medium Employment', data: mediumArr, backgroundColor: '#10b981', hoverBackgroundColor: '#10b981', borderWidth: 1, borderRadius: chartType === "bar" ? 4 : 0, barThickness: chartType === "bar" ? 24 : undefined, maxBarThickness: chartType === "bar" ? 40 : undefined },
-                        { label: 'Large Employment', data: largeArr, backgroundColor: '#ef4444', hoverBackgroundColor: '#ef4444', borderWidth: 1, borderRadius: chartType === "bar" ? 4 : 0, barThickness: chartType === "bar" ? 24 : undefined, maxBarThickness: chartType === "bar" ? 40 : undefined }
+                        { label: 'Micro Employment', data: microArr, backgroundColor: '#d97706', borderColor: chartType === "line" ? '#d97706' : undefined, borderWidth: chartType === "line" ? 3 : 1, pointBackgroundColor: '#d97706', pointBorderColor: "#f8fafc", pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 9, pointHoverBackgroundColor: "#f59e0b", pointHoverBorderColor: "#fff", pointHoverBorderWidth: 3, hoverBackgroundColor: '#d9770652', hoverBorderColor: '#d9770652', hoverBorderWidth: 4, fill: chartType === "line" ? false : undefined, tension: chartType === "line" ? 0.2 : undefined, borderRadius: chartType === "bar" ? 4 : 0, barThickness: chartType === "bar" ? 24 : undefined, maxBarThickness: chartType === "bar" ? 40 : undefined },
+                        { label: 'Small Employment', data: smallArr, backgroundColor: '#eab308', borderColor: chartType === "line" ? '#eab308' : undefined, borderWidth: chartType === "line" ? 3 : 1, pointBackgroundColor: '#eab308', pointBorderColor: "#f8fafc", pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 9, pointHoverBackgroundColor: "#facc15", pointHoverBorderColor: "#fff", pointHoverBorderWidth: 3, hoverBackgroundColor: '#eab30852', hoverBorderColor: '#eab30852', hoverBorderWidth: 4, fill: chartType === "line" ? false : undefined, tension: chartType === "line" ? 0.2 : undefined, borderRadius: chartType === "bar" ? 4 : 0, barThickness: chartType === "bar" ? 24 : undefined, maxBarThickness: chartType === "bar" ? 40 : undefined },
+                        { label: 'Medium Employment', data: mediumArr, backgroundColor: '#10b981', borderColor: chartType === "line" ? '#10b981' : undefined, borderWidth: chartType === "line" ? 3 : 1, pointBackgroundColor: '#10b981', pointBorderColor: "#f8fafc", pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 9, pointHoverBackgroundColor: "#34d399", pointHoverBorderColor: "#fff", pointHoverBorderWidth: 3, hoverBackgroundColor: '#10b98152', hoverBorderColor: '#10b98152', hoverBorderWidth: 4, fill: chartType === "line" ? false : undefined, tension: chartType === "line" ? 0.2 : undefined, borderRadius: chartType === "bar" ? 4 : 0, barThickness: chartType === "bar" ? 24 : undefined, maxBarThickness: chartType === "bar" ? 40 : undefined },
+                        { label: 'Large Employment', data: largeArr, backgroundColor: '#e1271a', borderColor: chartType === "line" ? '#e1271a' : undefined, borderWidth: chartType === "line" ? 3 : 1, pointBackgroundColor: '#e1271a', pointBorderColor: "#f8fafc", pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 9, pointHoverBackgroundColor: "#ff2a2a", pointHoverBorderColor: "#fff", pointHoverBorderWidth: 3, hoverBackgroundColor: '#e1271a52', hoverBorderColor: '#e1271a52', hoverBorderWidth: 4, fill: chartType === "line" ? false : undefined, tension: chartType === "line" ? 0.2 : undefined, borderRadius: chartType === "bar" ? 4 : 0, barThickness: chartType === "bar" ? 24 : undefined, maxBarThickness: chartType === "bar" ? 40 : undefined }
                     ];
                     options.scales.x.stacked = true;
                     options.scales.y.stacked = true;
@@ -970,20 +988,21 @@
                         type: "pie",
                         data: {
                             labels: catLabels.map((l, i) => `${l} · ${getPct(catValues[i])}`),
-                            datasets: [{ label: `${selectedBrgy} Enterprise Profile`, data: catValues, backgroundColor: catColors, hoverBackgroundColor: catHoverColors, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }]
+                            datasets: [{ label: `${selectedBrgy} Enterprise Profile`, data: catValues, backgroundColor: catColors, hoverBackgroundColor: catColors.map(c => c + "99"), hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }]
                         },
                         options: {
                             responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true },
+                            animation: { animateRotate: true, animateScale: true, duration: 1000 },
                             plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => { const val = ctx.raw || 0; return ` Count: ${val.toLocaleString()} (${getPct(val)})`; }) }
                         }
                     };
                 } else {
                     labels = [`${selectedBrgy} Enterprise Profile`];
                     datasets = [
-                        { label: `Micro (≤ 3M) · ${getPct(micro)}`, data: [micro], backgroundColor: '#d97706', hoverBackgroundColor: '#d97706', borderWidth: 1, borderRadius: 4 },
-                        { label: `Small (3.1M - 15M) · ${getPct(small)}`, data: [small], backgroundColor: '#eab308', hoverBackgroundColor: '#eab308', borderWidth: 1, borderRadius: 4 },
-                        { label: `Medium (15.1M - 100M) · ${getPct(medium)}`, data: [medium], backgroundColor: '#10b981', hoverBackgroundColor: '#10b981', borderWidth: 1, borderRadius: 4 },
-                        { label: `Large (≥ 100.1M) · ${getPct(large)}`, data: [large], backgroundColor: '#ef4444', hoverBackgroundColor: '#ef4444', borderWidth: 1, borderRadius: 4 }
+                        { label: `Micro (≤ 3M) · ${getPct(micro)}`, data: [micro], backgroundColor: '#d97706', hoverBackgroundColor: '#d9770652', hoverBorderColor: '#d9770652', hoverBorderWidth: 4, borderWidth: 1, borderRadius: 4 },
+                        { label: `Small (3.1M - 15M) · ${getPct(small)}`, data: [small], backgroundColor: '#eab308', hoverBackgroundColor: '#eab30852', hoverBorderColor: '#eab30852', hoverBorderWidth: 4, borderWidth: 1, borderRadius: 4 },
+                        { label: `Medium (15.1M - 100M) · ${getPct(medium)}`, data: [medium], backgroundColor: '#10b981', hoverBackgroundColor: '#10b98152', hoverBorderColor: '#10b98152', hoverBorderWidth: 4, borderWidth: 1, borderRadius: 4 },
+                        { label: `Large (≥ 100.1M) · ${getPct(large)}`, data: [large], backgroundColor: '#ef4444', hoverBackgroundColor: '#ef444452', hoverBorderColor: '#ef444452', hoverBorderWidth: 4, borderWidth: 1, borderRadius: 4 }
                     ];
                     options.scales.x.stacked = true;
                     options.scales.y.stacked = true;
@@ -1007,7 +1026,18 @@
             if (barangayEconChartInstance) { barangayEconChartInstance.destroy(); }
             const ctxC = document.getElementById("barangayEconChart").getContext("2d");
 
-            if (typeof config !== 'undefined') {
+            let realDataForAnimation;
+            let isConfigPath = typeof config !== 'undefined';
+
+            if (isConfigPath) {
+                realDataForAnimation = config.data.datasets.map(d => d.data);
+                config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
+            } else {
+                realDataForAnimation = datasets.map(d => d.data);
+                datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
+            }
+
+            if (isConfigPath) {
                 barangayEconChartInstance = new Chart(ctxC, config);
             } else {
                 barangayEconChartInstance = new Chart(ctxC, {
@@ -1016,6 +1046,13 @@
                     options
                 });
             }
+
+            setTimeout(function() {
+                realDataForAnimation.forEach((data, i) => {
+                    barangayEconChartInstance.data.datasets[i].data = data;
+                });
+                barangayEconChartInstance.update();
+            }, 50);
         }
 
     </script>
