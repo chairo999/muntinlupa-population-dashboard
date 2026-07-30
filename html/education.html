@@ -320,11 +320,6 @@
             transition: var(--transition-smooth);
         }
 
-        .perf-kpi-card:hover {
-            border-color: rgba(239, 68, 68, 0.3);
-            transform: translateY(-2px);
-        }
-
         .perf-kpi-title {
             font-size: 0.75rem;
             font-weight: 700;
@@ -758,14 +753,7 @@
         const BARANGAY_NAMES = ["Alabang", "Ayala Alabang", "Bayanan", "Buli", "Cupang", "Poblacion", "Putatan", "Sucat", "Tunasan"];
 
         const PIE_COLORS = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548"];
-        const PIE_HOVER_COLORS = ["#ff2a2a", "#ff6666", "#ffb347", "#4caf50", "#42a5f5", "#ab47bc", "#26c6da", "#ff7043", "#8d6e63"];
-
-        function makeGradient(ctx) {
-            const g = ctx.createLinearGradient(0, 0, 0, 350);
-            g.addColorStop(0, "#e1271a");
-            g.addColorStop(1, "#e1271a89");
-            return g;
-        }
+        const PIE_HOVER_COLORS = PIE_COLORS.map(c => c + "99");
 
         function baseTooltip(callback) {
             return Object.assign({
@@ -1086,7 +1074,6 @@
             const labels = eduLabels;
             const data = labels.map((l, i) => eduData["Literacy Rate"]?.history[i]);
             const ctx = document.getElementById("literacyChart").getContext("2d");
-            const gradient = makeGradient(ctx);
 
             let config;
 
@@ -1117,7 +1104,7 @@
                             hoverBackgroundColor: "#e1271a52",
                             hoverBorderColor: "#e1271a52",
                             hoverBorderWidth: 4,
-                            backgroundColor: gradient,
+                            backgroundColor: '#e1271a',
                             fill: false,
                             tension: 0.15,
                             borderRadius: literacyChartType === "bar" ? 6 : 0
@@ -1143,7 +1130,7 @@
             const publicData = levels.map(l => getLatestValue(`Public Enrollment - ${l}`) || 0);
             const privateData = levels.map(l => getLatestValue(`Private Enrollment - ${l}`) || 0);
             const ctx = document.getElementById("enrollmentChart").getContext("2d");
-            const gradient = makeGradient(ctx);
+
 
             let config;
 
@@ -1163,7 +1150,7 @@
                             {
                                 label: 'Public School',
                                 data: publicData,
-                                backgroundColor: gradient,
+                                backgroundColor: '#e1271a',
                                 hoverBackgroundColor: "#e1271a52",
                                 hoverBorderColor: "#e1271a52",
                                 hoverBorderWidth: 4,
@@ -1184,18 +1171,18 @@
                             {
                                 label: 'Private School',
                                 data: privateData,
-                                backgroundColor: enrollmentChartType === "line" ? "rgba(239, 68, 68, 0.3)" : "rgba(239, 68, 68, 0.4)",
-                                hoverBackgroundColor: "#e1271a52",
-                                hoverBorderColor: "#e1271a52",
+                                backgroundColor: "#003397",
+                                hoverBackgroundColor: "rgba(0, 51, 151, 0.2)",
+                                hoverBorderColor: "rgba(0, 51, 151, 0.2)",
                                 hoverBorderWidth: 4,
-                                borderColor: enrollmentChartType === "line" ? "#ef4444" : undefined,
-                                borderWidth: enrollmentChartType === "line" ? 2 : undefined,
-                                pointBackgroundColor: "#ef4444",
+                                borderColor: enrollmentChartType === "line" ? "#003397" : undefined,
+                                borderWidth: enrollmentChartType === "line" ? 3 : undefined,
+                                pointBackgroundColor: "#003397",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 8,
-                                pointHoverBackgroundColor: "#ff6666",
+                                pointRadius: 5,
+                                pointHoverRadius: 9,
+                                pointHoverBackgroundColor: "#003397",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
                                 fill: false,
@@ -1304,12 +1291,12 @@
                                 hoverBorderColor: "#FF7AC885",
                                 hoverBorderWidth: 4,
                                 borderColor: cdmChartType === "line" ? "#ff7ac8" : undefined,
-                                borderWidth: cdmChartType === "line" ? 2 : undefined,
+                                borderWidth: cdmChartType === "line" ? 3 : undefined,
                                 pointBackgroundColor: "#ff7ac8",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 8,
+                                pointRadius: 5,
+                                pointHoverRadius: 9,
                                 pointHoverBackgroundColor: "#ff7ac8",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
@@ -1356,7 +1343,7 @@
                 return 0;
             });
             const ctx = document.getElementById("plmunChart").getContext("2d");
-            const gradient = makeGradient(ctx);
+
 
             let config;
 
@@ -1402,12 +1389,12 @@
                                 hoverBorderColor: "#FF7AC885",
                                 hoverBorderWidth: 4,
                                 borderColor: plmunChartType === "line" ? "#ff7ac8" : undefined,
-                                borderWidth: plmunChartType === "line" ? 2 : undefined,
+                                borderWidth: plmunChartType === "line" ? 3 : undefined,
                                 pointBackgroundColor: "#ff7ac8",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 8,
+                                pointRadius: 5,
+                                pointHoverRadius: 9,
                                 pointHoverBackgroundColor: "#ff7ac8",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
@@ -1450,7 +1437,7 @@
                 return 0;
             });
             const ctx = document.getElementById("tesdaChart").getContext("2d");
-            const gradient = makeGradient(ctx);
+
 
             let config;
 
@@ -1496,12 +1483,12 @@
                                 hoverBorderColor: "#FF7AC885",
                                 hoverBorderWidth: 4,
                                 borderColor: tesdaChartType === "line" ? "#ff7ac8" : undefined,
-                                borderWidth: tesdaChartType === "line" ? 2 : undefined,
+                                borderWidth: tesdaChartType === "line" ? 3 : undefined,
                                 pointBackgroundColor: "#ff7ac8",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 8,
+                                pointRadius: 5,
+                                pointHoverRadius: 9,
                                 pointHoverBackgroundColor: "#ff7ac8",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
@@ -1564,7 +1551,7 @@
 
             const labels = ageGroups;
             const ctx = document.getElementById("daycareChart").getContext("2d");
-            const gradient = makeGradient(ctx);
+
 
             if (daycareChartInst) { daycareChartInst.destroy(); daycareChartInst = null; }
 
@@ -1612,12 +1599,12 @@
                                 hoverBorderColor: "#FF7AC885",
                                 hoverBorderWidth: 4,
                                 borderColor: daycareChartType === "line" ? "#ff7ac8 " : undefined,
-                                borderWidth: daycareChartType === "line" ? 2 : undefined,
+                                borderWidth: daycareChartType === "line" ? 3 : undefined,
                                 pointBackgroundColor: "#ff7ac8",
                                 pointBorderColor: "#f8fafc",
                                 pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 8,
+                                pointRadius: 5,
+                                pointHoverRadius: 9,
                                 pointHoverBackgroundColor: "#ff7ac8",
                                 pointHoverBorderColor: "#fff",
                                 pointHoverBorderWidth: 3,
@@ -1719,6 +1706,13 @@
                         <span class="perf-kpi-sub">${kpi.sub}</span>
                     </div>
                 `).join("");
+                kpiContainer.querySelectorAll(".perf-kpi-value").forEach(el => {
+                    const raw = el.textContent;
+                    const num = parseFloat(raw);
+                    if (!isNaN(num)) {
+                        countUp(el, num, 600, "%");
+                    }
+                });
             }
 
             const tbody = document.getElementById("perf-table-body");
@@ -1769,28 +1763,64 @@
                             label: 'Male',
                             data: maleVals,
                             backgroundColor: "#7ea8f7",
+                            hoverBackgroundColor: "#7EA8F77D",
+                            hoverBorderColor: "#7EA8F77D",
+                            hoverBorderWidth: 4,
                             borderColor: perfChartType === 'line' ? "#7ea8f7" : undefined,
-                            borderWidth: perfChartType === 'line' ? 2 : 0,
+                            borderWidth: perfChartType === 'line' ? 3 : undefined,
+                            pointBackgroundColor: "#7ea8f7",
+                            pointBorderColor: "#f8fafc",
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 9,
+                            pointHoverBackgroundColor: "#7ea8f7",
+                            pointHoverBorderColor: "#fff",
+                            pointHoverBorderWidth: 3,
                             borderRadius: perfChartType === 'bar' ? 4 : 0,
-                            fill: false
+                            fill: false,
+                            tension: 0.2
                         },
                         {
                             label: 'Female',
                             data: femaleVals,
                             backgroundColor: "#ff7ac8",
+                            hoverBackgroundColor: "#FF7AC885",
+                            hoverBorderColor: "#FF7AC885",
+                            hoverBorderWidth: 4,
                             borderColor: perfChartType === 'line' ? "#ff7ac8" : undefined,
-                            borderWidth: perfChartType === 'line' ? 2 : 0,
+                            borderWidth: perfChartType === 'line' ? 3 : undefined,
+                            pointBackgroundColor: "#ff7ac8",
+                            pointBorderColor: "#f8fafc",
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 9,
+                            pointHoverBackgroundColor: "#ff7ac8",
+                            pointHoverBorderColor: "#fff",
+                            pointHoverBorderWidth: 3,
                             borderRadius: perfChartType === 'bar' ? 4 : 0,
-                            fill: false
+                            fill: false,
+                            tension: 0.2
                         },
                         {
                             label: 'Total',
                             data: totalVals,
                             backgroundColor: "#e1271a",
+                            hoverBackgroundColor: "#e1271a52",
+                            hoverBorderColor: "#e1271a52",
+                            hoverBorderWidth: 4,
                             borderColor: perfChartType === 'line' ? "#e1271a" : undefined,
-                            borderWidth: perfChartType === 'line' ? 3 : 0,
+                            borderWidth: perfChartType === 'line' ? 3 : undefined,
+                            pointBackgroundColor: "#e1271a",
+                            pointBorderColor: "#f8fafc",
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 9,
+                            pointHoverBackgroundColor: "#ff2a2a",
+                            pointHoverBorderColor: "#fff",
+                            pointHoverBorderWidth: 3,
                             borderRadius: perfChartType === 'bar' ? 4 : 0,
-                            fill: false
+                            fill: false,
+                            tension: 0.2
                         }
                     ]
                 },
