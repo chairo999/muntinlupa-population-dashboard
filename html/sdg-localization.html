@@ -549,10 +549,71 @@
             border: 1px solid var(--border-light);
         }
 
+        .sdg-logos-section-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-align: center;
+        }
+
+        .sdg-logos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+
+        .sdg-logo-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.2s;
+            text-decoration: none;
+        }
+
+        .sdg-logo-card:hover {
+            transform: scale(1.05);
+        }
+
+        .sdg-logo-card img {
+            width: 100%;
+            max-width: 240px;
+            height: auto;
+            aspect-ratio: 1;
+            object-fit: contain;
+        }
+
+        .sdg-progress-wrap {
+            width: 100%;
+            max-width: 240px;
+            height: 6px;
+            display: flex;
+            gap: 0;
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+            background: #e2e8f0;
+        }
+
+        .sdg-progress-fill {
+            height: 100%;
+            transition: width 0.8s ease;
+            border-radius: 0;
+        }
+
+        .sdg-progress-fill:first-child { border-radius: 3px 0 0 3px; }
+        .sdg-progress-fill:last-child { border-radius: 0 3px 3px 0; }
+        .sdg-progress-fill:only-child { border-radius: 3px; }
+
         @media (max-width: 768px) {
             .main-card { padding: 20px; }
             h1 { font-size: 1.8rem; }
             .pillars-grid { grid-template-columns: 1fr; }
+            .sdg-logos-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+            .sdg-logo-card img { max-width: 180px; }
         }
     </style>
 </head>
@@ -680,6 +741,81 @@
                         <img src="../assets/images/sdg-16.png" alt="SDG 16 Peace & Justice" class="sdg-btn-img">
                     </div>
                 </button>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 17 SDGs LOGOS SECTION (fetched from UN SDG)  -->
+            <!-- ========================================== -->
+            <div class="sdg-logos-section-title">The 17 Sustainable Development Goals</div>
+            <div class="sdg-logos-grid">
+                <a href="https://sdgs.un.org/goals/goal1" target="_blank" class="sdg-logo-card" title="Goal 1: No Poverty" data-sdg="1">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-01.jpg" alt="SDG 1 No Poverty" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
+                <a href="https://sdgs.un.org/goals/goal2" target="_blank" class="sdg-logo-card" title="Goal 2: Zero Hunger" data-sdg="2">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-02.jpg" alt="SDG 2 Zero Hunger" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
+                <a href="https://sdgs.un.org/goals/goal3" target="_blank" class="sdg-logo-card" title="Goal 3: Good Health and Well-being" data-sdg="3">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3 Good Health" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
+                <a href="https://sdgs.un.org/goals/goal4" target="_blank" class="sdg-logo-card" title="Goal 4: Quality Education" data-sdg="4">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" alt="SDG 4 Quality Education" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
+                <a href="https://sdgs.un.org/goals/goal5" target="_blank" class="sdg-logo-card" title="Goal 5: Gender Equality" data-sdg="5">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-05.jpg" alt="SDG 5 Gender Equality" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
+                <a href="https://sdgs.un.org/goals/goal6" target="_blank" class="sdg-logo-card" title="Goal 6: Clean Water and Sanitation" data-sdg="6">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-06.jpg" alt="SDG 6 Clean Water" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
+                <a href="https://sdgs.un.org/goals/goal7" target="_blank" class="sdg-logo-card" title="Goal 7: Affordable and Clean Energy" data-sdg="7">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-07.jpg" alt="SDG 7 Clean Energy" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
+                <a href="https://sdgs.un.org/goals/goal8" target="_blank" class="sdg-logo-card" title="Goal 8: Decent Work and Economic Growth" data-sdg="8">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg" alt="SDG 8 Decent Work" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
+                <a href="https://sdgs.un.org/goals/goal9" target="_blank" class="sdg-logo-card" title="Goal 9: Industry, Innovation and Infrastructure" data-sdg="9">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-09.jpg" alt="SDG 9 Industry" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
+                <a href="https://sdgs.un.org/goals/goal10" target="_blank" class="sdg-logo-card" title="Goal 10: Reduced Inequalities" data-sdg="10">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-10.jpg" alt="SDG 10 Reduced Inequalities" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
+                <a href="https://sdgs.un.org/goals/goal11" target="_blank" class="sdg-logo-card" title="Goal 11: Sustainable Cities and Communities" data-sdg="11">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-11.jpg" alt="SDG 11 Sustainable Cities" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
+                <a href="https://sdgs.un.org/goals/goal12" target="_blank" class="sdg-logo-card" title="Goal 12: Responsible Consumption and Production" data-sdg="12">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-12.jpg" alt="SDG 12 Responsible Consumption" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
+                <a href="https://sdgs.un.org/goals/goal13" target="_blank" class="sdg-logo-card" title="Goal 13: Climate Action" data-sdg="13">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-13.jpg" alt="SDG 13 Climate Action" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
+                <a href="https://sdgs.un.org/goals/goal14" target="_blank" class="sdg-logo-card" title="Goal 14: Life Below Water" data-sdg="14">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-14.jpg" alt="SDG 14 Life Below Water" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
+                <a href="https://sdgs.un.org/goals/goal15" target="_blank" class="sdg-logo-card" title="Goal 15: Life on Land" data-sdg="15">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-15.jpg" alt="SDG 15 Life on Land" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
+                <a href="https://sdgs.un.org/goals/goal16" target="_blank" class="sdg-logo-card" title="Goal 16: Peace, Justice and Strong Institutions" data-sdg="16">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-16.jpg" alt="SDG 16 Peace & Justice" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
+                <a href="https://sdgs.un.org/goals/goal17" target="_blank" class="sdg-logo-card" title="Goal 17: Partnerships for the Goals" data-sdg="17">
+                    <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-17.jpg" alt="SDG 17 Partnerships" loading="lazy">
+                    <div class="sdg-progress-wrap"></div>
+                </a>
             </div>
 
             <!-- ========================================== -->
@@ -2385,9 +2521,68 @@
             kapayapaanChart = new Chart(ctx, { type: 'line', data: { labels: item.years, datasets: [{ label: 'Target Benchmark', data: item.target, borderColor: '#d97706', borderDash: [6, 6], fill: false }, { label: '5-Year Trend', data: item.trend, borderColor: '#00689d', backgroundColor: 'rgba(0, 104, 157, 0.12)', borderWidth: 3, fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#0f172a', font: { family: 'Montserrat', weight: 700 } } } }, scales: { x: { ticks: { color: '#475569' } }, y: { ticks: { color: '#475569' } } } } });
         }
 
+        // ===============================================
+        // SDG PROGRESS BARS — compute from table data
+        // ===============================================
+        const STATUS_COLORS = {
+            'On Track': '#16a34a',
+            'Needs Acceleration': '#ca8a04',
+            'Regressing': '#b91c1c'
+        };
+
+        function computeSDGProgress() {
+            const counts = {};
+            for (let g = 1; g <= 17; g++) counts[g] = { onTrack: 0, needsAccel: 0, regressing: 0 };
+
+            const tableIds = ['kabuhayanTable', 'kalusuganTable', 'karununganTable', 'kaunlaranTable', 'kalikasanTable', 'katarunganTable', 'kapayapaanTable'];
+            for (const id of tableIds) {
+                const table = document.getElementById(id);
+                if (!table) continue;
+                const rows = table.querySelectorAll('tbody tr[data-status]');
+                for (const row of rows) {
+                    const sdgCell = row.querySelector('.sdg-num-col');
+                    if (!sdgCell) continue;
+                    const match = sdgCell.textContent.match(/SDG\s*(\d+)/i);
+                    if (!match) continue;
+                    const goal = parseInt(match[1]);
+                    if (goal < 1 || goal > 17) continue;
+                    const status = row.getAttribute('data-status');
+                    if (status === 'On Track') counts[goal].onTrack++;
+                    else if (status === 'Needs Acceleration') counts[goal].needsAccel++;
+                    else if (status === 'Regressing') counts[goal].regressing++;
+                }
+            }
+
+            for (let g = 1; g <= 17; g++) {
+                const wrap = document.querySelector(`.sdg-logo-card[data-sdg="${g}"] .sdg-progress-wrap`);
+                if (!wrap) continue;
+                wrap.innerHTML = '';
+                const { onTrack, needsAccel, regressing } = counts[g];
+                const total = onTrack + needsAccel + regressing;
+                if (total === 0) continue;
+                const pct = 100 / total;
+
+                const rows = document.querySelectorAll(`.sdg-table tbody tr[data-status] .sdg-num-col`);
+                for (const cell of rows) {
+                    const match = cell.textContent.match(/SDG\s*(\d+)/i);
+                    if (!match || parseInt(match[1]) !== g) continue;
+                    const row = cell.closest('tr');
+                    const status = row.getAttribute('data-status');
+                    const div = document.createElement('div');
+                    div.className = 'sdg-progress-fill';
+                    div.style.width = pct + '%';
+                    div.style.background = STATUS_COLORS[status] || '#e2e8f0';
+                    wrap.appendChild(div);
+                }
+                const card = wrap.closest('.sdg-logo-card');
+                if (card) card.title = `Goal ${g}: ${onTrack} On Track, ${needsAccel} Needs Acceleration, ${regressing} Regressing`;
+            }
+        }
+
         // Initialize default Kabuhayan Chart on load
         window.addEventListener('DOMContentLoaded', () => {
             updateKabuhayanChart();
+            computeSDGProgress();
         });
     </script>
 </body>
