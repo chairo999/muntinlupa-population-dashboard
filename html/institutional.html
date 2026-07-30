@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome for Premium Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesomfor e/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom CSS -->
@@ -72,7 +72,7 @@
         }
 
         .chart-card h5 i {
-            color: #4f46e5; /* Institutional Indigo */
+            color: #e1271a; /* Institutional Indigo */
         }
 
         .canvas-container {
@@ -94,12 +94,6 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
         }
 
-        .stat-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(79, 70, 229, 0.2);
-            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.08);
-        }
-
         .stat-icon-wrapper.inst-icon-indigo {
             width: 54px;
             height: 54px;
@@ -108,8 +102,8 @@
             align-items: center;
             justify-content: center;
             font-size: 1.4rem;
-            background: rgba(79, 70, 229, 0.08);
-            color: #4f46e5;
+            background: #e1271a;
+            color: #ffffff;
         }
 
         /* Indicator detail card list */
@@ -133,7 +127,7 @@
         }
 
         .section-header h4 i {
-            color: #4f46e5;
+            color: #e1271a;
         }
 
         .indicators-grid {
@@ -153,12 +147,6 @@
             transition: var(--transition-smooth);
         }
 
-        .ind-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(79, 70, 229, 0.25);
-            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.04);
-        }
-
         .ind-card-header {
             display: flex;
             align-items: center;
@@ -175,7 +163,7 @@
 
         .ind-card-icon {
             font-size: 1.1rem;
-            color: #4f46e5;
+            color: #e1271a;
         }
 
         .ind-card-value-box {
@@ -187,7 +175,7 @@
         .ind-card-value {
             font-size: 1.5rem;
             font-weight: 800;
-            color: #4f46e5;
+            color: #e1271a;
         }
 
         .ind-card-year {
@@ -236,6 +224,46 @@
         .db-dot.offline {
             background-color: #f59e0b;
             box-shadow: 0 0 6px #f59e0b;
+        }
+
+        .chart-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chart-select {
+            background-color: #f1f5f9;
+            color: var(--text-primary);
+            border: 1px solid rgba(15, 23, 42, 0.1);
+            border-radius: 0.375rem;
+            padding: 5px 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .chart-select:focus,
+        .chart-select:active,
+        .chart-select:hover {
+            background-color: #f1f5f9 !important;
+            border-color: rgba(15, 23, 42, 0.1);
+            color: var(--text-primary);
+        }
+
+        .chart-type-select {
+            background-color: #e1271a;
+            color: #f8fafc;
+            border-radius: 0.375rem;
+            padding: 5px 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            outline: none;
+            border: none;
         }
     </style>
 </head>
@@ -341,7 +369,10 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-chart-column"></i> Comparative Budget Allocation — Per Sector</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">Hover bars to show values</div>
+                        <select id="budgetChartType" class="chart-type-select">
+                            <option value="bar">Bar Graph</option>
+                            <option value="line">Line Graph</option>
+                        </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="budgetChart"></canvas>
@@ -352,7 +383,10 @@
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-pie-chart"></i> Revenue Stability & Reliability</h5>
-                        <div class="badge" style="font-size:0.75rem; color:var(--text-secondary)">2024 vs 2025 comparison</div>
+                        <select id="revenueChartType" class="chart-type-select">
+                            <option value="bar">Bar Graph</option>
+                            <option value="line">Line Graph</option>
+                        </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="revenueChart"></canvas>
@@ -419,6 +453,10 @@
 
         let institutionalData = {};
         let supabaseClient = null;
+        let budgetChartInstance = null;
+        let budgetChartType = 'bar';
+        let revenueChartInstance = null;
+        let revenueChartType = 'bar';
 
         // Initialize Supabase safely
         if (typeof supabase !== 'undefined') {
@@ -427,11 +465,15 @@
 
         // Initialize Page
         document.addEventListener("DOMContentLoaded", async () => {
+            Chart.defaults.color = '#000000b3';
+            Chart.defaults.font.family = 'Montserrat, sans-serif';
+            Chart.defaults.font.size = 11;
             initSidebar();
             await fetchInstitutionalData();
             renderStatsBanner();
             renderCharts();
             renderIndicatorCards();
+            initChartTypeControls();
         });
 
         // Sidebar navigation toggling
@@ -572,82 +614,162 @@
             return '₱' + num.toLocaleString('en-US');
         }
 
+        function countUpCurrency(element, target, duration) {
+            if (!element) return;
+            duration = duration || 600;
+            const start = performance.now();
+            function tick(now) {
+                const elapsed = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - elapsed, 3);
+                element.textContent = fmtCurrency(target * eased);
+                if (elapsed < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
         // Populate Stats Banner Cards
         function renderStatsBanner() {
             const total = getLatestValue(institutionalData["TOTAL APPROPRIATION"]);
-            document.getElementById("card-total").textContent = total.val !== '--' ? fmtCurrency(total.val) : '--';
+            const totalEl = document.getElementById("card-total");
+            if (total.val !== '--') { countUpCurrency(totalEl, total.val); } else { totalEl.textContent = '--'; }
             document.getElementById("card-total-year").textContent = `Fiscal Year: ${total.year}`;
 
             const social = getLatestValue(institutionalData["Social Services Sector"]);
-            document.getElementById("card-social").textContent = social.val !== '--' ? fmtCurrency(social.val) : '--';
+            const socialEl = document.getElementById("card-social");
+            if (social.val !== '--') { countUpCurrency(socialEl, social.val); } else { socialEl.textContent = '--'; }
             document.getElementById("card-social-year").textContent = `Fiscal Year: ${social.year}`;
 
             const general = getLatestValue(institutionalData["General Public Services Sector"]);
-            document.getElementById("card-general").textContent = general.val !== '--' ? fmtCurrency(general.val) : '--';
+            const generalEl = document.getElementById("card-general");
+            if (general.val !== '--') { countUpCurrency(generalEl, general.val); } else { generalEl.textContent = '--'; }
             document.getElementById("card-general-year").textContent = `Fiscal Year: ${general.year}`;
 
             const economic = getLatestValue(institutionalData["Economic Services Sector"]);
-            document.getElementById("card-economic").textContent = economic.val !== '--' ? fmtCurrency(economic.val) : '--';
+            const economicEl = document.getElementById("card-economic");
+            if (economic.val !== '--') { countUpCurrency(economicEl, economic.val); } else { economicEl.textContent = '--'; }
             document.getElementById("card-economic-year").textContent = `Fiscal Year: ${economic.year}`;
         }
 
         // Draw Interactive Charts
         function renderCharts() {
-            // Chart 1: Comparative Budget Allocation per Sector (2019-2025)
-            const ctxA = document.getElementById("budgetChart").getContext("2d");
-            new Chart(ctxA, {
-                type: 'bar',
-                data: {
-                    labels: BUDGET_YEARS,
-                    datasets: [
-                        {
-                            label: 'General Public Services',
-                            data: institutionalData["General Public Services Sector"]?.history || [],
-                            backgroundColor: 'rgba(59, 130, 246, 0.85)',
-                            borderColor: '#3b82f6',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        },
-                        {
-                            label: 'Social Services',
-                            data: institutionalData["Social Services Sector"]?.history || [],
-                            backgroundColor: 'rgba(239, 68, 68, 0.85)',
-                            borderColor: '#ef4444',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        },
-                        {
-                            label: 'Economic Services',
-                            data: institutionalData["Economic Services Sector"]?.history || [],
-                            backgroundColor: 'rgba(16, 185, 129, 0.85)',
-                            borderColor: '#10b981',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        },
-                        {
-                            label: 'TOTAL APPROPRIATION',
-                            data: institutionalData["TOTAL APPROPRIATION"]?.history || [],
-                            type: 'line',
-                            borderColor: '#0f172a',
-                            backgroundColor: 'transparent',
-                            borderWidth: 3,
-                            pointRadius: 4,
-                            pointBackgroundColor: '#0f172a',
-                            fill: false,
-                            yAxisID: 'y'
-                        }
-                    ]
+            renderBudgetChart();
+            renderRevenueChart();
+        }
+
+        function renderBudgetChart() {
+            if (budgetChartInstance) { budgetChartInstance.destroy(); budgetChartInstance = null; }
+            const ctx = document.getElementById("budgetChart").getContext("2d");
+            const isLine = budgetChartType === 'line';
+
+            const datasets = [
+                {
+                    label: 'General Public Services',
+                    data: institutionalData["General Public Services Sector"]?.history || [],
+                    backgroundColor: isLine ? 'transparent' : '#003397',
+                    borderColor: '#003397',
+                    borderWidth: isLine ? 3 : 1,
+                    pointBackgroundColor: '#003397',
+                    pointBorderColor: '#f8fafc',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 9,
+                    pointHoverBackgroundColor: '#003397',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 3,
+                    hoverBackgroundColor: 'rgba(0, 51, 151, 0.2)',
+                    hoverBorderColor: 'rgba(0, 51, 151, 0.2)',
+                    hoverBorderWidth: 4,
+                    fill: false,
+                    tension: 0.15,
+                    borderRadius: isLine ? 0 : 6,
+                    pointStyle: 'circle'
                 },
+                {
+                    label: 'Social Services',
+                    data: institutionalData["Social Services Sector"]?.history || [],
+                    backgroundColor: isLine ? 'transparent' : '#e1271a',
+                    borderColor: '#e1271a',
+                    borderWidth: isLine ? 3 : 1,
+                    pointBackgroundColor: '#e1271a',
+                    pointBorderColor: '#f8fafc',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 9,
+                    pointHoverBackgroundColor: '#ef4444',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 3,
+                    hoverBackgroundColor: 'rgba(225, 39, 26, 0.2)',
+                    hoverBorderColor: 'rgba(225, 39, 26, 0.2)',
+                    hoverBorderWidth: 4,
+                    fill: false,
+                    tension: 0.15,
+                    borderRadius: isLine ? 0 : 6,
+                    pointStyle: 'circle'
+                },
+                {
+                    label: 'Economic Services',
+                    data: institutionalData["Economic Services Sector"]?.history || [],
+                    backgroundColor: isLine ? 'transparent' : '#ffcf01',
+                    borderColor: '#ffcf01',
+                    borderWidth: isLine ? 3 : 1,
+                    pointBackgroundColor: '#ffcf01',
+                    pointBorderColor: '#f8fafc',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 9,
+                    pointHoverBackgroundColor: '#ffcf01',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 3,
+                    hoverBackgroundColor: 'rgba(255, 207, 1, 0.2)',
+                    hoverBorderColor: 'rgba(255, 207, 1, 0.2)',
+                    hoverBorderWidth: 4,
+                    fill: false,
+                    tension: 0.15,
+                    borderRadius: isLine ? 0 : 6,
+                    pointStyle: 'circle'
+                },
+                {
+                    label: 'TOTAL APPROPRIATION',
+                    data: institutionalData["TOTAL APPROPRIATION"]?.history || [],
+                    type: 'line',
+                    borderColor: '#0f172a',
+                    backgroundColor: 'transparent',
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#0f172a',
+                    pointBorderColor: '#f8fafc',
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 8,
+                    pointHoverBackgroundColor: '#0f172a',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 3,
+                    fill: false,
+                    tension: 0.15,
+                    pointStyle: 'circle',
+                    yAxisID: 'y'
+                }
+            ];
+
+            budgetChartInstance = new Chart(ctx, {
+                type: isLine ? 'line' : 'bar',
+                data: { labels: BUDGET_YEARS, datasets },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    hover: { mode: 'nearest', intersect: true },
+                    interaction: { mode: 'nearest', intersect: true },
+                    animation: { duration: 200, easing: 'easeOutQuart' },
                     plugins: {
                         legend: {
                             position: 'bottom',
-                            labels: { boxWidth: 12, font: { family: 'Outfit', size: 11, weight: '500' }, padding: 14 }
+                            labels: { boxWidth: 12, font: { family: 'Montserrat, sans-serif', size: 11, weight: '500' }, padding: 14, color: '#000000b3' }
                         },
                         tooltip: {
-                            font: { family: 'Outfit' },
+                            backgroundColor: "rgba(15, 23, 42, 0.95)",
+                            padding: 10,
+                            borderWidth: 1,
+                            borderColor: "rgba(255, 255, 255, 0.15)",
+                            font: { family: 'Montserrat, sans-serif' },
                             callbacks: {
                                 label: function (context) {
                                     return context.dataset.label + ': ' + fmtCurrency(context.parsed.y);
@@ -658,52 +780,91 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            title: { display: true, text: 'Appropriation (₱)', font: { family: 'Outfit', weight: 'bold', size: 12 } },
-                            ticks: { callback: v => fmtCurrency(v) },
+                            title: { display: true, text: 'Appropriation (₱)', font: { family: 'Montserrat, sans-serif', weight: 'bold', size: 12 }, color: '#000000b3' },
+                            ticks: { callback: v => fmtCurrency(v), color: '#000000b3' },
                             grid: { color: 'rgba(15, 23, 42, 0.04)' }
                         },
-                        x: { grid: { display: false } }
+                        x: { grid: { display: false }, ticks: { color: '#000000b3' } }
                     }
                 }
             });
+        }
 
-            // Chart 2: Revenue Stability & Reliability (2024 vs 2025)
-            const ctxB = document.getElementById("revenueChart").getContext("2d");
+        function renderRevenueChart() {
+            if (revenueChartInstance) { revenueChartInstance.destroy(); revenueChartInstance = null; }
+            const ctx = document.getElementById("revenueChart").getContext("2d");
+            const isLine = revenueChartType === 'line';
+
             const rev2024 = REVENUE_SOURCES.map(k => institutionalData[k]?.history?.[0] ?? 0);
             const rev2025 = REVENUE_SOURCES.map(k => institutionalData[k]?.history?.[1] ?? 0);
-            new Chart(ctxB, {
-                type: 'bar',
-                data: {
-                    labels: REVENUE_SOURCES,
-                    datasets: [
-                        {
-                            label: '2024',
-                            data: rev2024,
-                            backgroundColor: 'rgba(59, 130, 246, 0.85)',
-                            borderColor: '#3b82f6',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        },
-                        {
-                            label: '2025',
-                            data: rev2025,
-                            backgroundColor: 'rgba(79, 70, 229, 0.85)',
-                            borderColor: '#4f46e5',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        }
-                    ]
+
+            const datasets = [
+                {
+                    label: '2024',
+                    data: rev2024,
+                    backgroundColor: isLine ? 'transparent' : '#003397',
+                    borderColor: '#003397',
+                    borderWidth: isLine ? 3 : 1,
+                    pointBackgroundColor: '#003397',
+                    pointBorderColor: '#f8fafc',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 9,
+                    pointHoverBackgroundColor: '#003397',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 3,
+                    hoverBackgroundColor: 'rgba(0, 51, 151, 0.2)',
+                    hoverBorderColor: 'rgba(0, 51, 151, 0.2)',
+                    hoverBorderWidth: 4,
+                    fill: false,
+                    tension: 0.15,
+                    borderRadius: isLine ? 0 : 6,
+                    pointStyle: 'circle'
                 },
+                {
+                    label: '2025',
+                    data: rev2025,
+                    backgroundColor: isLine ? 'transparent' : '#e1271a',
+                    borderColor: '#e1271a',
+                    borderWidth: isLine ? 3 : 1,
+                    pointBackgroundColor: '#e1271a',
+                    pointBorderColor: '#f8fafc',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 9,
+                    pointHoverBackgroundColor: '#e1271a',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 3,
+                    hoverBackgroundColor: 'rgba(225, 39, 26, 0.2)',
+                    hoverBorderColor: 'rgba(225, 39, 26, 0.2)',
+                    hoverBorderWidth: 4,
+                    fill: false,
+                    tension: 0.15,
+                    borderRadius: isLine ? 0 : 6,
+                    pointStyle: 'circle'
+                }
+            ];
+
+            revenueChartInstance = new Chart(ctx, {
+                type: isLine ? 'line' : 'bar',
+                data: { labels: REVENUE_SOURCES, datasets },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    hover: { mode: 'nearest', intersect: true },
+                    interaction: { mode: 'nearest', intersect: true },
+                    animation: { duration: 200, easing: 'easeOutQuart' },
                     plugins: {
                         legend: {
                             position: 'bottom',
-                            labels: { boxWidth: 12, font: { family: 'Outfit', size: 11, weight: '500' }, padding: 14 }
+                            labels: { boxWidth: 12, font: { family: 'Montserrat, sans-serif', size: 11, weight: '500' }, padding: 14, color: '#000000b3' }
                         },
                         tooltip: {
-                            font: { family: 'Outfit' },
+                            backgroundColor: "rgba(15, 23, 42, 0.95)",
+                            padding: 10,
+                            borderWidth: 1,
+                            borderColor: "rgba(255, 255, 255, 0.15)",
+                            font: { family: 'Montserrat, sans-serif' },
                             callbacks: {
                                 label: function (context) {
                                     return context.dataset.label + ': ' + fmtCurrency(context.parsed.y);
@@ -714,11 +875,20 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            title: { display: true, text: 'Revenue (₱)', font: { family: 'Outfit', weight: 'bold', size: 12 } },
-                            ticks: { callback: v => fmtCurrency(v) },
+                            title: { display: true, text: 'Revenue (₱)', font: { family: 'Montserrat, sans-serif', weight: 'bold', size: 12 }, color: '#000000b3' },
+                            ticks: { callback: v => fmtCurrency(v), color: '#000000b3' },
                             grid: { color: 'rgba(15, 23, 42, 0.04)' }
                         },
-                        x: { ticks: { autoSkip: false, maxRotation: 60, minRotation: 45 }, grid: { display: false } }
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                autoSkip: false,
+                                maxRotation: 45,
+                                minRotation: 0,
+                                color: '#000000b3',
+                                font: { family: 'Montserrat, sans-serif', size: 10 }
+                            }
+                        }
                     }
                 }
             });
@@ -737,18 +907,13 @@
                 const card = document.createElement("div");
                 card.className = "ind-card";
 
-                let displayVal = '--';
-                if (latest.val !== '--') {
-                    displayVal = fmtCurrency(latest.val);
-                }
-
                 card.innerHTML = `
                     <div class="ind-card-header">
                         <span class="ind-card-title">${indicatorName}</span>
                         <i class="fa-solid ${meta.icon} ind-card-icon"></i>
                     </div>
                     <div class="ind-card-value-box">
-                        <span class="ind-card-value">${displayVal}</span>
+                        <span class="ind-card-value">--</span>
                         <span class="ind-card-year">${latest.year !== '--' ? `(Latest: ${latest.year})` : ''}</span>
                     </div>
                     <div class="ind-card-desc">
@@ -757,6 +922,22 @@
                 `;
 
                 container.appendChild(card);
+
+                if (latest.val !== '--') {
+                    const valEl = card.querySelector(".ind-card-value");
+                    countUpCurrency(valEl, latest.val);
+                }
+            });
+        }
+
+        function initChartTypeControls() {
+            document.getElementById("budgetChartType").addEventListener("change", e => {
+                budgetChartType = e.target.value;
+                renderBudgetChart();
+            });
+            document.getElementById("revenueChartType").addEventListener("change", e => {
+                revenueChartType = e.target.value;
+                renderRevenueChart();
             });
         }
     </script>
