@@ -352,10 +352,6 @@ function renderTrendChart(historyData) {
     const ctx3 = document.getElementById("trendChart")?.getContext("2d");
     if (!ctx3) return;
 
-    const gradient = ctx3.createLinearGradient(0, 0, 0, 160);
-    gradient.addColorStop(0, "#e1271a");
-    gradient.addColorStop(1, "#e1271a89");
-
     const pieColors = ["#e1271a", "#f44336", "#ff9800"];
     const zeroData = new Array(historyData.length).fill(0);
 
@@ -401,7 +397,7 @@ function renderTrendChart(historyData) {
                 datasets: [{
                     label: "Overall Population Total",
                     data: zeroData,
-                    backgroundColor: gradient,
+                    backgroundColor: '#e1271a',
                     borderRadius: trendChartType === "bar" ? 6 : 0,
                     hoverBackgroundColor: "#e1271a52",
                     hoverBorderColor: "#e1271a52",
@@ -521,10 +517,6 @@ function renderBarangayBarChart() {
     const ctx4 = document.getElementById("barangayBarChart")?.getContext("2d");
     if (!ctx4) return;
 
-    const gradient = ctx4.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, "#e1271a");
-    gradient.addColorStop(1, "#e1271a9a");
-
     const pieColors = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548"];
     const zeroData = new Array(labels.length).fill(0);
 
@@ -581,7 +573,7 @@ function renderBarangayBarChart() {
                 datasets: [{
                     label: `Population in ${selectedYear}`,
                     data: zeroData,
-                    backgroundColor: gradient,
+                    backgroundColor: '#e1271a',
                     borderRadius: barangayChartType === "bar" ? 6 : 0,
                     hoverBackgroundColor: "#e1271a52",
                     hoverBorderColor: "#e1271a52",
