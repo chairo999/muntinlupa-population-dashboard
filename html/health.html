@@ -444,7 +444,7 @@
                 maintainAspectRatio: false,
                 hover: { mode: 'nearest', intersect: true },
                 interaction: { mode: 'nearest', intersect: true },
-                animation: { duration: 200, easing: 'easeOutQuart' },
+                animation: { duration: 1000, easing: 'easeOutQuart' },
                 plugins: { legend: { display: false }, tooltip: baseTooltip() }
             }, extra || {});
         }
@@ -662,7 +662,7 @@
                 config = {
                     type: "pie",
                     data: { labels, datasets: [{ label: 'Vital Rates', data: merged, backgroundColor: vitalPieColors, hoverBackgroundColor: vitalPieColors.map(c => c + "99"), hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
-                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { duration: 200, easing: 'easeOutQuart' }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.label}: ${ctx.raw}`) } }
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { animateRotate: true, animateScale: true, duration: 1000 }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.label}: ${ctx.raw}`) } }
                 };
             } else {
                 const isLine = vitalRatesChartType === "line";
@@ -761,7 +761,13 @@
                 };
             }
 
+            const vitalRealData = config.data.datasets.map(d => d.data);
+            config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             vitalRatesChartInst = new Chart(ctx, config);
+            setTimeout(function() {
+                vitalRealData.forEach((data, i) => { vitalRatesChartInst.data.datasets[i].data = data; });
+                vitalRatesChartInst.update();
+            }, 50);
         }
 
         function renderFamilyHealthChart() {
@@ -771,9 +777,9 @@
             const familyKeys = [
                 { key: "Percentage of Fully Immunized Children", label: "Fully Immunized Children", color: "#003397" },
                 { key: "Infants Exclusively Breastfeed until 6 months", label: "Exclusively Breastfed (6 mos)", color: "#e1271a" },
-                { key: "Percentage of Teenage Deliveries", label: "Teenage Deliveries", color: "#ffcf01" },
+                { key: "Percentage of Teenage Deliveries", label: "Teenage Deliveries", color: "#0d9488" },
                 { key: "Percentage of Birth by Skilled Attendant", label: "Birth by Skilled Attendant", color: "#16a34a" },
-                { key: "Births by Facility Based", label: "Births in Facility", color: "#0d9488" },
+                { key: "Births by Facility Based", label: "Births in Facility", color: "#ffcf01" },
                 { key: "Contraceptive Prevalence Rate", label: "Contraceptive Prevalence Rate", color: "#4f46e5" }
             ];
 
@@ -786,11 +792,11 @@
                     return latest.val !== '--' ? latest.val : 0;
                 });
                 const labels = familyKeys.map(v => v.label);
-                const familyPieColors = ["#003397", "#e1271a", "#ffcf01", "#16a34a", "#0d9488", "#4f46e5"];
+                const familyPieColors = ["#003397", "#e1271a", "#0d9488", "#16a34a", "#ffcf01", "#4f46e5"];
                 config = {
                     type: "pie",
                     data: { labels, datasets: [{ label: 'Family Health Indicators', data: merged, backgroundColor: familyPieColors, hoverBackgroundColor: familyPieColors.map(c => c + "99"), hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
-                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { duration: 200, easing: 'easeOutQuart' }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.label}: ${ctx.raw}%`) } }
+                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { animateRotate: true, animateScale: true, duration: 1000 }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.label}: ${ctx.raw}%`) } }
                 };
             } else {
                 const isLine = familyHealthChartType === "line";
@@ -847,7 +853,13 @@
                 };
             }
 
+            const familyRealData = config.data.datasets.map(d => d.data);
+            config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             familyHealthChartInst = new Chart(ctx, config);
+            setTimeout(function() {
+                familyRealData.forEach((data, i) => { familyHealthChartInst.data.datasets[i].data = data; });
+                familyHealthChartInst.update();
+            }, 50);
         }
 
         function renderIndicatorCards() {
