@@ -390,15 +390,8 @@
         let resourcesChartType = 'line';
         let barangayChartType = 'line';
 
-        const PIE_COLORS = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548", "#3b82f6", "#ec4899", "#10b981", "#8b5cf6"];
+        const PIE_COLORS = ["#e1271a", "#f44336", "#ffcf01", "#16a34a", "#003397", "#9c27b0", "#00bcd4", "#ff5722", "#795548", "#3b82f6", "#ec4899", "#10b981", "#8b5cf6"];
         const PIE_HOVER_COLORS = PIE_COLORS.map(c => c + "99");
-
-        function makeGradient(ctx, color) {
-            const g = ctx.createLinearGradient(0, 0, 0, 380);
-            g.addColorStop(0, color || "#e1271a");
-            g.addColorStop(1, (color || "#e1271a") + "89");
-            return g;
-        }
 
         function baseTooltip(callback) {
             return Object.assign({
@@ -415,7 +408,7 @@
                 maintainAspectRatio: false,
                 hover: { mode: 'nearest', intersect: true },
                 interaction: { mode: 'nearest', intersect: true },
-                animation: { duration: 200, easing: 'easeOutQuart' },
+                animation: { duration: 1000, easing: 'easeOutQuart' },
                 plugins: { legend: { display: false }, tooltip: baseTooltip() }
             }, extra || {});
         }
@@ -655,7 +648,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    animation: { duration: 200, easing: 'easeOutQuart' },
+                    animation: { duration: 1000, easing: 'easeOutQuart' },
                     plugins: {
                         legend: { display: false },
                         tooltip: baseTooltip()
@@ -685,10 +678,10 @@
             const ctx = document.getElementById("crimeStatsChart").getContext("2d");
 
             const CRIME_DATASETS = [
-                { key: 'Total Crime Volume (TCV)', label: 'Total Crime Volume (TCV)', color: '#003397', yAxisID: 'y', unit: 'Volume Count' },
+                { key: 'Total Crime Volume (TCV)', label: 'Total Crime Volume (TCV)', color: '#e1271a', yAxisID: 'y', unit: 'Volume Count' },
                 { key: 'Index Crime', label: 'Index Crime', color: '#8b5cf6', yAxisID: 'y', unit: 'Volume Count' },
                 { key: 'Average Monthly Crime Rate (AMCR)', label: 'Average Monthly Crime Rate (AMCR)', color: '#ffcf01', yAxisID: 'y', unit: 'Rate' },
-                { key: 'Crime Solution Efficiency (CSE)', label: 'Crime Solution Efficiency (CSE)', color: '#e1271a', yAxisID: 'y1', unit: 'Percentage (%)' },
+                { key: 'Crime Solution Efficiency (CSE)', label: 'Crime Solution Efficiency (CSE)', color: '#003397', yAxisID: 'y1', unit: 'Percentage (%)' },
                 { key: 'Crime Clearance Solution', label: 'Crime Clearance Solution', color: '#16a34a', yAxisID: 'y1', unit: 'Percentage (%)' }
             ];
 
@@ -725,7 +718,7 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         hover: { mode: 'nearest', intersect: true },
-                        animation: { duration: 200, easing: 'easeOutQuart' },
+                        animation: { animateRotate: true, animateScale: true, duration: 1000 },
                         plugins: {
                             legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } },
                             tooltip: baseTooltip(context => ` ${context.label}: ${context.raw}${isPercentage ? '%' : ''}`)
@@ -734,7 +727,6 @@
                 };
             } else {
                 const isLine = crimeChartType === "line";
-                const barGrad = isLine ? null : makeGradient(ctx, selectedMeta.color);
                 config = {
                     type: crimeChartType,
                     data: {
@@ -743,7 +735,7 @@
                             const style = makeDatasetStyle(ds.color, isLine);
                             style.label = ds.label;
                             style.data = protectiveData[ds.key]?.history || [];
-                            style.backgroundColor = isLine ? ds.color : barGrad;
+                            style.backgroundColor = isLine ? 'transparent' : ds.color;
                             style.hoverBackgroundColor = ds.color + '99';
                             style.yAxisID = ds.yAxisID;
                             style.spanGaps = true;
@@ -805,7 +797,13 @@
                 };
             }
 
+            const crimeRealData = config.data.datasets.map(d => d.data);
+            config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             crimeChartInstance = new Chart(ctx, config);
+            setTimeout(function() {
+                crimeRealData.forEach((data, i) => { crimeChartInstance.data.datasets[i].data = data; });
+                crimeChartInstance.update();
+            }, 50);
         }
 
         function renderResourcesChart() {
@@ -813,10 +811,10 @@
             const ctx = document.getElementById("policeResourcesChart").getContext("2d");
 
             const RESOURCE_DATASETS = [
-                { key: "Number of Policemen", label: 'Total Policemen', color: '#ef4444' },
-                { key: "Motorcycles", label: 'Motorcycles', color: '#db2777' },
-                { key: "Patrol Cars", label: 'Patrol Cars', color: '#0d9488' },
-                { key: "Police Sub-Stations", label: 'Police Sub-Stations', color: '#8b5cf6' }
+                { key: "Number of Policemen", label: 'Total Policemen', color: '#0f172a' },
+                { key: "Motorcycles", label: 'Motorcycles', color: '#e1271a' },
+                { key: "Patrol Cars", label: 'Patrol Cars', color: '#003397' },
+                { key: "Police Sub-Stations", label: 'Police Sub-Stations', color: '#ffcf01' }
             ];
 
             let config;
@@ -828,7 +826,7 @@
                     return latest.val !== '--' ? latest.val : 0;
                 });
                 const pieLabels = RESOURCE_DATASETS.map(ds => ds.label);
-                const pieColors = ["#ef4444", "#db2777", "#0d9488", "#8b5cf6"];
+                const pieColors = ["#0f172a", "#e1271a", "#003397", "#ffcf01"];
                 config = {
                     type: "pie",
                     data: {
@@ -848,7 +846,7 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         hover: { mode: 'nearest', intersect: true },
-                        animation: { duration: 200, easing: 'easeOutQuart' },
+                        animation: { animateRotate: true, animateScale: true, duration: 1000 },
                         plugins: {
                             legend: { display: true, position: 'bottom', labels: { boxWidth: 12, color: "#000000b3", padding: 14 } },
                             tooltip: baseTooltip(context => ` ${context.label}: ${context.raw}`)
@@ -865,7 +863,7 @@
                             const style = makeDatasetStyle(ds.color, isLine);
                             style.label = ds.label;
                             style.data = protectiveData[ds.key]?.history || [];
-                            style.backgroundColor = isLine ? ds.color : makeGradient(ctx, ds.color);
+                            style.backgroundColor = isLine ? 'transparent' : ds.color;
                             style.hoverBackgroundColor = ds.color + '99';
                             style.yAxisID = 'y';
                             style.spanGaps = true;
@@ -899,7 +897,13 @@
                 };
             }
 
+            const resourcesRealData = config.data.datasets.map(d => d.data);
+            config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             resourcesChartInstance = new Chart(ctx, config);
+            setTimeout(function() {
+                resourcesRealData.forEach((data, i) => { resourcesChartInstance.data.datasets[i].data = data; });
+                resourcesChartInstance.update();
+            }, 50);
         }
 
         // Initialize Barangay chart select dropdowns
@@ -956,7 +960,7 @@
             const yearSelVal = document.getElementById("barangay-year-select").value;
             const brgySelVal = document.getElementById("barangay-name-select").value;
             const yearIndex = protectiveLabels.indexOf(yearSelVal);
-            const color = '#ef4444';
+            const color = '#e1271a';
 
             if (barangayChartType === "pie") {
                 const pieData = BARANGAY_NAMES.map(name => {
@@ -982,7 +986,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     hover: { mode: 'nearest', intersect: true },
-                    animation: { duration: 200, easing: 'easeOutQuart' },
+                    animation: { animateRotate: true, animateScale: true, duration: 1000 },
                     plugins: {
                         legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } },
                         tooltip: baseTooltip(context => ` ${context.label}: ${context.raw}`)
@@ -994,14 +998,12 @@
                     return history[yearIndex] !== undefined ? history[yearIndex] : 0;
                 });
                 const isLine = barangayChartType === "line";
-                const barCtx = document.getElementById("barangayCrimesChart").getContext("2d");
-                const barGrad = isLine ? null : makeGradient(barCtx);
                 barangayChartInstance.config.type = barangayChartType;
                 barangayChartInstance.data.labels = BARANGAY_NAMES;
                 barangayChartInstance.data.datasets[0].label = `Crimes Reported in ${yearSelVal}`;
                 barangayChartInstance.data.datasets[0].data = dataValues;
                 Object.assign(barangayChartInstance.data.datasets[0], makeDatasetStyle(color, isLine));
-                barangayChartInstance.data.datasets[0].backgroundColor = isLine ? color : barGrad;
+                barangayChartInstance.data.datasets[0].backgroundColor = isLine ? 'transparent' : color;
                 barangayChartInstance.data.datasets[0].hoverBackgroundColor = color + '99';
                 barangayChartInstance.data.datasets[0].borderRadius = isLine ? 0 : 6;
                 barangayChartInstance.data.datasets[0].pointStyle = 'circle';
@@ -1017,14 +1019,12 @@
             } else {
                 const historyData = protectiveData[brgySelVal]?.history || [];
                 const isLine = barangayChartType === "line";
-                const barCtx = document.getElementById("barangayCrimesChart").getContext("2d");
-                const barGrad = isLine ? null : makeGradient(barCtx);
                 barangayChartInstance.config.type = barangayChartType;
                 barangayChartInstance.data.labels = protectiveLabels;
                 barangayChartInstance.data.datasets[0].label = `Historical Crimes in ${brgySelVal}`;
                 barangayChartInstance.data.datasets[0].data = historyData;
                 Object.assign(barangayChartInstance.data.datasets[0], makeDatasetStyle(color, isLine));
-                barangayChartInstance.data.datasets[0].backgroundColor = isLine ? color : barGrad;
+                barangayChartInstance.data.datasets[0].backgroundColor = isLine ? 'transparent' : color;
                 barangayChartInstance.data.datasets[0].hoverBackgroundColor = color + '99';
                 barangayChartInstance.data.datasets[0].borderRadius = isLine ? 0 : 6;
                 barangayChartInstance.data.datasets[0].pointStyle = 'circle';
@@ -1039,7 +1039,13 @@
                 });
             }
 
+            const barangayRealData = barangayChartInstance.data.datasets.map(d => d.data);
+            barangayChartInstance.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             barangayChartInstance.update();
+            setTimeout(function() {
+                barangayRealData.forEach((data, i) => { barangayChartInstance.data.datasets[i].data = data; });
+                barangayChartInstance.update();
+            }, 50);
         }
     </script>
 </body>

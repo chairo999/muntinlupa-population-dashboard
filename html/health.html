@@ -675,7 +675,7 @@
                                 const ds = makeDatasetStyle(v.color, isLine);
                                 ds.label = v.label;
                                 ds.data = healthData[v.key]?.history || [];
-                                ds.backgroundColor = v.color;
+                                ds.backgroundColor = isLine ? 'transparent' : v.color;
                                 ds.hoverBackgroundColor = v.color + '99';
                                 ds.yAxisID = 'y';
                                 ds.spanGaps = true;
@@ -687,7 +687,7 @@
                                 const ds = makeDatasetStyle(mmrKey.color, isLine);
                                 ds.label = mmrKey.label;
                                 ds.data = healthData[mmrKey.key]?.history || [];
-                                ds.backgroundColor = mmrKey.color;
+                                ds.backgroundColor = isLine ? 'transparent' : mmrKey.color;
                                 ds.hoverBackgroundColor = mmrKey.color + '99';
                                 ds.yAxisID = 'y1';
                                 ds.spanGaps = true;
@@ -808,7 +808,7 @@
                             const ds = makeDatasetStyle(v.color, isLine);
                             ds.label = v.label;
                             ds.data = healthData[v.key]?.history || [];
-                            ds.backgroundColor = v.color;
+                            ds.backgroundColor = isLine ? 'transparent' : v.color;
                             ds.hoverBackgroundColor = v.color + '99';
                             ds.yAxisID = 'y';
                             ds.spanGaps = true;
