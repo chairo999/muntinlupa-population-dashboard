@@ -420,20 +420,13 @@
 			}, callback ? { callbacks: { label: callback } } : {});
 		}
 
-		function makeGradient(ctx, color) {
-			const g = ctx.createLinearGradient(0, 0, 0, 380);
-			g.addColorStop(0, color || "#e1271a");
-			g.addColorStop(1, (color || "#e1271a") + "89");
-			return g;
-		}
-
 		function baseLineOpts(extra) {
 			return Object.assign({
 				responsive: true,
 				maintainAspectRatio: false,
 				hover: { mode: 'nearest', intersect: true },
 				interaction: { mode: 'nearest', intersect: true },
-				animation: { duration: 200, easing: 'easeOutQuart' },
+				animation: { duration: 1000, easing: 'easeOutQuart' },
 				plugins: { legend: { display: false }, tooltip: baseTooltip() }
 			}, extra || {});
 		}
@@ -457,11 +450,11 @@
 		}
 
 		const RIVER_METRICS = [
-			{ key: 'Chloride', label: 'Chloride (mg/L)', color: 'rgba(250,204,21,0.95)', borderColor: '#facc15', axisId: 'y_chl', axisLabel: 'Chloride (mg/L)', isBar: true },
+			{ key: 'Chloride', label: 'Chloride (mg/L)', color: '#e1271a', borderColor: '#e1271a', axisId: 'y_chl', axisLabel: 'Chloride (mg/L)', isBar: true },
 			{ key: 'Nitrate', label: 'Nitrate (mg/L)', color: 'rgba(99,102,241,0.9)', borderColor: '#6366f1', axisId: 'y_nit', axisLabel: 'Nitrate (mg/L)', isBar: true },
-			{ key: 'Temperature', label: 'Temperature (°C)', color: 'transparent', borderColor: '#06b6d4', axisId: 'y_temp', axisLabel: 'Temperature (°C)', isBar: false },
-			{ key: 'pH', label: 'pH', color: 'transparent', borderColor: '#f97316', axisId: 'y_ph', axisLabel: 'pH', isBar: false },
-			{ key: 'Turbidity', label: 'Turbidity (NTU)', color: 'transparent', borderColor: '#7c3aed', axisId: 'y_turb', axisLabel: 'Turbidity (NTU)', isBar: false },
+			{ key: 'Temperature', label: 'Temperature (°C)', color: '#003397', borderColor: '#003397', axisId: 'y_temp', axisLabel: 'Temperature (°C)', isBar: false },
+			{ key: 'pH', label: 'pH', color: '#ffcf01', borderColor: '#ffcf01', axisId: 'y_ph', axisLabel: 'pH', isBar: false },
+			{ key: 'Turbidity', label: 'Turbidity (NTU)', color: '#16a34a', borderColor: '#16a34a', axisId: 'y_turb', axisLabel: 'Turbidity (NTU)', isBar: false },
 			{ key: 'RDO', label: 'RDO (mg/L)', color: 'transparent', borderColor: '#10b981', axisId: 'y_rdo', axisLabel: 'RDO (mg/L)', isBar: false },
 			{ key: 'TDS', label: 'TDS (g/L)', color: 'transparent', borderColor: '#64748b', axisId: 'y_tds', axisLabel: 'TDS (g/L)', isBar: false }
 		];
@@ -490,16 +483,16 @@
 						labels: RIVER_METRICS.map(m => m.label),
 						datasets: [{ label: 'River Sampling', data: pieData, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }]
 					},
-					options: {
-						responsive: true, maintainAspectRatio: false,
-						hover: { mode: 'nearest', intersect: true },
-						animation: { duration: 200, easing: 'easeOutQuart' },
-						plugins: {
-							legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } },
-							tooltip: baseTooltip(context => ` ${context.label}: ${context.raw}`)
-						}
+				options: {
+					responsive: true, maintainAspectRatio: false,
+					hover: { mode: 'nearest', intersect: true },
+					animation: { animateRotate: true, animateScale: true, duration: 1000 },
+					plugins: {
+						legend: { display: true, position: 'bottom', labels: { boxWidth: 12, padding: 14, color: "#000000b3" } },
+						tooltip: baseTooltip(context => ` ${context.label}: ${context.raw}`)
 					}
-				};
+				}
+			};
 			} else {
 				const isLine = chartType === "line";
 				const scales = {};
@@ -512,7 +505,7 @@
 				const ds = [{
 					label: meta.label,
 					data,
-					backgroundColor: isLine ? meta.borderColor : (meta.color === 'transparent' ? meta.borderColor + '99' : meta.color),
+					backgroundColor: isLine ? 'transparent' : (meta.color === 'transparent' ? meta.borderColor + '99' : meta.color),
 					hoverBackgroundColor: meta.borderColor + '99',
 					hoverBorderColor: meta.borderColor + '99',
 					hoverBorderWidth: 4,
@@ -540,9 +533,9 @@
 						responsive: true, maintainAspectRatio: false,
 						hover: { mode: 'nearest', intersect: true },
 						interaction: { mode: 'nearest', intersect: true },
-						animation: { duration: 200, easing: 'easeOutQuart' },
-						plugins: {
-							legend: { display: false },
+					animation: { duration: 1000, easing: 'easeOutQuart' },
+					plugins: {
+						legend: { display: false },
 							tooltip: { callbacks: { label: ctx => { const lab = ctx.dataset.label || ''; let v = ctx.parsed.y; if (v === null) return lab + ': N/A'; return lab + ': ' + v; } } }
 						},
 						scales
@@ -550,7 +543,16 @@
 				};
 			}
 
+			const isPie = chartType === "pie";
+			const riverRealData = isPie ? null : config.data.datasets.map(d => d.data);
+			if (!isPie) config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
 			const newChart = new Chart(ctx, config);
+			if (!isPie) {
+				setTimeout(function() {
+					riverRealData.forEach((data, i) => { newChart.data.datasets[i].data = data; });
+					newChart.update();
+				}, 50);
+			}
 			if (side === 'up') upstreamChartInst = newChart;
 			else downstreamChartInst = newChart;
 		}
@@ -582,9 +584,9 @@
 					options: {
 						responsive: true, maintainAspectRatio: false,
 						hover: { mode: 'nearest', intersect: true },
-						animation: { duration: 200, easing: 'easeOutQuart' },
+						animation: { animateRotate: true, animateScale: true, duration: 1000 },
 						plugins: {
-							legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } },
+							legend: { display: true, position: 'bottom', labels: { boxWidth: 12, padding: 14, color: "#000000b3" } },
 							tooltip: baseTooltip(context => ` ${context.label}: ${context.raw.toLocaleString()}`)
 						}
 					}
@@ -599,7 +601,7 @@
 							const style = makeDatasetStyle(ds.color, isLine);
 							style.label = ds.label;
 							style.data = waste[ds.key] || [];
-							style.backgroundColor = isLine ? ds.color : makeGradient(ctx, ds.color);
+							style.backgroundColor = isLine ? 'transparent' : ds.color;
 							style.hoverBackgroundColor = ds.color + '99';
 							style.borderRadius = isLine ? 0 : 6;
 							style.yAxisID = 'y';
@@ -613,14 +615,23 @@
 							x: { grid: { display: false }, ticks: { color: "#000000b3" } }
 						},
 						plugins: {
-							legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } },
+							legend: { display: true, position: 'bottom', labels: { boxWidth: 12, padding: 14, color: "#000000b3" } },
 							tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`)
 						}
 					})
 				};
 			}
 
+			const isPie = wasteChartType === "pie";
+			const wasteRealData = isPie ? null : config.data.datasets.map(d => d.data);
+			if (!isPie) config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
 			wasteChartInst = new Chart(ctx, config);
+			if (!isPie) {
+				setTimeout(function() {
+					wasteRealData.forEach((data, i) => { wasteChartInst.data.datasets[i].data = data; });
+					wasteChartInst.update();
+				}, 50);
+			}
 
 			const drEl = document.getElementById('diversion-rate');
 			if (drEl && waste.diversion_rate_pct !== undefined) drEl.textContent = waste.diversion_rate_pct + '%';
@@ -648,9 +659,9 @@
 					options: {
 						responsive: true, maintainAspectRatio: false,
 						hover: { mode: 'nearest', intersect: true },
-						animation: { duration: 200, easing: 'easeOutQuart' },
+						animation: { animateRotate: true, animateScale: true, duration: 1000 },
 						plugins: {
-							legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } },
+							legend: { display: true, position: 'bottom', labels: { boxWidth: 12, padding: 14, color: "#000000b3" } },
 							tooltip: baseTooltip(context => ` ${context.label}: ${context.raw.toFixed(2)}`)
 						}
 					}
@@ -661,7 +672,7 @@
 					const style = makeDatasetStyle(colors[idx % colors.length], isLine);
 					style.label = String(y.year);
 					style.data = y.values;
-					style.backgroundColor = isLine ? 'transparent' : makeGradient(ctx, colors[idx % colors.length]);
+					style.backgroundColor = isLine ? 'transparent' : colors[idx % colors.length];
 					style.hoverBackgroundColor = colors[idx % colors.length] + '99';
 					style.borderRadius = isLine ? 0 : 6;
 					style.spanGaps = true;
@@ -676,12 +687,21 @@
 							y: { beginAtZero: true, title: { display: true, text: 'PM2.5 (µg/Ncm)' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } },
 							x: { grid: { display: false }, ticks: { color: "#000000b3" } }
 						},
-						plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw != null ? ctx.raw.toFixed(2) : 'N/A'}`) }
+						plugins: { legend: { display: true, position: 'bottom', labels: { boxWidth: 12, padding: 14, color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw != null ? ctx.raw.toFixed(2) : 'N/A'}`) }
 					})
 				};
 			}
 
+			const isPie = pm25ChartType === "pie";
+			const pm25RealData = isPie ? null : config.data.datasets.map(d => d.data);
+			if (!isPie) config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
 			pm25ChartInst = new Chart(ctx, config);
+			if (!isPie) {
+				setTimeout(function() {
+					pm25RealData.forEach((data, i) => { pm25ChartInst.data.datasets[i].data = data; });
+					pm25ChartInst.update();
+				}, 50);
+			}
 		}
 
 		function renderPM10Chart() {
@@ -706,9 +726,9 @@
 					options: {
 						responsive: true, maintainAspectRatio: false,
 						hover: { mode: 'nearest', intersect: true },
-						animation: { duration: 200, easing: 'easeOutQuart' },
+						animation: { animateRotate: true, animateScale: true, duration: 1000 },
 						plugins: {
-							legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } },
+							legend: { display: true, position: 'bottom', labels: { boxWidth: 12, padding: 14, color: "#000000b3" } },
 							tooltip: baseTooltip(context => ` ${context.label}: ${context.raw.toFixed(2)}`)
 						}
 					}
@@ -719,7 +739,7 @@
 					const style = makeDatasetStyle(colors[idx % colors.length], isLine);
 					style.label = String(y.year);
 					style.data = y.values;
-					style.backgroundColor = isLine ? 'transparent' : makeGradient(ctx, colors[idx % colors.length]);
+					style.backgroundColor = isLine ? 'transparent' : colors[idx % colors.length];
 					style.hoverBackgroundColor = colors[idx % colors.length] + '99';
 					style.borderRadius = isLine ? 0 : 6;
 					style.spanGaps = true;
@@ -734,12 +754,21 @@
 							y: { beginAtZero: true, title: { display: true, text: 'PM10 (µg/Ncm)' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } },
 							x: { grid: { display: false }, ticks: { color: "#000000b3" } }
 						},
-						plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw != null ? ctx.raw.toFixed(2) : 'N/A'}`) }
+						plugins: { legend: { display: true, position: 'bottom', labels: { boxWidth: 12, padding: 14, color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw != null ? ctx.raw.toFixed(2) : 'N/A'}`) }
 					})
 				};
 			}
 
+			const isPie = pm10ChartType === "pie";
+			const pm10RealData = isPie ? null : config.data.datasets.map(d => d.data);
+			if (!isPie) config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
 			pm10ChartInst = new Chart(ctx, config);
+			if (!isPie) {
+				setTimeout(function() {
+					pm10RealData.forEach((data, i) => { pm10ChartInst.data.datasets[i].data = data; });
+					pm10ChartInst.update();
+				}, 50);
+			}
 		}
 
 		function renderEnvCharts() {
