@@ -775,6 +775,27 @@
             }, extra || {});
         }
 
+        function stabilizeValueAxis(config, realDataArrays) {
+            const valAxis = config.options && config.options.indexAxis === "y" ? "x" : "y";
+            const scale = config.options && config.options.scales && config.options.scales[valAxis];
+            if (!scale) return;
+            const stacked = scale.stacked === true;
+            const len = realDataArrays.reduce((m, arr) => Math.max(m, arr.length), 0);
+            let chartMax = 1;
+            if (stacked) {
+                for (let i = 0; i < len; i++) {
+                    const sum = realDataArrays.reduce((s, arr) => s + (Number(arr[i]) || 0), 0);
+                    chartMax = Math.max(chartMax, sum);
+                }
+            } else {
+                realDataArrays.forEach(arr => arr.forEach(v => {
+                    const n = Number(v);
+                    if (!isNaN(n)) chartMax = Math.max(chartMax, n);
+                }));
+            }
+            scale.max = Math.ceil(chartMax * 1.1);
+        }
+
         let eduData = {};
         let eduLabels = [];
         let supabaseClient = null;
@@ -1208,6 +1229,7 @@
             }
 
             const enrollmentRealData = config.data.datasets.map(d => d.data);
+            stabilizeValueAxis(config, enrollmentRealData);
             config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             enrollmentChartInst = new Chart(ctx, config);
             setTimeout(function() {
@@ -1334,6 +1356,7 @@
             }
 
             const cdmRealData = config.data.datasets.map(d => d.data);
+            stabilizeValueAxis(config, cdmRealData);
             config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             cdmChartInst = new Chart(ctx, config);
             setTimeout(function() {
@@ -1434,6 +1457,7 @@
             }
 
             const plmunRealData = config.data.datasets.map(d => d.data);
+            stabilizeValueAxis(config, plmunRealData);
             config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             plmunChartInst = new Chart(ctx, config);
             setTimeout(function() {
@@ -1535,6 +1559,7 @@
             }
 
             const tesdaRealData = config.data.datasets.map(d => d.data);
+            stabilizeValueAxis(config, tesdaRealData);
             config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             tesdaChartInst = new Chart(ctx, config);
             setTimeout(function() {
@@ -1656,6 +1681,7 @@
             }
 
             const daycareRealData = config.data.datasets.map(d => d.data);
+            stabilizeValueAxis(config, daycareRealData);
             config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             daycareChartInst = new Chart(ctx, config);
             setTimeout(function() {

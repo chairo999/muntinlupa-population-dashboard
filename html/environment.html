@@ -545,7 +545,15 @@
 
 			const isPie = chartType === "pie";
 			const riverRealData = isPie ? null : config.data.datasets.map(d => d.data);
-			if (!isPie) config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
+			if (!isPie) {
+				let riverMax = 1;
+				(data || []).forEach(v => {
+					const n = Number(v);
+					if (!isNaN(n)) riverMax = Math.max(riverMax, n);
+				});
+				config.options.scales[meta.axisId].max = Math.ceil(riverMax * 1.1);
+				config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
+			}
 			const newChart = new Chart(ctx, config);
 			if (!isPie) {
 				setTimeout(function() {
@@ -624,7 +632,15 @@
 
 			const isPie = wasteChartType === "pie";
 			const wasteRealData = isPie ? null : config.data.datasets.map(d => d.data);
-			if (!isPie) config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
+			if (!isPie) {
+				let wasteMax = 1;
+				wasteRealData.forEach(arr => arr.forEach(v => {
+					const n = Number(v);
+					if (!isNaN(n)) wasteMax = Math.max(wasteMax, n);
+				}));
+				config.options.scales.y.max = Math.ceil(wasteMax * 1.1);
+				config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
+			}
 			wasteChartInst = new Chart(ctx, config);
 			if (!isPie) {
 				setTimeout(function() {
@@ -694,7 +710,15 @@
 
 			const isPie = pm25ChartType === "pie";
 			const pm25RealData = isPie ? null : config.data.datasets.map(d => d.data);
-			if (!isPie) config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
+			if (!isPie) {
+				let pm25Max = 1;
+				pm25RealData.forEach(arr => arr.forEach(v => {
+					const n = Number(v);
+					if (!isNaN(n)) pm25Max = Math.max(pm25Max, n);
+				}));
+				config.options.scales.y.max = Math.ceil(pm25Max * 1.1);
+				config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
+			}
 			pm25ChartInst = new Chart(ctx, config);
 			if (!isPie) {
 				setTimeout(function() {
@@ -761,7 +785,15 @@
 
 			const isPie = pm10ChartType === "pie";
 			const pm10RealData = isPie ? null : config.data.datasets.map(d => d.data);
-			if (!isPie) config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
+			if (!isPie) {
+				let pm10Max = 1;
+				pm10RealData.forEach(arr => arr.forEach(v => {
+					const n = Number(v);
+					if (!isNaN(n)) pm10Max = Math.max(pm10Max, n);
+				}));
+				config.options.scales.y.max = Math.ceil(pm10Max * 1.1);
+				config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
+			}
 			pm10ChartInst = new Chart(ctx, config);
 			if (!isPie) {
 				setTimeout(function() {

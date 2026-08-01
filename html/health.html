@@ -762,6 +762,19 @@
             }
 
             const vitalRealData = config.data.datasets.map(d => d.data);
+            let yMax = 1, y1Max = 1;
+            config.data.datasets.forEach((d, i) => {
+                const axis = d.yAxisID || 'y';
+                (vitalRealData[i] || []).forEach(v => {
+                    const n = Number(v);
+                    if (!isNaN(n)) {
+                        if (axis === 'y1') y1Max = Math.max(y1Max, n);
+                        else yMax = Math.max(yMax, n);
+                    }
+                });
+            });
+            config.options.scales.y.max = Math.ceil(yMax * 1.1);
+            config.options.scales.y1.max = Math.ceil(y1Max * 1.1);
             config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             vitalRatesChartInst = new Chart(ctx, config);
             setTimeout(function() {

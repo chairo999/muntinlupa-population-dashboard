@@ -354,6 +354,7 @@ function renderTrendChart(historyData) {
 
     const pieColors = ["#e1271a", "#f44336", "#ff9800"];
     const zeroData = new Array(historyData.length).fill(0);
+    const trendMax = Math.max(1, ...historyData.filter(v => typeof v === 'number' && !isNaN(v))) * 1.1;
 
     let config;
 
@@ -439,6 +440,7 @@ function renderTrendChart(historyData) {
                 scales: {
                     x: { grid: { display: false }, ticks: { color: "#000000b3" } },
                     y: {
+                        max: trendMax,
                         grid: { color: "rgba(3, 3, 3, 0.05)" },
                         ticks: { color: "#000000b3", callback: function (value) { return value.toLocaleString(); } }
                     }
@@ -519,6 +521,7 @@ function renderBarangayBarChart() {
 
     const pieColors = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548"];
     const zeroData = new Array(labels.length).fill(0);
+    const barangayMax = Math.max(1, ...dataValues.filter(v => typeof v === 'number' && !isNaN(v))) * 1.1;
 
     let config;
 
@@ -618,6 +621,7 @@ function renderBarangayBarChart() {
                         ticks: { color: "#000000b3" }
                     },
                     y: {
+                        max: barangayMax,
                         grid: { color: "rgba(3, 3, 3, 0.05)" },
                         ticks: {
                             color: "#000000b3",

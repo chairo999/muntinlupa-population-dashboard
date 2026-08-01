@@ -798,6 +798,17 @@
             }
 
             const crimeRealData = config.data.datasets.map(d => d.data);
+            let crimeYMax = 1;
+            config.data.datasets.forEach((d, i) => {
+                if ((d.yAxisID || 'y') !== 'y1') {
+                    (crimeRealData[i] || []).forEach(v => {
+                        const n = Number(v);
+                        if (!isNaN(n)) crimeYMax = Math.max(crimeYMax, n);
+                    });
+                }
+            });
+            config.options.scales.y.max = Math.ceil(crimeYMax * 1.1);
+            config.options.scales.y1.max = 100;
             config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             crimeChartInstance = new Chart(ctx, config);
             setTimeout(function() {
@@ -898,6 +909,12 @@
             }
 
             const resourcesRealData = config.data.datasets.map(d => d.data);
+            let resourcesMax = 1;
+            resourcesRealData.forEach(arr => arr.forEach(v => {
+                const n = Number(v);
+                if (!isNaN(n)) resourcesMax = Math.max(resourcesMax, n);
+            }));
+            config.options.scales.y.max = Math.ceil(resourcesMax * 1.1);
             config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             resourcesChartInstance = new Chart(ctx, config);
             setTimeout(function() {
@@ -1040,6 +1057,14 @@
             }
 
             const barangayRealData = barangayChartInstance.data.datasets.map(d => d.data);
+            if (barangayChartType !== "pie" && barangayChartInstance.options && barangayChartInstance.options.scales && barangayChartInstance.options.scales.y) {
+                let barangayMax = 1;
+                barangayRealData.forEach(arr => arr.forEach(v => {
+                    const n = Number(v);
+                    if (!isNaN(n)) barangayMax = Math.max(barangayMax, n);
+                }));
+                barangayChartInstance.options.scales.y.max = Math.ceil(barangayMax * 1.1);
+            }
             barangayChartInstance.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             barangayChartInstance.update();
             setTimeout(function() {

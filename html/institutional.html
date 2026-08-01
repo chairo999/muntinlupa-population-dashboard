@@ -750,6 +750,9 @@
                 }
             ];
 
+            const budgetRealData = datasets.map(d => d.data);
+            const budgetMax = Math.max(1, ...datasets.flatMap(d => d.data).filter(v => typeof v === 'number' && !isNaN(v))) * 1.1;
+            datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             budgetChartInstance = new Chart(ctx, {
                 type: isLine ? 'line' : 'bar',
                 data: { labels: BUDGET_YEARS, datasets },
@@ -758,7 +761,7 @@
                     maintainAspectRatio: false,
                     hover: { mode: 'nearest', intersect: true },
                     interaction: { mode: 'nearest', intersect: true },
-                    animation: { duration: 200, easing: 'easeOutQuart' },
+                    animation: { duration: 1000, easing: 'easeOutQuart' },
                     plugins: {
                         legend: {
                             position: 'bottom',
@@ -780,6 +783,7 @@
                     scales: {
                         y: {
                             beginAtZero: true,
+                            max: budgetMax,
                             title: { display: true, text: 'Appropriation (₱)', font: { family: 'Montserrat, sans-serif', weight: 'bold', size: 12 }, color: '#000000b3' },
                             ticks: { callback: v => fmtCurrency(v), color: '#000000b3' },
                             grid: { color: 'rgba(15, 23, 42, 0.04)' }
@@ -788,6 +792,10 @@
                     }
                 }
             });
+            setTimeout(function() {
+                budgetRealData.forEach((data, i) => { budgetChartInstance.data.datasets[i].data = data; });
+                budgetChartInstance.update();
+            }, 50);
         }
 
         function renderRevenueChart() {
@@ -845,6 +853,9 @@
                 }
             ];
 
+            const revenueRealData = datasets.map(d => d.data);
+            const revenueMax = Math.max(1, ...datasets.flatMap(d => d.data).filter(v => typeof v === 'number' && !isNaN(v))) * 1.1;
+            datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             revenueChartInstance = new Chart(ctx, {
                 type: isLine ? 'line' : 'bar',
                 data: { labels: REVENUE_SOURCES, datasets },
@@ -853,7 +864,7 @@
                     maintainAspectRatio: false,
                     hover: { mode: 'nearest', intersect: true },
                     interaction: { mode: 'nearest', intersect: true },
-                    animation: { duration: 200, easing: 'easeOutQuart' },
+                    animation: { duration: 1000, easing: 'easeOutQuart' },
                     plugins: {
                         legend: {
                             position: 'bottom',
@@ -875,6 +886,7 @@
                     scales: {
                         y: {
                             beginAtZero: true,
+                            max: revenueMax,
                             title: { display: true, text: 'Revenue (₱)', font: { family: 'Montserrat, sans-serif', weight: 'bold', size: 12 }, color: '#000000b3' },
                             ticks: { callback: v => fmtCurrency(v), color: '#000000b3' },
                             grid: { color: 'rgba(15, 23, 42, 0.04)' }
@@ -892,6 +904,10 @@
                     }
                 }
             });
+            setTimeout(function() {
+                revenueRealData.forEach((data, i) => { revenueChartInstance.data.datasets[i].data = data; });
+                revenueChartInstance.update();
+            }, 50);
         }
 
         // Render detailed cards for each indicator

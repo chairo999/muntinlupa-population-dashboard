@@ -653,11 +653,12 @@
             const vals = estYears.map(y => { const c = estCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
             const zeroData = new Array(estYears.length).fill(0);
             const realData = establishmentsChartType === "line" ? estCoordinates : vals;
+            const estMax = Math.max(1, ...vals.filter(v => typeof v === 'number' && !isNaN(v))) * 1.1;
 
             if (establishmentsChartInstance) { establishmentsChartInstance.destroy(); establishmentsChartInstance = null; }
             const ctx = document.getElementById("establishmentsChart").getContext("2d");
 
-            const yScale = { beginAtZero: true, title: { display: true, text: 'Total Active Businesses' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } };
+            const yScale = { beginAtZero: true, max: estMax, title: { display: true, text: 'Total Active Businesses' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } };
             const xScale = { grid: { display: false }, ticks: { color: "#000000b3" } };
 
             let config;
@@ -718,11 +719,12 @@
             const vals = hotelYears.map(y => { const c = hotelCoordinates.find(cc => cc.x === y); return c ? c.y : 0; });
             const zeroData = new Array(hotelYears.length).fill(0);
             const realData = hotelChartType === "line" ? hotelCoordinates : vals;
+            const hotelMax = Math.max(1, ...vals.filter(v => typeof v === 'number' && !isNaN(v))) * 1.1;
 
             if (hotelArrivalsChartInstance) { hotelArrivalsChartInstance.destroy(); hotelArrivalsChartInstance = null; }
             const ctx = document.getElementById("hotelArrivalsChart").getContext("2d");
 
-            const yScale = { beginAtZero: true, title: { display: true, text: 'Annual Hotel Arrivals' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } };
+            const yScale = { beginAtZero: true, max: hotelMax, title: { display: true, text: 'Annual Hotel Arrivals' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } };
             const xScale = { grid: { display: false }, ticks: { color: "#000000b3" } };
 
             let config;
@@ -1028,6 +1030,16 @@
 
             let realDataForAnimation;
             let isConfigPath = typeof config !== 'undefined';
+
+            if (!isConfigPath) {
+                const econLength = datasets.reduce((m, d) => Math.max(m, d.data.length), 0);
+                let econChartMax = 1;
+                for (let i = 0; i < econLength; i++) {
+                    const sum = datasets.reduce((s, d) => s + (Number(d.data[i]) || 0), 0);
+                    econChartMax = Math.max(econChartMax, sum);
+                }
+                options.scales.y.max = Math.ceil(econChartMax * 1.1);
+            }
 
             if (isConfigPath) {
                 realDataForAnimation = config.data.datasets.map(d => d.data);

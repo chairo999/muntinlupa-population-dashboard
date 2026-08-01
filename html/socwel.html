@@ -540,6 +540,27 @@
             }, extra || {});
         }
 
+        function stabilizeValueAxis(config, realDataArrays) {
+            const valAxis = config.options && config.options.indexAxis === "y" ? "x" : "y";
+            const scale = config.options && config.options.scales && config.options.scales[valAxis];
+            if (!scale) return;
+            const stacked = scale.stacked === true;
+            const len = realDataArrays.reduce((m, arr) => Math.max(m, arr.length), 0);
+            let chartMax = 1;
+            if (stacked) {
+                for (let i = 0; i < len; i++) {
+                    const sum = realDataArrays.reduce((s, arr) => s + (Number(arr[i]) || 0), 0);
+                    chartMax = Math.max(chartMax, sum);
+                }
+            } else {
+                realDataArrays.forEach(arr => arr.forEach(v => {
+                    const n = Number(v);
+                    if (!isNaN(n)) chartMax = Math.max(chartMax, n);
+                }));
+            }
+            scale.max = Math.ceil(chartMax * 1.1);
+        }
+
         let appData = {};
         let appLabels = [];
         let supabaseClient = null;
@@ -794,6 +815,7 @@
             }
 
             const seniorsRealData = config.data.datasets.map(d => d.data);
+            stabilizeValueAxis(config, seniorsRealData);
             config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             seniorsChartInst = new Chart(ctx, config);
             setTimeout(function() {
@@ -881,6 +903,7 @@
             }
 
             const pwdRealData = config.data.datasets.map(d => d.data);
+            stabilizeValueAxis(config, pwdRealData);
             config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             pwdChartInst = new Chart(ctx, config);
             setTimeout(function() {
@@ -997,6 +1020,19 @@
             };
 
             const youthRealData = config.data.datasets.map(d => d.data);
+            let youthYMax = 1, youthY1Max = 1;
+            config.data.datasets.forEach((d, i) => {
+                const axis = d.yAxisID || 'y';
+                (youthRealData[i] || []).forEach(v => {
+                    const n = Number(v);
+                    if (!isNaN(n)) {
+                        if (axis === 'y1') youthY1Max = Math.max(youthY1Max, n);
+                        else youthYMax = Math.max(youthYMax, n);
+                    }
+                });
+            });
+            config.options.scales.y.max = Math.ceil(youthYMax * 1.1);
+            config.options.scales.y1.max = Math.ceil(youthY1Max * 1.1);
             config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });
             youthChartInst = new Chart(ctxC, config);
             setTimeout(function() {
