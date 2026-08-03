@@ -963,20 +963,20 @@ select option {
     padding: 10px;
     display: grid;
     grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
     gap: 20px;
-    overflow-y: auto;
     flex-grow: 1;
-    max-height: 920px;
+    min-height: 0;
 }
 
 .charts-wrapper-pyramid {
     padding: 10px;
     display: grid;
     grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
     gap: 20px;
-    overflow-y: auto;
     flex-grow: 1;
-    max-height: 920px;
+    min-height: 0;
 }
 
 .chart-card-pyramid {
@@ -987,6 +987,12 @@ select option {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    min-height: 0;
+}
+
+.pyramid-container {
+    flex: 1;
+    min-height: 600px;
 }
 
 .chart-card-pyramid h5 {
@@ -1010,6 +1016,7 @@ select option {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    min-height: 0;
 }
 
 .chart-title-wrapper {
@@ -1043,10 +1050,28 @@ select option {
     border: none;
 }
 
+/* References / Source Badges */
+.chart-reference {
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(15, 23, 42, 0.08);
+    font-size: 0.75rem;
+    color: var(--text-muted, #64748b);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.chart-reference i {
+    color: #ef4444;
+    font-size: 0.8rem;
+}
+
 .canvas-container {
     position: relative;
     width: 100%;
     height: 180px;
+    min-height: 0;
 }
 
 .doughnut-container {
@@ -1054,7 +1079,8 @@ select option {
 }
 
 .trend-container {
-    height: 350px;
+    flex: 1;
+    min-height: 300px;
 }
 
 /* Footer styling */
@@ -1080,10 +1106,6 @@ select option {
     .dashboard-grid {
         grid-template-columns: 1fr 1fr 1fr;
     }
-    
-    .charts-wrapper {
-        max-height: 600px;
-    }
 }
 
 @media (max-width: 1200px) {
@@ -1101,7 +1123,6 @@ select option {
     
     .charts-wrapper {
         grid-template-columns: 1fr 1fr;
-        max-height: none;
     }
     
     .chart-card.span-full {
@@ -1220,7 +1241,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: var(--bg-image, url('assets/images/ecological_profile.png'));
+    background-image: var(--bg-image, url('assets/images/ep.jpg'));
     background-size: cover;
     background-position: center;
     opacity: 0.4;

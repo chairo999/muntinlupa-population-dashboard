@@ -352,46 +352,11 @@ function renderTrendChart(historyData) {
     const ctx3 = document.getElementById("trendChart")?.getContext("2d");
     if (!ctx3) return;
 
-    const pieColors = ["#e1271a", "#f44336", "#ff9800"];
     const zeroData = new Array(historyData.length).fill(0);
     const trendMax = Math.max(1, ...historyData.filter(v => typeof v === 'number' && !isNaN(v))) * 1.1;
 
     let config;
-
-    if (trendChartType === "pie") {
-        config = {
-            type: "pie",
-            data: {
-                labels: HISTORICAL_LABELS,
-                datasets: [{
-                    label: "Overall Population Total",
-                    data: zeroData,
-                    backgroundColor: pieColors,
-                    hoverBackgroundColor: ["#ff2a2a", "#ff6666", "#ffb347"],
-                    hoverBorderColor: "#fff",
-                    hoverBorderWidth: 3,
-                    borderColor: "#fff",
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                hover: { mode: 'nearest', intersect: true },
-                animation: { animateRotate: true, animateScale: true, duration: 1000 },
-                plugins: {
-                    legend: { display: true, labels: { color: "#000000b3" } },
-                    tooltip: { backgroundColor: "rgba(0, 0, 0, 0.72)", padding: 10, borderWidth: 1, borderColor: "rgba(255, 255, 255, 0.15)" }
-                }
-            }
-        };
-        trendChartInstance = new Chart(ctx3, config);
-        setTimeout(function() {
-            trendChartInstance.data.datasets[0].data = historyData;
-            trendChartInstance.update();
-        }, 50);
-    } else {
-        config = {
+    config = {
             type: trendChartType,
             data: {
                 labels: HISTORICAL_LABELS,
@@ -452,7 +417,6 @@ function renderTrendChart(historyData) {
             trendChartInstance.data.datasets[0].data = historyData;
             trendChartInstance.update();
         }, 50);
-    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -519,7 +483,7 @@ function renderBarangayBarChart() {
     const ctx4 = document.getElementById("barangayBarChart")?.getContext("2d");
     if (!ctx4) return;
 
-    const pieColors = ["#e1271a", "#f44336", "#ff9800", "#4caf50", "#2196f3", "#9c27b0", "#00bcd4", "#ff5722", "#795548"];
+    const pieColors = ["#e1271a", "#ffcf01", "#ff9800", "#16a34a", "#2196f3", "#8800a0", "#003397", "#ff5722", "#992900"];
     const zeroData = new Array(labels.length).fill(0);
     const barangayMax = Math.max(1, ...dataValues.filter(v => typeof v === 'number' && !isNaN(v))) * 1.1;
 
