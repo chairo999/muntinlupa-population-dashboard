@@ -728,12 +728,12 @@ function renderPyramidChart(selectedYear) {
     if (!canvasElement) return;
     
     const ctx = canvasElement.getContext('2d');
-    const ageGroups = ['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80-84', '85+'];
+    const ageGroups = ['85+', '80-84', '75-79', '70-74', '65-69', '60-64', '55-59', '50-54', '45-49', '40-44', '35-39', '30-34', '25-29', '20-24', '15-19', '10-14', '5-9', '0-4'];
     
     const currentData = pyramidData[selectedYear];
     if (!currentData) return;
-    const maleData = currentData.male.map(val => -val);
-    const femaleData = currentData.female.map(val => val);
+    const maleData = currentData.male.slice().reverse().map(val => -val);
+    const femaleData = currentData.female.slice().reverse().map(val => val);
 
     if (pyramidChartInstance) {
         pyramidChartInstance.data.datasets[0].data = maleData;
