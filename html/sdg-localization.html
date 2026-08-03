@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <title>MunTHINK Hub — SDG Localization</title>
     <style>
         :root {
@@ -1068,14 +1069,6 @@
                         <div class="metric-select-container">
                             <label class="metric-select-label" for="kabuhayanMetricSelect">Select Indicator:</label>
                             <select id="kabuhayanMetricSelect" class="metric-select" onchange="updateKabuhayanChart()">
-                                <option value="empRate">Employment Rate (%)</option>
-                                <option value="unempRate">Unemployment Rate (%)</option>
-                                <option value="underempRate">Underemployment Rate (%)</option>
-                                <option value="localGdp">Local GDP (Billion PHP)</option>
-                                <option value="agriBudget">Urban Agriculture Budget (Million PHP)</option>
-                                <option value="coopReg">Cooperative Registrations (Count)</option>
-                                <option value="produceHarvest">Volume of Produce Harvested (kg)</option>
-                                <option value="heritageBudget">Cultural Heritage Allocation (PHP/person)</option>
                             </select>
                         </div>
                     </div>
@@ -1127,213 +1120,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 1.1 Eradicate extreme poverty for all people everywhere</td>
-                                <td class="indicator-col">Poverty Incidence among Families</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-1.png" alt="SDG 1" class="table-sdg-img"><span>SDG 1</span></div></td>
-                                <td class="sdg-target-col">1%</td>
-                                <td class="center trend-val">1.50%</td><td class="center trend-val">-</td><td class="center trend-val">0.10%</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">2023 Official Poverty Statistics (PSA)</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 1.1 Eradicate extreme poverty for all people everywhere</td>
-                                <td class="indicator-col">Poverty Incidence among Population</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-1.png" alt="SDG 1" class="table-sdg-img"><span>SDG 1</span></div></td>
-                                <td class="sdg-target-col">2.50%</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">0.10%</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">2023 Official Poverty Statistics (PSA)</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 1.1 Eradicate extreme poverty for all people everywhere</td>
-                                <td class="indicator-col">Local Gini Coefficient</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-1.png" alt="SDG 1" class="table-sdg-img"><span>SDG 1</span></div></td>
-                                <td class="sdg-target-col">0.0</td>
-                                <td class="center trend-val">0.3036</td><td class="center trend-val">0.2782 <small style="color:var(--text-muted);">(prelim)</small></td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">2023 Official Poverty Statistics (PSA)</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 1.2 Reduce poverty in all dimensions according to national definitions</td>
-                                <td class="indicator-col">Magnitude of Poor Families</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-1.png" alt="SDG 1" class="table-sdg-img"><span>SDG 1</span></div></td>
-                                <td class="sdg-target-col">Reduce at least half</td>
-                                <td class="center trend-val">10,570</td><td class="center trend-val">-</td><td class="center trend-val">1,090 <small style="color:var(--text-muted);">(prelim)</small></td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">PSA Poverty Statistics</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 1.2 Reduce poverty in all dimensions according to national definitions</td>
-                                <td class="indicator-col">Magnitude of Poor Population</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-1.png" alt="SDG 1" class="table-sdg-img"><span>SDG 1</span></div></td>
-                                <td class="sdg-target-col">Reduce at least half</td>
-                                <td class="center trend-val">57,270</td><td class="center trend-val">-</td><td class="center trend-val">6,900 <small style="color:var(--text-muted);">(prelim)</small></td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">PSA Poverty Statistics</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 8.5 Full &amp; productive employment and decent work for all</td>
-                                <td class="indicator-col">Employment Rate</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img"><span>SDG 8</span></div></td>
-                                <td class="sdg-target-col">97%</td>
-                                <td class="center trend-val">90.50%</td><td class="center trend-val">94.50%</td><td class="center trend-val">96.20%</td><td class="center trend-val">95.60%</td><td class="center trend-val">94.80%</td>
-                                <td class="source-col">PSA, various data</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 8.5 Full &amp; productive employment and decent work for all</td>
-                                <td class="indicator-col">8.5.2 Unemployment rate (by sex, age, PWD)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img"><span>SDG 8</span></div></td>
-                                <td class="sdg-target-col">3%</td>
-                                <td class="center trend-val">9.50%</td><td class="center trend-val">5.50%</td><td class="center trend-val">3.80%</td><td class="center trend-val">4.40%</td><td class="center trend-val">5.20%</td>
-                                <td class="source-col">PSA, various data</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 8.6 Reduce proportion of youth not in employment, education or training</td>
-                                <td class="indicator-col">8.6.1 Proportion of youth (15-24) not in education, employment or training (NEET)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img"><span>SDG 8</span></div></td>
-                                <td class="sdg-target-col">-</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">12.10%</td><td class="center trend-val">12.00%</td>
-                                <td class="source-col">PSA, regional data</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 8.1 Sustain per capita economic growth</td>
-                                <td class="indicator-col">Local GDP</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img"><span>SDG 8</span></div></td>
-                                <td class="sdg-target-col">Sustained growth</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">254.16B</td><td class="center trend-val">264.71B</td><td class="center trend-val">273.11B</td><td class="center trend-val">-</td>
-                                <td class="source-col">PSA</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 8.1 Sustain per capita economic growth</td>
-                                <td class="indicator-col">Annual growth rate of GDP per capita</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img"><span>SDG 8</span></div></td>
-                                <td class="sdg-target-col">Sustained growth</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">473,786</td><td class="center trend-val">494,566</td><td class="center trend-val">-</td>
-                                <td class="source-col">PSA</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 9.2 Promote inclusive and sustainable industrialization</td>
-                                <td class="indicator-col">9.2.1 Manufacturing value added as % of GDP &amp; per capita</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-9.png" alt="SDG 9" class="table-sdg-img"><span>SDG 9</span></div></td>
-                                <td class="sdg-target-col">Sustained growth</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">25.9% GDP / 132.9 cap</td><td class="center trend-val">24.8% GDP / 137.8 cap</td><td class="center trend-val">22.9% GDP / 135.0 cap</td><td class="center trend-val">-</td>
-                                <td class="source-col">PSA (pop 534,445)</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 8.3 Promote productive activities, job creation, entrepreneurship &amp; MSMEs</td>
-                                <td class="indicator-col">Underemployment Rate</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img"><span>SDG 8</span></div></td>
-                                <td class="sdg-target-col">Max 10%</td>
-                                <td class="center trend-val">8.6%</td><td class="center trend-val">6.7%</td><td class="center trend-val">9.09%</td><td class="center trend-val">12.9%</td><td class="center trend-val">10.9%</td>
-                                <td class="source-col">PSA, various data</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 8.9 Promote sustainable tourism that creates jobs</td>
-                                <td class="indicator-col">Tourism-Oriented &amp; Related Business Registrations</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img"><span>SDG 8</span></div></td>
-                                <td class="sdg-target-col">4,125 baseline</td>
-                                <td class="center trend-val">3,849</td><td class="center trend-val">4,994</td><td class="center trend-val">4,877</td><td class="center trend-val">4,744</td><td class="center trend-val">-</td>
-                                <td class="source-col">Tourism &amp; Culture Dept</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 8.10 Expand access to banking, insurance and financial services</td>
-                                <td class="indicator-col">Cooperative Registration</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img"><span>SDG 8</span></div></td>
-                                <td class="sdg-target-col">10% increase</td>
-                                <td class="center trend-val">82</td><td class="center trend-val">140</td><td class="center trend-val">118</td><td class="center trend-val">143</td><td class="center trend-val">152</td>
-                                <td class="source-col">City Cooperative Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 2.3 Double agricultural productivity and incomes of small producers</td>
-                                <td class="indicator-col">Volume of Produce Harvested</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-2.png" alt="SDG 2" class="table-sdg-img"><span>SDG 2</span></div></td>
-                                <td class="sdg-target-col">Double baseline (7,893 kg)</td>
-                                <td class="center trend-val">5,093 kg</td><td class="center trend-val">5,528 kg</td><td class="center trend-val">3,371 kg</td><td class="center trend-val">6,001 kg</td><td class="center trend-val">-</td>
-                                <td class="source-col">DA-ESO</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 2.a Increase investment in agricultural productive capacity</td>
-                                <td class="indicator-col">Budget Allocation for Urban Agriculture Program</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-2.png" alt="SDG 2" class="table-sdg-img"><span>SDG 2</span></div></td>
-                                <td class="sdg-target-col">Increasing annually</td>
-                                <td class="center trend-val">₱16.23M</td><td class="center trend-val">₱18.50M</td><td class="center trend-val">₱18.51M</td><td class="center trend-val">₱23.51M</td><td class="center trend-val">₱26.48M</td>
-                                <td class="source-col">DA-ESO</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 2.c Ensure proper functioning of food commodity markets</td>
-                                <td class="indicator-col">% of public markets covered by real-time price monitoring system</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-2.png" alt="SDG 2" class="table-sdg-img"><span>SDG 2</span></div></td>
-                                <td class="sdg-target-col">All public markets</td>
-                                <td class="center trend-val">1</td><td class="center trend-val">1</td><td class="center trend-val">1</td><td class="center trend-val">1</td><td class="center trend-val">All</td>
-                                <td class="source-col">City Public Market</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 8.10 Strengthen domestic financial institutions access</td>
-                                <td class="indicator-col">Active Local Gov't Initiative Loan Borrowers (Annual Released)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img"><span>SDG 8</span></div></td>
-                                <td class="sdg-target-col">Increasing annually</td>
-                                <td class="center trend-val">413</td><td class="center trend-val">328</td><td class="center trend-val">580</td><td class="center trend-val">572</td><td class="center trend-val">394</td>
-                                <td class="source-col">MEFD</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 9.3 Increase access of small-scale enterprises to credit</td>
-                                <td class="indicator-col">9.3.2 Small-scale industries with a loan or line of credit</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-9.png" alt="SDG 9" class="table-sdg-img"><span>SDG 9</span></div></td>
-                                <td class="sdg-target-col">Expanding coverage</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">MEFD</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 10.2 Empower and promote social, economic and political inclusion</td>
-                                <td class="indicator-col">10.2.1 Proportion living below 50% median income (by sex, age, PWD)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-10.png" alt="SDG 10" class="table-sdg-img"><span>SDG 10</span></div></td>
-                                <td class="sdg-target-col">Reduction target</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">PSA / Local Data</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 10.1 Progressively achieve income growth of bottom 40%</td>
-                                <td class="indicator-col">10.1.1 Growth rates of household expenditure/income per capita (bottom 40%)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-10.png" alt="SDG 10" class="table-sdg-img"><span>SDG 10</span></div></td>
-                                <td class="sdg-target-col">Above national avg</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">PSA</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 11.4 Protect and safeguard world cultural &amp; natural heritage</td>
-                                <td class="indicator-col">11.4.1 Total per capita allocation on cultural &amp; natural heritage preservation</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-11.png" alt="SDG 11" class="table-sdg-img"><span>SDG 11</span></div></td>
-                                <td class="sdg-target-col">Increasing annually</td>
-                                <td class="center trend-val">₱0.64</td><td class="center trend-val">₱0.64</td><td class="center trend-val">₱0.64</td><td class="center trend-val">₱0.92</td><td class="center trend-val">₱1.84</td>
-                                <td class="source-col">City Engineering Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 12.b Monitor sustainable development impacts for sustainable tourism</td>
-                                <td class="indicator-col">12.b.1 Standard accounting tools implementation for tourism sustainability</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-12.png" alt="SDG 12" class="table-sdg-img"><span>SDG 12</span></div></td>
-                                <td class="sdg-target-col">Full implementation</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">Tourism Dept</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -1368,16 +1154,6 @@
                         <div class="metric-select-container">
                             <label class="metric-select-label" for="kalusuganMetricSelect">Select Indicator:</label>
                             <select id="kalusuganMetricSelect" class="metric-select" onchange="updateKalusuganChart()">
-                                <option value="childImmunization">Child Immunization Coverage Rate (%)</option>
-                                <option value="underweight">Underweight and Severely Underweight (%)</option>
-                                <option value="stunted">Stunted and Severely Stunted (%)</option>
-                                <option value="wasted">Wasted and Severely Wasted (%)</option>
-                                <option value="overweight">Overweight and Obese (%)</option>
-                                <option value="tbCases">Tuberculosis Cases (Count)</option>
-                                <option value="animalBites">Animal Bites Cases (Count)</option>
-                                <option value="teenPregnancy">Teenage Pregnancy Cases (Count)</option>
-                                <option value="breastfeeding">Exclusive Breastfeeding Rate (%)</option>
-                                <option value="infantMortality">Infant Mortality Rate (per 1,000)</option>
                             </select>
                         </div>
                     </div>
@@ -1417,159 +1193,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 2.1 &amp; 2.2 End malnutrition &amp; ensure infant nutrition</td>
-                                <td class="indicator-col">Proportion of infants 0–5 months exclusively breastfed</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-2.png" alt="SDG 2" class="table-sdg-img"><span>SDG 2</span></div></td>
-                                <td class="sdg-target-col">High coverage</td>
-                                <td class="center trend-val">56.80%</td><td class="center trend-val">80.00%</td><td class="center trend-val">84.80%</td><td class="center trend-val">68.37%</td><td class="center trend-val">-</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 3.7 Universal access to sexual &amp; reproductive health care</td>
-                                <td class="indicator-col">Teenage Pregnancy Cases</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img"><span>SDG 3</span></div></td>
-                                <td class="sdg-target-col">Lowest possible</td>
-                                <td class="center trend-val">705</td><td class="center trend-val">619</td><td class="center trend-val">580</td><td class="center trend-val">578</td><td class="center trend-val">512</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 3.7 Universal access to reproductive health-care services</td>
-                                <td class="indicator-col">Contraceptive Prevalence Rate</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img"><span>SDG 3</span></div></td>
-                                <td class="sdg-target-col">75% coverage</td>
-                                <td class="center trend-val">22.70%</td><td class="center trend-val">23.74%</td><td class="center trend-val">27.57%</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 3.8 Achieve universal health coverage &amp; essential vaccines</td>
-                                <td class="indicator-col">Child Immunization Coverage Rate</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img"><span>SDG 3</span></div></td>
-                                <td class="sdg-target-col">≥90-95% coverage</td>
-                                <td class="center trend-val">74.00%</td><td class="center trend-val">61.00%</td><td class="center trend-val">60.29%</td><td class="center trend-val">54.65%</td><td class="center trend-val">50.26%</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 3.2 End preventable deaths of newborns &amp; under-5 children</td>
-                                <td class="indicator-col">Infant Mortality Rate (IMR)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img"><span>SDG 3</span></div></td>
-                                <td class="sdg-target-col">21 per 1,000 live births</td>
-                                <td class="center trend-val">9.00%</td><td class="center trend-val">10.65%</td><td class="center trend-val">13.065</td><td class="center trend-val">7.85%</td><td class="center trend-val">7.69%</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 3.2 End preventable under-5 mortality</td>
-                                <td class="indicator-col">Underfive Mortality Rate</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img"><span>SDG 3</span></div></td>
-                                <td class="sdg-target-col">≤ 25 per 1,000</td>
-                                <td class="center trend-val">11.58</td><td class="center trend-val">12.89</td><td class="center trend-val">14.93</td><td class="center trend-val">9.55</td><td class="center trend-val">-</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 3.1 Reduce global maternal mortality ratio</td>
-                                <td class="indicator-col">Maternal Mortality Rate</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img"><span>SDG 3</span></div></td>
-                                <td class="sdg-target-col">≤70 per 100k</td>
-                                <td class="center trend-val">106.80</td><td class="center trend-val">133.67</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 3.3 End epidemics of communicable diseases</td>
-                                <td class="indicator-col">STI / HIV / AIDS Cases</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img"><span>SDG 3</span></div></td>
-                                <td class="sdg-target-col">Zero new infections</td>
-                                <td class="center trend-val">111</td><td class="center trend-val">146</td><td class="center trend-val">151</td><td class="center trend-val">144</td><td class="center trend-val">-</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 3.3 Combat water-borne &amp; communicable diseases</td>
-                                <td class="indicator-col">Animal Bites</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img"><span>SDG 3</span></div></td>
-                                <td class="sdg-target-col">Significant reduction</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">3,924</td><td class="center trend-val">3,333</td><td class="center trend-val">1,718</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 3.3 End TB epidemic</td>
-                                <td class="indicator-col">Tuberculosis Cases</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img"><span>SDG 3</span></div></td>
-                                <td class="sdg-target-col">Significant reduction</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">3,924</td><td class="center trend-val">3,333</td><td class="center trend-val">1,718</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 3.3 End vector-borne diseases</td>
-                                <td class="indicator-col">Dengue Cases</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img"><span>SDG 3</span></div></td>
-                                <td class="sdg-target-col">Significant reduction</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">383</td><td class="center trend-val">1,018</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 2.1 &amp; 2.2 End child malnutrition</td>
-                                <td class="indicator-col">Underweight and Severely Underweight (%)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-2.png" alt="SDG 2" class="table-sdg-img"><span>SDG 2</span></div></td>
-                                <td class="sdg-target-col">Near zero (≤1%)</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">0.64%</td><td class="center trend-val">0.62%</td><td class="center trend-val">0.55%</td><td class="center trend-val">0.49%</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 2.2 End stunting in children under 5</td>
-                                <td class="indicator-col">Stunted and Severely Stunted (%)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-2.png" alt="SDG 2" class="table-sdg-img"><span>SDG 2</span></div></td>
-                                <td class="sdg-target-col">Near zero (≤5%)</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">0.67%</td><td class="center trend-val">0.65%</td><td class="center trend-val">0.52%</td><td class="center trend-val">0.41%</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 2.2 End wasting in children under 5</td>
-                                <td class="indicator-col">Wasted and Severely Wasted (%)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-2.png" alt="SDG 2" class="table-sdg-img"><span>SDG 2</span></div></td>
-                                <td class="sdg-target-col">Reduced to ≤1%</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">0.67%</td><td class="center trend-val">0.65%</td><td class="center trend-val">0.52%</td><td class="center trend-val">0.41%</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 2.2 Address childhood obesity</td>
-                                <td class="indicator-col">Overweight and Obese (%)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-2.png" alt="SDG 2" class="table-sdg-img"><span>SDG 2</span></div></td>
-                                <td class="sdg-target-col">Keep below 5%</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">0.16%</td><td class="center trend-val">0.17%</td><td class="center trend-val">0.15%</td><td class="center trend-val">0.14%</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 6.1 Universal access to safe drinking water</td>
-                                <td class="indicator-col">6.1.1 Population using safely managed drinking water services</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-6.png" alt="SDG 6" class="table-sdg-img"><span>SDG 6</span></div></td>
-                                <td class="sdg-target-col">100%</td>
-                                <td class="center trend-val">98.99%</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 6.2 Universal access to sanitation and hygiene</td>
-                                <td class="indicator-col">6.2.1 Population using safely managed sanitation &amp; handwashing</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-6.png" alt="SDG 6" class="table-sdg-img"><span>SDG 6</span></div></td>
-                                <td class="sdg-target-col">100%</td>
-                                <td class="center trend-val">98.86%</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">City Health Office</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -1604,12 +1227,6 @@
                         <div class="metric-select-container">
                             <label class="metric-select-label" for="karununganMetricSelect">Select Indicator:</label>
                             <select id="karununganMetricSelect" class="metric-select" onchange="updateKarununganChart()">
-                                <option value="scholarshipBudget">Total Scholarship Budget Allocation (PHP)</option>
-                                <option value="scholarships">Scholarships Granted to Marginalized (Count)</option>
-                                <option value="literacy">Youth/Adult Basic Literacy Rate (%)</option>
-                                <option value="completionElem">Elem Completion Rate (Kinder to Gr 6) (%)</option>
-                                <option value="completionJHS">JHS Completion Rate (Gr 7 to 10) (%)</option>
-                                <option value="completionSHS">SHS Completion Rate (Gr 7 to 12) (%)</option>
                             </select>
                         </div>
                     </div>
@@ -1649,87 +1266,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 4.b Expand scholarships globally</td>
-                                <td class="indicator-col">Total Budget allocation for Scholarships (in PHP)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img"><span>SDG 4</span></div></td>
-                                <td class="sdg-target-col">Increasing annually</td>
-                                <td class="center trend-val">₱347.58M</td><td class="center trend-val">₱409.43M</td><td class="center trend-val">₱419.20M</td><td class="center trend-val">₱590.82M</td><td class="center trend-val">₱606.75M</td>
-                                <td class="source-col">Muntinlupa Scholarship Division</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 4.7 Education for sustainable development &amp; global citizenship</td>
-                                <td class="indicator-col">Extent to which global citizenship &amp; ESD are mainstreamed</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img"><span>SDG 4</span></div></td>
-                                <td class="sdg-target-col">Full integration</td>
-                                <td class="center trend-val">Integrated</td><td class="center trend-val">Integrated</td><td class="center trend-val">Integrated</td><td class="center trend-val">Integrated</td><td class="center trend-val">Integrated</td>
-                                <td class="source-col">DepEd Muntinlupa, City Gov</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 4.3 Equal access to affordable &amp; quality technical/tertiary education</td>
-                                <td class="indicator-col">Participation rate of youth &amp; adults in formal/non-formal education</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img"><span>SDG 4</span></div></td>
-                                <td class="sdg-target-col">Expanded access</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">DepEd-Muntinlupa</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 4.1 Complete free, equitable &amp; quality primary &amp; secondary education</td>
-                                <td class="indicator-col">4.1.2. Completion Rate (Kinder to Grade 6)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img"><span>SDG 4</span></div></td>
-                                <td class="sdg-target-col">Universal completion</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">97.87%</td><td class="center trend-val">98.64%</td><td class="center trend-val">97.51%</td>
-                                <td class="source-col">DepEd-Muntinlupa</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 4.1 Complete free secondary education</td>
-                                <td class="indicator-col">4.1.2 Completion Rate (Grade 7 to 10)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img"><span>SDG 4</span></div></td>
-                                <td class="sdg-target-col">High completion</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">97.98%</td><td class="center trend-val">91.13%</td><td class="center trend-val">92.43%</td>
-                                <td class="source-col">DepEd-Muntinlupa</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 4.1 Complete free secondary education (K-12)</td>
-                                <td class="indicator-col">4.1.2. Completion Rate (Grade 7 to 12)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img"><span>SDG 4</span></div></td>
-                                <td class="sdg-target-col">Full completion</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">83.61%</td><td class="center trend-val">86.49%</td><td class="center trend-val">84.21%</td>
-                                <td class="source-col">DepEd-Muntinlupa</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 4.2 Early childhood development &amp; pre-primary education</td>
-                                <td class="indicator-col">4.2.2 Participation rate in organized learning (1 year before entry age)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img"><span>SDG 4</span></div></td>
-                                <td class="sdg-target-col">Full readiness</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">DepEd-Muntinlupa</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 4.5 Eliminate gender disparities &amp; protect vulnerable sectors</td>
-                                <td class="indicator-col">Proportion of Scholarships Granted to Marginalized Sector</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img"><span>SDG 4</span></div></td>
-                                <td class="sdg-target-col">Increasing annually, full coverage</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">82,442</td><td class="center trend-val">83,205</td><td class="center trend-val">109,349</td><td class="center trend-val">110,508</td>
-                                <td class="source-col">Muntinlupa Scholarship Division</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 4.6 Ensure youth and adults achieve literacy and numeracy</td>
-                                <td class="indicator-col">4.6.1 Youth/adult literacy rate</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-4.png" alt="SDG 4" class="table-sdg-img"><span>SDG 4</span></div></td>
-                                <td class="sdg-target-col">100% Literacy</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">99.62% <small style="color:var(--text-muted);">(CBMS)</small></td><td class="center trend-val">-</td><td class="center trend-val">93.10% <small style="color:var(--text-muted);">(PSA)</small></td><td class="center trend-val">-</td>
-                                <td class="source-col">Muntinlupa CBMS (2022) / PSA (2024)</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -1764,10 +1300,6 @@
                         <div class="metric-select-container">
                             <label class="metric-select-label" for="kaunlaranMetricSelect">Select Indicator:</label>
                             <select id="kaunlaranMetricSelect" class="metric-select" onchange="updateKaunlaranChart()">
-                                <option value="govRevenue">Total Government Revenue (Billion PHP)</option>
-                                <option value="rdSpend">R&amp;D Expenditure of LGU (Billion PHP)</option>
-                                <option value="birthRegRate">Timely Birthyear Registration Rate (%)</option>
-                                <option value="internetAccess">Proportion of HHs with Internet Access (%)</option>
                             </select>
                         </div>
                     </div>
@@ -1807,132 +1339,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 17.1 Domestic resource mobilization</td>
-                                <td class="indicator-col">17.1.1 Total government revenue (in PHP)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-17.png" alt="SDG 17" class="table-sdg-img"><span>SDG 17</span></div></td>
-                                <td class="sdg-target-col">Increasing pattern</td>
-                                <td class="center trend-val">₱6.39B</td><td class="center trend-val">₱6.60B</td><td class="center trend-val">₱6.53B</td><td class="center trend-val">₱6.83B</td><td class="center trend-val">₱7.76B</td>
-                                <td class="source-col">City Accounting Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 17.5 Investment promotion regimes</td>
-                                <td class="indicator-col">17.5.1 LGU implementing local investment code</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-17.png" alt="SDG 17" class="table-sdg-img"><span>SDG 17</span></div></td>
-                                <td class="sdg-target-col">1 code updated</td>
-                                <td class="center trend-val">Updated</td><td class="center trend-val">Needs update</td><td class="center trend-val">Needs update</td><td class="center trend-val">Needs update</td><td class="center trend-val">Needs update</td>
-                                <td class="source-col">LEIPO</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 17.8 ICT &amp; technology bank mechanism</td>
-                                <td class="indicator-col">17.8.1 Proportion of households using the Internet</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-17.png" alt="SDG 17" class="table-sdg-img"><span>SDG 17</span></div></td>
-                                <td class="sdg-target-col">100%</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">66.00%</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">CBMS 2022, PSA</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 17.14 Policy coherence for sustainable development</td>
-                                <td class="indicator-col">17.14.1 LGU policy coherence mechanisms in place</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-17.png" alt="SDG 17" class="table-sdg-img"><span>SDG 17</span></div></td>
-                                <td class="sdg-target-col">100% in-place</td>
-                                <td class="center trend-val">50%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td>
-                                <td class="source-col">Planning Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 17.15 Respect policy space &amp; leadership</td>
-                                <td class="indicator-col">Extent of use of LGU-owned results frameworks &amp; planning tools</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-17.png" alt="SDG 17" class="table-sdg-img"><span>SDG 17</span></div></td>
-                                <td class="sdg-target-col">100% implemented</td>
-                                <td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td>
-                                <td class="source-col">Planning Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 17.16 Global Partnership &amp; multi-stakeholder monitoring</td>
-                                <td class="indicator-col">17.16.1 LGU reporting progress in multi-stakeholder frameworks</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-17.png" alt="SDG 17" class="table-sdg-img"><span>SDG 17</span></div></td>
-                                <td class="sdg-target-col">100% implemented</td>
-                                <td class="center trend-val">50%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td>
-                                <td class="source-col">Planning Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 17.17 Effective public-private &amp; CSO partnerships</td>
-                                <td class="indicator-col">Extent of stakeholder participation in partnership planning</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-17.png" alt="SDG 17" class="table-sdg-img"><span>SDG 17</span></div></td>
-                                <td class="sdg-target-col">100% participation</td>
-                                <td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td>
-                                <td class="source-col">Planning Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 17.18 Statistical capacity building &amp; data disaggregation</td>
-                                <td class="indicator-col">17.18.1/2/3 Statistical capacity indicators &amp; funded statistical plan</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-17.png" alt="SDG 17" class="table-sdg-img"><span>SDG 17</span></div></td>
-                                <td class="sdg-target-col">100% satisfied</td>
-                                <td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td>
-                                <td class="source-col">Planning Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 17.19 Measurements of progress &amp; census</td>
-                                <td class="indicator-col">17.19.2 Timely birthyear registration rate</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-17.png" alt="SDG 17" class="table-sdg-img"><span>SDG 17</span></div></td>
-                                <td class="sdg-target-col">100% rate</td>
-                                <td class="center trend-val">92.70%</td><td class="center trend-val">81.00%</td><td class="center trend-val">77.00%</td><td class="center trend-val">73.00%</td><td class="center trend-val">-</td>
-                                <td class="source-col">Local Civil Registry</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 9.1 Quality, reliable &amp; resilient infrastructure</td>
-                                <td class="indicator-col">Percentage of population within 500m of public transport stops</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-9.png" alt="SDG 9" class="table-sdg-img"><span>SDG 9</span></div></td>
-                                <td class="sdg-target-col">100%</td>
-                                <td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td>
-                                <td class="source-col">Planning Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 9.c Significantly increase access to ICT</td>
-                                <td class="indicator-col">9.c.1 Proportion of population covered by a mobile network</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-9.png" alt="SDG 9" class="table-sdg-img"><span>SDG 9</span></div></td>
-                                <td class="sdg-target-col">100%</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">95.00%</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">Muntinlupa CBMS 2022</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 9.5 Enhance scientific research &amp; R&amp;D spending</td>
-                                <td class="indicator-col">9.5.1 Research and development expenditure of LGU (in PHP)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-9.png" alt="SDG 9" class="table-sdg-img"><span>SDG 9</span></div></td>
-                                <td class="sdg-target-col">Increasing annually</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">₱100.98M</td><td class="center trend-val">₱5.65B</td><td class="center trend-val">-</td>
-                                <td class="source-col">Accounting Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 11.2 Safe &amp; affordable public transport systems</td>
-                                <td class="indicator-col">11.2.1 Proportion of population with convenient access to transport</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-11.png" alt="SDG 11" class="table-sdg-img"><span>SDG 11</span></div></td>
-                                <td class="sdg-target-col">100%</td>
-                                <td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td>
-                                <td class="source-col">Planning Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 11.a Balanced urban-rural territorial development</td>
-                                <td class="indicator-col">11.a.1 LGU with adopted urban development plans (CDP)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-11.png" alt="SDG 11" class="table-sdg-img"><span>SDG 11</span></div></td>
-                                <td class="sdg-target-col">1 adopted CDP</td>
-                                <td class="center trend-val">1 CDP</td><td class="center trend-val">1 CDP</td><td class="center trend-val">1 CDP</td><td class="center trend-val">1 CDP</td><td class="center trend-val">1 CDP</td>
-                                <td class="source-col">Planning Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -1967,11 +1373,6 @@
                         <div class="metric-select-container">
                             <label class="metric-select-label" for="kalikasanMetricSelect">Select Indicator:</label>
                             <select id="kalikasanMetricSelect" class="metric-select" onchange="updateKalikasanChart()">
-                                <option value="airPm25">Air Quality PM2.5 Level (µg/m³)</option>
-                                <option value="airPm10">Air Quality PM10 Level (µg/m³)</option>
-                                <option value="wasteDiversion">Waste Diversion Rate (%)</option>
-                                <option value="conservationBudget">Conservation Budget Allocation (Million PHP)</option>
-                                <option value="electricityAccess">Population Electricity Access (%)</option>
                             </select>
                         </div>
                     </div>
@@ -2011,159 +1412,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 6.3 Improve water quality &amp; reduce pollution</td>
-                                <td class="indicator-col">6.3.2 Proportion of water bodies with good ambient quality</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-6.png" alt="SDG 6" class="table-sdg-img"><span>SDG 6</span></div></td>
-                                <td class="sdg-target-col">All (11) riverways</td>
-                                <td class="center trend-val">0</td><td class="center trend-val">0</td><td class="center trend-val">0</td><td class="center trend-val">0</td><td class="center trend-val">0</td>
-                                <td class="source-col">LMO</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 12.5 Substantially reduce waste generation</td>
-                                <td class="indicator-col">Waste Diversion Rate</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-12.png" alt="SDG 12" class="table-sdg-img"><span>SDG 12</span></div></td>
-                                <td class="sdg-target-col">50–65%</td>
-                                <td class="center trend-val">39.18%</td><td class="center trend-val">9.26%</td><td class="center trend-val">34.02%</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">ESC</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 12.4 Environmentally sound hazardous waste management</td>
-                                <td class="indicator-col">12.4.2 Hazardous waste generated per capita</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-12.png" alt="SDG 12" class="table-sdg-img"><span>SDG 12</span></div></td>
-                                <td class="sdg-target-col">Significantly reduce</td>
-                                <td class="center trend-val">2.75g/day</td><td class="center trend-val">76.5g/day</td><td class="center trend-val">2.8g/day</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">ESC</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 6.b Community participation in water/sanitation</td>
-                                <td class="indicator-col">6.b.1 Operational Solid Waste Management Board</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-6.png" alt="SDG 6" class="table-sdg-img"><span>SDG 6</span></div></td>
-                                <td class="sdg-target-col">Functioning Board</td>
-                                <td class="center trend-val">Operational</td><td class="center trend-val">Operational</td><td class="center trend-val">Operational</td><td class="center trend-val">Operational</td><td class="center trend-val">Operational</td>
-                                <td class="source-col">ESC</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 14.4 End overfishing &amp; illegal fishing</td>
-                                <td class="indicator-col">Illegal Fisher Apprehensions</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-14.png" alt="SDG 14" class="table-sdg-img"><span>SDG 14</span></div></td>
-                                <td class="sdg-target-col">100% Apprehensions</td>
-                                <td class="center trend-val">102</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">LMO</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 14.6 Combat IUU fishing instruments</td>
-                                <td class="indicator-col">14.6.1 Degree of implementation of IUU fishing instruments</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-14.png" alt="SDG 14" class="table-sdg-img"><span>SDG 14</span></div></td>
-                                <td class="sdg-target-col">100% full implementation</td>
-                                <td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td>
-                                <td class="source-col">LMO</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 13.2 Integrate climate change measures into planning</td>
-                                <td class="indicator-col">13.2.2 Total greenhouse gas emissions per year (tCO2e)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-13.png" alt="SDG 13" class="table-sdg-img"><span>SDG 13</span></div></td>
-                                <td class="sdg-target-col">Net zero</td>
-                                <td class="center trend-val">1,225,223</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">Environment Cluster</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 13.3 Climate change education &amp; capacity building</td>
-                                <td class="indicator-col">13.3.1 Extent of mainstreaming climate change in education</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-13.png" alt="SDG 13" class="table-sdg-img"><span>SDG 13</span></div></td>
-                                <td class="sdg-target-col">100% full integration</td>
-                                <td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td>
-                                <td class="source-col">EPNRO/DDRM</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 11.6 Reduce environmental impact of cities (PM2.5)</td>
-                                <td class="indicator-col">11.6.2 Annual mean levels of PM2.5 (µg/m³)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-11.png" alt="SDG 11" class="table-sdg-img"><span>SDG 11</span></div></td>
-                                <td class="sdg-target-col">≤ 5 µg/m³</td>
-                                <td class="center trend-val">&gt;15</td><td class="center trend-val">No Data</td><td class="center trend-val">Rehab</td><td class="center trend-val">8.20</td><td class="center trend-val">4.67</td>
-                                <td class="source-col">DENR-NCR</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 11.6 Reduce environmental impact of cities (PM10)</td>
-                                <td class="indicator-col">11.6.2 Annual mean levels of PM10 (µg/m³)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-11.png" alt="SDG 11" class="table-sdg-img"><span>SDG 11</span></div></td>
-                                <td class="sdg-target-col">15 µg/m³</td>
-                                <td class="center trend-val">19.60</td><td class="center trend-val">19.00</td><td class="center trend-val">14.75</td><td class="center trend-val">13.00</td><td class="center trend-val">6.67</td>
-                                <td class="source-col">DENR-NCR</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 1.a Budget allocation for essential services</td>
-                                <td class="indicator-col">Proportion of total budget on essential services</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-1.png" alt="SDG 1" class="table-sdg-img"><span>SDG 1</span></div></td>
-                                <td class="sdg-target-col">Largest proportion</td>
-                                <td class="center trend-val">68.30%</td><td class="center trend-val">67.79%</td><td class="center trend-val">48.06%</td><td class="center trend-val">50.00%</td><td class="center trend-val">50.00%</td>
-                                <td class="source-col">Budget Office</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 12.6 Corporate sustainability reporting</td>
-                                <td class="indicator-col">12.6.1 Number of companies publishing sustainability reports</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-12.png" alt="SDG 12" class="table-sdg-img"><span>SDG 12</span></div></td>
-                                <td class="sdg-target-col">Increasing coverage</td>
-                                <td class="center trend-val">67</td><td class="center trend-val">67</td><td class="center trend-val">67</td><td class="center trend-val">67</td><td class="center trend-val">67</td>
-                                <td class="source-col">DOE, Env Cluster</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 12.8 Information for sustainable development</td>
-                                <td class="indicator-col">12.8.1 Extent of ESD mainstreamed in policies</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-12.png" alt="SDG 12" class="table-sdg-img"><span>SDG 12</span></div></td>
-                                <td class="sdg-target-col">Full integration</td>
-                                <td class="center trend-val">Integrated</td><td class="center trend-val">Integrated</td><td class="center trend-val">Integrated</td><td class="center trend-val">Integrated</td><td class="center trend-val">Integrated</td>
-                                <td class="source-col">Environment Cluster</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 14.b Protection of artisanal fisheries access rights</td>
-                                <td class="indicator-col">14.b.1 Degree of legal framework protecting artisanal fisheries</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-14.png" alt="SDG 14" class="table-sdg-img"><span>SDG 14</span></div></td>
-                                <td class="sdg-target-col">100% implemented</td>
-                                <td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td>
-                                <td class="source-col">Environment Cluster</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 15.9 Biodiversity values in local planning</td>
-                                <td class="indicator-col">Integration of biodiversity values to local planning</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-15.png" alt="SDG 15" class="table-sdg-img"><span>SDG 15</span></div></td>
-                                <td class="sdg-target-col">Fully integrated</td>
-                                <td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td>
-                                <td class="source-col">EPNRO</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 15.a Financial resource allocation for conservation</td>
-                                <td class="indicator-col">Budget allocation for conservation (in PHP)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-15.png" alt="SDG 15" class="table-sdg-img"><span>SDG 15</span></div></td>
-                                <td class="sdg-target-col">Significant increase</td>
-                                <td class="center trend-val">₱966.1K</td><td class="center trend-val">₱208.8K</td><td class="center trend-val">₱849.9K</td><td class="center trend-val">₱599.9K</td><td class="center trend-val">₱2.37M</td>
-                                <td class="source-col">EPNRO</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 7.1 Universal access to electricity</td>
-                                <td class="indicator-col">7.1.1 Proportion of population with access to electricity</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-7.png" alt="SDG 7" class="table-sdg-img"><span>SDG 7</span></div></td>
-                                <td class="sdg-target-col">100%</td>
-                                <td class="center trend-val">97.50%</td><td class="center trend-val">-</td><td class="center trend-val">95.98%</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">Meralco</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -2194,10 +1442,6 @@
                         <div class="metric-select-container">
                             <label class="metric-select-label" for="katarunganMetricSelect">Select Indicator:</label>
                             <select id="katarunganMetricSelect" class="metric-select" onchange="updateKatarunganChart()">
-                                <option value="finAssistance">Local Financial Assistance Coverage (Count)</option>
-                                <option value="gadBudget">Budget Allocation for GAD Program (Million PHP)</option>
-                                <option value="vawcCases">Incidence of VAWC Cases (Count)</option>
-                                <option value="isfPop">Informal Settler Families Population (Count)</option>
                             </select>
                         </div>
                     </div>
@@ -2236,105 +1480,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 1.3 Social protection systems for all</td>
-                                <td class="indicator-col">Local Financial Assistance Coverage</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-1.png" alt="SDG 1" class="table-sdg-img"><span>SDG 1</span></div></td>
-                                <td class="sdg-target-col">Increasing annually</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">3,812</td><td class="center trend-val">15,172</td><td class="center trend-val">18,889</td><td class="center trend-val">22,831</td>
-                                <td class="source-col">Kalingang Munti, GAD</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 1.4 Equal rights to basic services &amp; economic resources</td>
-                                <td class="indicator-col">1.4.1 Proportion with access to basic services</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-1.png" alt="SDG 1" class="table-sdg-img"><span>SDG 1</span></div></td>
-                                <td class="sdg-target-col">100%</td>
-                                <td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td><td class="center trend-val">100%</td>
-                                <td class="source-col">Planning Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 1.b Pro-poor &amp; gender-sensitive policy frameworks</td>
-                                <td class="indicator-col">Gender and Development Plan (updated)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-1.png" alt="SDG 1" class="table-sdg-img"><span>SDG 1</span></div></td>
-                                <td class="sdg-target-col">1 updated GAD plan</td>
-                                <td class="center trend-val">1 plan</td><td class="center trend-val">1 plan</td><td class="center trend-val">1 plan</td><td class="center trend-val">1 plan</td><td class="center trend-val">1 plan</td>
-                                <td class="source-col">GAD Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 11.1 Access to safe housing &amp; slum upgrading</td>
-                                <td class="indicator-col">11.1.1 Proportion of urban population living in ISFs</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-11.png" alt="SDG 11" class="table-sdg-img"><span>SDG 11</span></div></td>
-                                <td class="sdg-target-col">Near zero ISFs</td>
-                                <td class="center trend-val">19,575</td><td class="center trend-val">23,201</td><td class="center trend-val">23,201</td><td class="center trend-val">23,201</td><td class="center trend-val">23,471</td>
-                                <td class="source-col">UPAO</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 11.1 ISFs in hazard prone areas</td>
-                                <td class="indicator-col">Proportion of ISFs living in flood/danger zones</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-11.png" alt="SDG 11" class="table-sdg-img"><span>SDG 11</span></div></td>
-                                <td class="sdg-target-col">Near zero ISFs</td>
-                                <td class="center trend-val">3,997</td><td class="center trend-val">4,929</td><td class="center trend-val">4,929</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">UPAO</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 11.3 Participatory urban settlement planning</td>
-                                <td class="indicator-col">11.3.2 Proportion of CSOs with direct participation in urban planning</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-11.png" alt="SDG 11" class="table-sdg-img"><span>SDG 11</span></div></td>
-                                <td class="sdg-target-col">CSO integrated</td>
-                                <td class="center trend-val">4</td><td class="center trend-val">4</td><td class="center trend-val">4</td><td class="center trend-val">4</td><td class="center trend-val">5</td>
-                                <td class="source-col">UPAO, Local Housing Board</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 8.7 Eradicate child labor in all forms</td>
-                                <td class="indicator-col">8.7.1 Proportion and number of children engaged in child labor</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-8.png" alt="SDG 8" class="table-sdg-img"><span>SDG 8</span></div></td>
-                                <td class="sdg-target-col">End child labor</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">365</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">CBMS 2022, PSA</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 5.1 End discrimination &amp; violence against women</td>
-                                <td class="indicator-col">Incidence of VAWC Cases</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-5.png" alt="SDG 5" class="table-sdg-img"><span>SDG 5</span></div></td>
-                                <td class="sdg-target-col">Ideal target zero</td>
-                                <td class="center trend-val">422</td><td class="center trend-val">510</td><td class="center trend-val">531</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">SAGIP Muntinlupa</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 5.c Enforceable legislation for gender equality</td>
-                                <td class="indicator-col">Budget Allocation for Gender and Development Program (in PHP)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-5.png" alt="SDG 5" class="table-sdg-img"><span>SDG 5</span></div></td>
-                                <td class="sdg-target-col">Increasing annually</td>
-                                <td class="center trend-val">₱23.59M</td><td class="center trend-val">₱25.90M</td><td class="center trend-val">₱27.90M</td><td class="center trend-val">₱31.57M</td><td class="center trend-val">₱26.38M</td>
-                                <td class="source-col">Gender &amp; Dev Office</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 16.2 End abuse &amp; violence against children</td>
-                                <td class="indicator-col">16.2.1 Proportion of children experiencing physical/psych aggression</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-16.png" alt="SDG 16" class="table-sdg-img"><span>SDG 16</span></div></td>
-                                <td class="sdg-target-col">End abuse</td>
-                                <td class="center trend-val">1,114</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">SAGIP Muntinlupa</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 10.7 Facilitate safe, regular &amp; responsible migration</td>
-                                <td class="indicator-col">Migration, Inhabitants Registry System (MuntiZen Card)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-10.png" alt="SDG 10" class="table-sdg-img"><span>SDG 10</span></div></td>
-                                <td class="sdg-target-col">MuntiZen Card rollout</td>
-                                <td class="center trend-val">RBIM</td><td class="center trend-val">RBIM</td><td class="center trend-val">RBIM</td><td class="center trend-val">RBIM</td><td class="center trend-val">MuntiZen Card</td>
-                                <td class="source-col">City Government</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -2369,10 +1514,6 @@
                         <div class="metric-select-container">
                             <label class="metric-select-label" for="kapayapaanMetricSelect">Select Indicator:</label>
                             <select id="kapayapaanMetricSelect" class="metric-select" onchange="updateKapayapaanChart()">
-                                <option value="roadAccidents">Road Accident Cases (Count)</option>
-                                <option value="substanceUse">Substance Use Treatment Interventions (Count)</option>
-                                <option value="homicideRate">Homicide Rate (per 100,000 Population)</option>
-                                <option value="safetyFeeling">Proportion Feeling Safe Walking Alone (%)</option>
                             </select>
                         </div>
                     </div>
@@ -2412,78 +1553,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 3.5 Treatment of substance abuse</td>
-                                <td class="indicator-col">3.5.1 Coverage of treatment interventions for substance use</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img"><span>SDG 3</span></div></td>
-                                <td class="sdg-target-col">100% covered</td>
-                                <td class="center trend-val">28</td><td class="center trend-val">69</td><td class="center trend-val">69</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">DAPCO</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 3.6 Halve road traffic accident deaths &amp; injuries</td>
-                                <td class="indicator-col">Road Accident Cases</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-3.png" alt="SDG 3" class="table-sdg-img"><span>SDG 3</span></div></td>
-                                <td class="sdg-target-col">Reduce to half</td>
-                                <td class="center trend-val">2,515</td><td class="center trend-val">2,423</td><td class="center trend-val">2,484</td><td class="center trend-val">2,622</td><td class="center trend-val">-</td>
-                                <td class="source-col">MTMB</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 11.5 &amp; 1.5 Reduce disaster deaths</td>
-                                <td class="indicator-col">Deaths during Disasters</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-11.png" alt="SDG 11" class="table-sdg-img"><span>SDG 11</span></div></td>
-                                <td class="sdg-target-col">Zero deaths</td>
-                                <td class="center trend-val">0</td><td class="center trend-val">10</td><td class="center trend-val">12</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">DDRM</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="On Track">
-                                <td class="target-col">Target 11.b Implement local disaster risk reduction strategies</td>
-                                <td class="indicator-col">11.b.1/2 Implementation of local DRR strategies (Sendai Framework)</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-11.png" alt="SDG 11" class="table-sdg-img"><span>SDG 11</span></div></td>
-                                <td class="sdg-target-col">Adopted</td>
-                                <td class="center trend-val">Adopted</td><td class="center trend-val">Adopted</td><td class="center trend-val">Adopted</td><td class="center trend-val">Adopted</td><td class="center trend-val">Adopted</td>
-                                <td class="source-col">DDRM</td>
-                                <td class="center"><span class="status-badge on-track">On Track</span></td>
-                            </tr>
-                            <tr data-status="Regressing">
-                                <td class="target-col">Target 13.1 Strengthen disaster resilience &amp; reduce affected persons</td>
-                                <td class="indicator-col">13.1.1 Disaster affected persons per 100,000 population</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-13.png" alt="SDG 13" class="table-sdg-img"><span>SDG 13</span></div></td>
-                                <td class="sdg-target-col">0</td>
-                                <td class="center trend-val">0</td><td class="center trend-val">1.84 / 100k</td><td class="center trend-val">2.21 / 100k</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">DDRM</td>
-                                <td class="center"><span class="status-badge regressing">Regressing</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 16.1 Significantly reduce all forms of violence &amp; homicide</td>
-                                <td class="indicator-col">16.1.1 Number of victims of intentional homicide per 100,000</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-16.png" alt="SDG 16" class="table-sdg-img"><span>SDG 16</span></div></td>
-                                <td class="sdg-target-col">Significantly reduce</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">1.47 / 100k</td><td class="center trend-val">1.47 / 100k</td><td class="center trend-val">0.37 / 100k</td><td class="center trend-val">-</td>
-                                <td class="source-col">PNP</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 16.1 Reduce physical &amp; sexual violence rates</td>
-                                <td class="indicator-col">16.1.3 Physical injuries &amp; rape cases</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-16.png" alt="SDG 16" class="table-sdg-img"><span>SDG 16</span></div></td>
-                                <td class="sdg-target-col">Significantly reduce</td>
-                                <td class="center trend-val">10 Inj / 31 Rape</td><td class="center trend-val">9 Inj / 49 Rape</td><td class="center trend-val">9 Inj / 38 Rape</td><td class="center trend-val">6 Inj / 23 Rape</td><td class="center trend-val">-</td>
-                                <td class="source-col">PNP</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
-                            <tr data-status="Needs Acceleration">
-                                <td class="target-col">Target 16.1 Perception of safety walking alone after dark</td>
-                                <td class="indicator-col">16.1.4 Proportion of population that feel safe walking alone after dark</td>
-                                <td class="sdg-num-col"><div class="table-sdg-container"><img src="../assets/images/sdg-16.png" alt="SDG 16" class="table-sdg-img"><span>SDG 16</span></div></td>
-                                <td class="sdg-target-col">100%</td>
-                                <td class="center trend-val">-</td><td class="center trend-val">79.82%</td><td class="center trend-val">-</td><td class="center trend-val">-</td><td class="center trend-val">-</td>
-                                <td class="source-col">CBMS 2022, PSA</td>
-                                <td class="center"><span class="status-badge needs-acceleration">Needs Acceleration</span></td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -2509,22 +1578,8 @@
             document.getElementById(pillarId).classList.add('active');
             btnEl.classList.add('active');
 
-            // Lazy initialize charts
-            if (pillarId === 'kalusugan' && !kalusuganChart) {
-                updateKalusuganChart();
-            } else if (pillarId === 'karunungan' && !karununganChart) {
-                updateKarununganChart();
-            } else if (pillarId === 'kabuhayan' && !kabuhayanChart) {
-                updateKabuhayanChart();
-            } else if (pillarId === 'kaunlaran' && !kaunlaranChart) {
-                updateKaunlaranChart();
-            } else if (pillarId === 'kalikasan' && !kalikasanChart) {
-                updateKalikasanChart();
-            } else if (pillarId === 'katarungan' && !katarunganChart) {
-                updateKatarunganChart();
-            } else if (pillarId === 'kapayapaan' && !kapayapaanChart) {
-                updateKapayapaanChart();
-            }
+            // Lazy initialize chart for the selected pillar
+            ensurePillarChart(pillarId);
         }
 
         // Generic Table Search Filter
@@ -2563,174 +1618,107 @@
         }
 
         // ===============================================
-        // 1. KABUHAYAN METRICS & CHART
+        // SUPABASE — DB-driven metrics & charts
         // ===============================================
-        const kabuhayanMetrics = {
-            empRate: { label: 'Employment Rate (%)', years: ['2021', '2022', '2023', '2024', '2025'], trend: [90.50, 94.50, 96.20, 95.60, 94.80], target: [97, 97, 97, 97, 97], targetText: '97% Target', latestText: '94.80% (2025)', status: 'Needs Acceleration', statusClass: 'needs-acceleration' },
-            unempRate: { label: 'Unemployment Rate (%)', years: ['2021', '2022', '2023', '2024', '2025'], trend: [9.50, 5.50, 3.80, 4.40, 5.20], target: [3.0, 3.0, 3.0, 3.0, 3.0], targetText: '3.0% Max Target', latestText: '5.20% (2025)', status: 'Needs Acceleration', statusClass: 'needs-acceleration' },
-            underempRate: { label: 'Underemployment Rate (%)', years: ['2021', '2022', '2023', '2024', '2025'], trend: [8.60, 6.70, 9.09, 12.90, 10.90], target: [10.0, 10.0, 10.0, 10.0, 10.0], targetText: '10.0% Max Target', latestText: '10.90% (2025)', status: 'Regressing', statusClass: 'regressing' },
-            localGdp: { label: 'Local GDP (Billion PHP)', years: ['2022', '2023', '2024'], trend: [254.16, 264.71, 273.11], target: [250.0, 260.0, 270.0], targetText: 'Sustained Annual Growth Target', latestText: '₱273.11 Billion (2024)', status: 'Needs Acceleration', statusClass: 'needs-acceleration' },
-            agriBudget: { label: 'Urban Agriculture Budget (Million PHP)', years: ['2021', '2022', '2023', '2024', '2025'], trend: [16.233, 18.50, 18.506, 23.507, 26.48], target: [16.0, 18.0, 18.5, 23.0, 26.0], targetText: 'Annual Increase Target', latestText: '₱26.48 Million (2025)', status: 'On Track', statusClass: 'on-track' },
-            coopReg: { label: 'Cooperative Registration (Count)', years: ['2021', '2022', '2023', '2024', '2025'], trend: [82, 140, 118, 143, 152], target: [82, 90, 99, 109, 120], targetText: '10% Annual Growth Target', latestText: '152 Cooperatives (2025)', status: 'On Track', statusClass: 'on-track' },
-            produceHarvest: { label: 'Volume of Produce Harvested (kg)', years: ['2021', '2022', '2023', '2024'], trend: [5093, 5528, 3371, 6001], target: [7893, 7893, 7893, 7893], targetText: '7,893 kg Target', latestText: '6,001 kg (2024)', status: 'Needs Acceleration', statusClass: 'needs-acceleration' },
-            heritageBudget: { label: 'Cultural Heritage Allocation (PHP / Person)', years: ['2021', '2022', '2023', '2024', '2025'], trend: [0.64, 0.64, 0.64, 0.92, 1.84], target: [0.60, 0.60, 0.60, 0.80, 1.50], targetText: 'Annual Increase Target', latestText: '₱1.84 / person (2025)', status: 'On Track', statusClass: 'on-track' }
+        const SUPABASE_URL = "https://uaareqlqrkgpmltvrjao.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_-RZnuhIwEjepuaXPxmrkSg_iZawf7jO";
+
+        const PILLAR_META = {
+            kabuhayan:  { select: 'kabuhayanMetricSelect',  bannerTarget: 'kabuhayanBannerTarget',  bannerLatest: 'kabuhayanBannerLatest',  bannerStatus: 'kabuhayanBannerStatus',  chartCanvas: 'kabuhayanComparisonChart',  defaultColor: '#003893' },
+            kalusugan:  { select: 'kalusuganMetricSelect',  bannerTarget: 'kalusuganBannerTarget',  bannerLatest: 'kalusuganBannerLatest',  bannerStatus: 'kalusuganBannerStatus',  chartCanvas: 'kalusuganComparisonChart',  defaultColor: '#16a34a' },
+            karunungan: { select: 'karununganMetricSelect', bannerTarget: 'karununganBannerTarget', bannerLatest: 'karununganBannerLatest', bannerStatus: 'karununganBannerStatus', chartCanvas: 'karununganComparisonChart', defaultColor: '#9333ea' },
+            kaunlaran:  { select: 'kaunlaranMetricSelect',  bannerTarget: 'kaunlaranBannerTarget',  bannerLatest: 'kaunlaranBannerLatest',  bannerStatus: 'kaunlaranBannerStatus',  chartCanvas: 'kaunlaranComparisonChart',  defaultColor: '#0284c7' },
+            kalikasan:  { select: 'kalikasanMetricSelect',  bannerTarget: 'kalikasanBannerTarget',  bannerLatest: 'kalikasanBannerLatest',  bannerStatus: 'kalikasanBannerStatus',  chartCanvas: 'kalikasanComparisonChart',  defaultColor: '#15803d' },
+            katarungan: { select: 'katarunganMetricSelect', bannerTarget: 'katarunganBannerTarget', bannerLatest: 'katarunganBannerLatest', bannerStatus: 'katarunganBannerStatus', chartCanvas: 'katarunganComparisonChart', defaultColor: '#dd1367' },
+            kapayapaan: { select: 'kapayapaanMetricSelect', bannerTarget: 'kapayapaanBannerTarget', bannerLatest: 'kapayapaanBannerLatest', bannerStatus: 'kapayapaanBannerStatus', chartCanvas: 'kapayapaanComparisonChart', defaultColor: '#00689d' }
         };
-        let kabuhayanChart = null;
-        function updateKabuhayanChart() {
-            const item = kabuhayanMetrics[document.getElementById('kabuhayanMetricSelect').value];
-            document.getElementById('kabuhayanBannerTarget').textContent = item.targetText;
-            document.getElementById('kabuhayanBannerLatest').textContent = item.latestText;
-            const badge = document.getElementById('kabuhayanBannerStatus');
-            badge.textContent = item.status; badge.className = 'status-badge ' + item.statusClass;
-            const ctx = document.getElementById('kabuhayanComparisonChart').getContext('2d');
-            if (kabuhayanChart) kabuhayanChart.destroy();
-            kabuhayanChart = new Chart(ctx, { type: 'line', data: { labels: item.years, datasets: [{ label: 'Target Benchmark', data: item.target, borderColor: '#d97706', borderDash: [6, 6], fill: false }, { label: '5-Year Trend', data: item.trend, borderColor: '#003893', backgroundColor: 'rgba(0, 56, 147, 0.12)', borderWidth: 3, fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#0f172a', font: { family: 'Montserrat', weight: 700 } } } }, scales: { x: { ticks: { color: '#475569' } }, y: { ticks: { color: '#475569' } } } } });
+
+        const STATUS_CLASS_MAP = { 'On Track': 'on-track', 'Needs Acceleration': 'needs-acceleration', 'Regressing': 'regressing' };
+        const STATUS_COLORS = { 'On Track': '#16a34a', 'Needs Acceleration': '#ca8a04', 'Regressing': '#b91c1c' };
+
+        let supabaseClient = null;
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         }
 
-        // ===============================================
-        // 2. KALUSUGAN METRICS & CHART
-        // ===============================================
-        const kalusuganMetrics = {
-            childImmunization: { label: 'Child Immunization Coverage Rate (%)', years: ['2021', '2022', '2023', '2024', '2025'], trend: [74.00, 61.00, 60.29, 54.65, 50.26], target: [95, 95, 95, 95, 95], targetText: '95% Universal Coverage Target', latestText: '50.26% (2025)', status: 'Regressing', statusClass: 'regressing' },
-            underweight: { label: 'Underweight & Severely Underweight (%)', years: ['2022', '2023', '2024', '2025'], trend: [0.64, 0.62, 0.55, 0.49], target: [0.70, 0.65, 0.60, 0.50], targetText: 'Continuous Reduction Target', latestText: '0.49% (2025)', status: 'On Track', statusClass: 'on-track' },
-            stunted: { label: 'Stunted & Severely Stunted (%)', years: ['2022', '2023', '2024', '2025'], trend: [0.67, 0.65, 0.52, 0.41], target: [0.70, 0.65, 0.60, 0.50], targetText: 'Continuous Reduction Target', latestText: '0.41% (2025)', status: 'On Track', statusClass: 'on-track' },
-            wasted: { label: 'Wasted & Severely Wasted (%)', years: ['2022', '2023', '2024', '2025'], trend: [0.67, 0.65, 0.52, 0.41], target: [0.70, 0.65, 0.60, 0.50], targetText: 'Continuous Reduction Target', latestText: '0.41% (2025)', status: 'On Track', statusClass: 'on-track' },
-            overweight: { label: 'Overweight & Obese (%)', years: ['2022', '2023', '2024', '2025'], trend: [0.16, 0.17, 0.15, 0.14], target: [0.20, 0.18, 0.16, 0.15], targetText: 'Obesity Reduction Target', latestText: '0.14% (2025)', status: 'On Track', statusClass: 'on-track' },
-            tbCases: { label: 'Tuberculosis Cases (Count)', years: ['2023', '2024', '2025'], trend: [3924, 3333, 1718], target: [3500, 2500, 1500], targetText: 'TB Eradication Reduction Target', latestText: '1,718 Cases (2025)', status: 'Needs Acceleration', statusClass: 'needs-acceleration' },
-            animalBites: { label: 'Animal Bites Cases (Count)', years: ['2023', '2024', '2025'], trend: [3924, 3333, 1718], target: [3500, 2500, 1500], targetText: 'Significant Reduction Target', latestText: '1,718 Cases (2025)', status: 'Needs Acceleration', statusClass: 'needs-acceleration' },
-            teenPregnancy: { label: 'Teenage Pregnancy Cases (Count)', years: ['2021', '2022', '2023', '2024', '2025'], trend: [705, 619, 580, 578, 512], target: [600, 550, 500, 450, 400], targetText: 'Lowest Possible Target', latestText: '512 Cases (2025)', status: 'Needs Acceleration', statusClass: 'needs-acceleration' },
-            breastfeeding: { label: 'Exclusive Breastfeeding Rate (0-5 mos) (%)', years: ['2021', '2022', '2023', '2024'], trend: [56.80, 80.00, 84.80, 68.37], target: [50, 50, 50, 50], targetText: 'At least 50% Target', latestText: '68.37% (2024)', status: 'On Track', statusClass: 'on-track' },
-            infantMortality: { label: 'Infant Mortality Rate (per 1,000 live births)', years: ['2021', '2022', '2023', '2024', '2025'], trend: [9.0, 10.65, 13.065, 7.85, 7.69], target: [21, 21, 21, 21, 21], targetText: '≤21 per 1,000 Target', latestText: '7.69 per 1k (2025)', status: 'Regressing', statusClass: 'regressing' }
-        };
-        let kalusuganChart = null;
-        function updateKalusuganChart() {
-            const item = kalusuganMetrics[document.getElementById('kalusuganMetricSelect').value];
-            document.getElementById('kalusuganBannerTarget').textContent = item.targetText;
-            document.getElementById('kalusuganBannerLatest').textContent = item.latestText;
-            const badge = document.getElementById('kalusuganBannerStatus');
-            badge.textContent = item.status; badge.className = 'status-badge ' + item.statusClass;
-            const ctx = document.getElementById('kalusuganComparisonChart').getContext('2d');
-            if (kalusuganChart) kalusuganChart.destroy();
-            kalusuganChart = new Chart(ctx, { type: 'line', data: { labels: item.years, datasets: [{ label: 'Target Benchmark', data: item.target, borderColor: '#d97706', borderDash: [6, 6], fill: false }, { label: '5-Year Trend', data: item.trend, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.12)', borderWidth: 3, fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#0f172a', font: { family: 'Montserrat', weight: 700 } } } }, scales: { x: { ticks: { color: '#475569' } }, y: { ticks: { color: '#475569' } } } } });
+        let sdgRows = [];
+        let metricsByPillar = {};
+        const chartInstances = {};
+
+        function buildMetricsFromRows(rows) {
+            const byPillar = {};
+            for (const pillar of Object.keys(PILLAR_META)) byPillar[pillar] = {};
+            for (const r of rows) {
+                if (r.chart_key && byPillar[r.pillar]) byPillar[r.pillar][r.chart_key] = r;
+            }
+            return byPillar;
         }
 
-        // ===============================================
-        // 3. KARUNUNGAN METRICS & CHART
-        // ===============================================
-        const karununganMetrics = {
-            scholarshipBudget: { label: 'Total Scholarship Budget Allocation (PHP)', years: ['2021', '2022', '2023', '2024', '2025'], trend: [347.58, 409.43, 419.20, 590.82, 606.75], target: [300, 350, 400, 500, 550], targetText: 'Increasing Annually Target', latestText: '₱606.75M (2025)', status: 'On Track', statusClass: 'on-track' },
-            scholarships: { label: 'Scholarships Granted to Marginalized Sector (Count)', years: ['2022', '2023', '2024', '2025'], trend: [82442, 83205, 109349, 110508], target: [80000, 85000, 100000, 105000], targetText: 'Increasing Annually, Full Coverage Target', latestText: '110,508 Recipients (2025)', status: 'On Track', statusClass: 'on-track' },
-            literacy: { label: 'Youth/Adult Basic Literacy Rate (%)', years: ['2022', '2024'], trend: [99.62, 93.10], target: [100, 100], targetText: '100% Literacy Target', latestText: '93.10% (2024 PSA)', status: 'Regressing', statusClass: 'regressing' },
-            completionElem: { label: 'Elem Completion Rate (Kinder to Gr 6) (%)', years: ['2023', '2024', '2025'], trend: [97.87, 98.64, 97.51], target: [97.0, 97.0, 97.0], targetText: 'High Universal Completion Target', latestText: '97.51% (2025)', status: 'On Track', statusClass: 'on-track' },
-            completionJHS: { label: 'JHS Completion Rate (Gr 7 to 10) (%)', years: ['2023', '2024', '2025'], trend: [97.98, 91.13, 92.43], target: [95.0, 95.0, 95.0], targetText: '95% Completion Target', latestText: '92.43% (2025)', status: 'On Track', statusClass: 'on-track' },
-            completionSHS: { label: 'SHS Completion Rate (Gr 7 to 12) (%)', years: ['2023', '2024', '2025'], trend: [83.61, 86.49, 84.21], target: [90.0, 90.0, 90.0], targetText: '90% Completion Target', latestText: '84.21% (2025)', status: 'Needs Acceleration', statusClass: 'needs-acceleration' }
-        };
-        let karununganChart = null;
-        function updateKarununganChart() {
-            const item = karununganMetrics[document.getElementById('karununganMetricSelect').value];
-            document.getElementById('karununganBannerTarget').textContent = item.targetText;
-            document.getElementById('karununganBannerLatest').textContent = item.latestText;
-            const badge = document.getElementById('karununganBannerStatus');
-            badge.textContent = item.status; badge.className = 'status-badge ' + item.statusClass;
-            const ctx = document.getElementById('karununganComparisonChart').getContext('2d');
-            if (karununganChart) karununganChart.destroy();
-            karununganChart = new Chart(ctx, { type: 'line', data: { labels: item.years, datasets: [{ label: 'Target Benchmark', data: item.target, borderColor: '#d97706', borderDash: [6, 6], fill: false }, { label: '5-Year Trend', data: item.trend, borderColor: '#9333ea', backgroundColor: 'rgba(147, 51, 234, 0.12)', borderWidth: 3, fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#0f172a', font: { family: 'Montserrat', weight: 700 } } } }, scales: { x: { ticks: { color: '#475569' } }, y: { ticks: { color: '#475569' } } } } });
+        function populateMetricSelects(rows) {
+            for (const pillar of Object.keys(PILLAR_META)) {
+                const sel = document.getElementById(PILLAR_META[pillar].select);
+                if (!sel) continue;
+                sel.innerHTML = '';
+                const items = rows.filter(r => r.pillar === pillar && r.chart_key).sort((a, b) => a.sort_order - b.sort_order);
+                for (const it of items) {
+                    const opt = document.createElement('option');
+                    opt.value = it.chart_key;
+                    opt.textContent = it.chart_label;
+                    sel.appendChild(opt);
+                }
+            }
         }
 
-        // ===============================================
-        // 4. KAUNLARAN METRICS & CHART
-        // ===============================================
-        const kaunlaranMetrics = {
-            govRevenue: { label: 'Total Government Revenue (Billion PHP)', years: ['2021', '2022', '2023', '2024', '2025'], trend: [6.39, 6.60, 6.53, 6.83, 7.76], target: [6.0, 6.3, 6.5, 6.7, 7.0], targetText: 'Increasing Pattern Target', latestText: '₱7.76 Billion (2025)', status: 'On Track', statusClass: 'on-track' },
-            rdSpend: { label: 'R&D Expenditure of LGU (Billion PHP)', years: ['2023', '2024'], trend: [0.10, 5.65], target: [0.05, 1.0], targetText: 'Increasing Annually Target', latestText: '₱5.65 Billion (2024)', status: 'On Track', statusClass: 'on-track' },
-            birthRegRate: { label: 'Timely Birthyear Registration Rate (%)', years: ['2021', '2022', '2023', '2024'], trend: [92.70, 81.00, 77.00, 73.00], target: [100, 100, 100, 100], targetText: '100% Timely Registration Target', latestText: '73.00% (2024)', status: 'Regressing', statusClass: 'regressing' },
-            internetAccess: { label: 'Proportion of HHs with Internet Access (%)', years: ['2022'], trend: [66.00], target: [100], targetText: '100% Coverage Target', latestText: '66.00% (CBMS 2022)', status: 'Needs Acceleration', statusClass: 'needs-acceleration' }
-        };
-        let kaunlaranChart = null;
-        function updateKaunlaranChart() {
-            const item = kaunlaranMetrics[document.getElementById('kaunlaranMetricSelect').value];
-            document.getElementById('kaunlaranBannerTarget').textContent = item.targetText;
-            document.getElementById('kaunlaranBannerLatest').textContent = item.latestText;
-            const badge = document.getElementById('kaunlaranBannerStatus');
-            badge.textContent = item.status; badge.className = 'status-badge ' + item.statusClass;
-            const ctx = document.getElementById('kaunlaranComparisonChart').getContext('2d');
-            if (kaunlaranChart) kaunlaranChart.destroy();
-            kaunlaranChart = new Chart(ctx, { type: 'line', data: { labels: item.years, datasets: [{ label: 'Target Benchmark', data: item.target, borderColor: '#d97706', borderDash: [6, 6], fill: false }, { label: '5-Year Trend', data: item.trend, borderColor: '#0284c7', backgroundColor: 'rgba(2, 132, 199, 0.12)', borderWidth: 3, fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#0f172a', font: { family: 'Montserrat', weight: 700 } } } }, scales: { x: { ticks: { color: '#475569' } }, y: { ticks: { color: '#475569' } } } } });
+        function updateComparisonChart(pillar) {
+            const meta = PILLAR_META[pillar];
+            const sel = document.getElementById(meta.select);
+            if (!sel) return;
+            const pillarMetrics = metricsByPillar[pillar];
+            const item = pillarMetrics ? pillarMetrics[sel.value] : undefined;
+            if (!item) return;
+            document.getElementById(meta.bannerTarget).textContent = item.chart_target_text || '';
+            document.getElementById(meta.bannerLatest).textContent = item.chart_latest_text || '';
+            const badge = document.getElementById(meta.bannerStatus);
+            badge.textContent = item.status || '';
+            badge.className = 'status-badge ' + (item.chart_status_class || STATUS_CLASS_MAP[item.status] || 'on-track');
+            const canvas = document.getElementById(meta.chartCanvas);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (chartInstances[pillar]) chartInstances[pillar].destroy();
+            chartInstances[pillar] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: item.chart_years || [],
+                    datasets: [
+                        { label: 'Target Benchmark', data: item.chart_target || [], borderColor: '#d97706', borderDash: [6, 6], fill: false },
+                        { label: '5-Year Trend', data: item.chart_trend || [], borderColor: item.chart_color || meta.defaultColor, backgroundColor: 'rgba(0, 56, 147, 0.12)', borderWidth: 3, fill: true, tension: 0.3 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#0f172a', font: { family: 'Montserrat', weight: 700 } } } },
+                    scales: { x: { ticks: { color: '#475569' } }, y: { ticks: { color: '#475569' } } }
+                }
+            });
         }
 
-        // ===============================================
-        // 5. KALIKASAN METRICS & CHART
-        // ===============================================
-        const kalikasanMetrics = {
-            airPm25: { label: 'Air Quality PM2.5 Level (µg/m³)', years: ['2021', '2024', '2025'], trend: [15.0, 8.20, 4.67], target: [5.0, 5.0, 5.0], targetText: '≤ 5 µg/m³ Annual Avg Target', latestText: '4.67 µg/m³ (2025)', status: 'On Track', statusClass: 'on-track' },
-            airPm10: { label: 'Air Quality PM10 Level (µg/m³)', years: ['2021', '2022', '2023', '2024', '2025'], trend: [19.60, 19.00, 14.75, 13.00, 6.67], target: [15.0, 15.0, 15.0, 15.0, 15.0], targetText: '≤ 15 µg/m³ Target', latestText: '6.67 µg/m³ (2025)', status: 'On Track', statusClass: 'on-track' },
-            wasteDiversion: { label: 'Waste Diversion Rate (%)', years: ['2021', '2022', '2023'], trend: [39.18, 9.26, 34.02], target: [50.0, 55.0, 60.0], targetText: '50-65% Target', latestText: '34.02% (2023)', status: 'Needs Acceleration', statusClass: 'needs-acceleration' },
-            conservationBudget: { label: 'Conservation Budget Allocation (Million PHP)', years: ['2021', '2022', '2023', '2024', '2025'], trend: [0.97, 0.21, 0.85, 0.60, 2.37], target: [0.50, 0.60, 0.70, 0.80, 1.00], targetText: 'Significant Increase Target', latestText: '₱2.37M (2025)', status: 'On Track', statusClass: 'on-track' },
-            electricityAccess: { label: 'Population Electricity Access (%)', years: ['2021', '2023'], trend: [97.50, 95.98], target: [100, 100], targetText: '100% Coverage Target', latestText: '95.98% (2023)', status: 'Needs Acceleration', statusClass: 'needs-acceleration' }
-        };
-        let kalikasanChart = null;
-        function updateKalikasanChart() {
-            const item = kalikasanMetrics[document.getElementById('kalikasanMetricSelect').value];
-            document.getElementById('kalikasanBannerTarget').textContent = item.targetText;
-            document.getElementById('kalikasanBannerLatest').textContent = item.latestText;
-            const badge = document.getElementById('kalikasanBannerStatus');
-            badge.textContent = item.status; badge.className = 'status-badge ' + item.statusClass;
-            const ctx = document.getElementById('kalikasanComparisonChart').getContext('2d');
-            if (kalikasanChart) kalikasanChart.destroy();
-            kalikasanChart = new Chart(ctx, { type: 'line', data: { labels: item.years, datasets: [{ label: 'Target Benchmark', data: item.target, borderColor: '#d97706', borderDash: [6, 6], fill: false }, { label: '5-Year Trend', data: item.trend, borderColor: '#15803d', backgroundColor: 'rgba(21, 128, 61, 0.12)', borderWidth: 3, fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#0f172a', font: { family: 'Montserrat', weight: 700 } } } }, scales: { x: { ticks: { color: '#475569' } }, y: { ticks: { color: '#475569' } } } } });
+        function ensurePillarChart(pillar) {
+            if (!chartInstances[pillar]) updateComparisonChart(pillar);
         }
 
-        // ===============================================
-        // 6. KATARUNGAN METRICS & CHART
-        // ===============================================
-        const katarunganMetrics = {
-            finAssistance: { label: 'Local Financial Assistance Coverage (Count)', years: ['2022', '2023', '2024', '2025'], trend: [3812, 15172, 18889, 22831], target: [3000, 10000, 15000, 20000], targetText: 'Increasing Annually Target', latestText: '22,831 Beneficiaries (2025)', status: 'On Track', statusClass: 'on-track' },
-            gadBudget: { label: 'Budget Allocation for GAD Program (Million PHP)', years: ['2021', '2022', '2023', '2024', '2025'], trend: [23.59, 25.90, 27.90, 31.57, 26.38], target: [20.0, 22.0, 25.0, 28.0, 30.0], targetText: 'Increasing Annually Target', latestText: '₱26.38 Million (2025)', status: 'On Track', statusClass: 'on-track' },
-            vawcCases: { label: 'Incidence of VAWC Cases (Count)', years: ['2021', '2022', '2023'], trend: [422, 510, 531], target: [0, 0, 0], targetText: 'Ideal Target Zero', latestText: '531 Cases (2023)', status: 'Regressing', statusClass: 'regressing' },
-            isfPop: { label: 'Informal Settler Families Population (Count)', years: ['2021', '2022', '2023', '2024', '2025'], trend: [19575, 23201, 23201, 23201, 23471], target: [15000, 12000, 10000, 8000, 5000], targetText: 'Near Zero ISFs Target', latestText: '23,471 ISFs (2025)', status: 'Regressing', statusClass: 'regressing' }
-        };
-        let katarunganChart = null;
-        function updateKatarunganChart() {
-            const item = katarunganMetrics[document.getElementById('katarunganMetricSelect').value];
-            document.getElementById('katarunganBannerTarget').textContent = item.targetText;
-            document.getElementById('katarunganBannerLatest').textContent = item.latestText;
-            const badge = document.getElementById('katarunganBannerStatus');
-            badge.textContent = item.status; badge.className = 'status-badge ' + item.statusClass;
-            const ctx = document.getElementById('katarunganComparisonChart').getContext('2d');
-            if (katarunganChart) katarunganChart.destroy();
-            katarunganChart = new Chart(ctx, { type: 'line', data: { labels: item.years, datasets: [{ label: 'Target Benchmark', data: item.target, borderColor: '#d97706', borderDash: [6, 6], fill: false }, { label: '5-Year Trend', data: item.trend, borderColor: '#dd1367', backgroundColor: 'rgba(221, 19, 103, 0.12)', borderWidth: 3, fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#0f172a', font: { family: 'Montserrat', weight: 700 } } } }, scales: { x: { ticks: { color: '#475569' } }, y: { ticks: { color: '#475569' } } } } });
-        }
-
-        // ===============================================
-        // 7. KAPAYAPAAN METRICS & CHART
-        // ===============================================
-        const kapayapaanMetrics = {
-            roadAccidents: { label: 'Road Accident Cases (Count)', years: ['2021', '2022', '2023', '2024'], trend: [2515, 2423, 2484, 2622], target: [1250, 1250, 1250, 1250], targetText: 'Reduce to Half Target', latestText: '2,622 Cases (2024)', status: 'Regressing', statusClass: 'regressing' },
-            substanceUse: { label: 'Substance Use Treatment Interventions (Count)', years: ['2021', '2022', '2023'], trend: [28, 69, 69], target: [20, 50, 60], targetText: '100% Coverage Target', latestText: '69 Interventions (2023)', status: 'On Track', statusClass: 'on-track' },
-            homicideRate: { label: 'Homicide Rate (per 100,000 Population)', years: ['2022', '2023', '2024'], trend: [1.47, 1.47, 0.37], target: [1.0, 1.0, 0.5], targetText: 'Significantly Reduce Target', latestText: '0.37 per 100k (2024)', status: 'Needs Acceleration', statusClass: 'needs-acceleration' },
-            safetyFeeling: { label: 'Proportion Feeling Safe Walking Alone (%)', years: ['2022'], trend: [79.82], target: [100], targetText: '100% Target', latestText: '79.82% (CBMS 2022)', status: 'Needs Acceleration', statusClass: 'needs-acceleration' }
-        };
-        let kapayapaanChart = null;
-        function updateKapayapaanChart() {
-            const item = kapayapaanMetrics[document.getElementById('kapayapaanMetricSelect').value];
-            document.getElementById('kapayapaanBannerTarget').textContent = item.targetText;
-            document.getElementById('kapayapaanBannerLatest').textContent = item.latestText;
-            const badge = document.getElementById('kapayapaanBannerStatus');
-            badge.textContent = item.status; badge.className = 'status-badge ' + item.statusClass;
-            const ctx = document.getElementById('kapayapaanComparisonChart').getContext('2d');
-            if (kapayapaanChart) kapayapaanChart.destroy();
-            kapayapaanChart = new Chart(ctx, { type: 'line', data: { labels: item.years, datasets: [{ label: 'Target Benchmark', data: item.target, borderColor: '#d97706', borderDash: [6, 6], fill: false }, { label: '5-Year Trend', data: item.trend, borderColor: '#00689d', backgroundColor: 'rgba(0, 104, 157, 0.12)', borderWidth: 3, fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#0f172a', font: { family: 'Montserrat', weight: 700 } } } }, scales: { x: { ticks: { color: '#475569' } }, y: { ticks: { color: '#475569' } } } } });
-        }
+        // Wrappers matching the select onchange handlers
+        function updateKabuhayanChart() { updateComparisonChart('kabuhayan'); }
+        function updateKalusuganChart() { updateComparisonChart('kalusugan'); }
+        function updateKarununganChart() { updateComparisonChart('karunungan'); }
+        function updateKaunlaranChart() { updateComparisonChart('kaunlaran'); }
+        function updateKalikasanChart() { updateComparisonChart('kalikasan'); }
+        function updateKatarunganChart() { updateComparisonChart('katarungan'); }
+        function updateKapayapaanChart() { updateComparisonChart('kapayapaan'); }
 
         // ===============================================
         // SDG PROGRESS BARS — compute from table data
         // ===============================================
-        const STATUS_COLORS = {
-            'On Track': '#16a34a',
-            'Needs Acceleration': '#ca8a04',
-            'Regressing': '#b91c1c'
-        };
-
         function computeSDGProgress() {
             const counts = {};
             for (let g = 1; g <= 17; g++) counts[g] = { onTrack: 0, needsAccel: 0, regressing: 0 };
@@ -2778,11 +1766,155 @@
             }
         }
 
-        // Initialize default Kabuhayan Chart on load
-        window.addEventListener('DOMContentLoaded', () => {
-            updateKabuhayanChart();
-            computeSDGProgress();
+        // Render one table row from a database record
+        const YEAR_COLS = ['value_2021', 'value_2022', 'value_2023', 'value_2024', 'value_2025'];
 
+        function buildTableRow(r) {
+            const tr = document.createElement('tr');
+            tr.setAttribute('data-status', r.status || '');
+            const td = (cls) => { const c = document.createElement('td'); if (cls) c.className = cls; return c; };
+
+            const targetTd = td('target-col');
+            targetTd.textContent = r.sdg_target;
+            tr.appendChild(targetTd);
+
+            const indTd = td('indicator-col');
+            indTd.textContent = r.indicator_name;
+            tr.appendChild(indTd);
+
+            const sdgTd = td('sdg-num-col');
+            const container = document.createElement('div');
+            container.className = 'table-sdg-container';
+            const img = document.createElement('img');
+            img.src = '../assets/images/sdg-' + r.sdg_goal + '.png';
+            img.alt = 'SDG ' + r.sdg_goal;
+            img.className = 'table-sdg-img';
+            const span = document.createElement('span');
+            span.textContent = 'SDG ' + r.sdg_goal;
+            container.appendChild(img);
+            container.appendChild(span);
+            sdgTd.appendChild(container);
+            tr.appendChild(sdgTd);
+
+            const locTd = td('sdg-target-col');
+            locTd.textContent = r.localized_target;
+            tr.appendChild(locTd);
+
+            for (const col of YEAR_COLS) {
+                tr.appendChild(yearCell(r[col]));
+            }
+
+            const srcTd = td('source-col');
+            srcTd.textContent = r.source || '';
+            tr.appendChild(srcTd);
+
+            const statusTd = td('center');
+            const badge = document.createElement('span');
+            badge.className = 'status-badge ' + (STATUS_CLASS_MAP[r.status] || 'on-track');
+            badge.textContent = r.status || '';
+            statusTd.appendChild(badge);
+            tr.appendChild(statusTd);
+
+            return tr;
+        }
+
+        function yearCell(value) {
+            const td = document.createElement('td');
+            td.className = 'center trend-val';
+            const v = (value === null || value === undefined) ? '-' : String(value);
+            if (v.indexOf('(prelim)') > -1) {
+                const parts = v.split('(prelim)');
+                td.appendChild(document.createTextNode(parts[0].trim() + ' '));
+                const small = document.createElement('small');
+                small.style.color = 'var(--text-muted)';
+                small.textContent = '(prelim)';
+                td.appendChild(small);
+                const rest = parts.slice(1).join('(prelim)').trim();
+                if (rest) td.appendChild(document.createTextNode(rest));
+            } else {
+                td.textContent = v;
+            }
+            return td;
+        }
+
+        function renderPillarTables(rows) {
+            const byPillar = {};
+            for (const r of rows) {
+                (byPillar[r.pillar] = byPillar[r.pillar] || []).push(r);
+            }
+            for (const pillar of Object.keys(PILLAR_META)) {
+                const table = document.getElementById(pillar + 'Table');
+                if (!table) continue;
+                const tbody = table.querySelector('tbody');
+                if (!tbody) continue;
+                tbody.innerHTML = '';
+                const list = (byPillar[pillar] || []).slice().sort((a, b) => a.sort_order - b.sort_order);
+                for (const r of list) {
+                    tbody.appendChild(buildTableRow(r));
+                }
+            }
+        }
+
+        function updateKPIsAndFilters(rows) {
+            for (const pillar of Object.keys(PILLAR_META)) {
+                const list = rows.filter(r => r.pillar === pillar);
+                const onTrack = list.filter(r => r.status === 'On Track').length;
+                const needsAccel = list.filter(r => r.status === 'Needs Acceleration').length;
+                const regressing = list.filter(r => r.status === 'Regressing').length;
+                const total = list.length;
+
+                const box = document.getElementById(pillar);
+                if (!box) continue;
+
+                const values = box.querySelectorAll('.kpi-card .kpi-value');
+                if (values.length >= 4) {
+                    values[0].textContent = total;
+                    values[1].textContent = onTrack;
+                    values[2].textContent = needsAccel;
+                    values[3].textContent = regressing;
+                }
+
+                const pcts = [
+                    null,
+                    total ? Math.round((onTrack / total) * 1000) / 10 : 0,
+                    total ? Math.round((needsAccel / total) * 1000) / 10 : 0,
+                    total ? Math.round((regressing / total) * 1000) / 10 : 0
+                ];
+                const subs = box.querySelectorAll('.kpi-card .kpi-sub');
+                for (let i = 1; i < subs.length; i++) {
+                    if (/% of total/.test(subs[i].textContent)) {
+                        subs[i].textContent = pcts[i] + '% of total';
+                    }
+                }
+
+                const buttons = box.querySelectorAll('.filter-btn');
+                const counts = [total, onTrack, needsAccel, regressing];
+                for (let i = 0; i < buttons.length; i++) {
+                    const name = buttons[i].textContent.replace(/\s*\(\d+\)\s*$/, '').trim();
+                    buttons[i].textContent = name + ' (' + counts[i] + ')';
+                }
+            }
+        }
+
+        function showTableError() {
+            for (const pillar of Object.keys(PILLAR_META)) {
+                const table = document.getElementById(pillar + 'Table');
+                if (!table) continue;
+                const tbody = table.querySelector('tbody');
+                if (!tbody) continue;
+                tbody.innerHTML = '';
+                const tr = document.createElement('tr');
+                const tdEl = document.createElement('td');
+                tdEl.colSpan = 11;
+                tdEl.textContent = 'Failed to load data from the database. Please check the connection and try again.';
+                tdEl.style.textAlign = 'center';
+                tdEl.style.padding = '24px';
+                tr.appendChild(tdEl);
+                tbody.appendChild(tr);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
             const hamburgerBtn = document.getElementById('hamburger-btn');
             const sidebar = document.getElementById('sector-sidebar');
             const overlay = document.getElementById('sidebar-overlay');
@@ -2792,6 +1924,26 @@
             if (hamburgerBtn) hamburgerBtn.addEventListener('click', openSidebar);
             if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
             if (overlay) overlay.addEventListener('click', closeSidebar);
+
+            (async () => {
+                if (!supabaseClient) { showTableError(); return; }
+                const { data, error } = await supabaseClient
+                    .from('sdg_localization')
+                    .select('*')
+                    .order('sort_order', { ascending: true });
+                if (error || !data) {
+                    console.error('SDG Localization fetch error:', error);
+                    showTableError();
+                    return;
+                }
+                sdgRows = data;
+                metricsByPillar = buildMetricsFromRows(data);
+                populateMetricSelects(data);
+                renderPillarTables(data);
+                updateKPIsAndFilters(data);
+                updateComparisonChart('kabuhayan');
+                computeSDGProgress();
+            })();
         });
     </script>
 </body>
