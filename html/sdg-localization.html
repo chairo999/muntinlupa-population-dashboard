@@ -109,6 +109,17 @@
             margin-bottom: 0;
         }
 
+        .pillars-grid .intro-section {
+            grid-column: span 3;
+            margin-bottom: 0;
+            height: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 6px 18px rgba(0, 56, 147, 0.15);
+        }
+
         /* 7K PILLARS GRID BUTTONS */
         .pillars-section-title {
             font-size: 1.15rem;
@@ -659,6 +670,7 @@
                 .main-card { padding: 20px; }
                 h1 { font-size: 1.8rem; }
                 .pillars-grid { grid-template-columns: 1fr; }
+                .pillars-grid .intro-section { grid-column: auto; }
                 .sdg-logos-panel { padding: 16px; }
                 .sdg-logos-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
                 .sdg-logo-card img { max-width: 180px; }
@@ -865,22 +877,10 @@
     <div class="container">
         <div class="main-card">
             <div class="header-title">
-                <h1>SDG Localization Dashboard</h1>
-                <p class="subtitle">City Government of Muntinlupa • 7K Agenda Alignment</p>
-            </div>
-
-            <!-- Intro Section -->
-            <div class="intro-section">
-                <p class="intro-text">
-                    The City Government of Muntinlupa advances its development priorities through the 7K Agenda, the governing thrust of Mayor Ruffy Biazon. Anchored on seven pillars—Kabuhayan, Kalusugan, Karunungan, Kaunlaran, Kapayapaan at Kaayusan, Kalikasan, and Katarungan—this agenda provides a clear framework for inclusive growth and responsive governance.
-                </p>
-                <p class="intro-text">
-                    Each pillar is strategically aligned with the United Nations Sustainable Development Goals (SDGs), underscoring the importance of localizing global targets into concrete programs that directly benefit communities. By integrating the SDGs into the local government, Muntinlupa ensures that its initiatives are globally relevant while remaining locally grounded, strengthening resilience, equity, and sustainability across all sectors.
-                </p>
             </div>
 
             <!-- 7K PILLARS GRAPHIC BUTTONS GRID WITH ORIGINAL SDG IMAGE TILES -->
-            <div class="pillars-section-title">Select 7K Agenda Pillar</div>
+            <div class="pillars-section-title">7K Agenda Pillar</div>
             <div class="pillars-grid">
                 <!-- Pillar 1: Kabuhayan -->
                 <button class="pillar-card-btn active" data-pillar="kabuhayan" onclick="switchPillar('kabuhayan', this)">
@@ -985,6 +985,16 @@
                         <img src="../assets/images/sdg-16.png" alt="SDG 16 Peace & Justice" class="sdg-btn-img">
                     </div>
                 </button>
+
+                <!-- Intro Section: 7K Agenda beside Peace & Order -->
+                <div class="intro-section">
+                    <p class="intro-text">
+                        The City Government of Muntinlupa advances its development priorities through the 7K Agenda, the governing thrust of Mayor Ruffy Biazon. Anchored on seven pillars—Kabuhayan, Kalusugan, Karunungan, Kaunlaran, Kapayapaan at Kaayusan, Kalikasan, and Katarungan—this agenda provides a clear framework for inclusive growth and responsive governance.
+                    </p>
+                    <p class="intro-text">
+                        Each pillar is strategically aligned with the United Nations Sustainable Development Goals (SDGs), underscoring the importance of localizing global targets into concrete programs that directly benefit communities. By integrating the SDGs into the local government, Muntinlupa ensures that its initiatives are globally relevant while remaining locally grounded, strengthening resilience, equity, and sustainability across all sectors.
+                    </p>
+                </div>
             </div>
 
             <!-- ========================================== -->
