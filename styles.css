@@ -1241,7 +1241,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: var(--bg-image, url('assets/images/ep.jpg'));
+    background-image: var(--bg-image, url('assets/images/ep.webp'));
     background-size: cover;
     background-position: center;
     opacity: 0.4;
