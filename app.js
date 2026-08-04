@@ -298,7 +298,8 @@ function renderDashboard() {
         historyData = brgy.history || new Array(HISTORICAL_LABELS.length).fill(0);
 
         // UI Label Insertion
-        document.getElementById("selected-brgy-val").textContent = `${selectedBarangay} (${selectedYear})`;
+        document.getElementById("selected-brgy-name").textContent = selectedBarangay;
+        document.getElementById("selected-brgy-year").textContent = `(${selectedYear})`;
         document.getElementById("selected-badge").textContent = `${selectedBarangay} Analytics — ${selectedYear}`;
     } else {
         // Aggregate City-Wide
@@ -306,7 +307,8 @@ function renderDashboard() {
         totalPopulation = cwStats.total;
         historyData = cwStats.history;
 
-        document.getElementById("selected-brgy-val").textContent = `City-Wide (${selectedYear})`;
+        document.getElementById("selected-brgy-name").textContent = `City-Wide`;
+        document.getElementById("selected-brgy-year").textContent = `(${selectedYear})`;
         document.getElementById("selected-badge").textContent = `City-Wide Analytics — ${selectedYear}`;
     }
 
@@ -322,7 +324,7 @@ function renderDashboard() {
     if (ageChartCard) ageChartCard.style.display = 'none';
 
     // Update main overall Counter widget
-    const totalEl = document.getElementById("total-pop-val");
+    const totalEl = document.getElementById("total-pop-val-value");
     countUp(totalEl, totalPopulation, 600);
 
     // Animate current view label
@@ -812,8 +814,12 @@ function updateProjectedGenderCards(year) {
     if (!data) return;
     var maleTotal = data.male.reduce(function(a, b) { return a + b; }, 0);
     var femaleTotal = data.female.reduce(function(a, b) { return a + b; }, 0);
-    countUp(document.getElementById('projected-male-val'), maleTotal, 600);
-    countUp(document.getElementById('projected-female-val'), femaleTotal, 600);
+    countUp(document.getElementById('projected-male-val-value'), maleTotal, 600);
+    countUp(document.getElementById('projected-female-val-value'), femaleTotal, 600);
+    var maleYear = document.getElementById('projected-male-year');
+    var femaleYear = document.getElementById('projected-female-year');
+    if (maleYear) maleYear.textContent = '(' + year + ')';
+    if (femaleYear) femaleYear.textContent = '(' + year + ')';
 }
 
 function populatePyramidYearSelect() {

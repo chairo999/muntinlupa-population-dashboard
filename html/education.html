@@ -160,6 +160,7 @@
             display: grid;
             grid-template-columns: 280px 1fr;
             gap: 24px;
+            align-items: start;
         }
 
         @media (max-width: 768px) {
@@ -463,9 +464,9 @@
                     <i class="fa-solid fa-book-open"></i>
                 </div>
                 <div class="stat-data">
-                    <span class="stat-label">Functional Literacy (2024)</span>
+                    <span class="stat-label">Functional Literacy</span>
                     <h2 id="card-literacy">93.10%</h2>
-                    <span class="stat-pct" style="color: var(--text-muted)">PSA Functional Survey</span>
+                    <span class="stat-pct" style="color: var(--text-muted)">PSA Functional Survey <span class="stat-latest">(2024)</span></span>
                 </div>
             </div>
             <div class="stat-card">
@@ -473,9 +474,9 @@
                     <i class="fa-solid fa-school"></i>
                 </div>
                 <div class="stat-data">
-                    <span class="stat-label">Total Schools (2025)</span>
+                    <span class="stat-label">Total Schools</span>
                     <h2 id="card-schools">98</h2>
-                    <span class="stat-pct" id="card-schools-split" style="color: var(--text-muted)">28 Public, 70 Private</span>
+                    <span class="stat-pct" style="color: var(--text-muted)"><span id="card-schools-split">28 Public, 70 Private</span> <span class="stat-latest">(2025)</span></span>
                 </div>
             </div>
             <div class="stat-card">
@@ -485,7 +486,7 @@
                 <div class="stat-data">
                     <span class="stat-label">K-12 Student Enrollment</span>
                     <h2 id="card-enrollment">110,239</h2>
-                    <span class="stat-pct" style="color: var(--text-muted)">Public & Private Schools</span>
+                    <span class="stat-pct" style="color: var(--text-muted)">Public & Private Schools <span class="stat-latest">(Latest)</span></span>
                 </div>
             </div>
             <div class="stat-card">
@@ -493,9 +494,9 @@
                     <i class="fa-solid fa-user-graduate"></i>
                 </div>
                 <div class="stat-data">
-                    <span class="stat-label">CDM College Enrollment</span>
+                    <span class="stat-label">College Enrollment</span>
                     <h2 id="card-cdm">2,821</h2>
-                    <span class="stat-pct" id="card-cdm-split" style="color: var(--text-muted)">1,722 Male | 1,099 Female</span>
+                    <span class="stat-pct" id="card-cdm-split" style="color: var(--text-muted)">1,722 Male, 1,099 Female <span class="stat-latest">(Latest)</span></span>
                 </div>
             </div>
         </section>
@@ -542,30 +543,25 @@
 
             </div>
 
-            <!-- Chart 3: CDM Course Program Enrollees (Horizontal bar chart) -->
+            <!-- Chart 3: TESDA MCTI Training Trainees -->
             <div class="charts-container-grid">
                 
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
-                        <h5><i class="fa-solid fa-building-columns"></i> Colegio de Muntinlupa (CDM) Enrollment</h5>
-                        <select id="cdmChartType" class="chart-type-select">
+                        <h5><i class="fa-solid fa-tools"></i> TESDA MCTI Training Trainees</h5>
+                        <select id="tesdaChartType" class="chart-type-select">
                             <option value="bar">Bar Graph</option>
                             <option value="line">Line Graph</option>
                             <option value="pie">Pie Graph</option>
                         </select>
                     </div>
                     <div class="canvas-container">
-                        <canvas id="cdmChart"></canvas>
-                    </div>
-                    <div class="cdm-gender-summary" style="display: flex; justify-content: space-around; font-size: 0.78rem; font-weight: 700; background: #f8fafc; padding: 8px 12px; border-radius: 6px; margin-top: 4px; border: 1px solid rgba(15, 23, 42, 0.05);">
-                        <span style="color: #475569;"><i class="fa-solid fa-users"></i> Total Enrolled: <strong>2,821</strong></span>
-                        <span style="color: #2563eb;"><i class="fa-solid fa-mars"></i> Male: <strong>1,722</strong> (61.0%)</span>
-                        <span style="color: #db2777;"><i class="fa-solid fa-venus"></i> Female: <strong>1,099</strong> (39.0%)</span>
+                        <canvas id="tesdaChart"></canvas>
                     </div>
                     <div class="chart-reference">
-                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> Colegio de Muntinlupa (CDM) Registrar, SY 2025
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> Muntinlupa City Technical Institute (MCTI) / TESDA, 2025
                     </div>
-               </div>
+                </div>
 
                 <!-- Chart 4: Barangay ECCD Day Care Spotlight Widget -->
                 <div class="chart-card">
@@ -609,7 +605,7 @@
                         </div>
 
                         <!-- Bar chart inside Daycare card -->
-                        <div class="canvas-container" style="height: 250px;">
+                        <div class="canvas-container" style="height: 350px;">
                             <canvas id="daycareChart"></canvas>
                         </div>
                     </div>
@@ -674,7 +670,7 @@
                                 <option value="line">Line Graph</option>
                             </select>
                         </div>
-                        <div class="canvas-container" style="height: 330px;">
+                        <div class="canvas-container" style="flex: 1; min-height: 330px;">
                             <canvas id="perfChart"></canvas>
                         </div>
                     </div>
@@ -700,26 +696,36 @@
                     <div class="canvas-container">
                         <canvas id="plmunChart"></canvas>
                     </div>
+                    <div class="plmun-gender-summary" style="display: flex; justify-content: space-around; font-size: 0.78rem; font-weight: 700; background: #f8fafc; padding: 8px 12px; border-radius: 6px; margin-top: 4px; border: 1px solid rgba(15, 23, 42, 0.05);">
+                        <span style="color: #475569;"><i class="fa-solid fa-users"></i> Total Enrolled: <strong id="plmun-total">0</strong></span>
+                        <span style="color: #2563eb;"><i class="fa-solid fa-mars"></i> Male: <strong id="plmun-male">0</strong> (<span id="plmun-male-pct">0.0%</span>)</span>
+                        <span style="color: #db2777;"><i class="fa-solid fa-venus"></i> Female: <strong id="plmun-female">0</strong> (<span id="plmun-female-pct">0.0%</span>)</span>
+                    </div>
                     <div class="chart-reference">
                         <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> Pamantasan ng Lungsod ng Muntinlupa (PLMUN), AY 2022-2023
                     </div>
                 </div>
                 <div class="chart-card">
                     <div class="chart-title-wrapper">
-                        <h5><i class="fa-solid fa-tools"></i> TESDA MCTI Training Trainees</h5>
-                        <select id="tesdaChartType" class="chart-type-select">
+                        <h5><i class="fa-solid fa-building-columns"></i> Colegio de Muntinlupa (CDM) Enrollment</h5>
+                        <select id="cdmChartType" class="chart-type-select">
                             <option value="bar">Bar Graph</option>
                             <option value="line">Line Graph</option>
                             <option value="pie">Pie Graph</option>
                         </select>
                     </div>
                     <div class="canvas-container">
-                        <canvas id="tesdaChart"></canvas>
+                        <canvas id="cdmChart"></canvas>
+                    </div>
+                    <div class="cdm-gender-summary" style="display: flex; justify-content: space-around; font-size: 0.78rem; font-weight: 700; background: #f8fafc; padding: 8px 12px; border-radius: 6px; margin-top: 4px; border: 1px solid rgba(15, 23, 42, 0.05);">
+                        <span style="color: #475569;"><i class="fa-solid fa-users"></i> Total Enrolled: <strong>2,821</strong></span>
+                        <span style="color: #2563eb;"><i class="fa-solid fa-mars"></i> Male: <strong>1,722</strong> (61.0%)</span>
+                        <span style="color: #db2777;"><i class="fa-solid fa-venus"></i> Female: <strong>1,099</strong> (39.0%)</span>
                     </div>
                     <div class="chart-reference">
-                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> Muntinlupa City Technical Institute (MCTI) / TESDA, 2025
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> Colegio de Muntinlupa (CDM) Registrar, SY 2025
                     </div>
-                </div>
+               </div>
             </div>
         </div>
 
@@ -1068,7 +1074,16 @@
                 const v = getLatestValue(k);
                 if (v) cdmTot += v;
             });
-            countUp(document.getElementById("card-cdm"), cdmTot, 600);
+            let plmunTot = 0;
+            Object.keys(plmunData).forEach(p => {
+                const maleHist = plmunData[p].male || {};
+                const femaleHist = plmunData[p].female || {};
+                const mYears = Object.keys(maleHist).sort();
+                if (mYears.length > 0) plmunTot += (maleHist[mYears[mYears.length - 1]] || 0);
+                const fYears = Object.keys(femaleHist).sort();
+                if (fYears.length > 0) plmunTot += (femaleHist[fYears[fYears.length - 1]] || 0);
+            });
+            countUp(document.getElementById("card-cdm"), cdmTot + plmunTot, 600);
 
             const pubSchools = getLatestValue("Public Schools Count");
             const privSchools = getLatestValue("Private Schools Count");
@@ -1384,6 +1399,17 @@
                 }
                 return 0;
             });
+
+            const maleTotal = maleData.reduce((a, b) => a + (b || 0), 0);
+            const femaleTotal = femaleData.reduce((a, b) => a + (b || 0), 0);
+            const plmunGrandTotal = maleTotal + femaleTotal;
+            const plmunMalePct = plmunGrandTotal > 0 ? ((maleTotal / plmunGrandTotal) * 100).toFixed(1) : "0.0";
+            const plmunFemalePct = plmunGrandTotal > 0 ? ((femaleTotal / plmunGrandTotal) * 100).toFixed(1) : "0.0";
+            document.getElementById("plmun-total").textContent = plmunGrandTotal.toLocaleString();
+            document.getElementById("plmun-male").textContent = maleTotal.toLocaleString();
+            document.getElementById("plmun-female").textContent = femaleTotal.toLocaleString();
+            document.getElementById("plmun-male-pct").textContent = plmunMalePct + "%";
+            document.getElementById("plmun-female-pct").textContent = plmunFemalePct + "%";
             const ctx = document.getElementById("plmunChart").getContext("2d");
 
 
@@ -1548,10 +1574,10 @@
                         ]
                     },
                     options: baseLineOpts({
-                        indexAxis: tesdaChartType === "bar" ? "y" : "x",
+                        indexAxis: "x",
                         scales: {
-                            x: { stacked: tesdaChartType === "bar", beginAtZero: true, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } },
-                            y: { stacked: tesdaChartType === "bar", grid: { display: false }, ticks: { color: "#000000b3" } }
+                            y: { stacked: tesdaChartType === "bar", beginAtZero: true, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } },
+                            x: { stacked: tesdaChartType === "bar", grid: { display: false }, ticks: { color: "#000000b3", autoSkip: false } }
                         },
                         plugins: { legend: { display: true, position: 'bottom', labels: { boxWidth: 12, padding: 14, color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}`) }
                     })

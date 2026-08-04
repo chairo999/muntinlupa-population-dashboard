@@ -16,7 +16,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../styles.css">
 </head>
-<body>
+<body class="population-page">
     <!-- Header Section -->
     <header class="dashboard-header">
         <a class="header-logo" href="landing-page.html">
@@ -66,7 +66,8 @@
                 </div>
                 <div class="stat-data">
                     <span class="stat-label">Total Population</span>
-                    <h2 id="total-pop-val">0</h2>
+                    <h2 id="total-pop-val"><span id="total-pop-val-value">0</span></h2>
+                    <span class="stat-pct" style="color: var(--text-muted)"><span class="stat-latest">(Latest)</span></span>
                 </div>
             </div>
             <div class="stat-card" id="card-selected">
@@ -75,25 +76,30 @@
                 </div>
                 <div class="stat-data">
                     <span class="stat-label">Current View</span>
-                    <h2 id="selected-brgy-val">City-Wide</h2>
+                    <h2 id="selected-brgy-val"><span id="selected-brgy-name">City-Wide</span></h2>
+                    <span class="stat-pct" style="color: var(--text-muted)"><span class="stat-latest" id="selected-brgy-year">(2024)</span></span>
                 </div>
             </div>
-            <div class="stat-card" id="card-projected-male">
-                <div class="stat-icon-wrapper male-icon">
-                    <i class="fa-solid fa-mars"></i>
+            <div class="stats-banner-group">
+                <div class="stat-card" id="card-projected-male">
+                    <div class="stat-icon-wrapper male-icon">
+                        <i class="fa-solid fa-mars"></i>
+                    </div>
+                    <div class="stat-data">
+                        <span class="stat-label">Total Projected Male</span>
+                        <h2 id="projected-male-val"><span id="projected-male-val-value">0</span></h2>
+                        <span class="stat-pct" style="color: var(--text-muted)"><span class="stat-latest" id="projected-male-year">(2026)</span></span>
+                    </div>
                 </div>
-                <div class="stat-data">
-                    <span class="stat-label">Total Projected Male</span>
-                    <h2 id="projected-male-val">0</h2>
-                </div>
-            </div>
-            <div class="stat-card" id="card-projected-female">
-                <div class="stat-icon-wrapper female-icon">
-                    <i class="fa-solid fa-venus"></i>
-                </div>
-                <div class="stat-data">
-                    <span class="stat-label">Total Projected Female</span>
-                    <h2 id="projected-female-val">0</h2>
+                <div class="stat-card" id="card-projected-female">
+                    <div class="stat-icon-wrapper female-icon">
+                        <i class="fa-solid fa-venus"></i>
+                    </div>
+                    <div class="stat-data">
+                        <span class="stat-label">Total Projected Female</span>
+                        <h2 id="projected-female-val"><span id="projected-female-val-value">0</span></h2>
+                        <span class="stat-pct" style="color: var(--text-muted)"><span class="stat-latest" id="projected-female-year">(2026)</span></span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -366,7 +372,7 @@
             <!-- Population Pyramid Panel -->
             <section class="grid-panel pyramid-panel">
                 <div class="panel-header-pyramid flex-header">
-                    <h3><i class="fa-solid fa-users-rays"></i> Projected Population Pyramid</h3>
+                    <h3><i class="fa-solid fa-users-rays"></i> Projected City Population Pyramid</h3>
                     <div class="badge" id="pyramid-year-badge">2020-2030</div>
                 </div>
 
