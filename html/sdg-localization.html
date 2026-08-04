@@ -149,7 +149,9 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 0;
             box-shadow: 0 6px 18px rgba(0, 56, 147, 0.15);
             position: relative;
         }
@@ -178,7 +180,7 @@
             font-size: 0.95rem;
             color: #ffffff;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             line-height: 1.35;
         }
 
@@ -186,7 +188,8 @@
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-top: auto;
+            margin-top: 0;
+            width: 100%;
         }
 
         /* INDIVIDUAL SDG IMAGE BADGES */
@@ -1017,7 +1020,7 @@
                 <!-- Pillar 4: Kaunlaran -->
                 <button class="pillar-card-btn" data-pillar="kaunlaran" onclick="switchPillar('kaunlaran', this)">
                     <div>
-                        <div class="pillar-header-title">KAUNLARAN (Econ. Development)</div>
+                        <div class="pillar-header-title">KAUNLARAN (Development)</div>
                         <div class="pillar-header-sub">Innovative systems for business, investment, and services</div>
                     </div>
                     <div class="sdg-badges-row">
