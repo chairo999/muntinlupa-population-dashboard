@@ -587,10 +587,25 @@
             font-size: 1.15rem;
             font-weight: 800;
             color: var(--primary-blue);
-            margin-bottom: 16px;
+            margin-bottom: 4px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             text-align: center;
+        }
+
+        .sdg-logos-section-subtitle {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .sdg-logos-hover-hint {
+            font-style: italic;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 16px;
         }
 
         .sdg-logos-grid {
@@ -606,6 +621,52 @@
             padding: 10px 8px;
             border-radius: 14px;
             text-decoration: none;
+        }
+
+        .sdg-legend {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 240px;
+            aspect-ratio: 1;
+            margin: 0 auto;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            background: #f8fafc;
+        }
+
+        .sdg-legend-title {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            text-align: center;
+        }
+
+        .sdg-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .sdg-legend-swatch {
+            flex-shrink: 0;
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+
+        .sdg-legend-item:last-child {
+            margin-bottom: 0;
         }
 
         .sdg-logo-img-link {
@@ -994,117 +1055,6 @@
                     <p class="intro-text">
                         Each pillar is strategically aligned with the United Nations Sustainable Development Goals (SDGs), underscoring the importance of localizing global targets into concrete programs that directly benefit communities. By integrating the SDGs into the local government, Muntinlupa ensures that its initiatives are globally relevant while remaining locally grounded, strengthening resilience, equity, and sustainability across all sectors.
                     </p>
-                </div>
-            </div>
-
-            <!-- ========================================== -->
-            <!-- 17 SDGs LOGOS + PROGRESS PANEL              -->
-            <!-- ========================================== -->
-            <div class="sdg-logos-panel">
-                <div class="sdg-logos-section-title">The 17 Sustainable Development Goals</div>
-                <div class="sdg-logos-grid">
-                <div class="sdg-logo-card" title="Goal 1: No Poverty" data-sdg="1">
-                    <a href="https://sdgs.un.org/goals/goal1" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-01.jpg" alt="SDG 1 No Poverty" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
-                <div class="sdg-logo-card" title="Goal 2: Zero Hunger" data-sdg="2">
-                    <a href="https://sdgs.un.org/goals/goal2" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-02.jpg" alt="SDG 2 Zero Hunger" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
-                <div class="sdg-logo-card" title="Goal 3: Good Health and Well-being" data-sdg="3">
-                    <a href="https://sdgs.un.org/goals/goal3" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3 Good Health" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
-                <div class="sdg-logo-card" title="Goal 4: Quality Education" data-sdg="4">
-                    <a href="https://sdgs.un.org/goals/goal4" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" alt="SDG 4 Quality Education" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
-                <div class="sdg-logo-card" title="Goal 5: Gender Equality" data-sdg="5">
-                    <a href="https://sdgs.un.org/goals/goal5" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-05.jpg" alt="SDG 5 Gender Equality" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
-                <div class="sdg-logo-card" title="Goal 6: Clean Water and Sanitation" data-sdg="6">
-                    <a href="https://sdgs.un.org/goals/goal6" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-06.jpg" alt="SDG 6 Clean Water" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
-                <div class="sdg-logo-card" title="Goal 7: Affordable and Clean Energy" data-sdg="7">
-                    <a href="https://sdgs.un.org/goals/goal7" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-07.jpg" alt="SDG 7 Clean Energy" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
-                <div class="sdg-logo-card" title="Goal 8: Decent Work and Economic Growth" data-sdg="8">
-                    <a href="https://sdgs.un.org/goals/goal8" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg" alt="SDG 8 Decent Work" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
-                <div class="sdg-logo-card" title="Goal 9: Industry, Innovation and Infrastructure" data-sdg="9">
-                    <a href="https://sdgs.un.org/goals/goal9" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-09.jpg" alt="SDG 9 Industry" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
-                <div class="sdg-logo-card" title="Goal 10: Reduced Inequalities" data-sdg="10">
-                    <a href="https://sdgs.un.org/goals/goal10" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-10.jpg" alt="SDG 10 Reduced Inequalities" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
-                <div class="sdg-logo-card" title="Goal 11: Sustainable Cities and Communities" data-sdg="11">
-                    <a href="https://sdgs.un.org/goals/goal11" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-11.jpg" alt="SDG 11 Sustainable Cities" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
-                <div class="sdg-logo-card" title="Goal 12: Responsible Consumption and Production" data-sdg="12">
-                    <a href="https://sdgs.un.org/goals/goal12" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-12.jpg" alt="SDG 12 Responsible Consumption" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
-                <div class="sdg-logo-card" title="Goal 13: Climate Action" data-sdg="13">
-                    <a href="https://sdgs.un.org/goals/goal13" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-13.jpg" alt="SDG 13 Climate Action" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
-                <div class="sdg-logo-card" title="Goal 14: Life Below Water" data-sdg="14">
-                    <a href="https://sdgs.un.org/goals/goal14" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-14.jpg" alt="SDG 14 Life Below Water" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
-                <div class="sdg-logo-card" title="Goal 15: Life on Land" data-sdg="15">
-                    <a href="https://sdgs.un.org/goals/goal15" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-15.jpg" alt="SDG 15 Life on Land" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
-                <div class="sdg-logo-card" title="Goal 16: Peace, Justice and Strong Institutions" data-sdg="16">
-                    <a href="https://sdgs.un.org/goals/goal16" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-16.jpg" alt="SDG 16 Peace & Justice" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
-                <div class="sdg-logo-card" title="Goal 17: Partnerships for the Goals" data-sdg="17">
-                    <a href="https://sdgs.un.org/goals/goal17" target="_blank" class="sdg-logo-img-link">
-                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-17.jpg" alt="SDG 17 Partnerships" loading="lazy">
-                    </a>
-                    <div class="sdg-progress-wrap"></div>
-                </div>
                 </div>
             </div>
 
@@ -1637,6 +1587,134 @@
                         <tbody>
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 17 SDGs LOGOS + PROGRESS PANEL              -->
+            <!-- ========================================== -->
+            <div class="sdg-logos-panel">
+                <div class="sdg-logos-section-title">The 17 Sustainable Development Goals</div>
+                <div class="sdg-logos-section-subtitle">Current Progress on Localized SDG Indicators</div>
+                <div class="sdg-logos-section-subtitle sdg-logos-hover-hint">Hover over each target under a specific SDG to explore its progress</div>
+                <div class="sdg-logos-grid">
+                <div class="sdg-logo-card" title="Goal 1: No Poverty" data-sdg="1">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-01.jpg" alt="SDG 1 No Poverty" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-logo-card" title="Goal 2: Zero Hunger" data-sdg="2">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-02.jpg" alt="SDG 2 Zero Hunger" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-logo-card" title="Goal 3: Good Health and Well-being" data-sdg="3">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg" alt="SDG 3 Good Health" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-logo-card" title="Goal 4: Quality Education" data-sdg="4">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" alt="SDG 4 Quality Education" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-logo-card" title="Goal 5: Gender Equality" data-sdg="5">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-05.jpg" alt="SDG 5 Gender Equality" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-logo-card" title="Goal 6: Clean Water and Sanitation" data-sdg="6">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-06.jpg" alt="SDG 6 Clean Water" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-logo-card" title="Goal 7: Affordable and Clean Energy" data-sdg="7">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-07.jpg" alt="SDG 7 Clean Energy" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-logo-card" title="Goal 8: Decent Work and Economic Growth" data-sdg="8">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg" alt="SDG 8 Decent Work" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-logo-card" title="Goal 9: Industry, Innovation and Infrastructure" data-sdg="9">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-09.jpg" alt="SDG 9 Industry" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-logo-card" title="Goal 10: Reduced Inequalities" data-sdg="10">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-10.jpg" alt="SDG 10 Reduced Inequalities" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-logo-card" title="Goal 11: Sustainable Cities and Communities" data-sdg="11">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-11.jpg" alt="SDG 11 Sustainable Cities" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-logo-card" title="Goal 12: Responsible Consumption and Production" data-sdg="12">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-12.jpg" alt="SDG 12 Responsible Consumption" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-logo-card" title="Goal 13: Climate Action" data-sdg="13">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-13.jpg" alt="SDG 13 Climate Action" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-logo-card" title="Goal 14: Life Below Water" data-sdg="14">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-14.jpg" alt="SDG 14 Life Below Water" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-logo-card" title="Goal 15: Life on Land" data-sdg="15">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-15.jpg" alt="SDG 15 Life on Land" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-logo-card" title="Goal 16: Peace, Justice and Strong Institutions" data-sdg="16">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-16.jpg" alt="SDG 16 Peace & Justice" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-logo-card" title="Goal 17: Partnerships for the Goals" data-sdg="17">
+                    <a class="sdg-logo-img-link">
+                        <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-17.jpg" alt="SDG 17 Partnerships" loading="lazy">
+                    </a>
+                    <div class="sdg-progress-wrap"></div>
+                </div>
+                <div class="sdg-legend">
+                    <div class="sdg-legend-title">Legend</div>
+                    <div class="sdg-legend-item">
+                        <span class="sdg-legend-swatch" style="background: #16a34a;"></span>
+                        <span>On Track</span>
+                    </div>
+                    <div class="sdg-legend-item">
+                        <span class="sdg-legend-swatch" style="background: #ca8a04;"></span>
+                        <span>Needs Acceleration</span>
+                    </div>
+                    <div class="sdg-legend-item">
+                        <span class="sdg-legend-swatch" style="background: #b91c1c;"></span>
+                        <span>Regressing</span>
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
