@@ -653,6 +653,18 @@
     .grid-table tbody tr:hover td:first-child {
       background: #fffdf5;
     }
+    .economic-indicator-section {
+      margin-bottom: 20px;
+    }
+    .economic-indicator-section h4 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 8px 0;
+    }
+    .economic-indicator-table {
+      min-width: 520px;
+    }
     .grid-table input[type=number] {
       width: 100%;
       min-width: 90px;
@@ -869,6 +881,18 @@
                 <thead></thead>
                 <tbody></tbody>
               </table>
+            </div>
+          </div>
+          <!-- Tabular Editor: Economic Sector (spreadsheet-style editing) -->
+          <div id="economic-editor" class="tabular-editor">
+            <div class="tabular-header">
+              <div>
+                <h3><i class="fa-solid fa-chart-line"></i> Economic Indicators Editor</h3>
+                <p>Each indicator table below has its own year controls and save button. Rows are grouped by the indicator and show barangay/category columns separately.</p>
+              </div>
+            </div>
+            <div class="grid-table-wrap">
+              <div id="economic-grid-container" class="economic-grid-container"></div>
             </div>
           </div>
           <!-- Tabular Editor: Projected Population Pyramid (indicator_id = 28) -->
@@ -1144,6 +1168,7 @@
     let currentSectorKey = "edit";
     let appData = {};
     let HISTORICAL_LABELS = [...DEFAULT_HISTORICAL_LABELS];
+    let economicIndicatorData = {};
 
     // DOM Elements
     const statusDotEl = document.getElementById('status-dot');
@@ -1192,7 +1217,7 @@
       // Update UI title and texts
       sectorTitle.innerHTML = `<i class="fa-solid ${config.icon}"></i> ${config.name}`;
       sectorDesc.textContent = config.desc;
-      tableNameBadge.textContent = sectorKey === 'edit' ? 'data_values' : config.table;
+      tableNameBadge.textContent = sectorKey === 'edit' || sectorKey === 'economic' ? 'data_values' : config.table;
       
       // Update label text dynamically (Select Barangay vs Select Indicator)
       const labelEl = document.querySelector('label[for="brgy"]');
@@ -1210,14 +1235,22 @@
       
       // Toggle tabular editor for Population (edit) vs form for other sectors
       const tabularEditor = document.getElementById('tabular-editor');
+      const economicEditor = document.getElementById('economic-editor');
       const projectionEditor = document.getElementById('projection-editor');
       const editForm = document.getElementById('edit-form');
       if (sectorKey === 'edit') {
         tabularEditor.classList.add('active');
+        economicEditor.classList.remove('active');
         projectionEditor.classList.add('active');
+        editForm.style.display = 'none';
+      } else if (sectorKey === 'economic') {
+        tabularEditor.classList.remove('active');
+        economicEditor.classList.add('active');
+        projectionEditor.classList.remove('active');
         editForm.style.display = 'none';
       } else {
         tabularEditor.classList.remove('active');
+        economicEditor.classList.remove('active');
         projectionEditor.classList.remove('active');
         editForm.style.display = '';
       }
@@ -1228,6 +1261,8 @@
       // Fetch data for the new sector
       if (sectorKey === 'edit') {
         await Promise.all([loadPopulationData(), loadProjectionData()]);
+      } else if (sectorKey === 'economic') {
+        await loadEconomicData();
       } else {
         await loadSectorData(config.table);
       }
@@ -1309,6 +1344,9 @@
         // Re-populate choices
         populateBarangays();
         populateYears();
+        if (currentSectorKey === 'economic') {
+          renderEconomicGridTable();
+        }
         disableForm(false);
         
       } catch (err) {
@@ -1336,6 +1374,9 @@
         
         populateBarangays();
         populateYears();
+        if (currentSectorKey === 'economic') {
+          renderEconomicGridTable();
+        }
         disableForm(false);
       }
     }
@@ -1743,6 +1784,384 @@
     }
 
     document.getElementById('remove-year-btn').addEventListener('click', removePopulationYear);
+
+    // ===============================================
+    // ECONOMIC SECTOR TABLE EDITOR — spreadsheet style
+    // ===============================================
+    const ECONOMIC_SECTOR_ID = 2;
+
+    function buildEconomicRowLabel(row) {
+      const parts = [];
+      if (row.barangays?.barangay_name) parts.push(row.barangays.barangay_name);
+      if (row.category_1) parts.push(row.category_1);
+      if (row.category_2) parts.push(row.category_2);
+      return parts.length ? parts.join(' - ') : 'Overall';
+    }
+
+    async function loadEconomicData() {
+      updateHeaderStatus('connecting', 'Connecting table: [data_values]...');
+      showNotification('info', 'Retrieving economic indicator data from data_values...', 'fa-spinner fa-spin');
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('data_values')
+          .select('data_id, value, year, indicator_id, category_1, category_2, barangay_id, indicators(indicator_name), barangays(barangay_name)')
+          .in('indicator_id', [2, 3, 4, 5, 6])
+          .order('indicator_id', { ascending: true })
+          .order('year', { ascending: true });
+
+        if (error) throw error;
+
+        const grouped = {};
+        (data || []).forEach((row) => {
+          const indicatorId = row.indicator_id;
+          if (!grouped[indicatorId]) {
+            grouped[indicatorId] = {
+              indicatorId,
+              indicatorName: row.indicators?.indicator_name || `Indicator ${indicatorId}`,
+              years: [],
+              rows: []
+            };
+          }
+
+          const group = grouped[indicatorId];
+          const yearKey = String(row.year);
+          if (!group.years.includes(yearKey)) group.years.push(yearKey);
+
+          const rowId = `${indicatorId}::${row.barangays?.barangay_name || ''}::${row.category_1 || ''}::${row.category_2 || ''}::${row.data_id || ''}`;
+          let rowEntry = group.rows.find((entry) => entry.id === rowId);
+          if (!rowEntry) {
+            rowEntry = {
+              id: rowId,
+              meta: {
+                barangay_name: row.barangays?.barangay_name || null,
+                barangay_id: row.barangay_id || null,
+                category_1: row.category_1 || null,
+                category_2: row.category_2 || null,
+                data_id: row.data_id || null
+              },
+              values: {}
+            };
+            group.rows.push(rowEntry);
+          }
+
+          rowEntry.values[yearKey] = {
+            data_id: row.data_id || null,
+            value: row.value
+          };
+        });
+
+        Object.values(grouped).forEach((group) => {
+          group.years = group.years.sort((a, b) => Number(a) - Number(b));
+          group.rows.forEach((rowEntry) => {
+            group.years.forEach((year) => {
+              if (!rowEntry.values[year]) {
+                rowEntry.values[year] = { data_id: null, value: null };
+              }
+            });
+          });
+        });
+
+        economicIndicatorData = grouped;
+        HISTORICAL_LABELS = [...new Set(Object.values(grouped).flatMap((group) => group.years))].sort((a, b) => Number(a) - Number(b));
+
+        renderEconomicGridTable();
+        disableForm(false);
+        updateHeaderStatus('online', 'Live & Connected (Table: data_values)');
+        showNotification('ok', `Loaded ${Object.keys(grouped).length} economic indicator group(s) from data_values.`, 'fa-circle-check');
+      } catch (err) {
+        console.error('Economic data load failed:', err);
+        economicIndicatorData = {};
+        HISTORICAL_LABELS = [...DEFAULT_HISTORICAL_LABELS];
+        renderEconomicGridTable();
+        disableForm(false);
+        updateHeaderStatus('error', 'Offline / Economic Load Error');
+        showNotification('err', `Failed to load economic data: ${err.message || err}`, 'fa-circle-xmark');
+      }
+    }
+
+    function renderEconomicGridTable() {
+      const container = document.getElementById('economic-grid-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const groups = Object.values(economicIndicatorData).sort((a, b) => Number(a.indicatorId) - Number(b.indicatorId));
+      if (!groups.length) {
+        container.innerHTML = '<div class="economic-indicator-section"><h4>No economic indicator rows found</h4><p>No matching rows were returned from data_values for the economic indicators.</p></div>';
+        return;
+      }
+
+      groups.forEach((group) => {
+        const section = document.createElement('div');
+        section.className = 'economic-indicator-section';
+
+        const title = document.createElement('h4');
+        title.textContent = `${group.indicatorName} (Indicator ID ${group.indicatorId})`;
+        title.dataset.indicatorId = String(group.indicatorId);
+        section.appendChild(title);
+
+        const toolbar = document.createElement('div');
+        toolbar.className = 'economic-section-toolbar';
+        toolbar.dataset.indicatorId = String(group.indicatorId);
+
+        const addInput = document.createElement('input');
+        addInput.type = 'number';
+        addInput.min = '2000';
+        addInput.max = '2100';
+        addInput.step = '1';
+        addInput.placeholder = 'e.g. 2025';
+        addInput.className = 'economic-section-input';
+        addInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            addEconomicYearToGroup(group.indicatorId);
+          }
+        });
+
+        const addBtn = document.createElement('button');
+        addBtn.type = 'button';
+        addBtn.className = 'submit-btn save-grid-btn economic-section-action';
+        addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add Year';
+        addBtn.addEventListener('click', () => addEconomicYearToGroup(group.indicatorId));
+
+        const removeSelect = document.createElement('select');
+        removeSelect.className = 'economic-section-select';
+        removeSelect.innerHTML = '<option value="">Select year...</option>';
+        (group.years || []).forEach((year) => {
+          const option = document.createElement('option');
+          option.value = year;
+          option.textContent = year;
+          removeSelect.appendChild(option);
+        });
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'submit-btn save-grid-btn economic-section-action';
+        removeBtn.innerHTML = '<i class="fa-solid fa-minus"></i> Remove Year';
+        removeBtn.addEventListener('click', () => removeEconomicYearFromGroup(group.indicatorId, removeSelect.value));
+
+        const saveBtn = document.createElement('button');
+        saveBtn.type = 'button';
+        saveBtn.className = 'submit-btn save-grid-btn economic-section-action';
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+        saveBtn.addEventListener('click', () => saveEconomicGroupTable(group.indicatorId));
+
+        toolbar.appendChild(addInput);
+        toolbar.appendChild(addBtn);
+        toolbar.appendChild(removeSelect);
+        toolbar.appendChild(removeBtn);
+        toolbar.appendChild(saveBtn);
+
+        section.appendChild(toolbar);
+
+        const subTable = document.createElement('table');
+        subTable.className = 'grid-table economic-indicator-table';
+        const subThead = document.createElement('thead');
+        const subTbody = document.createElement('tbody');
+
+        const hasBarangays = (group.rows || []).some((rowEntry) => rowEntry.meta?.barangay_name);
+        const hasCategories = (group.rows || []).some((rowEntry) => rowEntry.meta?.category_1 || rowEntry.meta?.category_2);
+
+        const headerTr = document.createElement('tr');
+        const levelTh = document.createElement('th');
+        levelTh.textContent = hasBarangays ? 'Barangay' : 'Level';
+        headerTr.appendChild(levelTh);
+        if (hasCategories) {
+          const categoryTh = document.createElement('th');
+          categoryTh.textContent = 'Category';
+          headerTr.appendChild(categoryTh);
+        }
+        (group.years || []).forEach((year) => {
+          const thEl = document.createElement('th');
+          thEl.textContent = year;
+          headerTr.appendChild(thEl);
+        });
+        subThead.appendChild(headerTr);
+
+        (group.rows || []).forEach((rowEntry) => {
+          const row = document.createElement('tr');
+          const levelCell = document.createElement('td');
+          levelCell.textContent = hasBarangays ? (rowEntry.meta?.barangay_name || '—') : 'Citywide';
+          row.appendChild(levelCell);
+
+          if (hasCategories) {
+            const categoryCell = document.createElement('td');
+            const categoryParts = [rowEntry.meta?.category_1, rowEntry.meta?.category_2].filter(Boolean);
+            categoryCell.textContent = categoryParts.length ? categoryParts.join(' / ') : '—';
+            row.appendChild(categoryCell);
+          }
+
+          (group.years || []).forEach((year) => {
+            const cell = document.createElement('td');
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.min = '0';
+            input.step = 'any';
+            const entry = rowEntry.values && rowEntry.values[year];
+            input.value = (entry && entry.value !== undefined && entry.value !== null) ? entry.value : '';
+            input.dataset.indicatorId = group.indicatorId;
+            input.dataset.rowId = rowEntry.id;
+            input.dataset.year = year;
+            input.dataset.dataId = entry?.data_id || '';
+            input.addEventListener('input', onEconomicGridCellChange);
+            cell.appendChild(input);
+            row.appendChild(cell);
+          });
+
+          subTbody.appendChild(row);
+        });
+
+        subTable.appendChild(subThead);
+        subTable.appendChild(subTbody);
+        section.appendChild(subTable);
+        container.appendChild(section);
+      });
+    }
+
+    function onEconomicGridCellChange(e) {
+      const input = e.currentTarget;
+      const indicatorId = input.dataset.indicatorId;
+      const rowId = input.dataset.rowId;
+      const year = input.dataset.year;
+      const val = input.value === '' ? null : parseFloat(input.value);
+
+      const group = economicIndicatorData[indicatorId];
+      if (!group) return;
+
+      const rowEntry = (group.rows || []).find((entry) => entry.id === rowId);
+      if (!rowEntry) return;
+
+      if (!rowEntry.values[year]) {
+        rowEntry.values[year] = { data_id: input.dataset.dataId || null, value: null };
+      }
+      rowEntry.values[year].value = val;
+      rowEntry.values[year].data_id = input.dataset.dataId || rowEntry.values[year].data_id || null;
+
+      input.classList.add('grid-cell-changed');
+    }
+
+    function addEconomicYearToGroup(indicatorId) {
+      const group = economicIndicatorData[indicatorId];
+      if (!group) return;
+
+      const toolbar = document.querySelector(`[data-indicator-id="${String(indicatorId)}"]`)?.closest('.economic-indicator-section')?.querySelector('.economic-section-toolbar');
+      const input = toolbar?.querySelector('input');
+      const yearNum = parseInt((input && input.value) || '', 10);
+      if (!yearNum || isNaN(yearNum)) {
+        showNotification('err', 'Enter a valid year before adding a column.', 'fa-circle-xmark');
+        return;
+      }
+
+      const yearStr = String(yearNum);
+      if ((group.years || []).includes(yearStr)) {
+        showNotification('err', `Year ${yearStr} is already present for this indicator.`, 'fa-circle-xmark');
+        return;
+      }
+
+      group.years.push(yearStr);
+      group.years.sort((a, b) => Number(a) - Number(b));
+      (group.rows || []).forEach((rowEntry) => {
+        if (!rowEntry.values[yearStr]) {
+          rowEntry.values[yearStr] = { data_id: null, value: null };
+        }
+      });
+
+      HISTORICAL_LABELS = [...new Set(Object.values(economicIndicatorData).flatMap((g) => g.years || []))].sort((a, b) => Number(a) - Number(b));
+      renderEconomicGridTable();
+      showNotification('ok', `Added year ${yearStr} to ${group.indicatorName}.`, 'fa-circle-check');
+    }
+
+    function removeEconomicYearFromGroup(indicatorId, yearToRemove) {
+      const group = economicIndicatorData[indicatorId];
+      if (!group || !yearToRemove) return;
+      if (!confirm(`Remove year ${yearToRemove} from ${group.indicatorName}?`)) return;
+
+      group.years = (group.years || []).filter((year) => year !== yearToRemove);
+      (group.rows || []).forEach((rowEntry) => {
+        delete rowEntry.values[yearToRemove];
+      });
+
+      HISTORICAL_LABELS = [...new Set(Object.values(economicIndicatorData).flatMap((g) => g.years || []))].sort((a, b) => Number(a) - Number(b));
+      renderEconomicGridTable();
+      showNotification('ok', `Removed year ${yearToRemove} from ${group.indicatorName}.`, 'fa-circle-check');
+    }
+
+    async function saveEconomicGroupTable(indicatorId) {
+      const group = economicIndicatorData[indicatorId];
+      if (!group) return;
+
+      showNotification('info', `Saving ${group.indicatorName} values to data_values...`, 'fa-spinner fa-spin');
+
+      try {
+        let savedCount = 0;
+        const failures = [];
+
+        for (const rowEntry of group.rows || []) {
+          for (const year of group.years || []) {
+            const cell = rowEntry.values && rowEntry.values[year];
+            if (!cell) continue;
+
+            const value = cell.value !== undefined && cell.value !== null ? cell.value : null;
+            const hasChanges = cell.value !== undefined && cell.value !== null;
+
+            if (!hasChanges && !cell.data_id) {
+              continue;
+            }
+
+            if (cell.data_id) {
+              const { error } = await supabaseClient
+                .from('data_values')
+                .update({ value })
+                .eq('data_id', cell.data_id);
+
+              if (error) {
+                failures.push(`Update failed for ${rowEntry.meta?.barangay_name || 'citywide'} / ${year}: ${error.message || error}`);
+                console.error('Economic update error:', error);
+              } else {
+                savedCount++;
+              }
+            } else if (value !== null && value !== undefined) {
+              const payload = {
+                indicator_id: group.indicatorId,
+                sector_id: ECONOMIC_SECTOR_ID,
+                year: parseInt(year, 10),
+                value
+              };
+              if (rowEntry.meta?.barangay_id) payload.barangay_id = rowEntry.meta.barangay_id;
+              if (rowEntry.meta?.category_1) payload.category_1 = rowEntry.meta.category_1;
+              if (rowEntry.meta?.category_2) payload.category_2 = rowEntry.meta.category_2;
+
+              const { data, error } = await supabaseClient
+                .from('data_values')
+                .insert(payload)
+                .select('data_id')
+                .single();
+
+              if (error) {
+                failures.push(`Insert failed for ${rowEntry.meta?.barangay_name || 'citywide'} / ${year}: ${error.message || error}`);
+                console.error('Economic insert error:', error);
+              } else if (data?.data_id) {
+                cell.data_id = data.data_id;
+                savedCount++;
+              }
+            }
+          }
+        }
+
+        if (failures.length) {
+          throw new Error(failures.join(' | '));
+        }
+
+        localStorage.setItem('muntinlupa_economic_indicator_data_values', JSON.stringify(economicIndicatorData));
+        document.querySelectorAll('#economic-grid-container .grid-cell-changed').forEach(el => el.classList.remove('grid-cell-changed'));
+        await loadEconomicData();
+        showNotification('ok', `Saved ${savedCount} change(s) for ${group.indicatorName}.`, 'fa-circle-check');
+      } catch (err) {
+        console.error(err);
+        showNotification('err', `Save Failed: ${err.message || err}`, 'fa-circle-xmark');
+      }
+    }
+
 
     // ===============================================
     // PROJECTED POPULATION (Pyramid) — indicator_id = 28
