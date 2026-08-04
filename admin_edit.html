@@ -548,6 +548,59 @@
       width: auto;
       padding: 12px 22px;
     }
+    .add-year-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .add-year-box input[type=number] {
+      width: 130px;
+      padding: 12px 14px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius-md);
+      font-family: var(--font-outfit);
+      font-size: 0.9rem;
+      background: #f8fafc;
+      outline: none;
+      transition: var(--transition-smooth);
+    }
+    .add-year-box input[type=number]:focus {
+      border-color: var(--accent-yellow);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+      background: #ffffff;
+    }
+    .add-year-btn {
+      background: linear-gradient(135deg, #0ea5e9, #2563eb);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.2);
+    }
+    .add-year-btn:hover {
+      background: linear-gradient(135deg, #38bdf8, #3b82f6);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+    }
+    .add-year-box select {
+      width: 160px;
+      padding: 12px 14px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius-md);
+      font-family: var(--font-outfit);
+      font-size: 0.9rem;
+      background: #f8fafc;
+      outline: none;
+      transition: var(--transition-smooth);
+    }
+    .add-year-box select:focus {
+      border-color: var(--accent-yellow);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+      background: #ffffff;
+    }
+    .remove-year-btn {
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);
+    }
+    .remove-year-btn:hover {
+      background: linear-gradient(135deg, #f87171, #dc2626);
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+    }
     .grid-table-wrap {
       overflow: auto;
       max-height: 62vh;
@@ -792,6 +845,20 @@
               <div>
                 <h3><i class="fa-solid fa-table-cells"></i> Barangay Population Editor</h3>
                 <p>Live table: <strong>data_values</strong>. Click any cell to edit; empty cells are saved as empty.</p>
+              </div>
+              <div class="add-year-box">
+                <input type="number" id="add-year-input" min="2000" max="2100" step="1" placeholder="e.g. 2025" title="Add a new year column">
+                <button type="button" id="add-year-btn" class="submit-btn save-grid-btn add-year-btn">
+                  <i class="fa-solid fa-plus"></i> Add Year
+                </button>
+              </div>
+              <div class="add-year-box">
+                <select id="remove-year-select" title="Remove a year column from the table">
+                  <option value="">Select year...</option>
+                </select>
+                <button type="button" id="remove-year-btn" class="submit-btn save-grid-btn remove-year-btn">
+                  <i class="fa-solid fa-minus"></i> Remove Year
+                </button>
               </div>
               <button type="button" id="save-grid-btn" class="submit-btn save-grid-btn">
                 <i class="fa-solid fa-floppy-disk"></i> Save All Changes
@@ -1338,6 +1405,7 @@
     // same mechanism used by the public population dashboard.
     // ===============================================
     const POPULATION_INDICATOR_ID = 1;
+    const POPULATION_SECTOR_ID = 1;
     let popBarangays = [];
     let popRowMap = {};       // key `${barangay}__${year}` -> row {data_id, value}
     let popBarangayIds = {};  // barangay_name -> barangay_id
@@ -1401,6 +1469,7 @@
         });
 
         renderGridTable();
+        populateRemoveYearSelect();
         disableForm(false);
         updateHeaderStatus('online', 'Live & Connected (Table: data_values)');
         showNotification('ok', `Loaded ${popBarangays.length} barangays across ${HISTORICAL_LABELS.length} years from data_values.`, 'fa-circle-check');
@@ -1417,6 +1486,7 @@
               HISTORICAL_LABELS = parsed.labels;
               popBarangays = Object.keys(appData).filter(k => k !== '_cityHistory' && k !== 'history');
               renderGridTable();
+              populateRemoveYearSelect();
               disableForm(false);
               updateHeaderStatus('offline', 'Offline — Showing Saved Snapshot');
               showNotification('err', 'Could not reach Supabase. Showing last saved snapshot (LocalStorage).', 'fa-circle-exclamation');
@@ -1523,6 +1593,7 @@
           if (!ins.barangay_id) continue;
           const { error } = await supabaseClient.from('data_values').insert({
             indicator_id: POPULATION_INDICATOR_ID,
+            sector_id: POPULATION_SECTOR_ID,
             barangay_id: ins.barangay_id,
             year: ins.year,
             value: ins.value
@@ -1544,6 +1615,134 @@
     }
 
     document.getElementById('save-grid-btn').addEventListener('click', saveGridTable);
+
+    function addPopulationYear() {
+      const input = document.getElementById('add-year-input');
+      const yearNum = parseInt(input.value, 10);
+      if (!yearNum || isNaN(yearNum)) {
+        showNotification('err', 'Please enter a valid year first (e.g. 2025).', 'fa-circle-xmark');
+        return;
+      }
+      if (yearNum < 2000 || yearNum > 2100) {
+        showNotification('err', 'Year must be between 2000 and 2100.', 'fa-circle-xmark');
+        return;
+      }
+      const yearStr = String(yearNum);
+      if (HISTORICAL_LABELS.includes(yearStr)) {
+        showNotification('err', `Year ${yearStr} is already in the table.`, 'fa-circle-xmark');
+        return;
+      }
+
+      // Snapshot current values by barangay -> year before realigning history arrays
+      const snapshot = {};
+      HISTORICAL_LABELS.forEach((yr, idx) => {
+        popBarangays.forEach((brgy) => {
+          const v = appData[brgy] && appData[brgy].history ? appData[brgy].history[idx] : null;
+          if (v !== null && v !== undefined) snapshot[brgy + '__' + yr] = v;
+        });
+      });
+
+      const newLabels = [...HISTORICAL_LABELS, yearStr].sort((a, b) => Number(a) - Number(b));
+      HISTORICAL_LABELS = newLabels;
+
+      // Rebuild history arrays aligned to the new column order
+      popBarangays.forEach((brgy) => {
+        const hist = new Array(HISTORICAL_LABELS.length).fill(null);
+        HISTORICAL_LABELS.forEach((yr, idx) => {
+          if (snapshot[brgy + '__' + yr] !== undefined) hist[idx] = snapshot[brgy + '__' + yr];
+        });
+        appData[brgy] = { history: hist };
+      });
+
+      input.value = '';
+      renderGridTable();
+      populateRemoveYearSelect();
+      showNotification('ok', `Added year ${yearStr}. Fill in the new column, then click Save All Changes to write it to data_values.`, 'fa-circle-check');
+    }
+
+    document.getElementById('add-year-btn').addEventListener('click', addPopulationYear);
+    document.getElementById('add-year-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addPopulationYear();
+      }
+    });
+
+    function populateRemoveYearSelect() {
+      const select = document.getElementById('remove-year-select');
+      if (!select) return;
+      const current = select.value;
+      select.innerHTML = '';
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = 'Select year...';
+      select.appendChild(placeholder);
+      HISTORICAL_LABELS.forEach((yr) => {
+        const opt = document.createElement('option');
+        opt.value = yr;
+        opt.textContent = yr;
+        select.appendChild(opt);
+      });
+      if (HISTORICAL_LABELS.includes(current)) select.value = current;
+    }
+
+    async function removePopulationYear() {
+      const select = document.getElementById('remove-year-select');
+      const yearStr = select.value;
+      if (!yearStr) {
+        showNotification('err', 'Select a year to remove first.', 'fa-circle-xmark');
+        return;
+      }
+      if (!confirm(`Remove year ${yearStr} for ALL barangays from the database?\n\nThis permanently deletes the population rows for ${yearStr} from the 'data_values' table. This cannot be undone.`)) return;
+
+      const btn = document.getElementById('remove-year-btn');
+      btn.disabled = true;
+      showNotification('info', `Deleting population rows for year ${yearStr} from data_values...`, 'fa-spinner fa-spin');
+
+      try {
+        const { count, error } = await supabaseClient
+          .from('data_values')
+          .delete({ count: 'exact' })
+          .eq('indicator_id', POPULATION_INDICATOR_ID)
+          .eq('year', parseInt(yearStr, 10));
+        if (error) throw error;
+
+        // Drop the year from the grid state
+        const prevLabels = [...HISTORICAL_LABELS];
+        HISTORICAL_LABELS = HISTORICAL_LABELS.filter((yr) => yr !== yearStr);
+        Object.keys(popRowMap).forEach((key) => {
+          if (key.endsWith('__' + yearStr)) delete popRowMap[key];
+        });
+
+        // Rebuild histories aligned to the remaining columns
+        const snapshot = {};
+        Object.keys(appData).forEach((brgy) => {
+          const hist = appData[brgy].history || [];
+          hist.forEach((v, idx) => {
+            const yr = prevLabels[idx];
+            if (yr && v !== null && v !== undefined) snapshot[brgy + '__' + yr] = v;
+          });
+        });
+        popBarangays.forEach((brgy) => {
+          const hist = new Array(HISTORICAL_LABELS.length).fill(null);
+          HISTORICAL_LABELS.forEach((yr, idx) => {
+            if (snapshot[brgy + '__' + yr] !== undefined) hist[idx] = snapshot[brgy + '__' + yr];
+          });
+          appData[brgy] = { history: hist };
+        });
+
+        renderGridTable();
+        populateRemoveYearSelect();
+        showNotification('ok', `Deleted ${count ?? 0} row(s) for year ${yearStr} from data_values and removed the column.`, 'fa-circle-check');
+      } catch (err) {
+        console.error("Remove year failed:", err);
+        showNotification('err', `Failed to remove year ${yearStr}: ${err.message || err}`, 'fa-circle-xmark');
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    document.getElementById('remove-year-btn').addEventListener('click', removePopulationYear);
 
     // ===============================================
     // PROJECTED POPULATION (Pyramid) — indicator_id = 28
@@ -1690,7 +1889,7 @@
               if (row) {
                 updates.push({ data_id: row.data_id, value: val });
               } else if (val !== null && val !== undefined) {
-                inserts.push({ indicator_id: PROJECTION_INDICATOR_ID, category_1: age, category_2: g, year: yearNum, value: val });
+                inserts.push({ indicator_id: PROJECTION_INDICATOR_ID, sector_id: POPULATION_SECTOR_ID, category_1: age, category_2: g === 'male' ? 'Male' : 'Female', year: yearNum, value: val });
               }
             });
           });
