@@ -518,6 +518,145 @@
     .back-link:hover i {
       transform: translateX(-4px);
     }
+    /* Tabular Editor (Population) */
+    .tabular-editor {
+      display: none;
+      margin-top: 20px;
+    }
+    .tabular-editor.active {
+      display: block;
+    }
+    .tabular-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .tabular-header h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .tabular-header p {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    .save-grid-btn {
+      width: auto;
+      padding: 12px 22px;
+    }
+    .grid-table-wrap {
+      overflow: auto;
+      max-height: 62vh;
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius-md);
+      background: #ffffff;
+    }
+    .grid-table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    .grid-table th,
+    .grid-table td {
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      padding: 6px;
+    }
+    .grid-table thead th {
+      background: #f1f5f9;
+      color: var(--text-secondary);
+      font-weight: 700;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      white-space: nowrap;
+    }
+    .grid-table thead th:first-child {
+      left: 0;
+      text-align: left;
+    }
+    .grid-table td:first-child {
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-secondary);
+      position: sticky;
+      left: 0;
+      background: #ffffff;
+      z-index: 1;
+      white-space: nowrap;
+      max-width: 220px;
+    }
+    .grid-table thead th:first-child {
+      z-index: 2;
+    }
+    .grid-table tbody tr:hover td {
+      background: rgba(245, 158, 11, 0.04);
+    }
+    .grid-table tbody tr:hover td:first-child {
+      background: #fffdf5;
+    }
+    .grid-table input[type=number] {
+      width: 100%;
+      min-width: 90px;
+      padding: 8px 10px;
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      border-radius: 6px;
+      font-family: var(--font-outfit);
+      font-size: 0.88rem;
+      background: #f8fafc;
+      transition: var(--transition-smooth);
+      outline: none;
+    }
+    .grid-table input[type=number]:hover {
+      border-color: rgba(15, 23, 42, 0.2);
+    }
+    .grid-table input[type=number]:focus {
+      border-color: var(--accent-yellow);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+      background: #ffffff;
+    }
+    .grid-cell-changed {
+      background: var(--accent-yellow-light) !important;
+    }
+    /* Projection (pyramid) editor — gender toggle */
+    .proj-gender-toggle {
+      display: inline-flex;
+      gap: 6px;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 10px;
+    }
+    .proj-gender-btn {
+      border: none;
+      background: transparent;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-family: var(--font-outfit);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+    .proj-gender-btn.active {
+      background: #ffffff;
+      color: var(--accent-yellow);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
+    }
+    .projection-editor {
+      display: none;
+      margin-top: 26px;
+      padding-top: 22px;
+      border-top: 1px dashed var(--card-border);
+    }
+    .projection-editor.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -647,6 +786,46 @@
               <i class="fa-solid fa-floppy-disk"></i> Save changes to Supabase
             </button>
           </form>
+          <!-- Tabular Editor: Population (spreadsheet-style editing) -->
+          <div id="tabular-editor" class="tabular-editor">
+            <div class="tabular-header">
+              <div>
+                <h3><i class="fa-solid fa-table-cells"></i> Barangay Population Editor</h3>
+                <p>Live table: <strong>data_values</strong>. Click any cell to edit; empty cells are saved as empty.</p>
+              </div>
+              <button type="button" id="save-grid-btn" class="submit-btn save-grid-btn">
+                <i class="fa-solid fa-floppy-disk"></i> Save All Changes
+              </button>
+            </div>
+            <div class="grid-table-wrap">
+              <table class="grid-table" id="grid-table">
+                <thead></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+          <!-- Tabular Editor: Projected Population Pyramid (indicator_id = 28) -->
+          <div id="projection-editor" class="tabular-editor projection-editor">
+            <div class="tabular-header">
+              <div>
+                <h3><i class="fa-solid fa-users-rays"></i> Projected Population Pyramid Editor</h3>
+                <p>Live table: <strong>data_values</strong> (indicator_id 28). Projected age &amp; sex distribution, 2020-2030.</p>
+              </div>
+              <div class="proj-gender-toggle" role="group" aria-label="Gender">
+                <button type="button" class="proj-gender-btn active" data-gender="male"><i class="fa-solid fa-mars"></i> Male</button>
+                <button type="button" class="proj-gender-btn" data-gender="female"><i class="fa-solid fa-venus"></i> Female</button>
+              </div>
+              <button type="button" id="save-projection-btn" class="submit-btn save-grid-btn">
+                <i class="fa-solid fa-floppy-disk"></i> Save All Changes
+              </button>
+            </div>
+            <div class="grid-table-wrap">
+              <table class="grid-table" id="projection-grid">
+                <thead></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
           <!-- Supabase Config Collapsible details -->
           <details>
             <summary>Supabase connection details</summary>
@@ -946,7 +1125,7 @@
       // Update UI title and texts
       sectorTitle.innerHTML = `<i class="fa-solid ${config.icon}"></i> ${config.name}`;
       sectorDesc.textContent = config.desc;
-      tableNameBadge.textContent = config.table;
+      tableNameBadge.textContent = sectorKey === 'edit' ? 'data_values' : config.table;
       
       // Update label text dynamically (Select Barangay vs Select Indicator)
       const labelEl = document.querySelector('label[for="brgy"]');
@@ -962,11 +1141,29 @@
       valuePreviewBox.style.display = 'none';
       valueInput.value = '';
       
+      // Toggle tabular editor for Population (edit) vs form for other sectors
+      const tabularEditor = document.getElementById('tabular-editor');
+      const projectionEditor = document.getElementById('projection-editor');
+      const editForm = document.getElementById('edit-form');
+      if (sectorKey === 'edit') {
+        tabularEditor.classList.add('active');
+        projectionEditor.classList.add('active');
+        editForm.style.display = 'none';
+      } else {
+        tabularEditor.classList.remove('active');
+        projectionEditor.classList.remove('active');
+        editForm.style.display = '';
+      }
+      
       // Disable controls while loading
       disableForm(true);
 
       // Fetch data for the new sector
-      await loadSectorData(config.table);
+      if (sectorKey === 'edit') {
+        await Promise.all([loadPopulationData(), loadProjectionData()]);
+      } else {
+        await loadSectorData(config.table);
+      }
     }
 
     // Disable or Enable the Form Inputs & Button
@@ -995,7 +1192,6 @@
 
     // Load data from selected Table in Supabase (with LocalStorage fallbacks)
     async function loadSectorData(tableName) {
-      }
       updateHeaderStatus('connecting', `Connecting table: [${tableName}]...`);
       showNotification('info', `Retrieving sector data from table '${tableName}'...`, 'fa-spinner fa-spin');
       
@@ -1135,6 +1331,405 @@
 
     brgySelect.addEventListener('change', syncValuePreview);
     yearSelect.addEventListener('change', syncValuePreview);
+
+    // ===============================================
+    // TABULAR EDITOR (Population) — spreadsheet style
+    // Fetches from data_values (indicator_id = 1),
+    // same mechanism used by the public population dashboard.
+    // ===============================================
+    const POPULATION_INDICATOR_ID = 1;
+    let popBarangays = [];
+    let popRowMap = {};       // key `${barangay}__${year}` -> row {data_id, value}
+    let popBarangayIds = {};  // barangay_name -> barangay_id
+
+    async function loadPopulationData() {
+      updateHeaderStatus('connecting', 'Connecting table: [data_values]...');
+      showNotification('info', `Retrieving population data from 'data_values'...`, 'fa-spinner fa-spin');
+
+      popBarangays = [];
+      popRowMap = {};
+      popBarangayIds = {};
+      appData = {};
+
+      try {
+        const [valsRes, brgysRes] = await Promise.all([
+          supabaseClient
+            .from('data_values')
+            .select('data_id, value, year, barangays(barangay_name)')
+            .eq('indicator_id', POPULATION_INDICATOR_ID)
+            .order('year', { ascending: true }),
+          supabaseClient
+            .from('barangays')
+            .select('barangay_id, barangay_name')
+            .order('barangay_name')
+        ]);
+
+        if (valsRes.error) throw valsRes.error;
+        if (brgysRes.error) throw brgysRes.error;
+
+        const byBrgyYear = {};
+        const yearsSet = new Set();
+        (valsRes.data || []).forEach(r => {
+          const name = r.barangays && r.barangays.barangay_name;
+          if (!name) return;
+          const yr = String(r.year);
+          yearsSet.add(yr);
+          byBrgyYear[name + '__' + yr] = r;
+        });
+
+        if (yearsSet.size === 0) throw new Error("No rows returned from data_values for indicator_id=" + POPULATION_INDICATOR_ID);
+
+        HISTORICAL_LABELS = [...yearsSet].sort((a, b) => Number(a) - Number(b));
+
+        const brgyNames = (brgysRes.data || []).map(b => b.barangay_name).filter(Boolean);
+        popBarangays = brgyNames.length ? brgyNames : [...DEFAULT_BARANGAY_LIST];
+        (brgysRes.data || []).forEach(b => {
+          if (b.barangay_name) popBarangayIds[b.barangay_name] = b.barangay_id;
+        });
+
+        popBarangays.forEach(brgy => {
+          const hist = new Array(HISTORICAL_LABELS.length).fill(null);
+          HISTORICAL_LABELS.forEach((yr, idx) => {
+            const key = brgy + '__' + yr;
+            const row = byBrgyYear[key];
+            if (row) {
+              hist[idx] = row.value;
+              popRowMap[key] = row;
+            }
+          });
+          appData[brgy] = { history: hist };
+        });
+
+        renderGridTable();
+        disableForm(false);
+        updateHeaderStatus('online', 'Live & Connected (Table: data_values)');
+        showNotification('ok', `Loaded ${popBarangays.length} barangays across ${HISTORICAL_LABELS.length} years from data_values.`, 'fa-circle-check');
+      } catch (err) {
+        console.error("Population data load failed:", err);
+
+        // Fallback: render last saved snapshot from LocalStorage
+        const cached = localStorage.getItem('muntinlupa_population_data_values');
+        if (cached) {
+          try {
+            const parsed = JSON.parse(cached);
+            if (parsed.data && parsed.labels) {
+              appData = parsed.data;
+              HISTORICAL_LABELS = parsed.labels;
+              popBarangays = Object.keys(appData).filter(k => k !== '_cityHistory' && k !== 'history');
+              renderGridTable();
+              disableForm(false);
+              updateHeaderStatus('offline', 'Offline — Showing Saved Snapshot');
+              showNotification('err', 'Could not reach Supabase. Showing last saved snapshot (LocalStorage).', 'fa-circle-exclamation');
+              return;
+            }
+          } catch (parseErr) {
+            console.error("Cached snapshot invalid:", parseErr);
+          }
+        }
+
+        updateHeaderStatus('error', 'Offline / Load Error');
+        showNotification('err', `Failed to load population data: ${err.message || err}`, 'fa-circle-xmark');
+      }
+    }
+
+    function renderGridTable() {
+      const table = document.getElementById('grid-table');
+      if (!table) return;
+      const thead = table.querySelector('thead');
+      const tbody = table.querySelector('tbody');
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
+
+      // Header row: Barangay label + year columns
+      const headerTr = document.createElement('tr');
+      const labelTh = document.createElement('th');
+      labelTh.textContent = 'Barangay';
+      headerTr.appendChild(labelTh);
+      HISTORICAL_LABELS.forEach((lbl) => {
+        const thEl = document.createElement('th');
+        thEl.textContent = lbl;
+        headerTr.appendChild(thEl);
+      });
+      thead.appendChild(headerTr);
+
+      const keys = Object.keys(appData).filter(k => k !== '_cityHistory' && k !== 'history');
+      keys.forEach((brgy) => {
+        const row = document.createElement('tr');
+        const labelCell = document.createElement('td');
+        labelCell.textContent = brgy;
+        row.appendChild(labelCell);
+
+        const hist = Array.isArray(appData[brgy] && appData[brgy].history) ? appData[brgy].history : [];
+        HISTORICAL_LABELS.forEach((lbl, idx) => {
+          const cell = document.createElement('td');
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.min = '0';
+          input.step = 'any';
+          input.value = (hist[idx] !== undefined && hist[idx] !== null) ? hist[idx] : '';
+          input.dataset.brgy = brgy;
+          input.dataset.idx = idx;
+          input.addEventListener('input', onGridCellChange);
+          cell.appendChild(input);
+          row.appendChild(cell);
+        });
+        tbody.appendChild(row);
+      });
+    }
+
+    function onGridCellChange(e) {
+      const input = e.currentTarget;
+      const brgy = input.dataset.brgy;
+      const idx = parseInt(input.dataset.idx, 10);
+      const val = input.value === '' ? null : parseFloat(input.value);
+
+      if (!appData[brgy]) appData[brgy] = { history: [] };
+      if (!Array.isArray(appData[brgy].history)) appData[brgy].history = [];
+      while (appData[brgy].history.length <= idx) appData[brgy].history.push(null);
+      appData[brgy].history[idx] = val;
+
+      input.classList.add('grid-cell-changed');
+    }
+
+    async function saveGridTable() {
+      const saveBtn = document.getElementById('save-grid-btn');
+      saveBtn.disabled = true;
+      showNotification('info', 'Saving all population values to data_values...', 'fa-spinner fa-spin');
+
+      try {
+        const updates = []; // {data_id, value}
+        const inserts = []; // {barangay_id, year, value}
+
+        HISTORICAL_LABELS.forEach((yr, idx) => {
+          popBarangays.forEach(brgy => {
+            const val = appData[brgy] && appData[brgy].history ? appData[brgy].history[idx] : null;
+            const key = brgy + '__' + yr;
+            const row = popRowMap[key];
+            if (row) {
+              updates.push({ data_id: row.data_id, value: val });
+            } else if (val !== null && val !== undefined) {
+              inserts.push({ barangay_id: popBarangayIds[brgy], year: parseInt(yr, 10), value: val });
+            }
+          });
+        });
+
+        let savedCount = 0;
+        for (const u of updates) {
+          const { error } = await supabaseClient.from('data_values').update({ value: u.value }).eq('data_id', u.data_id);
+          if (error) console.error('Update error:', error);
+          else savedCount++;
+        }
+        for (const ins of inserts) {
+          if (!ins.barangay_id) continue;
+          const { error } = await supabaseClient.from('data_values').insert({
+            indicator_id: POPULATION_INDICATOR_ID,
+            barangay_id: ins.barangay_id,
+            year: ins.year,
+            value: ins.value
+          });
+          if (error) console.error('Insert error:', error);
+          else savedCount++;
+        }
+
+        localStorage.setItem('muntinlupa_population_data_values', JSON.stringify({ data: appData, labels: HISTORICAL_LABELS }));
+        document.querySelectorAll('.grid-cell-changed').forEach(el => el.classList.remove('grid-cell-changed'));
+
+        showNotification('ok', `Saved ${savedCount} change(s) to Supabase table 'data_values'.`, 'fa-circle-check');
+      } catch (err) {
+        console.error(err);
+        showNotification('err', `Save Failed: ${err.message || err}`, 'fa-circle-xmark');
+      } finally {
+        saveBtn.disabled = false;
+      }
+    }
+
+    document.getElementById('save-grid-btn').addEventListener('click', saveGridTable);
+
+    // ===============================================
+    // PROJECTED POPULATION (Pyramid) — indicator_id = 28
+    // Mirrors fetchPyramidData() in data.js used by the
+    // public "Projected Population Pyramid" panel.
+    // ===============================================
+    const PROJECTION_INDICATOR_ID = 28;
+    const PYRAMID_AGE_GROUPS = ['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80-84', '85+'];
+    const DEFAULT_PROJECTION_YEARS = Array.from({ length: 11 }, (_, i) => String(2020 + i)); // 2020-2030
+
+    let projYears = [];
+    let projRowMap = {};      // key `${gender}__${age}__${year}` -> row {data_id}
+    let projValues = {};      // key `${gender}__${age}__${year}` -> value | null
+    let projGender = 'male';
+
+    function projKey(gender, age, year) {
+      return gender + '__' + age + '__' + String(year);
+    }
+
+    async function loadProjectionData() {
+      showNotification('info', "Retrieving projected population (indicator_id 28) from 'data_values'...", 'fa-spinner fa-spin');
+
+      projYears = [];
+      projRowMap = {};
+      projValues = {};
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('data_values')
+          .select('data_id, value, year, category_1, category_2')
+          .eq('indicator_id', PROJECTION_INDICATOR_ID)
+          .not('value', 'is', null)
+          .order('year', { ascending: true });
+        if (error) throw error;
+
+        const years = [...new Set((data || []).map(r => r.year))].sort((a, b) => a - b);
+        if (years.length === 0) throw new Error('No rows returned from data_values for indicator_id=' + PROJECTION_INDICATOR_ID);
+
+        projYears = years.map(String);
+
+        (data || []).forEach(r => {
+          const g = (r.category_2 || '').trim().toLowerCase();
+          const age = r.category_1;
+          if (!PYRAMID_AGE_GROUPS.includes(age) || (g !== 'male' && g !== 'female')) return;
+          const key = projKey(g, age, r.year);
+          projRowMap[key] = r;
+          projValues[key] = r.value;
+        });
+
+        renderProjectionGrid();
+        showNotification('ok', `Loaded projected population across ${projYears.length} years (${projYears[0]}-${projYears[projYears.length - 1]}).`, 'fa-circle-check');
+      } catch (err) {
+        console.error("Projection data load failed:", err);
+
+        const cached = localStorage.getItem('muntinlupa_projection_data_values');
+        if (cached) {
+          try {
+            const parsed = JSON.parse(cached);
+            if (parsed.years && parsed.values) {
+              projYears = parsed.years;
+              projRowMap = {};
+              projValues = parsed.values;
+              renderProjectionGrid();
+              showNotification('err', 'Could not reach Supabase. Showing last saved projection snapshot (LocalStorage).', 'fa-circle-exclamation');
+              return;
+            }
+          } catch (parseErr) {
+            console.error("Cached projection snapshot invalid:", parseErr);
+          }
+        }
+
+        projYears = [...DEFAULT_PROJECTION_YEARS];
+        renderProjectionGrid();
+        showNotification('err', `Failed to load projected population: ${err.message || err}. Grid initialized with years ${DEFAULT_PROJECTION_YEARS[0]}-${DEFAULT_PROJECTION_YEARS[DEFAULT_PROJECTION_YEARS.length - 1]}.`, 'fa-circle-xmark');
+      }
+    }
+
+    function renderProjectionGrid() {
+      const table = document.getElementById('projection-grid');
+      if (!table) return;
+      const thead = table.querySelector('thead');
+      const tbody = table.querySelector('tbody');
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
+
+      const headerTr = document.createElement('tr');
+      const labelTh = document.createElement('th');
+      labelTh.textContent = projGender === 'male' ? 'Age Group (Male)' : 'Age Group (Female)';
+      headerTr.appendChild(labelTh);
+      projYears.forEach((yr) => {
+        const thEl = document.createElement('th');
+        thEl.textContent = yr;
+        headerTr.appendChild(thEl);
+      });
+      thead.appendChild(headerTr);
+
+      PYRAMID_AGE_GROUPS.forEach((age) => {
+        const row = document.createElement('tr');
+        const labelCell = document.createElement('td');
+        labelCell.textContent = age;
+        row.appendChild(labelCell);
+
+        projYears.forEach((yr) => {
+          const cell = document.createElement('td');
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.min = '0';
+          input.step = 'any';
+          const val = projValues[projKey(projGender, age, yr)];
+          input.value = (val !== undefined && val !== null) ? val : '';
+          input.dataset.age = age;
+          input.dataset.year = yr;
+          input.addEventListener('input', onProjectionCellChange);
+          cell.appendChild(input);
+          row.appendChild(cell);
+        });
+        tbody.appendChild(row);
+      });
+    }
+
+    function onProjectionCellChange(e) {
+      const input = e.currentTarget;
+      const key = projKey(projGender, input.dataset.age, input.dataset.year);
+      projValues[key] = input.value === '' ? null : parseFloat(input.value);
+      input.classList.add('grid-cell-changed');
+    }
+
+    async function saveProjectionGrid() {
+      const saveBtn = document.getElementById('save-projection-btn');
+      saveBtn.disabled = true;
+      showNotification('info', 'Saving projected population values to data_values...', 'fa-spinner fa-spin');
+
+      try {
+        const updates = [];
+        const inserts = [];
+
+        projYears.forEach((yr) => {
+          const yearNum = parseInt(yr, 10);
+          ['male', 'female'].forEach((g) => {
+            PYRAMID_AGE_GROUPS.forEach((age) => {
+              const key = projKey(g, age, yr);
+              const val = projValues[key];
+              const row = projRowMap[key];
+              if (row) {
+                updates.push({ data_id: row.data_id, value: val });
+              } else if (val !== null && val !== undefined) {
+                inserts.push({ indicator_id: PROJECTION_INDICATOR_ID, category_1: age, category_2: g, year: yearNum, value: val });
+              }
+            });
+          });
+        });
+
+        let savedCount = 0;
+        for (const u of updates) {
+          const { error } = await supabaseClient.from('data_values').update({ value: u.value }).eq('data_id', u.data_id);
+          if (error) console.error('Projection update error:', error);
+          else savedCount++;
+        }
+        for (const ins of inserts) {
+          const { error } = await supabaseClient.from('data_values').insert(ins);
+          if (error) console.error('Projection insert error:', error);
+          else savedCount++;
+        }
+
+        localStorage.setItem('muntinlupa_projection_data_values', JSON.stringify({ years: projYears, values: projValues }));
+        document.querySelectorAll('#projection-grid .grid-cell-changed').forEach(el => el.classList.remove('grid-cell-changed'));
+
+        showNotification('ok', `Saved ${savedCount} change(s) for projected population to Supabase table 'data_values'.`, 'fa-circle-check');
+      } catch (err) {
+        console.error(err);
+        showNotification('err', `Projection Save Failed: ${err.message || err}`, 'fa-circle-xmark');
+      } finally {
+        saveBtn.disabled = false;
+      }
+    }
+
+    document.getElementById('save-projection-btn').addEventListener('click', saveProjectionGrid);
+
+    document.querySelectorAll('.proj-gender-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.proj-gender-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        projGender = btn.dataset.gender;
+        renderProjectionGrid();
+      });
+    });
 
     // Form Submit Event Handler
     document.getElementById('edit-form').addEventListener('submit', async (e) => {
