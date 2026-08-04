@@ -65,7 +65,8 @@
         radial-gradient(at 90% 10%, rgba(239, 68, 68, 0.05) 0px, transparent 50%),
         radial-gradient(at 50% 90%, rgba(8, 145, 178, 0.03) 0px, transparent 50%);
       background-attachment: fixed;
-      padding: 24px;
+      margin: 0;
+      padding: 0;
     }
 
     /* Custom Scrollbars */
@@ -88,64 +89,78 @@
 
     /* Container & Layout */
     .admin-container {
-      max-width: 1200px;
       width: 100%;
+      max-width: 100%;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
       gap: 24px;
       flex-grow: 1;
+      padding: 24px 32px 32px;
     }
 
     /* Header */
-    header {
+    .dashboard-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 18px 28px;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--border-radius-lg);
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03), 0 1px 8px rgba(15, 23, 42, 0.02);
+      padding: 8px 24px;
+      background: #003397;
+      color: white;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      border-radius: 0;
+      margin-bottom: 24px;
     }
 
-    .header-title-group {
+    .header-logo {
       display: flex;
       align-items: center;
       gap: 16px;
+      text-decoration: none;
+      color: inherit;
     }
 
-    .header-icon {
-      font-size: 2.2rem;
-      color: var(--accent-red);
-      filter: drop-shadow(0 0 8px var(--accent-red-glow));
-      animation: pulse-glow 2.5s infinite alternate;
+    .header-logo-img {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
     }
 
-    @keyframes pulse-glow {
-      0% {
-        filter: drop-shadow(0 0 2px var(--accent-red-glow));
-      }
-
-      100% {
-        filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.5));
-      }
-    }
-
-    .header-titles h1 {
-      font-size: 1.5rem;
+    .dashboard-header .header-titles h1 {
+      font-size: 1.8rem;
       font-weight: 800;
-      letter-spacing: 1px;
-      background: linear-gradient(to right, var(--text-primary), var(--accent-red));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      background: none;
+      -webkit-text-fill-color: #ffffff;
     }
 
-    .header-titles p {
+    .dashboard-header .header-titles .subtitle {
       font-size: 0.75rem;
+      font-weight: 600;
+      color: #dbeafe;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 2px;
+    }
+
+    .header-info {
+      padding: 10px 6px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .header-sector-text {
+      color: #ffffff;
       font-weight: 700;
-      color: var(--accent-yellow);
-      letter-spacing: 3px;
+      font-size: 25px;
+      letter-spacing: 1px;
     }
 
     .header-status {
@@ -156,6 +171,17 @@
       padding: 8px 16px;
       border-radius: 30px;
       border: 1px solid var(--card-border);
+    }
+
+    .sidebar-sectors {
+      width: 30px;
+      object-fit: contain;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .sidebar-sectors:hover {
+      transform: scale(1.08);
     }
 
     .status-dot {
@@ -198,17 +224,118 @@
       font-weight: 600;
     }
 
-    /* Main Workspace Grid */
-    .workspace {
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 24px;
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 1999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
     }
 
-    @media (max-width: 900px) {
-      .workspace {
-        grid-template-columns: 1fr;
-      }
+    .sidebar-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sector-sidebar {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 280px;
+      height: 100vh;
+      background: var(--bg-light);
+      box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+      z-index: 2000;
+      transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sector-sidebar.active {
+      right: 0;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px;
+      border-bottom: 1px solid var(--card-border);
+      background: #003397;
+      color: white;
+    }
+
+    .sidebar-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    #close-sidebar-btn {
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    #close-sidebar-btn:hover {
+      transform: rotate(90deg);
+    }
+
+    .sidebar-nav {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav .nav-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border: none;
+      border-radius: var(--border-radius-md);
+      background: transparent;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .sidebar-nav .nav-item i {
+      color: #003397;
+      width: 20px;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .sidebar-nav .nav-item:hover {
+      background: #f8fafc;
+      color: #003397;
+      transform: translateX(4px);
+    }
+
+    .sidebar-nav .nav-item.active {
+      background: rgba(239, 68, 68, 0.08);
+      color: #003397;
+      box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.15);
+    }
+
+    .sidebar-nav .nav-item.active i {
+      color: var(--accent-red);
+    }
+
+    /* Main Workspace Grid */
+    .workspace {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
     }
 
     /* Sidebar Navigation */
@@ -301,6 +428,7 @@
       display: flex;
       flex-direction: column;
       gap: 24px;
+      width: 100%;
     }
 
     .card {
@@ -311,6 +439,8 @@
       box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03);
       transition: var(--transition-smooth);
       position: relative;
+      width: 100%;
+      max-width: none;
     }
 
     .card:hover {
@@ -635,6 +765,7 @@
       flex-wrap: wrap;
       gap: 12px;
       margin-bottom: 16px;
+      width: 100%;
     }
 
     .tabular-header h3 {
@@ -722,6 +853,7 @@
       border: 1px solid var(--card-border);
       border-radius: var(--border-radius-md);
       background: #ffffff;
+      width: 100%;
     }
 
     .grid-table {
@@ -775,6 +907,28 @@
 
     .grid-table tbody tr:hover td:first-child {
       background: #fffdf5;
+    }
+
+    .dashboard-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 12px;
+      z-index: 9999;
+      line-height: 0;
+      margin: 0;
+      padding: 0;
+      display: block;
+      background: transparent;
+    }
+
+    .footer-image {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: fill;
+      object-position: center;
     }
 
     .economic-indicator-section {
@@ -861,83 +1015,47 @@
 </head>
 
 <body>
-  <div class="admin-container">
+  <header class="dashboard-header">
+    <a class="header-logo" href="index.html">
+      <img src="assets/images/muntinlupa-city-logo.png" alt="MunTHINK Logo" class="header-logo-img">
+      <div class="header-titles">
+        <h1>MunTHINK Hub</h1>
+        <p class="subtitle">Smarter Data for a Smarter Muntinlupa</p>
+      </div>
+    </a>
+    <div class="header-info">
+      <div class="header-status" aria-live="polite">
+        <span class="status-dot connecting" id="status-dot"></span>
+        <span class="status-text" id="status-text">Loading editor...</span>
+      </div>
+      <span class="header-sector-text">ADMIN EDITOR</span>
+      <img src="assets/images/hamburger.png" alt="sidebar" class="sidebar-sectors" id="hamburger-btn">
+    </div>
+  </header>
 
-    <!-- Top Header -->
-    <header>
-      <div class="header-title-group">
-        <i class="fa-solid fa-screwdriver-wrench header-icon"></i>
-        <div class="header-titles">
-          <h1>MUNTINLUPA CITY ADMIN</h1>
-          <p>DATABASE DATA EDITOR</p>
-        </div>
-      </div>
-      <div class="header-status">
-        <div id="status-dot" class="status-dot connecting"></div>
-        <span id="status-text" class="status-text">Connecting to Supabase...</span>
-      </div>
-    </header>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <aside class="sector-sidebar" id="sector-sidebar">
+    <div class="sidebar-header">
+      <h2>Editor Sectors</h2>
+      <i class="fa-solid fa-xmark" id="close-sidebar-btn"></i>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button type="button" class="nav-item active" data-sector="edit"><i class="fa-solid fa-users"></i> Population</button>
+      <button type="button" class="nav-item" data-sector="economic"><i class="fa-solid fa-chart-line"></i> Economic</button>
+      <button type="button" class="nav-item" data-sector="education"><i class="fa-solid fa-graduation-cap"></i> Education</button>
+      <button type="button" class="nav-item" data-sector="health"><i class="fa-solid fa-heart-pulse"></i> Health</button>
+      <button type="button" class="nav-item" data-sector="protective"><i class="fa-solid fa-shield-halved"></i> Protective</button>
+      <button type="button" class="nav-item" data-sector="social_welfare"><i class="fa-solid fa-hand-holding-heart"></i> Social Welfare</button>
+      <button type="button" class="nav-item" data-sector="environment"><i class="fa-solid fa-leaf"></i> Environment</button>
+      <button type="button" class="nav-item" data-sector="institutional"><i class="fa-solid fa-building-columns"></i> Institutional</button>
+    </nav>
+  </aside>
+
+  <div class="admin-container">
     <!-- Main Workspace -->
     <div class="workspace">
-
-      <!-- Sidebar Navigation for Editor Sections -->
-      <aside class="sidebar">
-        <div class="sidebar-section-title">Edit Sectors</div>
-        <nav class="nav-list">
-          <li class="nav-item">
-            <button class="nav-btn active" data-sector="edit">
-              <i class="fa-solid fa-users"></i>
-              <span>Population</span>
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-btn" data-sector="economic">
-              <i class="fa-solid fa-chart-line"></i>
-              <span>Economic Sector</span>
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-btn" data-sector="education">
-              <i class="fa-solid fa-graduation-cap"></i>
-              <span>Education Sector</span>
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-btn" data-sector="health">
-              <i class="fa-solid fa-heart-pulse"></i>
-              <span>Health Sector</span>
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-btn" data-sector="protective">
-              <i class="fa-solid fa-shield-halved"></i>
-              <span>Protective Services</span>
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-btn" data-sector="social_welfare">
-              <i class="fa-solid fa-hand-holding-heart"></i>
-              <span>Social Welfare</span>
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-btn" data-sector="environment">
-              <i class="fa-solid fa-leaf"></i>
-              <span>Environment</span>
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-btn" data-sector="institutional">
-              <i class="fa-solid fa-building-columns"></i>
-              <span>Institutional</span>
-            </button>
-          </li>
-        </nav>
-
-        <a href="index.html" class="back-link">
-          <i class="fa-solid fa-arrow-left"></i> Back to Public Dashboard
-        </a>
-      </aside>
       <!-- Content Area -->
       <main class="main-panel">
 
@@ -1332,15 +1450,33 @@
     // Initialize Supabase Client
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Set up sidebar navigation click handlers
-    document.querySelectorAll('.nav-btn').forEach(btn => {
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const sidebar = document.getElementById('sector-sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+
+    function toggleSidebar() {
+      sidebar?.classList.toggle('active');
+      overlay?.classList.toggle('active');
+    }
+
+    hamburgerBtn?.addEventListener('click', toggleSidebar);
+    closeSidebarBtn?.addEventListener('click', toggleSidebar);
+    overlay?.addEventListener('click', toggleSidebar);
+
+    // Set up header navigation click handlers
+    document.querySelectorAll('.nav-btn, .nav-item').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const selectedBtn = e.currentTarget;
         const targetSector = selectedBtn.getAttribute('data-sector');
 
         // Update active class
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.nav-btn, .nav-item').forEach(b => b.classList.remove('active'));
         selectedBtn.classList.add('active');
+
+        // Close sidebar after selection
+        sidebar?.classList.remove('active');
+        overlay?.classList.remove('active');
 
         // Set new sector
         switchSector(targetSector);
@@ -1430,8 +1566,12 @@
 
     // Set the overall header status banner
     function updateHeaderStatus(state, message) {
-      statusTextEl.textContent = message;
-      statusDotEl.className = 'status-dot ' + state;
+      if (statusTextEl) {
+        statusTextEl.textContent = message;
+      }
+      if (statusDotEl) {
+        statusDotEl.className = 'status-dot ' + state;
+      }
     }
 
     // Show inline alert in form
@@ -2959,4 +3099,7 @@
   </script>
 </body>
 
+  <footer class="dashboard-footer" aria-hidden="true">
+    <img src="assets/images/footer.jpg" alt="" class="footer-image">
+  </footer>
 </html>
