@@ -49,11 +49,6 @@
             gap: 16px;
         }
 
-        .chart-card:hover {
-            border-color: rgba(79, 70, 229, 0.2);
-            box-shadow: 0 12px 35px rgba(79, 70, 229, 0.04);
-        }
-
         .chart-title-wrapper {
             display: flex;
             justify-content: space-between;
@@ -72,13 +67,29 @@
         }
 
         .chart-card h5 i {
-            color: #e1271a; /* Institutional Indigo */
+            color: #ef4444;
         }
 
         .canvas-container {
             position: relative;
             width: 100%;
-            height: 380px;
+            height: 350px;
+        }
+
+        .chart-reference {
+            margin-top: 4px;
+            padding-top: 4px;
+            border-top: 1px dashed rgba(15, 23, 42, 0.08);
+            font-size: 0.75rem;
+            color: var(--text-muted, #64748b);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chart-reference i {
+            color: #ef4444;
+            font-size: 0.8rem;
         }
 
         /* Stats Cards Indigo Touches */
@@ -377,6 +388,9 @@
                     <div class="canvas-container">
                         <canvas id="budgetChart"></canvas>
                     </div>
+                    <div class="chart-reference">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> Accounting Office
+                    </div>
                 </div>
 
                 <!-- Chart 2: Revenue Stability & Reliability -->
@@ -391,6 +405,9 @@
                     <div class="canvas-container">
                         <canvas id="revenueChart"></canvas>
                     </div>
+                    <div class="chart-reference">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> Accounting Office
+                    </div>
                 </div>
 
             </div>
@@ -399,7 +416,7 @@
         <!-- Detailed Indicators Cards Grid -->
         <section class="indicator-cards-section">
             <div class="section-header">
-                <h4><i class="fa-solid fa-circle-info"></i> Institutional Indicators Summary</h4>
+                <h4><i class="fa-solid fa-circle-info"></i> Institutional Indicators Summary (Accounting Office)</h4>
             </div>
             <div class="indicators-grid" id="indicators-grid-container">
                 <!-- Javascript builds these dynamically -->

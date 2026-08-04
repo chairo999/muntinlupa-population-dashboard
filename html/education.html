@@ -52,11 +52,6 @@
             gap: 16px;
         }
 
-        .chart-card:hover {
-            border-color: rgba(239, 68, 68, 0.2);
-            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.04);
-        }
-
         .chart-title-wrapper {
             display: flex;
             justify-content: space-between;
@@ -245,11 +240,6 @@
             flex-direction: column;
             gap: 20px;
             transition: var(--transition-smooth);
-        }
-
-        .perf-indicator-section:hover {
-            border-color: rgba(239, 68, 68, 0.2);
-            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.04);
         }
 
         .perf-header {
@@ -512,7 +502,6 @@
                         <select id="literacyChartType" class="chart-type-select">
                             <option value="line">Line Graph</option>
                             <option value="bar">Bar Graph</option>
-                            <option value="pie">Pie Graph</option>
                         </select>
                     </div>
                     <div class="canvas-container">
@@ -1110,51 +1099,42 @@
             const labels = eduLabels;
             const data = labels.map((l, i) => eduData["Literacy Rate"]?.history[i]);
             const ctx = document.getElementById("literacyChart").getContext("2d");
+            const chartType = literacyChartType === "pie" ? "line" : literacyChartType;
 
-            let config;
-
-            if (literacyChartType === "pie") {
-                config = {
-                    type: "pie",
-                    data: { labels, datasets: [{ label: 'Functional Literacy Rate (%)', data, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
-                    options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, animation: { animateRotate: true, animateScale: true, duration: 1000 }, plugins: { legend: { display: true, labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` ${ctx.raw}%`) } }
-                };
-            } else {
-                config = {
-                    type: literacyChartType,
-                    data: {
-                        labels,
-                        datasets: [{
-                            label: 'Functional Literacy Rate (%)',
-                            data,
-                            borderColor: literacyChartType === "line" ? "#d91406" : undefined,
-                            borderWidth: literacyChartType === "line" ? 3 : undefined,
-                            pointBackgroundColor: "#e1271a",
-                            pointBorderColor: "#f8fafc",
-                            pointBorderWidth: 2,
-                            pointRadius: 5,
-                            pointHoverRadius: 9,
-                            pointHoverBackgroundColor: "#ff2a2a",
-                            pointHoverBorderColor: "#fff",
-                            pointHoverBorderWidth: 3,
-                            hoverBackgroundColor: "#e1271a52",
-                            hoverBorderColor: "#e1271a52",
-                            hoverBorderWidth: 4,
-                            backgroundColor: '#e1271a',
-                            fill: false,
-                            tension: 0.15,
-                            borderRadius: literacyChartType === "bar" ? 6 : 0
-                        }]
+            const config = {
+                type: chartType,
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Functional Literacy Rate (%)',
+                        data,
+                        borderColor: chartType === "line" ? "#d91406" : undefined,
+                        borderWidth: chartType === "line" ? 3 : undefined,
+                        pointBackgroundColor: "#e1271a",
+                        pointBorderColor: "#f8fafc",
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 9,
+                        pointHoverBackgroundColor: "#ff2a2a",
+                        pointHoverBorderColor: "#fff",
+                        pointHoverBorderWidth: 3,
+                        hoverBackgroundColor: "#e1271a52",
+                        hoverBorderColor: "#e1271a52",
+                        hoverBorderWidth: 4,
+                        backgroundColor: '#e1271a',
+                        fill: false,
+                        tension: 0.15,
+                        borderRadius: chartType === "bar" ? 6 : 0
+                    }]
+                },
+                options: baseLineOpts({
+                    scales: {
+                        y: { min: 75, max: 100, title: { display: true, text: 'Percentage (%)' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } },
+                        x: { grid: { display: false }, ticks: { color: "#000000b3" } }
                     },
-                    options: baseLineOpts({
-                        scales: {
-                            y: { min: 75, max: 100, title: { display: true, text: 'Percentage (%)' }, grid: { color: "rgba(3, 3, 3, 0.05)" }, ticks: { color: "#000000b3" } },
-                            x: { grid: { display: false }, ticks: { color: "#000000b3" } }
-                        },
-                        plugins: { legend: { display: false }, tooltip: baseTooltip(ctx => ` ${ctx.raw}%`) }
-                    })
-                };
-            }
+                    plugins: { legend: { display: false }, tooltip: baseTooltip(ctx => ` ${ctx.raw}%`) }
+                })
+            };
 
             const literacyRealData = config.data.datasets.map(d => d.data);
             config.data.datasets.forEach(d => { d.data = new Array(d.data.length).fill(0); });

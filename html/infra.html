@@ -14,6 +14,35 @@
     <link rel="stylesheet" href="../styles.css">
 
     <style>
+        :root {
+            --infra-red: #e1271a;
+            --infra-red-alt: #e84b3a;
+            --infra-blue: #003397;
+            --infra-blue-alt: #1d57c7;
+            --infra-yellow: #ffcf01;
+            --infra-yellow-alt: #ffd84d;
+        }
+
+        i[style*="color:#0891b2"], i[style*="color:#0ea5e9"], i[style*="color:#06b6d4"] {
+            color: var(--infra-blue) !important;
+        }
+
+        i[style*="color:#f59e0b"], i[style*="color:#f97316"] {
+            color: var(--infra-yellow) !important;
+        }
+
+        i[style*="color:#10b981"] {
+            color: var(--infra-red) !important;
+        }
+
+        [style*="background:linear-gradient(135deg,#0891b2,#06b6d4)"] {
+            background: var(--infra-blue) !important;
+        }
+
+        [style*="background:linear-gradient(135deg,#f59e0b,#f97316)"] {
+            background: var(--infra-yellow) !important;
+        }
+
         .infra-grid {
             display: grid;
             grid-template-columns: 2fr 1.5fr 2fr;
@@ -77,11 +106,6 @@
             gap: 16px;
         }
 
-        .chart-card:hover {
-            border-color: rgba(6, 182, 212, 0.28);
-            box-shadow: 0 12px 35px rgba(6, 182, 212, 0.06);
-        }
-
         .chart-title-wrapper {
             display: flex;
             justify-content: space-between;
@@ -101,7 +125,7 @@
         }
 
         .chart-card h5 i {
-            color: #0ea5e9;
+            color: var(--infra-blue);
         }
 
         .canvas-container {
@@ -134,39 +158,6 @@
             color: white;
         }
 
-        .db-status-bar {
-            background: #f1f5f9;
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius-md);
-            padding: 8px 16px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .db-status-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .db-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--accent-emerald);
-            box-shadow: 0 0 6px var(--accent-emerald);
-        }
-
-        .db-dot.offline {
-            background-color: #f59e0b;
-            box-shadow: 0 0 6px #f59e0b;
-        }
-
         .chart-controls {
             display: flex;
             align-items: center;
@@ -183,6 +174,7 @@
             padding: 5px 10px;
             outline: none;
             cursor: pointer;
+            transition: var(--transition-smooth);
         }
 
         .chart-select {
@@ -191,10 +183,24 @@
             border: 1px solid rgba(15, 23, 42, 0.1);
         }
 
+        .chart-select:focus,
+        .chart-select:active,
+        .chart-select:hover {
+            background-color: #f1f5f9 !important;
+            border-color: rgba(15, 23, 42, 0.1);
+            color: var(--text-primary);
+        }
+
         .chart-type-select {
             background: #0891b2;
             color: #ffffff;
             border: none;
+        }
+
+        .chart-type-select:focus,
+        .chart-type-select:active,
+        .chart-type-select:hover {
+            opacity: 0.92;
         }
 
         @media (max-width: 640px) {
@@ -226,7 +232,7 @@
             width: 44px;
             height: 44px;
             border-radius: 12px;
-            background: linear-gradient(135deg, #0891b2, #06b6d4);
+            background: #e1271a;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -434,15 +440,43 @@
         /* Top Infra Section Layout (Map + Side Summary Panel) */
         .infra-top-section {
             display: grid;
-            grid-template-columns: 1.1fr 1fr;
-            gap: 24px;
+            grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.38fr);
+            gap: 0px;
             margin-top: 16px;
             margin-bottom: 24px;
+            align-items: start;
+        }
+
+        .infra-top-section .map-panel {
+            min-height: auto;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .infra-top-section .map-viewport {
+            flex: 1;
+            width: 100%;
+            aspect-ratio: 0.65 / 1;
+            min-height: 0;
+            max-width: 600px;
+        }
+
+        .infra-top-section .map-wrapper {
+            width: 100%;
+            max-width: 600px;
+            max-height: 100%;
+            aspect-ratio: 0.65 / 1;
+            margin: 0 auto;
         }
 
         @media (max-width: 1024px) {
             .infra-top-section {
                 grid-template-columns: 1fr;
+            }
+
+            .infra-summary-panel {
+                max-width: none;
+                margin-left: 0;
             }
         }
 
@@ -455,6 +489,8 @@
             flex-direction: column;
             gap: 16px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            width: 100%;
+            margin-left: 0;
         }
 
         .infra-summary-content {
@@ -472,14 +508,9 @@
             transition: var(--transition-smooth);
         }
 
-        .infra-summary-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
-        }
-
-        .water-card { border-left: 4px solid #0891b2; }
-        .power-card { border-left: 4px solid #f59e0b; }
-        .facilities-card { border-left: 4px solid #10b981; }
+        .water-card { border-left: 4px solid var(--infra-blue); }
+        .power-card { border-left: 4px solid var(--infra-yellow); }
+        .facilities-card { border-left: 4px solid var(--infra-red); }
 
         .infra-card-header {
             display: flex;
@@ -499,9 +530,9 @@
             font-size: 1.1rem;
         }
 
-        .water-icon { background: #0891b2; }
-        .power-icon { background: #f59e0b; }
-        .facilities-icon { background: #10b981; }
+        .water-icon { background: var(--infra-blue); }
+        .power-icon { background: var(--infra-yellow); }
+        .facilities-icon { background: var(--infra-red); }
 
         .infra-card-title {
             font-size: 0.95rem;
@@ -545,9 +576,9 @@
             color: var(--text-primary);
         }
 
-        .text-cyan { color: #0891b2; }
-        .text-amber { color: #d97706; }
-        .text-emerald { color: #059669; }
+        .text-cyan { color: var(--infra-blue); }
+        .text-amber { color: var(--infra-yellow); }
+        .text-emerald { color: var(--infra-red); }
 
         .facility-breakdown-box {
             margin-top: 14px;
@@ -644,12 +675,6 @@
     </aside>
 
     <div class="dashboard-container">
-        <div class="db-status-bar">
-            <div class="db-status-left">
-                <div id="db-dot" class="db-dot offline"></div>
-                <span id="db-status-txt">Checking infrastructure dataset...</span>
-            </div>
-        </div>
 
         <!-- ═══════════════════════════════════════════════════════════════
              TOP INTERACTIVE MAP & BARANGAY INFRASTRUCTURE SUMMARY SECTION
@@ -671,7 +696,7 @@
                         </div>
 
                         <select id="brgy-select" required style="background-color: #e1271a; color: #f8fafc; border-radius: 0.375rem; padding: 5px 10px; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; cursor: pointer; outline: none;">
-                            <option value="" selected>-- City-Wide (Select Barangay) --</option>
+                            <option value="" selected>-- Select Barangay --</option>
                             <option value="Sucat">Sucat</option>
                             <option value="Buli">Buli</option>
                             <option value="Cupang">Cupang</option>
@@ -871,7 +896,7 @@
             </section>
 
             <!-- Right Column: Barangay Infrastructure Summary Side Panel -->
-            <section class="grid-panel infra-summary-panel">
+            <section class="grid-panel infra-summary-panel" style="min-height: 100%;">
                 <div class="panel-header flex-header">
                     <h3><i class="fa-solid fa-building-circle-check"></i> <span id="side-summary-title">City-Wide Infrastructure Summary</span></h3>
                     <span class="badge" id="side-summary-badge">All 9 Barangays</span>
@@ -994,7 +1019,7 @@
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-users"></i> Year-End Customer Users by Type</h5>
                         <div class="chart-controls">
-                            <select id="mwssCustomersChartType" class="chart-type-select">
+                            <select id="mwssCustomersChartType" class="chart-type-select" style="background-color: var(--infra-blue); color: #ffffff; border: none;">
                                 <option value="bar">Bar Graph</option>
                                 <option value="line">Line Graph</option>
                             </select>
@@ -1010,7 +1035,7 @@
                     <div class="chart-title-wrapper">
                         <h5><i class="fa-solid fa-chart-area"></i> Annual Water Sales (cu.m.)</h5>
                         <div class="chart-controls">
-                            <select id="mwssSalesChartType" class="chart-type-select">
+                            <select id="mwssSalesChartType" class="chart-type-select" style="background-color: var(--infra-blue); color: #ffffff; border: none;">
                                 <option value="line">Line Graph</option>
                                 <option value="bar">Bar Graph</option>
                             </select>
@@ -1036,7 +1061,7 @@
                             <option value="industrial_conn">Industrial — No. of Connections</option>
                             <option value="industrial_avg">Industrial — Avg. Consumption</option>
                         </select>
-                        <select id="mwssBrgyChartType" class="chart-type-select">
+                        <select id="mwssBrgyChartType" class="chart-type-select" style="background-color: var(--infra-blue); color: #ffffff; border: none;">
                             <option value="bar">Bar Graph</option>
                             <option value="line">Line Graph</option>
                             <option value="pie">Pie Graph</option>
@@ -1053,7 +1078,7 @@
                 <div class="chart-title-wrapper">
                     <h5><i class="fa-solid fa-house-chimney-user"></i> Total Households in Service Area (2016–2022)</h5>
                     <div class="chart-controls">
-                        <select id="mwssHHChartType" class="chart-type-select">
+                        <select id="mwssHHChartType" class="chart-type-select" style="background-color: var(--infra-blue); color: #ffffff; border: none;">
                             <option value="line">Line Graph</option>
                             <option value="bar">Bar Graph</option>
                         </select>
@@ -1087,37 +1112,37 @@
             <!-- Power Stat Cards -->
             <div class="stats-banner" style="margin-bottom:18px;">
                 <div class="stat-card">
-                    <div class="stat-icon-wrapper" style="background:#f59e0b;">
+                    <div class="stat-icon-wrapper" style="background:#ffcf01;">
                         <i class="fa-solid fa-bolt" style="color:white;"></i>
                     </div>
                     <div class="stat-data">
-                        <span class="stat-label">Total Households (2023)</span>
+                        <span class="stat-label">Total Households</span>
                         <h2>148,952</h2>
-                        <span class="stat-pct" style="color: var(--text-muted)">Projected from 2020 Census</span>
+                        <span class="stat-pct" style="color: var(--text-muted)">Projected from 2020 Census <span class="stat-latest">(2023)</span></span>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon-wrapper" style="background:#f59e0b;">
+                    <div class="stat-icon-wrapper" style="background:#ffcf01;">
                         <i class="fa-solid fa-plug-circle-check" style="color:white;"></i>
                     </div>
                     <div class="stat-data">
-                        <span class="stat-label">Electrified Households (2023)</span>
+                        <span class="stat-label">Electrified Households</span>
                         <h2>142,970</h2>
-                        <span class="stat-pct" style="color: var(--text-muted)">Estimated Meralco connections</span>
+                        <span class="stat-pct" style="color: var(--text-muted)">Estimated Meralco connections <span class="stat-latest">(2023)</span></span>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon-wrapper" style="background:#f59e0b;">
+                    <div class="stat-icon-wrapper" style="background:#ffcf01;">
                         <i class="fa-solid fa-percent" style="color:white;"></i>
                     </div>
                     <div class="stat-data">
-                        <span class="stat-label">Electrification Rate (2023)</span>
+                        <span class="stat-label">Electrification Rate</span>
                         <h2>95.98%</h2>
-                        <span class="stat-pct" style="color: var(--text-muted)">Household electrification</span>
+                        <span class="stat-pct" style="color: var(--text-muted)">Household electrification <span class="stat-latest">(2023)</span></span>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon-wrapper" style="background:#f59e0b;">
+                    <div class="stat-icon-wrapper" style="background:#ffcf01;">
                         <i class="fa-solid fa-calendar-check" style="color:white;"></i>
                     </div>
                     <div class="stat-data">
@@ -1131,8 +1156,8 @@
             <!-- Household Electrification Trend Chart -->
             <div class="chart-card" style="margin-bottom:24px;">
                 <div class="chart-title-wrapper">
-                    <h5><i class="fa-solid fa-chart-line" style="color:#f59e0b;"></i> Household Electrification Statistics (2012–2023)</h5>
-                    <select id="electrificationChartType" class="chart-type-select">
+                    <h5><i class="fa-solid fa-chart-line" style="color:var(--infra-yellow);"></i> Household Electrification Statistics (2012–2023)</h5>
+                    <select id="electrificationChartType" class="chart-type-select" style="background-color: var(--infra-yellow); color: #ffffff; border: none;">
                         <option value="bar">Bar Graph</option>
                         <option value="line">Line Graph</option>
                     </select>
@@ -1148,8 +1173,8 @@
             <!-- Barangay-Level Electrification Chart -->
             <div class="chart-card">
                 <div class="chart-title-wrapper">
-                    <h5><i class="fa-solid fa-map-location-dot" style="color:#f59e0b;"></i> Household Electrification per Barangay (2019–2021)</h5>
-                    <select id="brgyElectrificationChartType" class="chart-type-select">
+                    <h5><i class="fa-solid fa-map-location-dot" style="color:var(--infra-yellow);"></i> Household Electrification per Barangay (2019–2021)</h5>
+                    <select id="brgyElectrificationChartType" class="chart-type-select" style="background-color: var(--infra-yellow); color: #ffffff; border: none;">
                         <option value="bar">Bar Graph</option>
                         <option value="line">Line Graph</option>
                     </select>
@@ -3011,8 +3036,29 @@
             }
         };
 
-        const PIE_COLORS = ["#0ea5e9", "#38bdf8", "#14b8a6", "#22c55e", "#f59e0b", "#8b5cf6", "#ec4899", "#6366f1", "#ef4444"];
-        const PIE_HOVER_COLORS = ["#38bdf8", "#67e8f9", "#2dd4bf", "#4ade80", "#fbbf24", "#a78bfa", "#f472b6", "#818cf8", "#f87171"];
+        function alphaColor(hex, alpha) {
+            if (typeof hex !== 'string') return hex;
+            const normalized = hex.replace('#', '');
+            const r = parseInt(normalized.substring(0, 2), 16);
+            const g = parseInt(normalized.substring(2, 4), 16);
+            const b = parseInt(normalized.substring(4, 6), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        const CHART_PALETTE = {
+            red: '#e1271a',
+            redAlt: '#e84b3a',
+            redSoft: '#f4a09b',
+            blue: '#003397',
+            blueAlt: '#1d57c7',
+            blueSoft: '#6e95db',
+            blueLight: '#9cb5e8',
+            yellow: '#ffcf01',
+            yellowAlt: '#ffd84d',
+            yellowSoft: '#ffe792'
+        };
+        const PIE_COLORS = [CHART_PALETTE.blue, CHART_PALETTE.blueAlt, CHART_PALETTE.blueSoft, CHART_PALETTE.red, CHART_PALETTE.redAlt, CHART_PALETTE.redSoft, CHART_PALETTE.yellow, CHART_PALETTE.yellowAlt, CHART_PALETTE.yellowSoft];
+        const PIE_HOVER_COLORS = PIE_COLORS.map(color => alphaColor(color, 0.55));
 
         let infraData = {
             citywide: {
@@ -3038,7 +3084,7 @@
         let barangayInfraChartType = 'bar';
 
         document.addEventListener('DOMContentLoaded', async () => {
-            Chart.defaults.color = '#64748b';
+            Chart.defaults.color = '#000000b3';
             Chart.defaults.font.family = 'Montserrat, sans-serif';
             Chart.defaults.font.size = 11;
 
@@ -3078,10 +3124,7 @@
         }
 
         async function fetchInfrastructureData() {
-            const statusTxt = document.getElementById('db-status-txt');
-            const statusDot = document.getElementById('db-dot');
-
-            try {
+                try {
                 if (!supabaseClient) throw new Error('Supabase client unavailable.');
 
                 const { data, error } = await supabaseClient
@@ -3163,14 +3206,8 @@
                     infraData.barangay = FALLBACK_BARANGAY_SERIES;
                 }
 
-                statusTxt.textContent = 'Live Connected: infrastructure indicators synced';
-                statusDot.className = 'db-dot';
-                statusDot.style.backgroundColor = '#10b981';
             } catch (e) {
                 console.warn('Database connection unavailable, using integrated fallback values.', e);
-                statusTxt.textContent = 'Demo Mode: using packaged infrastructure baseline data';
-                statusDot.className = 'db-dot offline';
-                statusDot.style.backgroundColor = '#f59e0b';
             }
         }
 
@@ -3222,11 +3259,8 @@
             renderBarangayInfraChart();
         }
 
-        function makeGradient(ctx) {
-            const g = ctx.createLinearGradient(0, 0, 0, 350);
-            g.addColorStop(0, '#0891b2');
-            g.addColorStop(1, '#67e8f9');
-            return g;
+        function makeGradient() {
+            return CHART_PALETTE.blue;
         }
 
         function baseTooltip(callback) {
@@ -3242,8 +3276,8 @@
             return Object.assign({
                 responsive: true,
                 maintainAspectRatio: false,
-                hover: { mode: 'nearest', intersect: true },
-                interaction: { mode: 'nearest', intersect: true },
+                hover: { mode: 'index', intersect: true },
+                interaction: { mode: 'index', intersect: true },
                 animation: { duration: 200, easing: 'easeOutQuart' },
                 plugins: { legend: { display: false }, tooltip: baseTooltip() }
             }, extra || {});
@@ -3257,7 +3291,7 @@
             if (roadChartInstance) roadChartInstance.destroy();
 
             const ctx = document.getElementById('roadChart').getContext('2d');
-            const gradient = makeGradient(ctx);
+            const chartFill = makeGradient();
 
             let config;
 
@@ -3291,15 +3325,17 @@
                         datasets: [{
                             label: selectedBarangay ? `${selectedBarangay} Road Network` : 'Road Network',
                             data: values,
-                            borderColor: '#0891b2',
+                            borderColor: CHART_PALETTE.blue,
                             borderWidth: roadChartType === 'line' ? 3 : 1,
-                            backgroundColor: gradient,
-                            fill: roadChartType === 'line',
+                            backgroundColor: chartFill,
+                            hoverBackgroundColor: roadChartType === 'bar' ? alphaColor(CHART_PALETTE.blue, 0.55) : undefined,
+                            fill: false,
                             tension: 0.25,
-                            pointBackgroundColor: '#0ea5e9',
+                            pointStyle: 'circle',
+                            pointBackgroundColor: CHART_PALETTE.blueAlt,
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            pointRadius: 4,
+                            pointRadius: roadChartType === 'line' ? 4 : 0,
                             pointHoverRadius: 7,
                             borderRadius: roadChartType === 'bar' ? 8 : 0
                         }]
@@ -3328,7 +3364,7 @@
             if (housingChartInstance) housingChartInstance.destroy();
 
             const ctx = document.getElementById('housingChart').getContext('2d');
-            const gradient = makeGradient(ctx);
+            const chartFill = makeGradient();
 
             let config;
 
@@ -3362,15 +3398,17 @@
                         datasets: [{
                             label: selectedBarangay ? `${selectedBarangay} Housing Units` : 'Housing Units',
                             data: values,
-                            borderColor: '#0891b2',
+                            borderColor: CHART_PALETTE.blue,
                             borderWidth: housingChartType === 'line' ? 3 : 1,
-                            backgroundColor: gradient,
-                            fill: housingChartType === 'line',
+                            backgroundColor: chartFill,
+                            hoverBackgroundColor: housingChartType === 'bar' ? alphaColor(CHART_PALETTE.blue, 0.55) : undefined,
+                            fill: false,
                             tension: 0.25,
-                            pointBackgroundColor: '#0ea5e9',
+                            pointStyle: 'circle',
+                            pointBackgroundColor: CHART_PALETTE.blueAlt,
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            pointRadius: 4,
+                            pointRadius: housingChartType === 'line' ? 4 : 0,
                             pointHoverRadius: 7,
                             borderRadius: housingChartType === 'bar' ? 8 : 0
                         }]
@@ -3416,7 +3454,7 @@
             if (barangayInfraChartInstance) barangayInfraChartInstance.destroy();
 
             const ctx = document.getElementById('barangayInfraChart').getContext('2d');
-            const gradient = makeGradient(ctx);
+            const chartFill = makeGradient();
 
             let labels = BARANGAY_NAMES;
             let values = infraData[mode === 'road' ? 'barangayRoad' : mode === 'water' ? 'barangayWater' : 'barangayPower']?.history || [];
@@ -3464,15 +3502,17 @@
                         datasets: [{
                             label: selectedBarangay ? `${selectedBarangay} ${mode.charAt(0).toUpperCase() + mode.slice(1)} Access` : `${mode.charAt(0).toUpperCase() + mode.slice(1)} Access`,
                             data: values,
-                            borderColor: '#0284c7',
+                            borderColor: CHART_PALETTE.blueAlt,
                             borderWidth: 2,
-                            backgroundColor: gradient,
-                            fill: barangayInfraChartType === 'line',
+                            backgroundColor: chartFill,
+                            hoverBackgroundColor: barangayInfraChartType === 'bar' ? alphaColor(CHART_PALETTE.blueAlt, 0.55) : undefined,
+                            fill: false,
                             tension: 0.25,
-                            pointBackgroundColor: '#0ea5e9',
+                            pointStyle: 'circle',
+                            pointBackgroundColor: CHART_PALETTE.blueSoft,
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            pointRadius: 4,
+                            pointRadius: barangayInfraChartType === 'line' ? 4 : 0,
                             pointHoverRadius: 7,
                             borderRadius: barangayInfraChartType === 'bar' ? 8 : 0
                         }]
@@ -4182,11 +4222,8 @@
             if (connEl) connEl.textContent = totalConn ? Number(totalConn).toLocaleString() : '--';
         }
 
-        function mwssGradient(ctx, color1, color2) {
-            const g = ctx.createLinearGradient(0, 0, 0, 320);
-            g.addColorStop(0, color1);
-            g.addColorStop(1, color2);
-            return g;
+        function mwssGradient(color) {
+            return color;
         }
 
         function mwssTooltip(labelFn) {
@@ -4205,11 +4242,11 @@
             const d = mwssData;
             const labels = d.labels || [];
             const COLORS = {
-                residential:  '#0891b2',
-                commercial:   '#06b6d4',
-                industrial:   '#22d3ee',
-                institutional:'#67e8f9',
-                total:        '#0e7490'
+                residential:  CHART_PALETTE.blue,
+                commercial:   CHART_PALETTE.red,
+                industrial:   CHART_PALETTE.yellow,
+                institutional: CHART_PALETTE.blueLight,
+                total:        CHART_PALETTE.blueLight
             };
             const datasets = ['residential','commercial','industrial','total'].map(key => ({
                 label: key.charAt(0).toUpperCase() + key.slice(1),
@@ -4217,10 +4254,14 @@
                 backgroundColor: mwssCustomersType === 'bar'
                     ? COLORS[key] + 'cc'
                     : 'transparent',
+                hoverBackgroundColor: mwssCustomersType === 'bar'
+                    ? alphaColor(COLORS[key], 0.55)
+                    : undefined,
                 borderColor: COLORS[key],
                 borderWidth: mwssCustomersType === 'line' ? 2.5 : 1,
                 fill: false,
                 tension: 0.3,
+                pointStyle: 'circle',
                 pointRadius: mwssCustomersType === 'line' ? 4 : 0,
                 pointHoverRadius: 7,
                 borderRadius: mwssCustomersType === 'bar' ? 6 : 0
@@ -4251,10 +4292,10 @@
             const d = mwssData;
             const labels = d.labels || [];
             const COLORS = {
-                residential:  '#0891b2',
-                commercial:   '#0284c7',
-                industrial:   '#14b8a6',
-                total:        '#1e40af'
+                residential:  CHART_PALETTE.blue,
+                commercial:   CHART_PALETTE.red,
+                industrial:   CHART_PALETTE.yellow,
+                total:        CHART_PALETTE.blueLight
             };
             const datasets = ['residential','commercial','industrial','total'].map(key => ({
                 label: key.charAt(0).toUpperCase() + key.slice(1),
@@ -4262,10 +4303,14 @@
                 backgroundColor: mwssSalesType === 'bar'
                     ? COLORS[key] + 'cc'
                     : COLORS[key] + '22',
+                hoverBackgroundColor: mwssSalesType === 'bar'
+                    ? alphaColor(COLORS[key], 0.55)
+                    : undefined,
                 borderColor: COLORS[key],
                 borderWidth: mwssSalesType === 'line' ? 2.5 : 1,
-                fill: mwssSalesType === 'line' && key === 'total',
+                fill: false,
                 tension: 0.3,
+                pointStyle: 'circle',
                 pointRadius: mwssSalesType === 'line' ? 4 : 0,
                 pointHoverRadius: 7,
                 borderRadius: mwssSalesType === 'bar' ? 6 : 0
@@ -4307,7 +4352,7 @@
             };
             const metricLabel = metricLabels[mwssBrgyMetric] || mwssBrgyMetric;
 
-            const BRGY_COLORS = ['#0891b2','#0284c7','#0e7490','#14b8a6','#0369a1','#06b6d4','#1e40af','#38bdf8','#0ea5e9'];
+            const BRGY_COLORS = [CHART_PALETTE.blue, CHART_PALETTE.blueAlt, CHART_PALETTE.blueSoft, CHART_PALETTE.red, CHART_PALETTE.redAlt, CHART_PALETTE.redSoft, CHART_PALETTE.yellow, CHART_PALETTE.yellowAlt, CHART_PALETTE.yellowSoft];
 
             let config;
             if (mwssBrgyType === 'pie') {
@@ -4315,7 +4360,13 @@
                     type: 'pie',
                     data: {
                         labels,
-                        datasets: [{ data: values, backgroundColor: BRGY_COLORS, borderColor:'#fff', borderWidth:2 }]
+                        datasets: [{
+                            data: values,
+                            backgroundColor: BRGY_COLORS,
+                            hoverBackgroundColor: BRGY_COLORS.map(color => alphaColor(color, 0.55)),
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        }]
                     },
                     options: {
                         responsive: true, maintainAspectRatio: false,
@@ -4326,7 +4377,7 @@
                     }
                 };
             } else {
-                const gradient = mwssGradient(ctx, '#0891b2', '#67e8f9');
+                const gradient = mwssGradient(CHART_PALETTE.blue);
                 config = {
                     type: mwssBrgyType,
                     data: {
@@ -4334,16 +4385,18 @@
                         datasets: [{
                             label: metricLabel,
                             data: values,
-                            backgroundColor: mwssBrgyType === 'bar' ? gradient : 'rgba(8,145,178,0.12)',
-                            borderColor: '#0891b2',
+                            backgroundColor: mwssBrgyType === 'bar' ? gradient : CHART_PALETTE.blue + '22',
+                            borderColor: CHART_PALETTE.blue,
                             borderWidth: 2.5,
-                            fill: mwssBrgyType === 'line',
+                            fill: false,
                             tension: 0.3,
-                            pointBackgroundColor: '#0891b2',
+                            pointStyle: 'circle',
+                            pointBackgroundColor: CHART_PALETTE.blueAlt,
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            pointRadius: 5,
+                            pointRadius: mwssBrgyType === 'line' ? 5 : 0,
                             pointHoverRadius: 8,
+                            hoverBackgroundColor: mwssBrgyType === 'bar' ? alphaColor(CHART_PALETTE.blue, 0.55) : undefined,
                             borderRadius: mwssBrgyType === 'bar' ? 8 : 0
                         }]
                     },
@@ -4358,7 +4411,7 @@
                                 anchor: mwssBrgyType === 'bar' ? 'end' : 'end',
                                 align: mwssBrgyType === 'bar' ? 'top' : 'top',
                                 offset: 4,
-                                color: '#0e7490',
+                                color: CHART_PALETTE.blueAlt,
                                 font: { size: 10, weight: '600' },
                                 formatter: val => val != null ? Number(val).toLocaleString() : ''
                             }
@@ -4379,7 +4432,7 @@
             const ctx = document.getElementById('mwssHHChart').getContext('2d');
             const labels = mwssData.labels || [];
             const values = mwssData.totalHouseholds || [];
-            const gradient = mwssGradient(ctx, '#0891b2aa', '#67e8f922');
+            const gradient = mwssGradient(CHART_PALETTE.blue);
             mwssHHChart = new Chart(ctx, {
                 type: mwssHHType,
                 data: {
@@ -4387,15 +4440,17 @@
                     datasets: [{
                         label: 'Total Households',
                         data: values,
-                        backgroundColor: mwssHHType === 'line' ? gradient : '#0891b2cc',
-                        borderColor: '#0891b2',
+                        backgroundColor: mwssHHType === 'line' ? gradient : CHART_PALETTE.blue,
+                        borderColor: CHART_PALETTE.blue,
                         borderWidth: 2.5,
-                        fill: mwssHHType === 'line',
+                        hoverBackgroundColor: mwssHHType === 'bar' ? alphaColor(CHART_PALETTE.blue, 0.55) : undefined,
+                        fill: false,
                         tension: 0.3,
-                        pointBackgroundColor: '#0891b2',
+                        pointStyle: 'circle',
+                        pointBackgroundColor: CHART_PALETTE.blueAlt,
                         pointBorderColor: '#fff',
                         pointBorderWidth: 2,
-                        pointRadius: 4,
+                        pointRadius: mwssHHType === 'line' ? 4 : 0,
                         pointHoverRadius: 7,
                         borderRadius: mwssHHType === 'bar' ? 8 : 0
                     }]
@@ -4464,12 +4519,9 @@
             if (electrificationChart) electrificationChart.destroy();
             const ctx = document.getElementById('electrificationChart').getContext('2d');
             const d = ELECTRIFICATION_DATA;
-            const gradTotal = ctx.createLinearGradient(0, 0, 0, 360);
-            gradTotal.addColorStop(0, '#f59e0b');
-            gradTotal.addColorStop(1, '#fbbf24');
-            const gradElectrified = ctx.createLinearGradient(0, 0, 0, 360);
-            gradElectrified.addColorStop(0, '#0891b2');
-            gradElectrified.addColorStop(1, '#67e8f9');
+            const totalColor = CHART_PALETTE.yellow;
+            const electrifiedColor = CHART_PALETTE.blue;
+            const rateColor = CHART_PALETTE.red;
 
             electrificationChart = new Chart(ctx, {
                 type: electrificationChartType,
@@ -4479,30 +4531,34 @@
                         {
                             label: 'Total Households',
                             data: d.totalHouseholds,
-                            backgroundColor: electrificationChartType === 'bar' ? gradTotal : 'rgba(245,158,11,0.12)',
-                            borderColor: '#f59e0b',
+                            backgroundColor: electrificationChartType === 'bar' ? totalColor : totalColor + '22',
+                            hoverBackgroundColor: electrificationChartType === 'bar' ? alphaColor(totalColor, 0.55) : undefined,
+                            borderColor: totalColor,
                             borderWidth: electrificationChartType === 'line' ? 2.5 : 1,
-                            fill: electrificationChartType === 'line',
+                            fill: false,
                             tension: 0.3,
-                            pointBackgroundColor: '#f59e0b',
+                            pointStyle: 'circle',
+                            pointBackgroundColor: CHART_PALETTE.yellowAlt,
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            pointRadius: 4,
+                            pointRadius: electrificationChartType === 'line' ? 4 : 0,
                             pointHoverRadius: 7,
                             borderRadius: electrificationChartType === 'bar' ? 6 : 0
                         },
                         {
                             label: 'Electrified Households',
                             data: d.electrifiedHouseholds,
-                            backgroundColor: electrificationChartType === 'bar' ? gradElectrified : 'rgba(8,145,178,0.12)',
-                            borderColor: '#0891b2',
+                            backgroundColor: electrificationChartType === 'bar' ? electrifiedColor : electrifiedColor + '22',
+                            hoverBackgroundColor: electrificationChartType === 'bar' ? alphaColor(electrifiedColor, 0.55) : undefined,
+                            borderColor: electrifiedColor,
                             borderWidth: electrificationChartType === 'line' ? 2.5 : 1,
-                            fill: electrificationChartType === 'line',
+                            fill: false,
                             tension: 0.3,
-                            pointBackgroundColor: '#0891b2',
+                            pointStyle: 'circle',
+                            pointBackgroundColor: CHART_PALETTE.blueAlt,
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            pointRadius: 4,
+                            pointRadius: electrificationChartType === 'line' ? 4 : 0,
                             pointHoverRadius: 7,
                             borderRadius: electrificationChartType === 'bar' ? 6 : 0
                         },
@@ -4511,10 +4567,11 @@
                             data: d.electrificationRate,
                             type: 'line',
                             yAxisID: 'yRate',
-                            borderColor: '#ef4444',
+                            borderColor: rateColor,
                             borderWidth: 2,
                             borderDash: [6, 3],
-                            pointBackgroundColor: '#ef4444',
+                            pointStyle: 'circle',
+                            pointBackgroundColor: rateColor,
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
                             pointRadius: 4,
@@ -4579,45 +4636,51 @@
                         {
                             label: '2019',
                             data: d.data2019,
-                            backgroundColor: isBar ? 'rgba(245,158,11,0.85)' : 'rgba(245,158,11,0.12)',
-                            borderColor: '#f59e0b',
+                            backgroundColor: isBar ? CHART_PALETTE.yellow : CHART_PALETTE.yellow + '22',
+                            hoverBackgroundColor: isBar ? alphaColor(CHART_PALETTE.yellow, 0.55) : undefined,
+                            borderColor: CHART_PALETTE.yellow,
                             borderWidth: isBar ? 1 : 2.5,
-                            fill: !isBar,
+                            fill: false,
                             tension: 0.3,
-                            pointBackgroundColor: '#f59e0b',
+                            pointStyle: 'circle',
+                            pointBackgroundColor: CHART_PALETTE.yellowAlt,
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            pointRadius: 4,
+                            pointRadius: isBar ? 0 : 4,
                             pointHoverRadius: 7,
                             borderRadius: isBar ? 6 : 0
                         },
                         {
                             label: '2020',
                             data: d.data2020,
-                            backgroundColor: isBar ? 'rgba(8,145,178,0.85)' : 'rgba(8,145,178,0.12)',
-                            borderColor: '#0891b2',
+                            backgroundColor: isBar ? CHART_PALETTE.blue : CHART_PALETTE.blue + '22',
+                            hoverBackgroundColor: isBar ? alphaColor(CHART_PALETTE.blue, 0.55) : undefined,
+                            borderColor: CHART_PALETTE.blue,
                             borderWidth: isBar ? 1 : 2.5,
-                            fill: !isBar,
+                            fill: false,
                             tension: 0.3,
-                            pointBackgroundColor: '#0891b2',
+                            pointStyle: 'circle',
+                            pointBackgroundColor: CHART_PALETTE.blueAlt,
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            pointRadius: 4,
+                            pointRadius: isBar ? 0 : 4,
                             pointHoverRadius: 7,
                             borderRadius: isBar ? 6 : 0
                         },
                         {
                             label: '2021',
                             data: d.data2021,
-                            backgroundColor: isBar ? 'rgba(16,185,129,0.85)' : 'rgba(16,185,129,0.12)',
-                            borderColor: '#10b981',
+                            backgroundColor: isBar ? CHART_PALETTE.red : CHART_PALETTE.red + '22',
+                            hoverBackgroundColor: isBar ? alphaColor(CHART_PALETTE.red, 0.55) : undefined,
+                            borderColor: CHART_PALETTE.red,
                             borderWidth: isBar ? 1 : 2.5,
-                            fill: !isBar,
+                            fill: false,
                             tension: 0.3,
-                            pointBackgroundColor: '#10b981',
+                            pointStyle: 'circle',
+                            pointBackgroundColor: CHART_PALETTE.redAlt,
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            pointRadius: 4,
+                            pointRadius: isBar ? 0 : 4,
                             pointHoverRadius: 7,
                             borderRadius: isBar ? 6 : 0
                         }

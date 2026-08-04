@@ -52,11 +52,6 @@
             gap: 16px;
         }
 
-        .chart-card:hover {
-            border-color: rgba(239, 68, 68, 0.2);
-            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.04);
-        }
-
         .chart-title-wrapper {
             display: flex;
             justify-content: space-between;
@@ -76,6 +71,22 @@
 
         .chart-card h5 i {
             color: #ef4444; /* Touch of red */
+        }
+
+        .chart-reference {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(15, 23, 42, 0.08);
+            font-size: 0.75rem;
+            color: var(--text-muted, #64748b);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chart-reference i {
+            color: #ef4444;
+            font-size: 0.8rem;
         }
 
         .canvas-container {
@@ -107,40 +118,6 @@
             font-size: 1.4rem;
             background: #e1271a;
             color: white;
-        }
-
-        /* Database Status Overlay */
-        .db-status-bar {
-            background: #f1f5f9;
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius-md);
-            padding: 8px 16px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .db-status-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .db-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--accent-emerald);
-            box-shadow: 0 0 6px var(--accent-emerald);
-        }
-
-        .db-dot.offline {
-            background-color: #f59e0b;
-            box-shadow: 0 0 6px #f59e0b;
         }
 
         /* Interactive controls for charts */
@@ -194,6 +171,14 @@
             display: grid;
             grid-template-columns: 280px 1fr;
             gap: 24px;
+        }
+
+        .spotlight-source {
+            width: 100%;
+            margin-top: 16px;
+            white-space: normal;
+            flex-wrap: wrap;
+            line-height: 1.5;
         }
 
         @media (max-width: 768px) {
@@ -250,7 +235,7 @@
         .donuts-wrapper {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 24px;
             align-items: center;
             justify-content: center;
         }
@@ -259,13 +244,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            padding: 8px 0;
         }
 
         .donut-canvas-holder {
             position: relative;
-            width: 140px;
-            height: 140px;
+            width: 210px;
+            height: 210px;
         }
 
         .donut-label {
@@ -317,14 +303,6 @@
     </aside>
 
     <div class="dashboard-container">
-        
-        <!-- Live Connection Status Alert Bar -->
-        <div class="db-status-bar">
-            <div class="db-status-left">
-                <div id="db-dot" class="db-dot"></div>
-                <span id="db-status-txt">Connected to live Supabase DB</span>
-            </div>
-        </div>
 
         <!-- Main Stats Summary Banner -->
         <section class="stats-banner">
@@ -333,9 +311,9 @@
                     <i class="fa-solid fa-person-cane"></i>
                 </div>
                 <div class="stat-data">
-                    <span class="stat-label">Senior Citizens (2024)</span>
+                    <span class="stat-label">Senior Citizens</span>
                     <h2 id="card-seniors">58,445</h2>
-                    <span class="stat-pct" style="color: var(--text-muted)">City-Wide Total</span>
+                    <span class="stat-pct" style="color: var(--text-muted)">City-Wide Total <span class="stat-latest">(2024)</span></span>
                 </div>
             </div>
             <div class="stat-card">
@@ -343,9 +321,9 @@
                     <i class="fa-solid fa-wheelchair"></i>
                 </div>
                 <div class="stat-data">
-                    <span class="stat-label">Registered PWDs (2021)</span>
+                    <span class="stat-label">Registered PWDs</span>
                     <h2 id="card-pwds">14,153</h2>
-                    <span class="stat-pct" style="color: var(--text-muted)">City-Wide Total</span>
+                    <span class="stat-pct" style="color: var(--text-muted)">City-Wide Total <span class="stat-latest">(2021)</span></span>
                 </div>
             </div>
             <div class="stat-card">
@@ -353,9 +331,9 @@
                     <i class="fa-solid fa-user-group"></i>
                 </div>
                 <div class="stat-data">
-                    <span class="stat-label">Registered Youth (2022)</span>
+                    <span class="stat-label">Registered Youth</span>
                     <h2 id="card-youths">13,495</h2>
-                    <span class="stat-pct" style="color: var(--text-muted)">City-Wide Total</span>
+                    <span class="stat-pct" style="color: var(--text-muted)">City-Wide Total <span class="stat-latest">(2022)</span></span>
                 </div>
             </div>
             <div class="stat-card">
@@ -363,9 +341,9 @@
                     <i class="fa-solid fa-sitemap"></i>
                 </div>
                 <div class="stat-data">
-                    <span class="stat-label">Youth Organizations (2022)</span>
+                    <span class="stat-label">Youth Organizations</span>
                     <h2 id="card-orgs">200</h2>
-                    <span class="stat-pct" style="color: var(--text-muted)">City-Wide Total</span>
+                    <span class="stat-pct" style="color: var(--text-muted)">City-Wide Total <span class="stat-latest">(2022)</span></span>
                 </div>
             </div>
         </section>
@@ -389,6 +367,9 @@
                     <div class="canvas-container">
                         <canvas id="seniorsChart"></canvas>
                     </div>
+                    <div class="chart-reference">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> OSCA, 2024
+                    </div>
                 </div>
 
                 <!-- Chart 2: PWDs Stacked Bar Chart -->
@@ -404,6 +385,9 @@
                     <div class="canvas-container">
                         <canvas id="pwdChart"></canvas>
                     </div>
+                    <div class="chart-reference">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> PDAO, 2021
+                    </div>
                 </div>
 
             </div>
@@ -417,6 +401,9 @@
                     </div>
                     <div class="canvas-container" style="height: 380px;">
                         <canvas id="youthChart"></canvas>
+                    </div>
+                    <div class="chart-reference">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> YASDO, 2022
                     </div>
                 </div>
             </div>
@@ -474,6 +461,10 @@
                                 <span class="donut-label">PWDs Gender Ratio</span>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="chart-reference spotlight-source">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> (OSCA, 2024), (PDAO, 2021), (YASDO, 2022)
                     </div>
 
                 </div>
@@ -636,9 +627,6 @@
 
         // Fetch Live Database or Local Storage Fallback
         async function fetchSocialWelfareData() {
-            const statusTxt = document.getElementById("db-status-txt");
-            const statusDot = document.getElementById("db-dot");
-
             if (supabaseClient) {
                 try {
                     const { data: allRows, error } = await supabaseClient
@@ -685,19 +673,11 @@
                     } else {
                         appData = {};
                     }
-
-                    statusTxt.textContent = "Live Connected: Syncing from data_values table";
-                    statusDot.className = "db-dot";
-                    statusDot.style.backgroundColor = "#10b981";
                 } catch (e) {
                     console.warn("Supabase load failed.", e);
-                    statusTxt.textContent = "Offline Mode";
-                    statusDot.className = "db-dot offline";
                 }
             } else {
                 console.warn("Supabase library not loaded.");
-                statusTxt.textContent = "Offline Mode";
-                statusDot.className = "db-dot offline";
             }
         }
 

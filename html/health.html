@@ -52,11 +52,6 @@
             gap: 16px;
         }
 
-        .chart-card:hover {
-            border-color: rgba(239, 68, 68, 0.2);
-            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.04);
-        }
-
         .chart-title-wrapper {
             display: flex;
             justify-content: space-between;
@@ -241,6 +236,23 @@
             padding-top: 8px;
         }
 
+        /* References / Source Badges */
+        .chart-reference {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(15, 23, 42, 0.08);
+            font-size: 0.75rem;
+            color: var(--text-muted, #64748b);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chart-reference i {
+            color: #ef4444;
+            font-size: 0.8rem;
+        }
+
     </style>
 </head>
 <body>
@@ -346,6 +358,9 @@
                     <div class="canvas-container">
                         <canvas id="vitalRatesChart"></canvas>
                     </div>
+                    <div class="chart-reference">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> CHO, 2025
+                    </div>
                 </div>
 
                 <!-- Chart 2: Family Health & Child Care -->
@@ -361,6 +376,9 @@
                     <div class="canvas-container">
                         <canvas id="familyHealthChart"></canvas>
                     </div>
+                    <div class="chart-reference">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> CHO, 2025
+                    </div>
                 </div>
 
             </div>
@@ -369,7 +387,7 @@
         <!-- Detailed Indicators Cards Grid -->
         <section class="indicator-cards-section">
             <div class="section-header">
-                <h4><i class="fa-solid fa-circle-info"></i> Health Indicators Summary</h4>
+                <h4><i class="fa-solid fa-circle-info"></i> Health Indicators Summary (CHO, 2025)</h4>
             </div>
             <div class="indicators-grid" id="indicators-grid-container">
                 <!-- Javascript builds these dynamically -->

@@ -52,11 +52,6 @@
             gap: 16px;
         }
 
-        .chart-card:hover {
-            border-color: rgba(239, 68, 68, 0.2);
-            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.04);
-        }
-
         .chart-title-wrapper {
             display: flex;
             justify-content: space-between;
@@ -109,40 +104,6 @@
             color: white;
         }
 
-        /* Database Status Overlay */
-        .db-status-bar {
-            background: #f1f5f9;
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius-md);
-            padding: 8px 16px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .db-status-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .db-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--accent-emerald);
-            box-shadow: 0 0 6px var(--accent-emerald);
-        }
-
-        .db-dot.offline {
-            background-color: #f59e0b;
-            box-shadow: 0 0 6px #f59e0b;
-        }
-
         /* Interactive controls for charts */
         .chart-controls {
             display: flex;
@@ -188,6 +149,22 @@
         .chart-type-select option {
             font-weight: 700;
         }
+        /* References / Source Badges (copied from education.html for consistent styling) */
+        .chart-reference {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(15, 23, 42, 0.08);
+            font-size: 0.75rem;
+            color: var(--text-muted, #64748b);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chart-reference i {
+            color: #ef4444;
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body>
@@ -231,14 +208,6 @@
     </aside>
 
     <div class="dashboard-container">
-        
-        <!-- Live Connection Status Alert Bar -->
-        <div class="db-status-bar">
-            <div class="db-status-left">
-                <div id="db-dot" class="db-dot"></div>
-                <span id="db-status-txt">Connected to live Supabase DB</span>
-            </div>
-        </div>
 
         <!-- Main Stats Summary Banner -->
         <section class="stats-banner">
@@ -302,11 +271,13 @@
                         <select id="crimeChartType" class="chart-type-select">
                             <option value="line">Line Graph</option>
                             <option value="bar">Bar Graph</option>
-                            <option value="pie">Pie Graph</option>
                         </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="crimeStatsChart"></canvas>
+                    </div>
+                    <div class="chart-reference">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> Muntinlupa City Police Station, 2024
                     </div>
                 </div>
 
@@ -317,11 +288,13 @@
                         <select id="resourcesChartType" class="chart-type-select">
                             <option value="line">Line Graph</option>
                             <option value="bar">Bar Graph</option>
-                            <option value="pie">Pie Graph</option>
                         </select>
                     </div>
                     <div class="canvas-container">
                         <canvas id="policeResourcesChart"></canvas>
+                    </div>
+                    <div class="chart-reference">
+                        <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> Muntinlupa PNP
                     </div>
                 </div>
 
@@ -351,6 +324,9 @@
                     <div class="canvas-container" style="height: 400px;">
                         <canvas id="barangayCrimesChart"></canvas>
                     </div>
+                        <div class="chart-reference">
+                            <i class="fa-solid fa-circle-info"></i> <strong>Source:</strong> CIRAS, SIDMS, Muntinlupa City Police Station, 2024
+                        </div>
                 </div>
             </div>
         </div>
@@ -487,9 +463,6 @@
                 "Police to Population Ratio": "Police to Population Ratio (1:X)"
             };
         async function fetchProtectiveData() {
-    const statusTxt = document.getElementById("db-status-txt");
-    const statusDot = document.getElementById("db-dot");
-
     if (supabaseClient) {
         try {
             const { data: allRows, error } = await supabaseClient
@@ -552,19 +525,11 @@
                 protectiveData = {};
                 protectiveLabels = [];
             }
-
-            statusTxt.textContent = "Live Connected: Syncing from data_values table";
-            statusDot.className = "db-dot";
-            statusDot.style.backgroundColor = "#10b981";
         } catch (e) {
             console.warn("Supabase load failed.", e);
-            statusTxt.textContent = "Offline Mode";
-            statusDot.className = "db-dot offline";
         }
     } else {
         console.warn("Supabase library not loaded.");
-        statusTxt.textContent = "Offline Mode";
-        statusDot.className = "db-dot offline";
     }
 }
 
