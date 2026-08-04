@@ -815,6 +815,55 @@ select option {
     object-fit: contain;
 }
 
+.economic-grid-container {
+  display: grid;
+  gap: 16px;
+}
+
+.economic-indicator-section {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.economic-indicator-section h4 {
+  margin: 0 0 10px;
+  color: #0f172a;
+  font-size: 1rem;
+}
+
+.economic-indicator-table {
+  width: 100%;
+  margin: 0;
+}
+
+.economic-indicator-table th,
+.economic-indicator-table td {
+  white-space: nowrap;
+}
+
+.economic-section-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.economic-section-toolbar input,
+.economic-section-toolbar select {
+  min-height: 38px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 0 10px;
+}
+
+.economic-section-action {
+  padding: 8px 12px;
+}
+
 /* Interactive SVG Overlay */
 .map-svg-overlay {
     position: absolute;
