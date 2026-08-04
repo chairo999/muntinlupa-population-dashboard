@@ -862,10 +862,6 @@
                             <span class="map-tooltip-dot" id="tooltip-dot"></span>
                             <span id="tooltip-title">Barangay</span>
                         </div>
-                        <div class="map-tooltip-row">
-                            <span class="map-tooltip-label">Population</span>
-                            <span class="map-tooltip-value" id="tooltip-pop">0</span>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -3015,17 +3011,32 @@
         const PIE_HOVER_COLORS = ["#38bdf8", "#67e8f9", "#2dd4bf", "#4ade80", "#fbbf24", "#a78bfa", "#f472b6", "#818cf8", "#f87171"];
 
         let infraData = {
-            citywide: {
-                roadLength: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [48, 51, 54, 58, 63] },
-                waterCoverage: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [74, 76, 79, 82, 85] },
-                housingUnits: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [8200, 8350, 8500, 8710, 9040] },
-                powerAccess: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [89, 90, 91, 92, 94] },
-            },
+            citywide: {},
             barangay: {},
-            barangayRoad: { labels: BARANGAY_NAMES, history: [78, 70, 84, 63, 81, 88, 74, 72, 77] },
-            barangayWater: { labels: BARANGAY_NAMES, history: [72, 76, 71, 66, 75, 82, 69, 68, 73] },
-            barangayPower: { labels: BARANGAY_NAMES, history: [85, 82, 88, 80, 84, 90, 83, 79, 86] }
+            barangayRoad: { labels: BARANGAY_NAMES, history: BARANGAY_NAMES.map(() => null) },
+            barangayWater: { labels: BARANGAY_NAMES, history: BARANGAY_NAMES.map(() => null) },
+            barangayPower: { labels: BARANGAY_NAMES, history: BARANGAY_NAMES.map(() => null) }
         };
+
+        function buildFallbackInfraData() {
+            return {
+                citywide: {
+                    roadLength: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [48, 51, 54, 58, 63] },
+                    waterCoverage: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [74, 76, 79, 82, 85] },
+                    housingUnits: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [8200, 8350, 8500, 8710, 9040] },
+                    powerAccess: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [89, 90, 91, 92, 94] },
+                },
+                barangay: JSON.parse(JSON.stringify(FALLBACK_BARANGAY_SERIES)),
+                barangayRoad: { labels: BARANGAY_NAMES, history: BARANGAY_NAMES.map(b => latestValue(FALLBACK_BARANGAY_SERIES[b]?.roadLength)) },
+                barangayWater: { labels: BARANGAY_NAMES, history: BARANGAY_NAMES.map(b => latestValue(FALLBACK_BARANGAY_SERIES[b]?.waterCoverage)) },
+                barangayPower: { labels: BARANGAY_NAMES, history: BARANGAY_NAMES.map(b => latestValue(FALLBACK_BARANGAY_SERIES[b]?.powerAccess)) }
+            };
+        }
+
+        let infraSummaryDetails = null;
+        let electrificationData = null;
+        let brgyElectrificationData = null;
+        let mwssDataFromDb = false;
 
         let roadChartInstance = null;
 
@@ -3042,6 +3053,7 @@
             Chart.defaults.font.family = 'Montserrat, sans-serif';
             Chart.defaults.font.size = 11;
 
+            infraData = buildFallbackInfraData();
             initSidebar();
             populateYearSelect();
             loadMWSSData();
@@ -3050,7 +3062,7 @@
             initChartControls();
             initMapInteraction();
 
-            await Promise.allSettled([initData(), fetchInfrastructureData()]);
+            await fetchInfrastructureData();
             renderStatsBanner();
             renderAllCharts();
         });
@@ -3085,93 +3097,257 @@
                 if (!supabaseClient) throw new Error('Supabase client unavailable.');
 
                 const { data, error } = await supabaseClient
-                    .from('data_values')
-                    .select('value, year, indicator_id, barangay_id, category_1, category_2, barangays(barangay_name)')
-                    .in('indicator_id', [7, 8, 9, 10, 11])
-                    .not('value', 'is', null)
+                    .from('infrastructure')
+                    .select('*')
                     .order('year', { ascending: true });
 
                 if (error) throw error;
+                const rows = data || [];
+                if (rows.length === 0) throw new Error('infrastructure table is empty');
 
-                const totalByMetric = {
-                    roadLength: {},
-                    waterCoverage: {},
-                    housingUnits: {},
-                    powerAccess: {}
+                const metricKeyMap = {
+                    road_length: 'roadLength',
+                    water_coverage: 'waterCoverage',
+                    housing_units: 'housingUnits',
+                    power_access: 'powerAccess'
                 };
 
-                const barangayByMetric = {};
-
-                const addValue = (store, key, year, value) => {
-                    if (!store[key]) store[key] = {};
-                    const current = store[key][year] ?? 0;
-                    store[key][year] = current + Number(value || 0);
-                };
-
-                const addBaranggaySeries = (brgy, metricKey, year, value) => {
-                    if (!barangayByMetric[brgy]) barangayByMetric[brgy] = {};
-                    if (!barangayByMetric[brgy][metricKey]) barangayByMetric[brgy][metricKey] = {};
-                    barangayByMetric[brgy][metricKey][year] = Number(value || 0);
-                };
-
-                const finalizeBarangaySeries = () => {
-                    Object.keys(barangayByMetric).forEach(brgy => {
-                        Object.keys(barangayByMetric[brgy]).forEach(metricKey => {
-                            barangayByMetric[brgy][metricKey] = buildSeriesFromYearMap(barangayByMetric[brgy][metricKey]);
-                        });
-                    });
-                };
-
-                if (data && data.length > 0) {
-                    data.forEach(row => {
-                        const brgy = row.barangays?.barangay_name;
-                        const year = String(row.year);
-                        const value = Number(row.value);
-
-                        if (row.indicator_id === 7) {
-                            addValue(totalByMetric, 'roadLength', year, value);
-                            if (brgy) addBaranggaySeries(brgy, 'roadLength', year, value);
-                        } else if (row.indicator_id === 8) {
-                            addValue(totalByMetric, 'waterCoverage', year, value);
-                            if (brgy) addBaranggaySeries(brgy, 'waterCoverage', year, value);
-                        } else if (row.indicator_id === 9) {
-                            addValue(totalByMetric, 'housingUnits', year, value);
-                            if (brgy) addBaranggaySeries(brgy, 'housingUnits', year, value);
-                        } else if (row.indicator_id === 10) {
-                            addValue(totalByMetric, 'powerAccess', year, value);
-                            if (brgy) addBaranggaySeries(brgy, 'powerAccess', year, value);
+                const citywide = {};
+                const barangay = {};
+                Object.keys(metricKeyMap).forEach(metric => {
+                    const key = metricKeyMap[metric];
+                    citywide[key] = seriesFromRows(rows, metric, 'city');
+                    BARANGAY_NAMES.forEach(brgy => {
+                        const s = seriesFromRows(rows, metric, 'barangay', brgy);
+                        if (s.labels.length) {
+                            if (!barangay[brgy]) barangay[brgy] = {};
+                            barangay[brgy][key] = s;
                         }
                     });
+                });
 
-                    const citywideSeries = {
-                        roadLength: buildSeriesFromYearMap(totalByMetric.roadLength),
-                        waterCoverage: buildSeriesFromYearMap(totalByMetric.waterCoverage),
-                        housingUnits: buildSeriesFromYearMap(totalByMetric.housingUnits),
-                        powerAccess: buildSeriesFromYearMap(totalByMetric.powerAccess)
-                    };
+                infraData.citywide = citywide;
+                infraData.barangay = { ...FALLBACK_BARANGAY_SERIES, ...barangay };
+                infraData.barangayRoad = { labels: BARANGAY_NAMES, history: BARANGAY_NAMES.map(b => latestValue(barangay[b]?.roadLength)) };
+                infraData.barangayWater = { labels: BARANGAY_NAMES, history: BARANGAY_NAMES.map(b => latestValue(barangay[b]?.waterCoverage)) };
+                infraData.barangayPower = { labels: BARANGAY_NAMES, history: BARANGAY_NAMES.map(b => latestValue(barangay[b]?.powerAccess)) };
 
-                    finalizeBarangaySeries();
-                    infraData.citywide = citywideSeries;
-                    infraData.barangay = { ...FALLBACK_BARANGAY_SERIES, ...barangayByMetric };
-                } else {
-                    infraData.citywide = {
-                        roadLength: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [48, 51, 54, 58, 63] },
-                        waterCoverage: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [74, 76, 79, 82, 85] },
-                        housingUnits: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [8200, 8350, 8500, 8710, 9040] },
-                        powerAccess: { labels: ["2020", "2021", "2022", "2023", "2024"], history: [89, 90, 91, 92, 94] }
-                    };
-                    infraData.barangay = FALLBACK_BARANGAY_SERIES;
+                infraSummaryDetails = buildSummaryDetails(rows);
+
+                const mwss = buildMWSSData(rows);
+                if (mwss) {
+                    mwssData = mwss;
+                    mwssDataFromDb = true;
                 }
+
+                electrificationData = buildElectrificationData(rows);
+                brgyElectrificationData = buildBrgyElectrificationData(rows);
 
                 statusTxt.textContent = 'Live Connected: infrastructure indicators synced';
                 statusDot.className = 'db-dot';
                 statusDot.style.backgroundColor = '#10b981';
+
+                updateSideSummaryPanel(selectedBarangay);
+                renderStatsBanner();
+                renderAllCharts();
+                renderMWSSStatCards();
+                renderMWSSCustomersChart();
+                renderMWSSalesChart();
+                renderMWSSBrgyChart();
+                renderMWSSHHChart();
+                renderElectrificationChart();
+                renderBrgyElectrificationChart();
             } catch (e) {
                 console.warn('Database connection unavailable, using integrated fallback values.', e);
+                infraData = buildFallbackInfraData();
+                infraSummaryDetails = null;
                 statusTxt.textContent = 'Demo Mode: using packaged infrastructure baseline data';
                 statusDot.className = 'db-dot offline';
                 statusDot.style.backgroundColor = '#f59e0b';
+
+                updateSideSummaryPanel(selectedBarangay);
+                renderStatsBanner();
+                renderAllCharts();
+                renderMWSSStatCards();
+                renderMWSSCustomersChart();
+                renderMWSSalesChart();
+                renderMWSSBrgyChart();
+                renderMWSSHHChart();
+                renderElectrificationChart();
+                renderBrgyElectrificationChart();
             }
+        }
+
+        function seriesFromRows(rows, metric, scope, brgyName) {
+            const yearMap = {};
+            rows.forEach(r => {
+                if (r.category !== 'infrastructure') return;
+                if (r.metric !== metric || r.scope !== scope) return;
+                if (brgyName && r.barangay_name !== brgyName) return;
+                if (r.year != null && r.value != null) yearMap[String(r.year)] = Number(r.value);
+            });
+            return buildSeriesFromYearMap(yearMap);
+        }
+
+        function latestValue(series) {
+            if (!series || !Array.isArray(series.history) || series.history.length === 0) return null;
+            return series.history[series.history.length - 1];
+        }
+
+        function buildSummaryDetails(rows) {
+            const summaryKeyMap = {
+                water_domestic_connections: 'waterDomConn',
+                water_domestic_avg: 'waterDomAvg',
+                water_commercial_connections: 'waterCommConn',
+                water_coverage: 'waterCoverage',
+                power_electrified_households: 'powerElectrified',
+                power_total_households: 'powerTotalHH',
+                power_rate: 'powerRate',
+                daycare_centers: 'facDaycare',
+                schools: 'facSchools',
+                health_facilities: 'facHealth',
+                road_network: 'facRoads'
+            };
+            const facilityKeyMap = {
+                daycare_center: 'daycareList',
+                school: 'schoolsList',
+                health_facility: 'healthList',
+                gov_facility: 'govList'
+            };
+
+            const city = {};
+            const brgyMap = {};
+
+            rows.forEach(r => {
+                if (r.category === 'summary') {
+                    const k = summaryKeyMap[r.metric];
+                    if (!k) return;
+                    const display = r.value_text || (r.value != null ? Number(r.value).toLocaleString() + (r.unit ? ' ' + r.unit : '') : null);
+                    if (!display) return;
+                    if (r.scope === 'city') {
+                        city[k] = display;
+                    } else if (r.barangay_name) {
+                        if (!brgyMap[r.barangay_name]) brgyMap[r.barangay_name] = {};
+                        brgyMap[r.barangay_name][k] = display;
+                    }
+                } else if (r.category === 'facilities') {
+                    const listKey = facilityKeyMap[r.metric];
+                    if (!listKey || !r.barangay_name || !r.value_text) return;
+                    if (!brgyMap[r.barangay_name]) brgyMap[r.barangay_name] = {};
+                    if (!brgyMap[r.barangay_name][listKey]) brgyMap[r.barangay_name][listKey] = [];
+                    brgyMap[r.barangay_name][listKey].push(r.value_text);
+                }
+            });
+
+            return { city, barangay: brgyMap };
+        }
+
+        function buildMWSSData(rows) {
+            const mwss = JSON.parse(JSON.stringify(DEFAULT_MWSS_DATA));
+            const hh = {};
+            const cust = {};
+            const sales = {};
+            const brgy = {
+                domestic_conn: {}, domestic_avg: {},
+                commercial_conn: {}, commercial_avg: {},
+                industrial_conn: {}, industrial_avg: {}
+            };
+            const brgyNames = new Set();
+
+            const brgyMetricMap = {
+                domestic_connections: 'domestic_conn',
+                domestic_avg_consumption: 'domestic_avg',
+                commercial_connections: 'commercial_conn',
+                commercial_avg_consumption: 'commercial_avg',
+                industrial_connections: 'industrial_conn',
+                industrial_avg_consumption: 'industrial_avg'
+            };
+
+            rows.forEach(r => {
+                if (r.category === 'mwss_households' && r.metric === 'total_households' && r.year != null && r.value != null) {
+                    hh[r.year] = Number(r.value);
+                } else if (r.category === 'mwss_customers' && r.year != null && r.value != null) {
+                    const k = String(r.customer_type || '').toLowerCase();
+                    if (!cust[k]) cust[k] = {};
+                    cust[k][r.year] = Number(r.value);
+                } else if (r.category === 'mwss_sales' && r.year != null && r.value != null) {
+                    const k = String(r.customer_type || '').toLowerCase();
+                    if (!sales[k]) sales[k] = {};
+                    sales[k][r.year] = Number(r.value);
+                } else if (r.category === 'mwss_barangay') {
+                    const key = brgyMetricMap[r.metric];
+                    if (key && r.barangay_name && r.year != null && r.value != null) {
+                        if (!brgy[key][r.barangay_name]) brgy[key][r.barangay_name] = {};
+                        brgy[key][r.barangay_name][r.year] = Number(r.value);
+                        brgyNames.add(r.barangay_name);
+                    }
+                }
+            });
+
+            const years = Object.keys(hh).map(Number).sort();
+            if (!years.length) return null;
+
+            mwss.labels = years.map(String);
+            mwss.totalHouseholds = years.map(y => hh[y] ?? null);
+            mwss.customers = {};
+            mwss.sales = {};
+            ['residential', 'commercial', 'industrial', 'total'].forEach(k => {
+                mwss.customers[k] = years.map(y => cust[k]?.[y] ?? null);
+                mwss.sales[k] = years.map(y => sales[k]?.[y] ?? null);
+            });
+
+            const names = ['Alabang', 'Ayala Alabang', 'Bayanan', 'Buli', 'Cupang', 'Poblacion', 'Putatan', 'Sucat', 'Tunasan']
+                .filter(n => brgyNames.has(n));
+            mwss.barangay = { labels: names };
+            Object.keys(brgyMetricMap).forEach(dbKey => {
+                const key = brgyMetricMap[dbKey];
+                mwss.barangay[key] = names.map(n => {
+                    const yMap = brgy[key][n];
+                    if (!yMap) return null;
+                    const y = yMap[2022] != null ? 2022 : Object.keys(yMap).pop();
+                    return yMap[y] ?? null;
+                });
+            });
+
+            return mwss;
+        }
+
+        function buildElectrificationData(rows) {
+            const metrics = {
+                total_households: 'totalHouseholds',
+                electrified_households: 'electrifiedHouseholds',
+                electrification_rate: 'electrificationRate'
+            };
+            const byMetric = { totalHouseholds: {}, electrifiedHouseholds: {}, electrificationRate: {} };
+            rows.forEach(r => {
+                if (r.category !== 'electrification' || r.scope !== 'city') return;
+                const key = metrics[r.metric];
+                if (key && r.year != null && r.value != null) byMetric[key][r.year] = Number(r.value);
+            });
+            const years = Object.keys(byMetric.totalHouseholds).map(Number).sort();
+            if (!years.length) return null;
+            return {
+                labels: years.map(String),
+                totalHouseholds: years.map(y => byMetric.totalHouseholds[y] ?? null),
+                electrifiedHouseholds: years.map(y => byMetric.electrifiedHouseholds[y] ?? null),
+                electrificationRate: years.map(y => byMetric.electrificationRate[y] ?? null)
+            };
+        }
+
+        function buildBrgyElectrificationData(rows) {
+            const byYear = { 2019: {}, 2020: {}, 2021: {} };
+            rows.forEach(r => {
+                if (r.category !== 'electrification' || r.scope !== 'barangay' || r.metric !== 'electrified_households') return;
+                if (r.year && r.barangay_name && r.value != null) byYear[r.year][r.barangay_name] = Number(r.value);
+            });
+            const names = [...new Set([].concat(Object.keys(byYear[2019]), Object.keys(byYear[2020]), Object.keys(byYear[2021])))].sort();
+            if (!names.length) return null;
+            return {
+                labels: names,
+                data2019: names.map(n => byYear[2019][n] ?? null),
+                data2020: names.map(n => byYear[2020][n] ?? null),
+                data2021: names.map(n => byYear[2021][n] ?? null)
+            };
         }
 
         function buildSeriesFromYearMap(yearMap) {
@@ -3203,10 +3379,15 @@
             const housing = getValueForYear('housingUnits');
             const power = getValueForYear('powerAccess');
 
-            document.getElementById('card-road-length').textContent = road !== '--' ? Number(road).toLocaleString() : '--';
-            document.getElementById('card-water-coverage').textContent = water !== '--' ? `${water}%` : '--';
-            document.getElementById('card-housing').textContent = housing !== '--' ? Number(housing).toLocaleString() : '--';
-            document.getElementById('card-power').textContent = power !== '--' ? `${power}%` : '--';
+            const roadEl = document.getElementById('card-road-length');
+            const waterEl = document.getElementById('card-water-coverage');
+            const housingEl = document.getElementById('card-housing');
+            const powerEl = document.getElementById('card-power');
+
+            if (roadEl) roadEl.textContent = road !== '--' ? Number(road).toLocaleString() : '--';
+            if (waterEl) waterEl.textContent = water !== '--' ? `${water}%` : '--';
+            if (housingEl) housingEl.textContent = housing !== '--' ? Number(housing).toLocaleString() : '--';
+            if (powerEl) powerEl.textContent = power !== '--' ? `${power}%` : '--';
         }
 
         function getLatestValue(key) {
@@ -3256,7 +3437,9 @@
 
             if (roadChartInstance) roadChartInstance.destroy();
 
-            const ctx = document.getElementById('roadChart').getContext('2d');
+            const roadCanvas = document.getElementById('roadChart');
+            if (!roadCanvas) return;
+            const ctx = roadCanvas.getContext('2d');
             const gradient = makeGradient(ctx);
 
             let config;
@@ -3327,7 +3510,9 @@
 
             if (housingChartInstance) housingChartInstance.destroy();
 
-            const ctx = document.getElementById('housingChart').getContext('2d');
+            const housingCanvas = document.getElementById('housingChart');
+            if (!housingCanvas) return;
+            const ctx = housingCanvas.getContext('2d');
             const gradient = makeGradient(ctx);
 
             let config;
@@ -3392,30 +3577,46 @@
         }
 
         function initChartControls() {
-            document.getElementById('roadChartType').addEventListener('change', e => {
-                roadChartType = e.target.value;
-                renderRoadChart();
-            });
+            const roadChartTypeEl = document.getElementById('roadChartType');
+            if (roadChartTypeEl) {
+                roadChartTypeEl.addEventListener('change', e => {
+                    roadChartType = e.target.value;
+                    renderRoadChart();
+                });
+            }
 
-            document.getElementById('housingChartType').addEventListener('change', e => {
-                housingChartType = e.target.value;
-                renderHousingChart();
-            });
+            const housingChartTypeEl = document.getElementById('housingChartType');
+            if (housingChartTypeEl) {
+                housingChartTypeEl.addEventListener('change', e => {
+                    housingChartType = e.target.value;
+                    renderHousingChart();
+                });
+            }
 
-            document.getElementById('barangayAccessMode').addEventListener('change', renderBarangayInfraChart);
-            document.getElementById('barangayInfrastructureChartType').addEventListener('change', e => {
-                barangayInfraChartType = e.target.value;
-                renderBarangayInfraChart();
-            });
+            const barangayAccessModeEl = document.getElementById('barangayAccessMode');
+            if (barangayAccessModeEl) {
+                barangayAccessModeEl.addEventListener('change', renderBarangayInfraChart);
+            }
+
+            const barangayInfrastructureChartTypeEl = document.getElementById('barangayInfrastructureChartType');
+            if (barangayInfrastructureChartTypeEl) {
+                barangayInfrastructureChartTypeEl.addEventListener('change', e => {
+                    barangayInfraChartType = e.target.value;
+                    renderBarangayInfraChart();
+                });
+            }
         }
 
         function renderBarangayInfraChart() {
-            const mode = document.getElementById('barangayAccessMode').value;
+            const barangayAccessModeEl = document.getElementById('barangayAccessMode');
+            const mode = barangayAccessModeEl?.value || 'road';
             const modeKey = mode === 'road' ? 'roadLength' : mode === 'water' ? 'waterCoverage' : 'powerAccess';
 
             if (barangayInfraChartInstance) barangayInfraChartInstance.destroy();
 
-            const ctx = document.getElementById('barangayInfraChart').getContext('2d');
+            const barangayCanvas = document.getElementById('barangayInfraChart');
+            if (!barangayCanvas) return;
+            const ctx = barangayCanvas.getContext('2d');
             const gradient = makeGradient(ctx);
 
             let labels = BARANGAY_NAMES;
@@ -3885,8 +4086,11 @@
         };
 
         function updateSideSummaryPanel(name) {
-            const data = name && BARANGAY_INFRA_DETAILS[name] ? BARANGAY_INFRA_DETAILS[name] : CITY_WIDE_INFRA_DETAILS;
-            const isCity = !name || !BARANGAY_INFRA_DETAILS[name];
+            const brgyDetail = name ? Object.assign({}, BARANGAY_INFRA_DETAILS[name] || {}, infraSummaryDetails?.barangay?.[name] || {}) : null;
+            const cityDetail = Object.assign({}, CITY_WIDE_INFRA_DETAILS, infraSummaryDetails?.city || {});
+            const hasBrgy = name && brgyDetail && Object.keys(brgyDetail).length > 0;
+            const data = hasBrgy ? brgyDetail : cityDetail;
+            const isCity = !hasBrgy;
 
             const titleEl = document.getElementById("side-summary-title");
             const badgeEl = document.getElementById("side-summary-badge");
@@ -4050,9 +4254,8 @@
                     }
 
                     if (tooltip) {
-                        const stats = (typeof getBarangayStats === 'function') ? getBarangayStats(name) : { total: 0 };
-                        document.getElementById("tooltip-title").textContent = name;
-                        document.getElementById("tooltip-pop").textContent = (stats.total || 0).toLocaleString();
+                        const titleEl = document.getElementById("tooltip-title");
+                        if (titleEl) titleEl.textContent = name;
                         const dot = document.getElementById("tooltip-dot");
                         if (dot) dot.style.backgroundColor = "#0891b2";
                         tooltip.classList.add("visible");
@@ -4144,13 +4347,15 @@
         let mwssBrgyMetric    = 'domestic_conn';
 
         function loadMWSSData() {
-            const stored = localStorage.getItem(MWSS_STORAGE_KEY);
-            if (stored) {
-                try { mwssData = JSON.parse(stored); } catch(e) { mwssData = null; }
-            }
-            if (!mwssData) {
-                mwssData = JSON.parse(JSON.stringify(DEFAULT_MWSS_DATA));
-                localStorage.setItem(MWSS_STORAGE_KEY, JSON.stringify(mwssData));
+            if (!mwssDataFromDb) {
+                const stored = localStorage.getItem(MWSS_STORAGE_KEY);
+                if (stored) {
+                    try { mwssData = JSON.parse(stored); } catch(e) { mwssData = null; }
+                }
+                if (!mwssData) {
+                    mwssData = JSON.parse(JSON.stringify(DEFAULT_MWSS_DATA));
+                    localStorage.setItem(MWSS_STORAGE_KEY, JSON.stringify(mwssData));
+                }
             }
             renderMWSSStatCards();
             renderMWSSCustomersChart();
@@ -4463,7 +4668,7 @@
         function renderElectrificationChart() {
             if (electrificationChart) electrificationChart.destroy();
             const ctx = document.getElementById('electrificationChart').getContext('2d');
-            const d = ELECTRIFICATION_DATA;
+            const d = electrificationData || ELECTRIFICATION_DATA;
             const gradTotal = ctx.createLinearGradient(0, 0, 0, 360);
             gradTotal.addColorStop(0, '#f59e0b');
             gradTotal.addColorStop(1, '#fbbf24');
@@ -4568,7 +4773,7 @@
         function renderBrgyElectrificationChart() {
             if (brgyElectrificationChart) brgyElectrificationChart.destroy();
             const ctx = document.getElementById('brgyElectrificationChart').getContext('2d');
-            const d = BRGY_ELECTRIFICATION_DATA;
+            const d = brgyElectrificationData || BRGY_ELECTRIFICATION_DATA;
             const isBar = brgyElectrificationChartType === 'bar';
 
             brgyElectrificationChart = new Chart(ctx, {
