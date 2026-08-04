@@ -669,6 +669,36 @@
             margin-bottom: 0;
         }
 
+        .sdg-remarks {
+            margin: 20px 0;
+            padding: 16px 20px;
+            background: #f8fafc;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-left: 4px solid var(--primary-blue);
+            border-radius: 10px;
+        }
+
+        .sdg-remarks-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .sdg-remarks p {
+            margin: 6px 0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--text-dark);
+        }
+
+        .sdg-remarks a {
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
         .sdg-logo-img-link {
             display: block;
             line-height: 0;
@@ -941,13 +971,13 @@
             </div>
 
             <!-- 7K PILLARS GRAPHIC BUTTONS GRID WITH ORIGINAL SDG IMAGE TILES -->
-            <div class="pillars-section-title">7K Agenda Pillar</div>
+            <div class="pillars-section-title">7K Agenda - Aligned with UN SDGs</div>
             <div class="pillars-grid">
                 <!-- Pillar 1: Kabuhayan -->
                 <button class="pillar-card-btn active" data-pillar="kabuhayan" onclick="switchPillar('kabuhayan', this)">
                     <div>
                         <div class="pillar-header-title">KABUHAYAN (Livelihood)</div>
-                        <div class="pillar-header-sub">Ibahagi ang trabaho at negosyo</div>
+                        <div class="pillar-header-sub">Promote full employment and business</div>
                     </div>
                     <div class="sdg-badges-row">
                         <img src="../assets/images/sdg-1.png" alt="SDG 1 No Poverty" class="sdg-btn-img">
@@ -964,7 +994,7 @@
                 <button class="pillar-card-btn" data-pillar="kalusugan" onclick="switchPillar('kalusugan', this)">
                     <div>
                         <div class="pillar-header-title">KALUSUGAN (Health)</div>
-                        <div class="pillar-header-sub">Palakasin ang serbisyong pangkalusugan</div>
+                        <div class="pillar-header-sub">Strengthen health services</div>
                     </div>
                     <div class="sdg-badges-row">
                         <img src="../assets/images/sdg-2.png" alt="SDG 2 Zero Hunger" class="sdg-btn-img">
@@ -977,7 +1007,7 @@
                 <button class="pillar-card-btn" data-pillar="karunungan" onclick="switchPillar('karunungan', this)">
                     <div>
                         <div class="pillar-header-title">KARUNUNGAN (Education)</div>
-                        <div class="pillar-header-sub">Patatagin ang edukasyon</div>
+                        <div class="pillar-header-sub">Building Stronger Education</div>
                     </div>
                     <div class="sdg-badges-row">
                         <img src="../assets/images/sdg-4.png" alt="SDG 4 Quality Education" class="sdg-btn-img">
@@ -988,7 +1018,7 @@
                 <button class="pillar-card-btn" data-pillar="kaunlaran" onclick="switchPillar('kaunlaran', this)">
                     <div>
                         <div class="pillar-header-title">KAUNLARAN (Econ. Development)</div>
-                        <div class="pillar-header-sub">Makabagong sistema para sa negosyo, puhunan, at serbisyo</div>
+                        <div class="pillar-header-sub">Innovative systems for business, investment, and services</div>
                     </div>
                     <div class="sdg-badges-row">
                         <img src="../assets/images/sdg-9.png" alt="SDG 9 Industry" class="sdg-btn-img">
@@ -1002,7 +1032,7 @@
                 <button class="pillar-card-btn" data-pillar="kalikasan" onclick="switchPillar('kalikasan', this)">
                     <div>
                         <div class="pillar-header-title">KALIKASAN (Environment)</div>
-                        <div class="pillar-header-sub">Pangangalaga ng likas na yaman at proteksyon ng kapaligiran</div>
+                        <div class="pillar-header-sub">Conservation of natural resources and protection of the environment</div>
                     </div>
                     <div class="sdg-badges-row">
                         <img src="../assets/images/sdg-1.png" alt="SDG 1 No Poverty" class="sdg-btn-img">
@@ -1021,7 +1051,7 @@
                 <button class="pillar-card-btn" data-pillar="katarungan" onclick="switchPillar('katarungan', this)">
                     <div>
                         <div class="pillar-header-title">KATARUNGAN (Social Justice)</div>
-                        <div class="pillar-header-sub">Pantay-pantay at patas na serbisyo para sa lahat</div>
+                        <div class="pillar-header-sub">Equal and fair service for all</div>
                     </div>
                     <div class="sdg-badges-row">
                         <img src="../assets/images/sdg-1.png" alt="SDG 1 No Poverty" class="sdg-btn-img">
@@ -1036,7 +1066,7 @@
                 <button class="pillar-card-btn" data-pillar="kapayapaan" onclick="switchPillar('kapayapaan', this)">
                     <div>
                         <div class="pillar-header-title">KAPAYAPAAN AT KAAYUSAN (Peace &amp; Order)</div>
-                        <div class="pillar-header-sub">Seguridad at kaligtasan ng mga mamamayan</div>
+                        <div class="pillar-header-sub">Safety and security of the people</div>
                     </div>
                     <div class="sdg-badges-row">
                         <img src="../assets/images/sdg-1.png" alt="SDG 1 No Poverty" class="sdg-btn-img">
@@ -1588,6 +1618,29 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            <div class="sdg-remarks">
+                <div class="sdg-remarks-title">SDG Target (Remark/s):</div>
+                <p>
+                    Not all 169 SDG Targets as per the United Nations were used due to applicability to the local
+                    context, as mentioned on this site: <a href="https://sdgs.un.org/goals" target="_blank">https://sdgs.un.org/goals</a>.
+                </p>
+                <p>
+                    <strong>List of Not Applicable SDG Targets:</strong>
+                    SDG 2 (2.5, 2.b); SDG 3 (3.b); SDG 5 (5.3, 5.4, 5.6, 5.a); SDG 6 (6.4, 6.5, 6.6, 6.a);
+                    SDG 7 (7.2, 7.3, 7.a, 7.b); SDG 8 (8.2, 8.4, 8.a, 8.b); SDG 9 (9.4, 9.a, 9.b);
+                    SDG 10 (10.5, 10.6, 10.a, 10.b, 10.c); SDG 11 (11.c); SDG 12 (12.1, 12.2, 12.3, 12.7, 12.c);
+                    SDG 13 (13.a, 13.b); SDG 14 (14.1, 14.2, 14.3, 14.5, 14.7, 14.a, 14.c);
+                    SDG 15 (15.1, 15.2, 15.3, 15.4, 15.5, 15.6, 15.7, 15.b, 15.c);
+                    SDG 17 (17.2, 17.3, 17.4, 17.6, 17.7, 17.9, 17.10, 17.11, 17.12, 17.13).
+                </p>
+                <p>
+                    <strong>*</strong> On the column entitled SDG Localized Indicators, the indicators with numbers were
+                    originally the official SDG indicators as referenced from this site: <a href="https://sdgs.un.org/goals" target="_blank">https://sdgs.un.org/goals</a>.
+                    However, the formulation of applicable and localized indicators was also undertaken to complement
+                    (1) the available data and (2) the corresponding SDG targets (column 1).
+                </p>
             </div>
 
             <!-- ========================================== -->
