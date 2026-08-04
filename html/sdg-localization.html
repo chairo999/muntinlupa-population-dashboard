@@ -184,6 +184,18 @@
             line-height: 1.35;
         }
 
+        .pillar-click-hint {
+            position: absolute;
+            right: 12px;
+            bottom: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            opacity: 0.9;
+            letter-spacing: 0.02em;
+            pointer-events: none;
+        }
+
         .sdg-badges-row {
             display: flex;
             flex-wrap: wrap;
@@ -198,12 +210,7 @@
             height: 52px;
             border-radius: 6px;
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s;
             object-fit: cover;
-        }
-
-        .sdg-btn-img:hover {
-            transform: scale(1.1);
         }
 
         /* INLINE TABLE SDG IMAGE BADGE */
@@ -714,13 +721,6 @@
             aspect-ratio: 1;
             object-fit: contain;
             border-radius: 10px;
-            transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
-        }
-
-        .sdg-logo-card img:hover {
-            transform: translateY(-4px) scale(1.05);
-            filter: brightness(1.05);
-            box-shadow: 0 12px 24px rgba(0, 56, 147, 0.2);
         }
 
         .sdg-progress-wrap {
@@ -991,6 +991,7 @@
                         <img src="../assets/images/sdg-11.png" alt="SDG 11 Sustainable Cities" class="sdg-btn-img">
                         <img src="../assets/images/sdg-12.png" alt="SDG 12 Responsible Consumption" class="sdg-btn-img">
                     </div>
+                    <div class="pillar-click-hint">Click here</div>
                 </button>
 
                 <!-- Pillar 2: Kalusugan -->
@@ -1004,6 +1005,7 @@
                         <img src="../assets/images/sdg-3.png" alt="SDG 3 Good Health" class="sdg-btn-img">
                         <img src="../assets/images/sdg-6.png" alt="SDG 6 Clean Water" class="sdg-btn-img">
                     </div>
+                    <div class="pillar-click-hint">Click here</div>
                 </button>
 
                 <!-- Pillar 3: Karunungan -->
@@ -1015,6 +1017,7 @@
                     <div class="sdg-badges-row">
                         <img src="../assets/images/sdg-4.png" alt="SDG 4 Quality Education" class="sdg-btn-img">
                     </div>
+                    <div class="pillar-click-hint">Click here</div>
                 </button>
 
                 <!-- Pillar 4: Kaunlaran -->
@@ -1029,6 +1032,7 @@
                         <img src="../assets/images/sdg-16.png" alt="SDG 16 Peace & Justice" class="sdg-btn-img">
                         <img src="../assets/images/sdg-17.png" alt="SDG 17 Partnerships" class="sdg-btn-img">
                     </div>
+                    <div class="pillar-click-hint">Click here</div>
                 </button>
 
                 <!-- Pillar 5: Kalikasan -->
@@ -1048,6 +1052,7 @@
                         <img src="../assets/images/sdg-14.png" alt="SDG 14 Life Below Water" class="sdg-btn-img">
                         <img src="../assets/images/sdg-15.png" alt="SDG 15 Life on Land" class="sdg-btn-img">
                     </div>
+                    <div class="pillar-click-hint">Click here</div>
                 </button>
 
                 <!-- Pillar 6: Katarungan -->
@@ -1063,6 +1068,7 @@
                         <img src="../assets/images/sdg-11.png" alt="SDG 11 Sustainable Cities" class="sdg-btn-img">
                         <img src="../assets/images/sdg-16.png" alt="SDG 16 Peace & Justice" class="sdg-btn-img">
                     </div>
+                    <div class="pillar-click-hint">Click here</div>
                 </button>
 
                 <!-- Pillar 7: Kapayapaan -->
@@ -1078,6 +1084,7 @@
                         <img src="../assets/images/sdg-13.png" alt="SDG 13 Climate Action" class="sdg-btn-img">
                         <img src="../assets/images/sdg-16.png" alt="SDG 16 Peace & Justice" class="sdg-btn-img">
                     </div>
+                    <div class="pillar-click-hint">Click here</div>
                 </button>
 
                 <!-- Intro Section: 7K Agenda beside Peace & Order -->
