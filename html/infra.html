@@ -50,6 +50,10 @@
             margin-top: 10px;
         }
 
+        .infra-map-header {
+            padding: 23px 20px;
+        }
+
         .infra-grid > .charts-container-grid {
             grid-column: span 2;
         }
@@ -682,19 +686,10 @@
         <div class="infra-top-section">
             <!-- Left Column: Muntinlupa Interactive Map -->
             <section class="grid-panel map-panel">
-                <div class="panel-header-map flex-header">  
+                <div class="panel-header-map flex-header infra-map-header">  
                     <h3><i class="fa-solid fa-map"></i> Muntinlupa Interactive Map</h3>
 
                     <div class="header-controls">
-                        <div class="census-year-row">
-                            <label for="year-select" style="font-size: 14px; color: #000000; font-weight: 500;">Census Year:</label>
-                            <select id="year-select" style="background-color: #e1271a; color: #f8fafc; border-radius: 0.375rem; padding: 5px 10px; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; cursor: pointer; outline: none;">
-                                <option value="2024">2024</option>
-                                <option value="2023">2023</option>
-                                <option value="2022">2022</option>
-                            </select>
-                        </div>
-
                         <select id="brgy-select" required style="background-color: #e1271a; color: #f8fafc; border-radius: 0.375rem; padding: 5px 10px; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; cursor: pointer; outline: none;">
                             <option value="" selected>-- Select Barangay --</option>
                             <option value="Sucat">Sucat</option>
@@ -3375,7 +3370,7 @@
             return infraData.citywide?.[metricKey] || { labels: [], history: [] };
         }
 
-        function getValueForYear(metricKey, year = selectedYear) {
+        function getValueForYear(metricKey, year) {
             const series = getSeriesForCurrentView(metricKey);
             if (!series || !Array.isArray(series.labels) || !Array.isArray(series.history)) return '--';
             const labelIndex = series.labels.indexOf(String(year));
@@ -3631,7 +3626,7 @@
                 const selectedSeries = infraData.barangay?.[selectedBarangay]?.[modeKey];
                 if (selectedSeries && selectedSeries.history.length > 0) {
                     labels = [selectedBarangay];
-                    values = [getValueForYear(modeKey, selectedYear)];
+                    values = [getLatestValue(modeKey)];
                 } else {
                     labels = [selectedBarangay];
                     values = [getLatestValue(modeKey)];
@@ -4187,7 +4182,6 @@
             const mapWrapper = document.querySelector(".map-wrapper");
             const tooltip = document.getElementById("map-tooltip");
             const brgySelect = document.getElementById("brgy-select");
-            const yearSelect = document.getElementById("year-select");
             const svgOverlay = mapWrapper?.querySelector(".map-svg-overlay");
 
             const magnifyLayer = mapWrapper?.querySelector(".map-magnify-layer") || (() => {
@@ -4300,13 +4294,6 @@
                 brgySelect.addEventListener("change", (e) => {
                     const selectedName = e.target.value;
                     selectBarangay(selectedName ? selectedName : null, false);
-                });
-            }
-
-            if (yearSelect) {
-                yearSelect.addEventListener("change", (e) => {
-                    selectedYear = e.target.value;
-                    renderInfrastructureDashboard();
                 });
             }
 
