@@ -973,6 +973,50 @@
       background: var(--accent-yellow-light) !important;
     }
 
+    .economic-section-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 4px 0 12px;
+    }
+
+    .economic-section-input {
+      width: 130px;
+      padding: 12px 14px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius-md);
+      font-family: var(--font-outfit);
+      font-size: 0.9rem;
+      background: #f8fafc;
+      outline: none;
+      transition: var(--transition-smooth);
+    }
+
+    .economic-section-input:focus {
+      border-color: var(--accent-yellow);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+      background: #ffffff;
+    }
+
+    .economic-section-select {
+      width: 160px;
+      padding: 12px 14px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius-md);
+      font-family: var(--font-outfit);
+      font-size: 0.9rem;
+      background: #f8fafc;
+      outline: none;
+      transition: var(--transition-smooth);
+    }
+
+    .economic-section-select:focus {
+      border-color: var(--accent-yellow);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+      background: #ffffff;
+    }
+
     /* Projection (pyramid) editor — gender toggle */
     .proj-gender-toggle {
       display: inline-flex;
@@ -1162,6 +1206,71 @@
             </div>
             <div class="grid-table-wrap">
               <div id="health-grid-container" class="economic-grid-container"></div>
+            </div>
+          </div>
+          <!-- Tabular Editor: Education Sector (spreadsheet-style editing) -->
+          <div id="education-editor" class="tabular-editor">
+            <div class="tabular-header">
+              <div>
+                <h3><i class="fa-solid fa-graduation-cap"></i> Education Sector Editor</h3>
+                <p>Each education indicator table below has its own year controls and save button. Rows are grouped by
+                  the indicator and show barangay/category columns separately.</p>
+              </div>
+            </div>
+            <div class="grid-table-wrap">
+              <div id="education-grid-container" class="economic-grid-container"></div>
+            </div>
+          </div>
+          <!-- Tabular Editor: Protective Services Sector (spreadsheet-style editing) -->
+          <div id="protective-editor" class="tabular-editor">
+            <div class="tabular-header">
+              <div>
+                <h3><i class="fa-solid fa-shield-halved"></i> Protective Services Editor</h3>
+                <p>Each protective indicator table below has its own year controls and save button. Rows are grouped by
+                  the indicator and show barangay/category columns separately.</p>
+              </div>
+            </div>
+            <div class="grid-table-wrap">
+              <div id="protective-grid-container" class="economic-grid-container"></div>
+            </div>
+          </div>
+          <!-- Tabular Editor: Social Welfare Sector (spreadsheet-style editing) -->
+          <div id="social-welfare-editor" class="tabular-editor">
+            <div class="tabular-header">
+              <div>
+                <h3><i class="fa-solid fa-hand-holding-heart"></i> Social Welfare Sector Editor</h3>
+                <p>Each social welfare indicator table below has its own year controls and save button. Rows are grouped
+                  by the indicator and show barangay/category columns separately.</p>
+              </div>
+            </div>
+            <div class="grid-table-wrap">
+              <div id="social-welfare-grid-container" class="economic-grid-container"></div>
+            </div>
+          </div>
+          <!-- Tabular Editor: Environment Sector (spreadsheet-style editing) -->
+          <div id="environment-editor" class="tabular-editor">
+            <div class="tabular-header">
+              <div>
+                <h3><i class="fa-solid fa-leaf"></i> Environment Sector Editor</h3>
+                <p>Each environment indicator table below has its own year controls and save button. Rows are grouped by
+                  the indicator and show barangay/category columns separately.</p>
+              </div>
+            </div>
+            <div class="grid-table-wrap">
+              <div id="environment-grid-container" class="economic-grid-container"></div>
+            </div>
+          </div>
+          <!-- Tabular Editor: Institutional Sector (spreadsheet-style editing) -->
+          <div id="institutional-editor" class="tabular-editor">
+            <div class="tabular-header">
+              <div>
+                <h3><i class="fa-solid fa-building-columns"></i> Institutional Sector Editor</h3>
+                <p>Each institutional indicator table below has its own year controls and save button. Rows are grouped
+                  by the indicator and show barangay/category columns separately.</p>
+              </div>
+            </div>
+            <div class="grid-table-wrap">
+              <div id="institutional-grid-container" class="economic-grid-container"></div>
             </div>
           </div>
           <!-- Tabular Editor: Projected Population Pyramid (indicator_id = 28) -->
@@ -1493,7 +1602,7 @@
       // Update UI title and texts
       sectorTitle.innerHTML = `<i class="fa-solid ${config.icon}"></i> ${config.name}`;
       sectorDesc.textContent = config.desc;
-      tableNameBadge.textContent = ['edit', 'economic', 'health'].includes(sectorKey) ? 'data_values' : config.table;
+      tableNameBadge.textContent = ['edit', 'economic', 'health', 'education', 'protective', 'social_welfare', 'environment', 'institutional'].includes(sectorKey) ? 'data_values' : config.table;
 
       // Update label text dynamically (Select Barangay vs Select Indicator)
       const labelEl = document.querySelector('label[for="brgy"]');
@@ -1514,30 +1623,44 @@
       const economicEditor = document.getElementById('economic-editor');
       const healthEditor = document.getElementById('health-editor');
       const projectionEditor = document.getElementById('projection-editor');
+      const educationEditorEl = document.getElementById('education-editor');
+      const protectiveEditorEl = document.getElementById('protective-editor');
+      const socialWelfareEditorEl = document.getElementById('social-welfare-editor');
+      const environmentEditorEl = document.getElementById('environment-editor');
+      const institutionalEditorEl = document.getElementById('institutional-editor');
       const editForm = document.getElementById('edit-form');
+
+      const allEditorEls = [tabularEditor, economicEditor, healthEditor, projectionEditor, educationEditorEl, protectiveEditorEl, socialWelfareEditorEl, environmentEditorEl, institutionalEditorEl];
+      allEditorEls.forEach(el => {
+        if (el) el.classList.remove('active');
+      });
+
       if (sectorKey === 'edit') {
-        tabularEditor.classList.add('active');
-        economicEditor.classList.remove('active');
-        healthEditor.classList.remove('active');
-        projectionEditor.classList.add('active');
+        tabularEditor?.classList.add('active');
+        projectionEditor?.classList.add('active');
         editForm.style.display = 'none';
       } else if (sectorKey === 'economic') {
-        tabularEditor.classList.remove('active');
-        economicEditor.classList.add('active');
-        healthEditor.classList.remove('active');
-        projectionEditor.classList.remove('active');
+        economicEditor?.classList.add('active');
         editForm.style.display = 'none';
       } else if (sectorKey === 'health') {
-        tabularEditor.classList.remove('active');
-        economicEditor.classList.remove('active');
-        healthEditor.classList.add('active');
-        projectionEditor.classList.remove('active');
+        healthEditor?.classList.add('active');
+        editForm.style.display = 'none';
+      } else if (sectorKey === 'education') {
+        educationEditorEl?.classList.add('active');
+        editForm.style.display = 'none';
+      } else if (sectorKey === 'protective') {
+        protectiveEditorEl?.classList.add('active');
+        editForm.style.display = 'none';
+      } else if (sectorKey === 'social_welfare') {
+        socialWelfareEditorEl?.classList.add('active');
+        editForm.style.display = 'none';
+      } else if (sectorKey === 'environment') {
+        environmentEditorEl?.classList.add('active');
+        editForm.style.display = 'none';
+      } else if (sectorKey === 'institutional') {
+        institutionalEditorEl?.classList.add('active');
         editForm.style.display = 'none';
       } else {
-        tabularEditor.classList.remove('active');
-        economicEditor.classList.remove('active');
-        healthEditor.classList.remove('active');
-        projectionEditor.classList.remove('active');
         editForm.style.display = '';
       }
 
@@ -1551,6 +1674,8 @@
         await loadEconomicData();
       } else if (sectorKey === 'health') {
         await loadHealthData();
+      } else if (sectorEditors[sectorKey]) {
+        await sectorEditors[sectorKey].load();
       } else {
         await loadSectorData(config.table);
       }
@@ -2844,6 +2969,481 @@
         showNotification('err', `Save Failed: ${err.message || err}`, 'fa-circle-xmark');
       }
     }
+
+
+    // ===============================================
+    // GENERIC INDICATOR GRID EDITOR — spreadsheet style
+    // Reused by education, protective, social_welfare,
+    // environment and institutional sectors. Fetches and
+    // writes rows to 'data_values' grouped by indicator_id,
+    // with per-indicator Add Year / Remove Year / Save.
+    // ===============================================
+    function createIndicatorGridEditor({ sectorKey, sectorId, indicatorIds, containerId, storageKey, label }) {
+      const state = { data: {} };
+
+      function buildRowLabel(meta) {
+        const parts = [];
+        if (meta?.barangay_name) parts.push(meta.barangay_name);
+        if (meta?.category_1) parts.push(meta.category_1);
+        if (meta?.category_2) parts.push(meta.category_2);
+        return parts.length ? parts.join(' - ') : 'Citywide';
+      }
+
+      async function load() {
+        updateHeaderStatus('connecting', 'Connecting table: [data_values]...');
+        showNotification('info', `Retrieving ${label} indicator data from data_values...`, 'fa-spinner fa-spin');
+
+        try {
+          const { data, error } = await supabaseClient
+            .from('data_values')
+            .select('data_id, value, year, indicator_id, category_1, category_2, barangay_id, indicators(indicator_name), barangays(barangay_name)')
+            .in('indicator_id', indicatorIds)
+            .order('indicator_id', { ascending: true })
+            .order('year', { ascending: true });
+
+          if (error) throw error;
+
+          const grouped = {};
+          (data || []).forEach((row) => {
+            const indicatorId = row.indicator_id;
+            if (!grouped[indicatorId]) {
+              grouped[indicatorId] = {
+                indicatorId,
+                indicatorName: row.indicators?.indicator_name || `Indicator ${indicatorId}`,
+                years: [],
+                rows: []
+              };
+            }
+
+            const group = grouped[indicatorId];
+            const yearKey = String(row.year);
+            if (!group.years.includes(yearKey)) group.years.push(yearKey);
+
+            const rowId = `${indicatorId}::${row.barangays?.barangay_name || ''}::${row.category_1 || ''}::${row.category_2 || ''}`;
+            let rowEntry = group.rows.find((entry) => entry.id === rowId);
+            if (!rowEntry) {
+              rowEntry = {
+                id: rowId,
+                meta: {
+                  barangay_name: row.barangays?.barangay_name || null,
+                  barangay_id: row.barangay_id || null,
+                  category_1: row.category_1 || null,
+                  category_2: row.category_2 || null
+                },
+                values: {}
+              };
+              group.rows.push(rowEntry);
+            }
+
+            rowEntry.values[yearKey] = {
+              data_id: row.data_id || null,
+              value: row.value
+            };
+          });
+
+          Object.values(grouped).forEach((group) => {
+            group.years = group.years.sort((a, b) => Number(a) - Number(b));
+            group.rows.forEach((rowEntry) => {
+              group.years.forEach((year) => {
+                if (!rowEntry.values[year]) {
+                  rowEntry.values[year] = { data_id: null, value: null };
+                }
+              });
+            });
+          });
+
+          state.data = grouped;
+          render();
+          disableForm(false);
+          updateHeaderStatus('online', 'Live & Connected (Table: data_values)');
+          showNotification('ok', `Loaded ${Object.keys(grouped).length} ${label} indicator group(s) from data_values.`, 'fa-circle-check');
+        } catch (err) {
+          console.error(`${label} data load failed:`, err);
+          state.data = {};
+          render();
+          disableForm(false);
+          updateHeaderStatus('error', 'Offline / Load Error');
+          showNotification('err', `Failed to load ${label} data: ${err.message || err}`, 'fa-circle-xmark');
+        }
+      }
+
+      function render() {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+
+        const groups = Object.values(state.data).sort((a, b) => Number(a.indicatorId) - Number(b.indicatorId));
+        if (!groups.length) {
+          container.innerHTML = `<div class="economic-indicator-section"><h4>No ${label} indicator rows found</h4><p>No matching rows were returned from data_values for the ${label} indicators.</p></div>`;
+          return;
+        }
+
+        groups.forEach((group) => {
+          const section = document.createElement('div');
+          section.className = 'economic-indicator-section';
+
+          const title = document.createElement('h4');
+          title.textContent = `${group.indicatorName} (Indicator ID ${group.indicatorId})`;
+          section.appendChild(title);
+
+          const toolbar = document.createElement('div');
+          toolbar.className = 'economic-section-toolbar';
+          toolbar.dataset.indicatorId = String(group.indicatorId);
+
+          const addInput = document.createElement('input');
+          addInput.type = 'number';
+          addInput.min = '2000';
+          addInput.max = '2100';
+          addInput.step = '1';
+          addInput.placeholder = 'e.g. 2025';
+          addInput.className = 'economic-section-input';
+          addInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              addYearToGroup(group.indicatorId);
+            }
+          });
+
+          const addBtn = document.createElement('button');
+          addBtn.type = 'button';
+          addBtn.className = 'submit-btn save-grid-btn economic-section-action';
+          addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add Year';
+          addBtn.addEventListener('click', () => addYearToGroup(group.indicatorId));
+
+          const removeSelect = document.createElement('select');
+          removeSelect.className = 'economic-section-select';
+          removeSelect.innerHTML = '<option value="">Select year...</option>';
+          (group.years || []).forEach((year) => {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            removeSelect.appendChild(option);
+          });
+
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.className = 'submit-btn save-grid-btn economic-section-action';
+          removeBtn.innerHTML = '<i class="fa-solid fa-minus"></i> Remove Year';
+          removeBtn.addEventListener('click', () => removeYearFromGroup(group.indicatorId, removeSelect.value));
+
+          const saveBtn = document.createElement('button');
+          saveBtn.type = 'button';
+          saveBtn.className = 'submit-btn save-grid-btn economic-section-action';
+          saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+          saveBtn.addEventListener('click', () => saveGroupTable(group.indicatorId));
+
+          toolbar.appendChild(addInput);
+          toolbar.appendChild(addBtn);
+          toolbar.appendChild(removeSelect);
+          toolbar.appendChild(removeBtn);
+          toolbar.appendChild(saveBtn);
+
+          section.appendChild(toolbar);
+
+          const subTable = document.createElement('table');
+          subTable.className = 'grid-table economic-indicator-table';
+          const subThead = document.createElement('thead');
+          const subTbody = document.createElement('tbody');
+
+          const rows = group.rows || [];
+          const hasBarangays = rows.some((rowEntry) => rowEntry.meta?.barangay_name);
+          const hasCat1 = rows.some((rowEntry) => rowEntry.meta?.category_1);
+          const hasCat2 = rows.some((rowEntry) => rowEntry.meta?.category_2);
+
+          const headerTr = document.createElement('tr');
+          const labelTh = document.createElement('th');
+          if (hasBarangays) {
+            labelTh.textContent = 'Barangay';
+          } else if (hasCat1) {
+            labelTh.textContent = 'Category';
+          } else {
+            labelTh.textContent = 'Level';
+          }
+          headerTr.appendChild(labelTh);
+
+          let secondaryShown = false;
+          if (hasBarangays && hasCat1) {
+            const categoryTh = document.createElement('th');
+            categoryTh.textContent = 'Category';
+            headerTr.appendChild(categoryTh);
+            secondaryShown = true;
+          } else if (!hasBarangays && hasCat2) {
+            const categoryTh = document.createElement('th');
+            categoryTh.textContent = 'Sub-Category';
+            headerTr.appendChild(categoryTh);
+            secondaryShown = true;
+          }
+
+          (group.years || []).forEach((year) => {
+            const thEl = document.createElement('th');
+            thEl.textContent = year;
+            headerTr.appendChild(thEl);
+          });
+          subThead.appendChild(headerTr);
+
+          rows.forEach((rowEntry) => {
+            const row = document.createElement('tr');
+            const labelCell = document.createElement('td');
+            if (hasBarangays) {
+              labelCell.textContent = rowEntry.meta?.barangay_name || '—';
+            } else if (hasCat1) {
+              labelCell.textContent = rowEntry.meta?.category_1 || '—';
+            } else {
+              labelCell.textContent = 'Citywide';
+            }
+            row.appendChild(labelCell);
+
+            if (secondaryShown) {
+              const categoryCell = document.createElement('td');
+              const parts = [];
+              if (hasBarangays && hasCat1) {
+                parts.push(rowEntry.meta?.category_1);
+                if (rowEntry.meta?.category_2) parts.push(rowEntry.meta.category_2);
+              } else if (!hasBarangays && hasCat2) {
+                parts.push(rowEntry.meta?.category_2);
+              }
+              categoryCell.textContent = parts.filter(Boolean).length ? parts.filter(Boolean).join(' / ') : '—';
+              row.appendChild(categoryCell);
+            }
+
+            (group.years || []).forEach((year) => {
+              const cell = document.createElement('td');
+              const input = document.createElement('input');
+              input.type = 'number';
+              input.min = '0';
+              input.step = 'any';
+              const entry = rowEntry.values && rowEntry.values[year];
+              input.value = (entry && entry.value !== undefined && entry.value !== null) ? entry.value : '';
+              input.dataset.indicatorId = group.indicatorId;
+              input.dataset.rowId = rowEntry.id;
+              input.dataset.year = year;
+              input.dataset.dataId = entry?.data_id || '';
+              input.addEventListener('input', onCellChange);
+              cell.appendChild(input);
+              row.appendChild(cell);
+            });
+
+            subTbody.appendChild(row);
+          });
+
+          subTable.appendChild(subThead);
+          subTable.appendChild(subTbody);
+          section.appendChild(subTable);
+          container.appendChild(section);
+        });
+      }
+
+      function onCellChange(e) {
+        const input = e.currentTarget;
+        const indicatorId = input.dataset.indicatorId;
+        const rowId = input.dataset.rowId;
+        const year = input.dataset.year;
+        const val = input.value === '' ? null : parseFloat(input.value);
+
+        const group = state.data[indicatorId];
+        if (!group) return;
+
+        const rowEntry = (group.rows || []).find((entry) => entry.id === rowId);
+        if (!rowEntry) return;
+
+        if (!rowEntry.values[year]) {
+          rowEntry.values[year] = { data_id: input.dataset.dataId || null, value: null };
+        }
+        rowEntry.values[year].value = val;
+        rowEntry.values[year].data_id = input.dataset.dataId || rowEntry.values[year].data_id || null;
+
+        input.classList.add('grid-cell-changed');
+      }
+
+      function addYearToGroup(indicatorId) {
+        const group = state.data[indicatorId];
+        if (!group) return;
+
+        const toolbar = document.querySelector(`.economic-section-toolbar[data-indicator-id="${String(indicatorId)}"]`);
+        const input = toolbar?.querySelector('input');
+        const yearNum = parseInt((input && input.value) || '', 10);
+        if (!yearNum || isNaN(yearNum)) {
+          showNotification('err', 'Enter a valid year before adding a column.', 'fa-circle-xmark');
+          return;
+        }
+
+        const yearStr = String(yearNum);
+        if ((group.years || []).includes(yearStr)) {
+          showNotification('err', `Year ${yearStr} is already present for this indicator.`, 'fa-circle-xmark');
+          return;
+        }
+
+        group.years.push(yearStr);
+        group.years.sort((a, b) => Number(a) - Number(b));
+        (group.rows || []).forEach((rowEntry) => {
+          if (!rowEntry.values[yearStr]) {
+            rowEntry.values[yearStr] = { data_id: null, value: null };
+          }
+        });
+
+        render();
+        showNotification('ok', `Added year ${yearStr} to ${group.indicatorName}.`, 'fa-circle-check');
+      }
+
+      async function removeYearFromGroup(indicatorId, yearToRemove) {
+        const group = state.data[indicatorId];
+        if (!group) return;
+        if (!yearToRemove) {
+          showNotification('err', 'Select a year to remove first.', 'fa-circle-xmark');
+          return;
+        }
+        if (!confirm(`Remove year ${yearToRemove} from ${group.indicatorName} in the database?\n\nThis permanently deletes all values for this indicator and year from the 'data_values' table. This cannot be undone.`)) return;
+
+        try {
+          showNotification('info', `Deleting rows for year ${yearToRemove} under ${group.indicatorName}...`, 'fa-spinner fa-spin');
+
+          const { count, error } = await supabaseClient
+            .from('data_values')
+            .delete({ count: 'exact' })
+            .eq('indicator_id', indicatorId)
+            .eq('year', parseInt(yearToRemove, 10));
+
+          if (error) throw error;
+
+          group.years = (group.years || []).filter((year) => year !== yearToRemove);
+          (group.rows || []).forEach((rowEntry) => {
+            delete rowEntry.values[yearToRemove];
+          });
+
+          render();
+          showNotification('ok', `Deleted year ${yearToRemove} (${count ?? 0} rows) from database for ${group.indicatorName}.`, 'fa-circle-check');
+        } catch (err) {
+          console.error("Remove year failed:", err);
+          showNotification('err', `Failed to remove year ${yearToRemove}: ${err.message || err}`, 'fa-circle-xmark');
+        }
+      }
+
+      async function saveGroupTable(indicatorId) {
+        const group = state.data[indicatorId];
+        if (!group) return;
+
+        showNotification('info', `Saving ${group.indicatorName} values to data_values...`, 'fa-spinner fa-spin');
+
+        try {
+          let savedCount = 0;
+          const failures = [];
+
+          for (const rowEntry of group.rows || []) {
+            for (const year of group.years || []) {
+              const cell = rowEntry.values && rowEntry.values[year];
+              if (!cell) continue;
+
+              const value = cell.value !== undefined && cell.value !== null ? cell.value : null;
+
+              if (cell.data_id) {
+                const { error } = await supabaseClient
+                  .from('data_values')
+                  .update({ value })
+                  .eq('data_id', cell.data_id);
+
+                if (error) {
+                  failures.push(`Update failed for ${buildRowLabel(rowEntry.meta)} / ${year}: ${error.message || error}`);
+                  console.error('Update error:', error);
+                } else {
+                  savedCount++;
+                }
+              } else {
+                const payload = {
+                  indicator_id: group.indicatorId,
+                  sector_id: sectorId,
+                  year: parseInt(year, 10),
+                  value
+                };
+                if (rowEntry.meta?.barangay_id) payload.barangay_id = rowEntry.meta.barangay_id;
+                if (rowEntry.meta?.category_1) payload.category_1 = rowEntry.meta.category_1;
+                if (rowEntry.meta?.category_2) payload.category_2 = rowEntry.meta.category_2;
+
+                const { data, error } = await supabaseClient
+                  .from('data_values')
+                  .insert(payload)
+                  .select('data_id')
+                  .single();
+
+                if (error) {
+                  failures.push(`Insert failed for ${buildRowLabel(rowEntry.meta)} / ${year}: ${error.message || error}`);
+                  console.error('Insert error:', error);
+                } else if (data?.data_id) {
+                  cell.data_id = data.data_id;
+                  savedCount++;
+                }
+              }
+            }
+          }
+
+          if (failures.length) {
+            throw new Error(failures.join(' | '));
+          }
+
+          localStorage.setItem(storageKey, JSON.stringify(state.data));
+          document.querySelectorAll(`#${containerId} .grid-cell-changed`).forEach(el => el.classList.remove('grid-cell-changed'));
+          await load();
+          showNotification('ok', `Saved ${savedCount} change(s) for ${group.indicatorName}.`, 'fa-circle-check');
+        } catch (err) {
+          console.error(err);
+          showNotification('err', `Save Failed: ${err.message || err}`, 'fa-circle-xmark');
+        }
+      }
+
+      return { load, render, state };
+    }
+
+    // Instantiate grid editors for the remaining sectors.
+    // indicator/sector ids mirror the public dashboard pages:
+    //   education (17-22, sector 3), protective (9-11, sector 5),
+    //   social welfare (12-14, sector 6), environment (23-27, sector 7),
+    //   institutional (15-16, sector 8)
+    const educationEditor = createIndicatorGridEditor({
+      sectorKey: 'education',
+      sectorId: 3,
+      indicatorIds: [17, 18, 19, 20, 21, 22],
+      containerId: 'education-grid-container',
+      storageKey: 'muntinlupa_education_indicator_data_values',
+      label: 'education'
+    });
+    const protectiveEditor = createIndicatorGridEditor({
+      sectorKey: 'protective',
+      sectorId: 5,
+      indicatorIds: [9, 10, 11],
+      containerId: 'protective-grid-container',
+      storageKey: 'muntinlupa_protective_indicator_data_values',
+      label: 'protective'
+    });
+    const socialWelfareEditor = createIndicatorGridEditor({
+      sectorKey: 'social_welfare',
+      sectorId: 6,
+      indicatorIds: [12, 13, 14],
+      containerId: 'social-welfare-grid-container',
+      storageKey: 'muntinlupa_social_welfare_indicator_data_values',
+      label: 'social welfare'
+    });
+    const environmentEditor = createIndicatorGridEditor({
+      sectorKey: 'environment',
+      sectorId: 7,
+      indicatorIds: [23, 24, 25, 26, 27],
+      containerId: 'environment-grid-container',
+      storageKey: 'muntinlupa_environment_indicator_data_values',
+      label: 'environment'
+    });
+    const institutionalEditor = createIndicatorGridEditor({
+      sectorKey: 'institutional',
+      sectorId: 8,
+      indicatorIds: [15, 16],
+      containerId: 'institutional-grid-container',
+      storageKey: 'muntinlupa_institutional_indicator_data_values',
+      label: 'institutional'
+    });
+    const sectorEditors = {
+      education: educationEditor,
+      protective: protectiveEditor,
+      social_welfare: socialWelfareEditor,
+      environment: environmentEditor,
+      institutional: institutionalEditor
+    };
 
 
     // ===============================================
