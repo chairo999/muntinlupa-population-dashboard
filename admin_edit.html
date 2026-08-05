@@ -975,10 +975,12 @@
 
     .economic-section-toolbar {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
       flex-wrap: wrap;
-      margin: 4px 0 12px;
+      gap: 12px;
+      margin: 4px 0 16px;
+      width: 100%;
     }
 
     .economic-section-input {
@@ -2336,9 +2338,15 @@
 
         const addBtn = document.createElement('button');
         addBtn.type = 'button';
-        addBtn.className = 'submit-btn save-grid-btn economic-section-action';
+        addBtn.className = 'submit-btn save-grid-btn add-year-btn';
         addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add Year';
         addBtn.addEventListener('click', () => addEconomicYearToGroup(group.indicatorId));
+
+        const addYearBox = document.createElement('div');
+        addYearBox.className = 'add-year-box';
+        addYearBox.appendChild(addInput);
+        addYearBox.appendChild(addBtn);
+        toolbar.appendChild(addYearBox);
 
         const removeSelect = document.createElement('select');
         removeSelect.className = 'economic-section-select';
@@ -2352,20 +2360,22 @@
 
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
-        removeBtn.className = 'submit-btn save-grid-btn economic-section-action';
+        removeBtn.className = 'submit-btn save-grid-btn remove-year-btn';
         removeBtn.innerHTML = '<i class="fa-solid fa-minus"></i> Remove Year';
         removeBtn.addEventListener('click', () => removeEconomicYearFromGroup(group.indicatorId, removeSelect.value));
 
+        const removeYearBox = document.createElement('div');
+        removeYearBox.className = 'add-year-box';
+        removeYearBox.appendChild(removeSelect);
+        removeYearBox.appendChild(removeBtn);
+        toolbar.appendChild(removeYearBox);
+
         const saveBtn = document.createElement('button');
         saveBtn.type = 'button';
-        saveBtn.className = 'submit-btn save-grid-btn economic-section-action';
+        saveBtn.className = 'submit-btn save-grid-btn';
         saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
         saveBtn.addEventListener('click', () => saveEconomicGroupTable(group.indicatorId));
 
-        toolbar.appendChild(addInput);
-        toolbar.appendChild(addBtn);
-        toolbar.appendChild(removeSelect);
-        toolbar.appendChild(removeBtn);
         toolbar.appendChild(saveBtn);
 
         section.appendChild(toolbar);
@@ -2714,9 +2724,15 @@
 
         const addBtn = document.createElement('button');
         addBtn.type = 'button';
-        addBtn.className = 'submit-btn save-grid-btn economic-section-action';
+        addBtn.className = 'submit-btn save-grid-btn add-year-btn';
         addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add Year';
         addBtn.addEventListener('click', () => addHealthYearToGroup(group.indicatorId));
+
+        const addYearBox = document.createElement('div');
+        addYearBox.className = 'add-year-box';
+        addYearBox.appendChild(addInput);
+        addYearBox.appendChild(addBtn);
+        toolbar.appendChild(addYearBox);
 
         const removeSelect = document.createElement('select');
         removeSelect.className = 'economic-section-select';
@@ -2730,20 +2746,22 @@
 
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
-        removeBtn.className = 'submit-btn save-grid-btn economic-section-action';
+        removeBtn.className = 'submit-btn save-grid-btn remove-year-btn';
         removeBtn.innerHTML = '<i class="fa-solid fa-minus"></i> Remove Year';
         removeBtn.addEventListener('click', () => removeHealthYearFromGroup(group.indicatorId, removeSelect.value));
 
+        const removeYearBox = document.createElement('div');
+        removeYearBox.className = 'add-year-box';
+        removeYearBox.appendChild(removeSelect);
+        removeYearBox.appendChild(removeBtn);
+        toolbar.appendChild(removeYearBox);
+
         const saveBtn = document.createElement('button');
         saveBtn.type = 'button';
-        saveBtn.className = 'submit-btn save-grid-btn economic-section-action';
+        saveBtn.className = 'submit-btn save-grid-btn';
         saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
         saveBtn.addEventListener('click', () => saveHealthGroupTable(group.indicatorId));
 
-        toolbar.appendChild(addInput);
-        toolbar.appendChild(addBtn);
-        toolbar.appendChild(removeSelect);
-        toolbar.appendChild(removeBtn);
         toolbar.appendChild(saveBtn);
 
         section.appendChild(toolbar);
@@ -3106,9 +3124,15 @@
 
           const addBtn = document.createElement('button');
           addBtn.type = 'button';
-          addBtn.className = 'submit-btn save-grid-btn economic-section-action';
+          addBtn.className = 'submit-btn save-grid-btn add-year-btn';
           addBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add Year';
           addBtn.addEventListener('click', () => addYearToGroup(group.indicatorId));
+
+          const addYearBox = document.createElement('div');
+          addYearBox.className = 'add-year-box';
+          addYearBox.appendChild(addInput);
+          addYearBox.appendChild(addBtn);
+          toolbar.appendChild(addYearBox);
 
           const removeSelect = document.createElement('select');
           removeSelect.className = 'economic-section-select';
@@ -3122,20 +3146,22 @@
 
           const removeBtn = document.createElement('button');
           removeBtn.type = 'button';
-          removeBtn.className = 'submit-btn save-grid-btn economic-section-action';
+          removeBtn.className = 'submit-btn save-grid-btn remove-year-btn';
           removeBtn.innerHTML = '<i class="fa-solid fa-minus"></i> Remove Year';
           removeBtn.addEventListener('click', () => removeYearFromGroup(group.indicatorId, removeSelect.value));
 
+          const removeYearBox = document.createElement('div');
+          removeYearBox.className = 'add-year-box';
+          removeYearBox.appendChild(removeSelect);
+          removeYearBox.appendChild(removeBtn);
+          toolbar.appendChild(removeYearBox);
+
           const saveBtn = document.createElement('button');
           saveBtn.type = 'button';
-          saveBtn.className = 'submit-btn save-grid-btn economic-section-action';
+          saveBtn.className = 'submit-btn save-grid-btn';
           saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
           saveBtn.addEventListener('click', () => saveGroupTable(group.indicatorId));
 
-          toolbar.appendChild(addInput);
-          toolbar.appendChild(addBtn);
-          toolbar.appendChild(removeSelect);
-          toolbar.appendChild(removeBtn);
           toolbar.appendChild(saveBtn);
 
           section.appendChild(toolbar);
