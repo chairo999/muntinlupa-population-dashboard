@@ -2938,7 +2938,9 @@
 
         // ─── MWSS Water Supply Default Data ──────────────────────────────────
         const MWSS_STORAGE_KEY = 'muntinlupa_sector_data_water_v2';
-        localStorage.removeItem('muntinlupa_sector_data_water');
+        // ensure any previous stored MWSS data (including v2 key) is cleared so
+        // the updated DEFAULT_MWSS_DATA is used on load/refresh
+        try { localStorage.removeItem(MWSS_STORAGE_KEY); } catch(e) { /* ignore */ }
 
         const DEFAULT_MWSS_DATA = {
             labels: ['2016', '2017', '2018', '2019', '2020', '2021', '2022'],
@@ -2951,11 +2953,11 @@
                 total:        [58295, 58922, 61954, 65129, 66568, 67132, 49435]
             },
             sales: {
-                residential:  [1057340, 1484777, 1676347, 1748000, 1648908, 1602414, 1606784],
-                commercial:   [121634,  137060,  145762,  149000,  100781,  57120,   105042],
-                industrial:   [28384,   38376,   39534,   43000,   16880,   16588,   16253],
+                residential:  [1357242, 1464777, 1511247, 1648908, 1638281, 1602414, 1618796],
+                commercial:   [121879,  137908,  140764,  109751,  87917,   87126,   105049],
+                industrial:   [20991,   30576,   128817,  17890,   18882,   16555,   16004],
                 institutional:[null,    null,    null,    null,    null,    null,    null],
-                total:        [1207358, 1660213, 1861643, 1940000, 1766569, 1676122, 1728079]
+                total:        [1500112, 1633261, 1780828, 1776549, 1745080, 1706095, 1739849]
             },
             barangay: {
                 labels:          ['Alabang','Ayala Alabang','Bayanan','Buli','Cupang','Poblacion','Putatan','Sucat','Tunasan'],
