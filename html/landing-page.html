@@ -8,8 +8,9 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body class="lp-env-body">
@@ -183,7 +184,27 @@
             </div>
         </div>
     </div>
+    <footer class="lp-footer">
+        <div class="lp-footer-content">
+            <div class="lp-footer-info">
+                <div class="lp-footer-brand-row">
+                    <img class="lp-footer-logo" src="../assets/images/cpdo.jpg" alt="CPDO Logo">
+                    <div class="lp-footer-brand">
+                        <span class="lp-footer-brand-acronym">CPDO</span>
+                        <span class="lp-footer-brand-name">City Planning and Development Office</span>
+                    </div>
+                </div>
+                <div class="lp-footer-contacts">
+                    <span><i class="fa-solid fa-envelope"></i> <a href="mailto:cpdomuntinlupa@gmail.com">cpdomuntinlupa@gmail.com</a></span>
+                    <span><i class="fa-solid fa-phone-volume"></i> 8862-2525</span>
+                    <span><i class="fa-solid fa-phone"></i> 3011 / 3012</span>
+                </div>
+            </div>
+            <p class="lp-footer-credit">© <span id="lp-footer-year"></span> Muntinlupa City. Developed by the City Planning and Development Office (CPDO). All rights reserved.</p>
+        </div>
+    </footer>
     <script src="../data.js"></script>
     <script src="../app.js"></script>
+    <script>document.getElementById('lp-footer-year').textContent = new Date().getFullYear();</script>
 </body>
 </html>

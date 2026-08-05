@@ -1441,6 +1441,7 @@ body {
     margin: 0;
     font-size: 17px;
     line-height: 1.5;
+    font-weight: 700;
     color: #f7f7f7;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
     text-align: justify;
@@ -1755,4 +1756,106 @@ body {
 
 #sdg-localization-slide {
     background-color: #00224e;
+}
+
+/* Landing page footer */
+.lp-footer {
+    background: #001a3a;
+    color: #f7f7f7;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.lp-footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.lp-footer-info h3 {
+    margin: 0 0 4px;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #fbce13;
+    letter-spacing: 0.5px;
+}
+
+.lp-footer-subtitle {
+    margin: 0 0 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.lp-footer-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+.lp-footer-brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.lp-footer-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.lp-footer-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    line-height: 1.1;
+}
+
+.lp-footer-brand-acronym {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #f7f7f7;
+    letter-spacing: 2px;
+}
+
+.lp-footer-brand-name {
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: #f7f7f7;
+    letter-spacing: 0px;
+}
+
+.lp-footer-contacts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 28px;
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+.lp-footer-contacts i {
+    margin-right: 6px;
+    color: #ffffff;
+}
+
+.lp-footer-contacts a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.lp-footer-contacts a:hover {
+    text-decoration: underline;
+}
+
+.lp-footer-credit {
+    margin: 18px 0 0;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.75);
 }
