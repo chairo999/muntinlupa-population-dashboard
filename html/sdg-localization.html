@@ -447,6 +447,19 @@
             border-collapse: collapse;
             text-align: left;
             font-size: 0.84rem;
+            table-layout: fixed;
+        }
+
+        .sdg-table th:nth-child(1) { width: 150px; }
+        .sdg-table th:nth-child(2) { width: 200px; }
+        .sdg-table th:nth-child(3) { width: 85px; }
+        .sdg-table th:nth-child(4) { width: 180px; }
+        .sdg-table th:nth-child(10) { width: 130px; }
+        .sdg-table th:nth-child(11) { width: 120px; }
+        .sdg-table th:nth-child(1),
+        .sdg-table th:nth-child(2),
+        .sdg-table th:nth-child(4) {
+            white-space: normal;
         }
 
         .sdg-table th {
@@ -470,6 +483,18 @@
             color: var(--text-dark);
             vertical-align: middle;
             line-height: 1.5;
+        }
+
+        .sdg-table th.year-col,
+        .sdg-table td.year-col {
+            width: 60px;
+            min-width: 60px;
+            max-width: 60px;
+            padding: 14px 3px;
+            font-size: 0.74rem;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            text-align: center;
         }
 
         .sdg-table tbody tr:nth-child(even) {
@@ -1181,11 +1206,11 @@
                                 <th>SDG Localized Indicators* (2)</th>
                                 <th>SDG #</th>
                                 <th>SDG Localized Target</th>
-                                <th class="center">2021</th>
-                                <th class="center">2022</th>
-                                <th class="center">2023</th>
-                                <th class="center">2024</th>
-                                <th class="center">2025</th>
+                                <th class="center year-col">2021</th>
+                                <th class="center year-col">2022</th>
+                                <th class="center year-col">2023</th>
+                                <th class="center year-col">2024</th>
+                                <th class="center year-col">2025</th>
                                 <th>Source/s</th>
                                 <th class="center">Status</th>
                             </tr>
@@ -1258,7 +1283,7 @@
                                 <th>SDG Localized Indicators* (2)</th>
                                 <th>SDG #</th>
                                 <th>SDG Localized Target</th>
-                                <th class="center">2021</th><th class="center">2022</th><th class="center">2023</th><th class="center">2024</th><th class="center">2025</th>
+                                <th class="center year-col">2021</th><th class="center year-col">2022</th><th class="center year-col">2023</th><th class="center year-col">2024</th><th class="center year-col">2025</th>
                                 <th>Source/s</th>
                                 <th class="center">Status</th>
                             </tr>
@@ -1331,7 +1356,7 @@
                                 <th>SDG Localized Indicators* (2)</th>
                                 <th>SDG #</th>
                                 <th>SDG Localized Target</th>
-                                <th class="center">2021</th><th class="center">2022</th><th class="center">2023</th><th class="center">2024</th><th class="center">2025</th>
+                                <th class="center year-col">2021</th><th class="center year-col">2022</th><th class="center year-col">2023</th><th class="center year-col">2024</th><th class="center year-col">2025</th>
                                 <th>Source/s</th>
                                 <th class="center">Status</th>
                             </tr>
@@ -1404,7 +1429,7 @@
                                 <th>SDG Localized Indicators* (2)</th>
                                 <th>SDG #</th>
                                 <th>SDG Localized Target</th>
-                                <th class="center">2021</th><th class="center">2022</th><th class="center">2023</th><th class="center">2024</th><th class="center">2025</th>
+                                <th class="center year-col">2021</th><th class="center year-col">2022</th><th class="center year-col">2023</th><th class="center year-col">2024</th><th class="center year-col">2025</th>
                                 <th>Source/s</th>
                                 <th class="center">Status</th>
                             </tr>
@@ -1477,7 +1502,7 @@
                                 <th>SDG Localized Indicators* (2)</th>
                                 <th>SDG #</th>
                                 <th>SDG Localized Target</th>
-                                <th class="center">2021</th><th class="center">2022</th><th class="center">2023</th><th class="center">2024</th><th class="center">2025</th>
+                                <th class="center year-col">2021</th><th class="center year-col">2022</th><th class="center year-col">2023</th><th class="center year-col">2024</th><th class="center year-col">2025</th>
                                 <th>Source/s</th>
                                 <th class="center">Status</th>
                             </tr>
@@ -1545,7 +1570,7 @@
                                 <th>SDG Localized Indicators* (2)</th>
                                 <th>SDG #</th>
                                 <th>SDG Localized Target</th>
-                                <th class="center">2021</th><th class="center">2022</th><th class="center">2023</th><th class="center">2024</th><th class="center">2025</th>
+                                <th class="center year-col">2021</th><th class="center year-col">2022</th><th class="center year-col">2023</th><th class="center year-col">2024</th><th class="center year-col">2025</th>
                                 <th>Source/s</th>
                                 <th class="center">Status</th>
                             </tr>
@@ -1618,7 +1643,7 @@
                                 <th>SDG Localized Indicators* (2)</th>
                                 <th>SDG #</th>
                                 <th>SDG Localized Target</th>
-                                <th class="center">2021</th><th class="center">2022</th><th class="center">2023</th><th class="center">2024</th><th class="center">2025</th>
+                                <th class="center year-col">2021</th><th class="center year-col">2022</th><th class="center year-col">2023</th><th class="center year-col">2024</th><th class="center year-col">2025</th>
                                 <th>Source/s</th>
                                 <th class="center">Status</th>
                             </tr>
@@ -2070,7 +2095,7 @@
 
         function yearCell(value) {
             const td = document.createElement('td');
-            td.className = 'center trend-val';
+            td.className = 'center trend-val year-col';
             const v = (value === null || value === undefined) ? '-' : String(value);
             if (v.indexOf('(prelim)') > -1) {
                 const parts = v.split('(prelim)');
@@ -2165,6 +2190,16 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            const SDG_COL_WIDTHS = [150, 200, 85, 180, 60, 60, 60, 60, 60, 130, 120];
+            document.querySelectorAll('table.sdg-table').forEach(tbl => {
+                tbl.style.tableLayout = 'fixed';
+                tbl.style.width = '100%';
+                const headerCells = tbl.rows[0] ? tbl.rows[0].cells : [];
+                for (let i = 0; i < SDG_COL_WIDTHS.length && i < headerCells.length; i++) {
+                    headerCells[i].style.width = SDG_COL_WIDTHS[i] + 'px';
+                }
+            });
+
             const hamburgerBtn = document.getElementById('hamburger-btn');
             const sidebar = document.getElementById('sector-sidebar');
             const overlay = document.getElementById('sidebar-overlay');
