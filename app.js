@@ -485,7 +485,7 @@ function renderBarangayBarChart() {
     const ctx4 = document.getElementById("barangayBarChart")?.getContext("2d");
     if (!ctx4) return;
 
-    const pieColors = ["#e1271a", "#ffcf01", "#ff9800", "#16a34a", "#2196f3", "#8800a0", "#003397", "#ff5722", "#992900"];
+    const pieColors = ["#de00b8", "#ff4001", "#ff7802", "#5d00fe", "#2c28fb", "#fe0501", "#00700e", "#01ffff", "#ffff01"];
     const zeroData = new Array(labels.length).fill(0);
     const barangayMax = Math.max(1, ...dataValues.filter(v => typeof v === 'number' && !isNaN(v))) * 1.1;
 

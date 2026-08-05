@@ -218,7 +218,7 @@
                 <div class="stat-data">
                     <span class="stat-label">Total Crime Volume (TCV)</span>
                     <h2 id="card-tcv">--</h2>
-                    <span class="stat-pct" id="card-tcv-year" style="color: var(--text-muted)">Latest Year</span>
+                    <span class="stat-pct" id="card-tcv-year" style="color: var(--text-muted)">Latest: --</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -228,7 +228,7 @@
                 <div class="stat-data">
                     <span class="stat-label">Crime Solution Efficiency (CSE)</span>
                     <h2 id="card-cse">--</h2>
-                    <span class="stat-pct" id="card-cse-year" style="color: var(--text-muted)">Latest Year</span>
+                    <span class="stat-pct" id="card-cse-year" style="color: var(--text-muted)">Latest: --</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -238,7 +238,7 @@
                 <div class="stat-data">
                     <span class="stat-label">Police to Population Ratio</span>
                     <h2 id="card-ratio">--</h2>
-                    <span class="stat-pct" id="card-ratio-year" style="color: var(--text-muted)">Latest Year</span>
+                    <span class="stat-pct" id="card-ratio-year" style="color: var(--text-muted)">Latest: --</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -248,7 +248,7 @@
                 <div class="stat-data">
                     <span class="stat-label">Active Police Force</span>
                     <h2 id="card-force">--</h2>
-                    <span class="stat-pct" id="card-force-year" style="color: var(--text-muted)">Latest Year</span>
+                    <span class="stat-pct" id="card-force-year" style="color: var(--text-muted)">Latest: --</span>
                 </div>
             </div>
         </section>
@@ -567,7 +567,7 @@
             } else {
                 tcvEl.textContent = '--';
             }
-            document.getElementById("card-tcv-year").textContent = `Reported: Year ${tcvInfo.year}`;
+            document.getElementById("card-tcv-year").textContent = `Latest: ${tcvInfo.year}`;
 
             // CSE
             const cseInfo = getLatestValue(protectiveData["Crime Solution Efficiency (CSE)"]?.history);
@@ -577,12 +577,12 @@
             } else {
                 cseEl.textContent = '--';
             }
-            document.getElementById("card-cse-year").textContent = `Assessed: Year ${cseInfo.year}`;
+            document.getElementById("card-cse-year").textContent = `Latest: ${cseInfo.year}`;
 
             // Police Ratio (1:X format — countUp not suitable, use direct)
             const ratioInfo = getLatestValue(protectiveData["Police to Population Ratio (1:X)"]?.history);
             document.getElementById("card-ratio").textContent = ratioInfo.val !== '--' ? `1:${Number(ratioInfo.val).toLocaleString()}` : '--';
-            document.getElementById("card-ratio-year").textContent = `Ratio: Year ${ratioInfo.year}`;
+            document.getElementById("card-ratio-year").textContent = `Latest: ${ratioInfo.year}`;
 
             // Total Police Force
             const forceInfo = getLatestValue(protectiveData["Number of Policemen"]?.history);
@@ -592,7 +592,7 @@
             } else {
                 forceEl.textContent = '--';
             }
-            document.getElementById("card-force-year").textContent = `Officers: Year ${forceInfo.year}`;
+            document.getElementById("card-force-year").textContent = `Latest: ${forceInfo.year}`;
         }
 
         // Draw Interactive Charts

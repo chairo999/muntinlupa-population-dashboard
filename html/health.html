@@ -306,7 +306,7 @@
                 <div class="stat-data">
                     <span class="stat-label">Crude Birth Rate (CBR)</span>
                     <h2 id="card-cbr">--</h2>
-                    <span class="stat-pct" id="card-cbr-year" style="color: var(--text-muted)">Latest Year</span>
+                    <span class="stat-pct" id="card-cbr-year" style="color: var(--text-muted)">Latest: --</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -316,7 +316,7 @@
                 <div class="stat-data">
                     <span class="stat-label">Crude Death Rate (CDR)</span>
                     <h2 id="card-cdr">--</h2>
-                    <span class="stat-pct" id="card-cdr-year" style="color: var(--text-muted)">Latest Year</span>
+                    <span class="stat-pct" id="card-cdr-year" style="color: var(--text-muted)">Latest: --</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -326,7 +326,7 @@
                 <div class="stat-data">
                     <span class="stat-label">Fully Immunized Children</span>
                     <h2 id="card-immunized">--</h2>
-                    <span class="stat-pct" id="card-immunized-year" style="color: var(--text-muted)">Latest Year</span>
+                    <span class="stat-pct" id="card-immunized-year" style="color: var(--text-muted)">Latest: --</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -336,7 +336,7 @@
                 <div class="stat-data">
                     <span class="stat-label">Facility Based Births</span>
                     <h2 id="card-facility">--</h2>
-                    <span class="stat-pct" id="card-facility-year" style="color: var(--text-muted)">Latest Year</span>
+                    <span class="stat-pct" id="card-facility-year" style="color: var(--text-muted)">Latest: --</span>
                 </div>
             </div>
         </section>
@@ -602,7 +602,7 @@
             } else {
                 cbrEl.textContent = '--';
             }
-            document.getElementById("card-cbr-year").textContent = `Census Year: ${cbrInfo.year}`;
+            document.getElementById("card-cbr-year").textContent = `Latest: ${cbrInfo.year}`;
 
             const cdrInfo = getLatestValue(healthData["Crude Death Rate (CDR)"]?.history);
             const cdrEl = document.getElementById("card-cdr");
@@ -611,7 +611,7 @@
             } else {
                 cdrEl.textContent = '--';
             }
-            document.getElementById("card-cdr-year").textContent = `Census Year: ${cdrInfo.year}`;
+            document.getElementById("card-cdr-year").textContent = `Latest: ${cdrInfo.year}`;
 
             const immInfo = getLatestValue(healthData["Percentage of Fully Immunized Children"]?.history);
             const immEl = document.getElementById("card-immunized");
@@ -620,7 +620,7 @@
             } else {
                 immEl.textContent = '--';
             }
-            document.getElementById("card-immunized-year").textContent = `Census Year: ${immInfo.year}`;
+            document.getElementById("card-immunized-year").textContent = `Latest: ${immInfo.year}`;
 
             const facInfo = getLatestValue(healthData["Births by Facility Based"]?.history);
             const facEl = document.getElementById("card-facility");
@@ -629,7 +629,7 @@
             } else {
                 facEl.textContent = '--';
             }
-            document.getElementById("card-facility-year").textContent = `Census Year: ${facInfo.year}`;
+            document.getElementById("card-facility-year").textContent = `Latest: ${facInfo.year}`;
         }
 
         function renderAllCharts() {
