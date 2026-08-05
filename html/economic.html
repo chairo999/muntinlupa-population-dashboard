@@ -292,6 +292,10 @@
                                 <option value="compare-employment">Employment</option>
                                 <option value="category-split">Barangay Category Split</option>
                             </select>
+                            <select id="barangay-year-select" class="chart-select">
+                                <option value="2024" selected>Year: 2024</option>
+                                <option value="2025">Year: 2025</option>
+                            </select>
                             <select id="barangay-select" class="chart-select" style="display: none;"></select>
                             <select id="barangayChartType" class="chart-type-select">
                                 <option value="bar">Bar Graph</option>
@@ -417,14 +421,17 @@
                             rankByYear[yr] = r.value;
                         } else if (r.indicator_id === 3 && name) {
                             const cat = r.category_1 || "Other";
-                            empSumByBrgy[name] = (empSumByBrgy[name] || 0) + r.value;
+                            if (!empSumByBrgy[name]) empSumByBrgy[name] = {};
+                            empSumByBrgy[name][yr] = (empSumByBrgy[name][yr] || 0) + r.value;
                             if (!empCatByBrgy[name]) empCatByBrgy[name] = {};
-                            empCatByBrgy[name][cat] = r.value;
+                            if (!empCatByBrgy[name][cat]) empCatByBrgy[name][cat] = {};
+                            empCatByBrgy[name][cat][yr] = (empCatByBrgy[name][cat][yr] || 0) + r.value;
                         } else if (r.indicator_id === 4 && !name) {
                             hotelByYear[yr] = r.value;
                         } else if (r.indicator_id === 5 && name) {
                             const cat = r.category_1 || "Other";
-                            bizSumByBrgy[name] = (bizSumByBrgy[name] || 0) + r.value;
+                            if (!bizSumByBrgy[name]) bizSumByBrgy[name] = {};
+                            bizSumByBrgy[name][yr] = (bizSumByBrgy[name][yr] || 0) + r.value;
                             if (!bizSplitByBrgy[name]) bizSplitByBrgy[name] = { labels: [], history: [] };
                             bizSplitByBrgy[name].labels.push(cat);
                             bizSplitByBrgy[name].history.push(r.value);
@@ -451,16 +458,19 @@
                     if (cityEstYears.length) allData["Total Establishments"] = { labels: cityEstYears, history: cityEstYears.map(y => cityEstByYear[y]) };
 
                     BARANGAY_NAMES.forEach(b => {
-                        if (empSumByBrgy[b] !== undefined) {
-                            allData[`${b} - Number of Employment`] = { labels: [String(new Date().getFullYear())], history: [empSumByBrgy[b]] };
+                        if (empSumByBrgy[b]) {
+                            const yrs = Object.keys(empSumByBrgy[b]).sort();
+                            allData[`${b} - Number of Employment`] = { labels: yrs, history: yrs.map(y => empSumByBrgy[b][y]) };
                         }
                         if (empCatByBrgy[b]) {
-                            Object.entries(empCatByBrgy[b]).forEach(([cat, val]) => {
-                                allData[`${b} - ${cat} Employment`] = { labels: [String(new Date().getFullYear())], history: [val] };
+                            Object.entries(empCatByBrgy[b]).forEach(([cat, yearMap]) => {
+                                const yrs = Object.keys(yearMap).sort();
+                                allData[`${b} - ${cat} Employment`] = { labels: yrs, history: yrs.map(y => yearMap[y]) };
                             });
                         }
-                        if (bizSumByBrgy[b] !== undefined) {
-                            allData[`${b} Registered Businesses`] = { labels: [String(new Date().getFullYear())], history: [bizSumByBrgy[b]] };
+                        if (bizSumByBrgy[b]) {
+                            const yrs = Object.keys(bizSumByBrgy[b]).sort();
+                            allData[`${b} Registered Businesses`] = { labels: yrs, history: yrs.map(y => bizSumByBrgy[b][y]) };
                         }
                         if (bizSplitByBrgy[b]) allData[`${b} Registered Biz Split`] = bizSplitByBrgy[b];
                         if (brgyEstByBrgy[b]) {
@@ -514,6 +524,36 @@
                     const hist = economicData[key].history || [];
                     for (let i = hist.length - 1; i >= 0; i--) {
                         if (hist[i] !== null && hist[i] !== undefined) return hist[i];
+                    }
+                }
+            }
+            return "--";
+        }
+
+        function resolveBarangayValueForYear(barangay, labelVariants, year) {
+            const yearStr = String(year);
+            const candidates = [];
+            labelVariants.forEach(variant => {
+                candidates.push(`${barangay} - ${variant}`);
+                candidates.push(`${barangay} ${variant}`);
+                candidates.push(`${variant} - ${barangay}`);
+                candidates.push(`${variant} ${barangay}`);
+            });
+            labelVariants.forEach(variant => {
+                const short = variant.replace(/\s+\(.+\)/, '').split(' ')[0];
+                if (short && short.length > 1) {
+                    candidates.push(`${barangay} - ${short}`);
+                    candidates.push(`${barangay} ${short}`);
+                }
+            });
+            for (let key of candidates) {
+                if (economicData[key]) {
+                    const labels = economicData[key].labels || [];
+                    const history = economicData[key].history || [];
+                    const idx = labels.indexOf(yearStr);
+                    if (idx !== -1 && history[idx] !== null && history[idx] !== undefined) return history[idx];
+                    for (let i = history.length - 1; i >= 0; i--) {
+                        if (history[i] !== null && history[i] !== undefined) return history[i];
                     }
                 }
             }
@@ -764,6 +804,7 @@
 
         function initChartControls() {
             const toggle = document.getElementById("barangay-view-mode");
+            const yearSel = document.getElementById("barangay-year-select");
             const selectBrgy = document.getElementById("barangay-select");
             const chartTypeSelect = document.getElementById("barangayChartType");
 
@@ -775,7 +816,9 @@
             });
 
             toggle.addEventListener("change", () => {
-                selectBrgy.style.display = (toggle.value === "category-split") ? "inline-block" : "none";
+                const isCategorySplit = toggle.value === "category-split";
+                selectBrgy.style.display = isCategorySplit ? "inline-block" : "none";
+                yearSel.style.display = isCategorySplit ? "none" : "inline-block";
                 const lineOption = chartTypeSelect.querySelector('option[value="line"]');
                 if (toggle.value === "category-split") {
                     if (lineOption) lineOption.remove();
@@ -792,6 +835,7 @@
             });
 
             selectBrgy.addEventListener("change", updateBarangayEconChart);
+            yearSel.addEventListener("change", updateBarangayEconChart);
         }
 
         function initChartTypeControls() {
@@ -803,6 +847,8 @@
 
         function updateBarangayEconChart() {
             const mode = document.getElementById("barangay-view-mode").value;
+            const yearSel = document.getElementById("barangay-year-select");
+            const selectedYear = yearSel ? yearSel.value : "2024";
             const selectedBrgy = document.getElementById("barangay-select").value;
             const chartType = barangayEconChartType;
 
@@ -827,19 +873,19 @@
 
             if (mode === "compare-establishments") {
                 const counts = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Total Establishments', 'Registered Businesses', 'Total Establishments (a)', 'Establishments']);
+                    const rawVal = resolveBarangayValueForYear(b, ['Total Establishments', 'Registered Businesses', 'Total Establishments (a)', 'Establishments'], selectedYear);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
 
                 if (chartType === "pie") {
                     config = {
                         type: "pie",
-                        data: { labels: BARANGAY_NAMES, datasets: [{ label: 'Registered Businesses', data: counts, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
+                        data: { labels: BARANGAY_NAMES, datasets: [{ label: `Registered Businesses (${selectedYear})`, data: counts, backgroundColor: PIE_COLORS, hoverBackgroundColor: PIE_HOVER_COLORS, hoverBorderColor: "#fff", hoverBorderWidth: 3, borderColor: "#fff", borderWidth: 2 }] },
                         options: { responsive: true, maintainAspectRatio: false, hover: { mode: 'nearest', intersect: true }, plugins: { legend: { display: true, position: 'bottom', labels: { color: "#000000b3" } }, tooltip: baseTooltip(ctx => ` Businesses: ${ctx.raw.toLocaleString()}`) } }
                     };
                 } else {
                     datasets = [{
-                        label: 'Registered Businesses',
+                        label: `Registered Businesses (${selectedYear})`,
                         data: counts,
                         backgroundColor: '#e1271a',
                         hoverBackgroundColor: "#e1271a52",
@@ -867,24 +913,24 @@
 
             } else if (mode === "compare-employment") {
                 let microArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Micro Employment', 'Micro', 'Micro - Establishments']);
+                    const rawVal = resolveBarangayValueForYear(b, ['Micro Employment', 'Micro', 'Micro - Establishments'], selectedYear);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
                 let smallArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Small Employment', 'Small', 'Small - Establishments']);
+                    const rawVal = resolveBarangayValueForYear(b, ['Small Employment', 'Small', 'Small - Establishments'], selectedYear);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
                 let mediumArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Medium Employment', 'Medium', 'Medium - Establishments']);
+                    const rawVal = resolveBarangayValueForYear(b, ['Medium Employment', 'Medium', 'Medium - Establishments'], selectedYear);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
                 let largeArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Large Employment', 'Large', 'Large - Establishments']);
+                    const rawVal = resolveBarangayValueForYear(b, ['Large Employment', 'Large', 'Large - Establishments'], selectedYear);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
 
                 const totalArr = BARANGAY_NAMES.map(b => {
-                    const rawVal = resolveLatestBarangayValue(b, ['Number of Employment', 'Number of Employment - b', 'Number of Employment (b)', 'Employment']);
+                    const rawVal = resolveBarangayValueForYear(b, ['Number of Employment', 'Number of Employment - b', 'Number of Employment (b)', 'Employment'], selectedYear);
                     return (rawVal && rawVal !== "--") ? parseFloat(rawVal) : 0;
                 });
 
